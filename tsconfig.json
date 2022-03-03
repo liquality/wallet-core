@@ -1,4 +1,4 @@
-{
+{/*TODO: switch more rules to true*/
   "compilerOptions": {
     "target": "es6",
     "declaration": true,
@@ -12,14 +12,16 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noImplicitAny": false,
     "noImplicitThis": false,
     "strictNullChecks": false,
     "rootDir": ".",
     "outDir": "dist",
-    "removeComments": true
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true // TODO: remove this if possible
   },
   "include": [
     "src/**/*"

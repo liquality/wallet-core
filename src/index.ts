@@ -1,19 +1,3 @@
-import { Store } from 'vuex'
+import store from './store';
 
-const wallet = new Store({
-  state: {
-    count: 0
-  },
-  mutations: {
-    increment (state) {
-      state.count++
-    }
-  },
-  actions: {
-    add (context) {
-      context.commit('increment');
-    }
-  }
-})
-
-export { wallet }
+export { store as wallet };
