@@ -84,7 +84,7 @@ export const requestPermission = async (
           { active: false },
           { root: true }
         );
-        emitter.$once(`permission:${id}`, (response) => {
+        emitter.once(`permission:${id}`, (response) => {
           if (!response.allowed) reject(new Error('User denied'));
           if (response.error) reject(new Error(response.error));
           resolve(response.result);

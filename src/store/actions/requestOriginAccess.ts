@@ -22,7 +22,7 @@ export const requestOriginAccess = async (
     }
 
     return new Promise((resolve, reject) => {
-      emitter.$once(`origin:${origin}`, (allowed, accountId, chain) => {
+      emitter.once(`origin:${origin}`, (allowed, accountId, chain) => {
         commit(
           'app/SET_ORIGIN_ACCESS_ACTIVE',
           { active: false },

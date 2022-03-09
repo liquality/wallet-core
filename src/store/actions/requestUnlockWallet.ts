@@ -13,7 +13,7 @@ export const requestUnlockWallet = async ({ state }) => {
   if (!state.unlockedAt) {
     const id = Date.now() + '.' + Math.random();
     return new Promise((resolve, reject) => {
-      emitter.$once(`unlocked:${id}`, (unlocked) => {
+      emitter.once(`unlocked:${id}`, (unlocked) => {
         // @ts-ignore
         if (unlocked) resolve();
         else reject(new Error('Wallet is locked. Unlock the wallet first.'));

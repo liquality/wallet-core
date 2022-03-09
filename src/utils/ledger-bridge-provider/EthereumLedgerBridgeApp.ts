@@ -1,5 +1,12 @@
 import { LedgerBridgeApp } from './LedgerBridgeApp'
-import { ExecutionMode } from '@liquality/hw-web-bridge'
+// import { ExecutionMode } from '@liquality/hw-web-bridge'
+
+// TODO: 
+enum ExecutionMode {
+  Sync = 'Sync',
+  Async = 'Async',
+  Prop = 'Prop'
+}
 
 export class EthereumLedgerBridgeApp extends LedgerBridgeApp {
   async getAddress(...payload) {

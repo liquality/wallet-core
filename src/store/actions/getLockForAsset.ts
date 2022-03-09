@@ -18,7 +18,7 @@ export const getLockForAsset = async (
 
     await new Promise((resolve) =>
       // @ts-ignore
-      emitter.$once(`unlock:${key}`, () => resolve())
+      emitter.once(`unlock:${key}`, () => resolve())
     );
 
     return dispatch('getLockForAsset', { network, walletId, asset, item });

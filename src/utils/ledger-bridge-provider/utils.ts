@@ -1,13 +1,15 @@
-import { createClient } from '@liquality/hw-web-bridge'
+// import { createClient } from '@liquality/hw-web-bridge'
 
 let bridgeClient = null
 
 export const setLedgerBridgeListener = (connected) => {
-  if (!connected || !bridgeClient) {
-    bridgeClient = createClient()
-  }
 
-  return bridgeClient
+  // TODO: ledger bridge is using chrome / window
+  // if (!connected || !bridgeClient) {
+  //   bridgeClient = createClient()
+  // }
+
+  // return bridgeClient
 }
 
 /**

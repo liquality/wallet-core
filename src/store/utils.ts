@@ -1,5 +1,5 @@
 // @ts-nocheck
-import Vue from 'vue';
+import EventEmitter from 'events'
 import { random, findKey, mapKeys, mapValues } from 'lodash';
 import axios from 'axios';
 import cryptoassets from '../utils/cryptoassets';
@@ -11,7 +11,7 @@ import { ChainNetworks } from '../utils/networks';
 
 export const CHAIN_LOCK = {};
 
-export const emitter = new Vue();
+export const emitter = new EventEmitter()
 
 const wait = (millis) =>
   new Promise((resolve) => setTimeout(() => resolve(), millis));
@@ -44,7 +44,7 @@ export const attemptToLockAsset = (network, walletId, asset) => {
 export const unlockAsset = (key) => {
   CHAIN_LOCK[key] = false;
 
-  emitter.$emit(`unlock:${key}`);
+  emitter.emit(`unlock:${key}`);
 };
 
 const COIN_GECKO_API = 'https://api.coingecko.com/api/v3';

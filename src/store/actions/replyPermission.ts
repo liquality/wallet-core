@@ -12,7 +12,7 @@ export const replyPermission = async ({ dispatch }, { request, allowed }) => {
     }
   }
 
-  emitter.$emit(`permission:${request.id}`, response);
+  emitter.emit(`permission:${request.id}`, response);
 
   return response;
 };
