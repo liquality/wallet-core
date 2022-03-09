@@ -33,7 +33,7 @@ import {
 } from '@xchainjs/xchain-util';
 import { SwapProvider } from '../SwapProvider';
 import { getTxFee } from '../../utils/fees';
-import { mapValues } from 'lodash-es';
+import { mapValues } from 'lodash';
 
 // Pool balances are denominated with 8 decimals
 const THORCHAIN_DECIMAL = 8;

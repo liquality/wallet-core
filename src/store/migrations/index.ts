@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep } from 'lodash'
 
 // Migrations
 import { firstMigration } from './1_first_migration'

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import axios from 'axios';
 import BN from 'bignumber.js';
-import { mapValues } from 'lodash-es';
+import { mapValues } from 'lodash';
 import { SwapProvider } from '../SwapProvider';
 import {
   chains,

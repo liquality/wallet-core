@@ -1,6 +1,6 @@
 // @ts-nocheck
 import Vue from 'vue';
-import { random, findKey, mapKeys, mapValues } from 'lodash-es';
+import { random, findKey, mapKeys, mapValues } from 'lodash';
 import axios from 'axios';
 import cryptoassets from '../utils/cryptoassets';
 import { Client } from '@liquality/client';

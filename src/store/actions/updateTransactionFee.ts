@@ -1,4 +1,4 @@
-import { isObject } from 'lodash-es'
+import { isObject } from 'lodash'
 import { unlockAsset } from '../utils'
 
 export const updateTransactionFee = async (

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { io } from 'socket.io-client';
 import BN from 'bignumber.js';
-import { mapValues } from 'lodash-es';
+import { mapValues } from 'lodash';
 import { SwapProvider } from '../SwapProvider';
 import { v4 as uuidv4 } from 'uuid';
 import {

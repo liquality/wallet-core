@@ -8,7 +8,7 @@ import { Object } from 'core-js';
 import BN from 'bignumber.js';
 import { cryptoToFiat } from '../utils/coinFormatter';
 import { Networks } from '../utils/networks';
-import { uniq } from 'lodash-es';
+import { uniq } from 'lodash';
 import { getDerivationPath } from '../utils/derivationPath';
 
 const clientCache = {};
