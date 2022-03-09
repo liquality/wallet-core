@@ -1,5 +1,5 @@
 {
-  "name": "wallet-core",
+  "name": "@liquality/wallet-core",
   "version": "1.0.0",
   "description": "Common library for liquality wallet",
   "repository": "git@github.com:liquality/wallet-core.git",
