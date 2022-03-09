@@ -1,6 +1,6 @@
 {
   "name": "@liquality/wallet-core",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Common library for liquality wallet",
   "repository": "git@github.com:liquality/wallet-core.git",
   "author": "monokh <mnokhb@gmail.com>",
@@ -69,7 +69,6 @@
     "core-js": "^3.21.1",
     "human-standard-token-abi": "^2.0.0",
     "jsbi": "^4.1.0",
-    "lodash-es": "^4.17.21",
     "moment": "^2.29.1",
     "socket.io-client": "^4.4.1",
     "tslib": "^2.3.1",
