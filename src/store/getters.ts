@@ -4,7 +4,6 @@ import {
 } from '@liquality/cryptoassets';
 import { createClient } from './factory/client';
 import { createSwapProvider } from './factory/swapProvider';
-import { Object } from 'core-js';
 import BN from 'bignumber.js';
 import { cryptoToFiat } from '../utils/coinFormatter';
 import { Networks } from '../utils/networks';
