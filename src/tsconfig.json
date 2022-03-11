@@ -19,12 +19,15 @@
     "noImplicitThis": false,
     "strictNullChecks": false,
     "rootDir": ".",
-    "outDir": ".",
+    "outDir": "../dist/",
     "removeComments": true,
     "resolveJsonModule": true,
-    "composite": true
+    "skipLibCheck": true // TODO: remove this if possible,
   },
-  "files": [
-    "package.json"
+  "include": [
+    "**/*"
+  ],
+  "references": [
+    { "path": "../" }  // this project to the one at the root dir`
   ]
 }
