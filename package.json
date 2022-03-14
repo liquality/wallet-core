@@ -67,6 +67,7 @@
     "amplitude-js": "^8.17.0",
     "bignumber.js": "^9.0.2",
     "detect-circular-deps": "^3.0.0",
+    "direct-vuex": "^1.0.0-rc3",
     "human-standard-token-abi": "^2.0.0",
     "jsbi": "^4.1.0",
     "moment": "^2.29.1",

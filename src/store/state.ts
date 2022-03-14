@@ -2,9 +2,11 @@
 // balances.network.walletId.asset
 // history.network.walletId[]
 // marketData.network
-import { LATEST_VERSION } from './migrations'
+import { ChainId } from '@liquality/cryptoassets';
+import { LATEST_VERSION } from './migrations';
+import { Network, RootState } from './types';
 
-export default {
+const initialState: RootState = {
   version: LATEST_VERSION,
 
   // <do not keep these in localStorage>
@@ -27,7 +29,7 @@ export default {
   history: {},
   marketData: {},
 
-  activeNetwork: 'mainnet',
+  activeNetwork: Network.Testnet,
   activeWalletId: null,
   activeAsset: null,
 
@@ -37,7 +39,7 @@ export default {
   setupAt: null,
 
   injectEthereum: true,
-  injectEthereumChain: 'ethereum',
+  injectEthereumChain: ChainId.Ethereum,
   usbBridgeWindowsId: 0,
 
   externalConnections: {},
@@ -47,9 +49,11 @@ export default {
     acceptedDate: null,
     askedDate: null,
     askedTimes: 0,
-    notAskAgain: false
+    notAskAgain: false,
   },
   experiments: {},
   watsNewModalVersion: null,
-  enabledChains: {}
-}
+  enabledChains: {},
+};
+
+export default initialState;

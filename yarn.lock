@@ -3828,6 +3828,11 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
+direct-vuex@^1.0.0-rc3:
+  version "1.0.0-rc3"
+  resolved "https://registry.yarnpkg.com/direct-vuex/-/direct-vuex-1.0.0-rc3.tgz#6e90e997f353cf60fbbffa9cc0df295a0b122663"
+  integrity sha512-oxpz9kPmxHxAgFC5jKqjziqCbAuGXxwQZbObYGx7D+a3666D6juxERMe40wa0BddzjXk6ZnbkCdD3UCWGTtZJQ==
+
 doctrine@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-3.0.0.tgz#addebead72a6574db783639dc87a121773973961"
