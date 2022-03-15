@@ -1,5 +1,4 @@
 import { createDirectStore } from 'direct-vuex';
-
 import state from './state';
 import getters from './getters';
 import * as actions from './actions';
