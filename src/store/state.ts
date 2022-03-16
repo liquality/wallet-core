@@ -1,7 +1,3 @@
-// addresses.network.walletId.asset
-// balances.network.walletId.asset
-// history.network.walletId[]
-// marketData.network
 import { ChainId } from '@liquality/cryptoassets';
 import { LATEST_VERSION } from './migrations';
 import { Network, RootState } from './types';
@@ -31,7 +27,6 @@ const initialState: RootState = {
 
   activeNetwork: Network.Testnet,
   activeWalletId: null,
-  activeAsset: null,
 
   keyUpdatedAt: null,
   keySalt: null,
