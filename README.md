@@ -8,3 +8,5 @@ adjustments:
 - Remove cyclical dependencies on store, by using getters from store in actions instead of from utility
 - Add direct-vuex and export store. Add subscription to exported store.
 - Remove direct cyclical dependency by doing dynamic require in cryptoassets
+- Add types to state at types.ts
+- Use direct vuex to make commits by using `rootActionContext`

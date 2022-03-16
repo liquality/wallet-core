@@ -8,10 +8,13 @@ import {
   assets as cryptoassets,
 } from '@liquality/cryptoassets';
 
+import { rootActionContext } from '../../store';
+
 export const createWallet = async (
-  { commit },
+  context,
   { key, mnemonic, imported = false }
 ) => {
+  const { commit } = rootActionContext(context);
   const id = uuidv4();
   const at = Date.now();
   const name = 'Account 1';
@@ -22,14 +25,14 @@ export const createWallet = async (
     key
   );
 
-  commit('CREATE_WALLET', { keySalt, encryptedWallets, wallet });
-  commit('CHANGE_ACTIVE_WALLETID', { walletId: id });
-  commit('ENABLE_ASSETS', {
+  commit.CREATE_WALLET({ keySalt, encryptedWallets, wallet });
+  commit.CHANGE_ACTIVE_WALLETID({ walletId: id });
+  commit.ENABLE_ASSETS({
     network: 'mainnet',
     walletId: id,
     assets: defaultAssets.mainnet,
   });
-  commit('ENABLE_ASSETS', {
+  commit.ENABLE_ASSETS({
     network: 'testnet',
     walletId: id,
     assets: defaultAssets.testnet,
@@ -38,7 +41,7 @@ export const createWallet = async (
   networks.forEach((network) => {
     const assetKeys = defaultAssets[network];
     buildConfig.chains.forEach(async (chainId) => {
-      commit('TOGGLE_BLOCKCHAIN', {
+      commit.TOGGLE_BLOCKCHAIN({
         network,
         walletId: id,
         chainId,
@@ -66,7 +69,7 @@ export const createWallet = async (
         },
       });
 
-      commit('CREATE_ACCOUNT', { network, walletId: id, account: _account });
+      commit.CREATE_ACCOUNT({ network, walletId: id, account: _account });
 
       // for RSK we add an extra account for legacy derivation path
       if (imported && chainId === ChainId.Rootstock) {
@@ -90,7 +93,7 @@ export const createWallet = async (
             enabled: true,
           },
         });
-        commit('CREATE_ACCOUNT', { network, walletId: id, account: _account });
+        commit.CREATE_ACCOUNT({ network, walletId: id, account: _account });
       }
     });
   });
