@@ -1,24 +1,19 @@
-import { enc as Enc, AES, lib as Lib } from 'crypto-js';
+import { enc as Enc, lib as Lib } from 'crypto-js';
 import _pbkdf2 from 'pbkdf2';
+import { walletOptionsStore } from '../walletOptions';
 
 const PBKDF2_ITERATIONS = 1000000;
 const PBKDF2_LENGTH = 32;
 const PBKDF2_DIGEST = 'sha256';
 
 async function pbkdf2(password, salt) {
-  return new Promise((resolve, reject) => {
-    _pbkdf2.pbkdf2(
-      password,
-      salt,
-      PBKDF2_ITERATIONS,
-      PBKDF2_LENGTH,
-      PBKDF2_DIGEST,
-      (err, derivedKey) => {
-        if (err) reject(err);
-        else resolve(Buffer.from(derivedKey).toString('hex'));
-      }
-    );
-  });
+  return walletOptionsStore.walletOptions.crypto.pbkdf2(
+    password,
+    salt,
+    PBKDF2_ITERATIONS,
+    PBKDF2_LENGTH,
+    PBKDF2_DIGEST
+  );
 }
 
 const JsonFormatter = {
@@ -59,7 +54,10 @@ const JsonFormatter = {
 async function encrypt(value, key) {
   const keySalt = Enc.Hex.stringify(Lib.WordArray.random(16));
   const derivedKey = await pbkdf2(key, keySalt);
-  const rawEncryptedValue = AES.encrypt(value, derivedKey);
+  const rawEncryptedValue = walletOptionsStore.walletOptions.crypto.encrypt(
+    value,
+    derivedKey
+  );
   return {
     encrypted: JsonFormatter.stringify(rawEncryptedValue),
     keySalt,
@@ -72,7 +70,10 @@ async function decrypt(encrypted, key, keySalt) {
   const encryptedValue = JsonFormatter.parse(encrypted);
   try {
     const derivedKey = await pbkdf2(key, keySalt);
-    const decryptedValue = AES.decrypt(encryptedValue, derivedKey);
+    const decryptedValue = walletOptionsStore.walletOptions.crypto.decrypt(
+      encryptedValue,
+      derivedKey
+    );
     return decryptedValue.toString(Enc.Utf8);
   } catch (e) {
     return false;
@@ -83,7 +84,10 @@ async function decrypt(encrypted, key, keySalt) {
 async function decryptLegacy(value, key) {
   try {
     const encryptedValue = JsonFormatter.parse(value);
-    const decryptedValue = AES.decrypt(encryptedValue, key);
+    const decryptedValue = walletOptionsStore.walletOptions.crypto.decrypt(
+      encryptedValue,
+      key
+    );
 
     return decryptedValue.toString(Enc.Utf8);
   } catch (e) {

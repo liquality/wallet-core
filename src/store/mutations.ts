@@ -26,6 +26,9 @@ const ensureEnableChainsWalletTree = (ref, walletId, network) => {
 };
 
 export default {
+  SET_STATE(state, { newState }) {
+    Object.assign(state, newState);
+  },
   SETUP_WALLET(state, { key }) {
     state.key = key;
     state.keyUpdatedAt = Date.now();

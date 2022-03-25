@@ -10,3 +10,6 @@ adjustments:
 - Remove direct cyclical dependency by doing dynamic require in cryptoassets
 - Add types to state at types.ts
 - Use direct vuex to make commits by using `rootActionContext`
+- Add setInitialState and commit 
+- setupWallet function taking options and initialising state, createNotification
+- 
