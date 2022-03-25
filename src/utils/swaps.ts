@@ -1,15 +1,5 @@
 import buildConfig from '../build.config';
-
-export const SwapProviderType = {
-  LIQUALITY: 'LIQUALITY',
-  UNISWAPV2: 'UNISWAPV2',
-  ONEINCHV4: 'ONEINCHV4',
-  THORCHAIN: 'THORCHAIN',
-  LIQUALITYBOOST: 'LIQUALITYBOOST',
-  FASTBTC: 'FASTBTC',
-  SOVRYN: 'SOVRYN',
-  ASTROPORT: 'ASTROPORT',
-};
+import { SwapProviderType } from '../swaps/types';
 
 const swapProviderRoot = {
   [SwapProviderType.LIQUALITY]: 'swaps/liquality',

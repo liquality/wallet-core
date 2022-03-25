@@ -1,4 +1,4 @@
-import { SwapProviderType } from '../../utils/swaps';
+import { SwapProviderType } from '../../swaps/types';
 import { LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
 import { LiqualityBoostSwapProvider } from '../../swaps/liqualityboost/LiqualityBoostSwapProvider';
 import { UniswapSwapProvider } from '../../swaps/uniswap/UniswapSwapProvider';

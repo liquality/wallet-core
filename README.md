@@ -12,4 +12,5 @@ adjustments:
 - Use direct vuex to make commits by using `rootActionContext`
 - Add setInitialState and commit 
 - setupWallet function taking options and initialising state, createNotification
+- Move SwapProviderType from  src/utils/swaps.ts into separate module to prevent cyclic dependency
 - 

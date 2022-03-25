@@ -1,4 +1,4 @@
-import { SwapProviderType } from './utils/swaps';
+import { SwapProviderType } from './swaps/types';
 
 import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-mainnet.json';
 import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
