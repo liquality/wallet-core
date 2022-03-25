@@ -2,32 +2,32 @@ export const LEDGER_BITCOIN_OPTIONS = [
   {
     name: 'bitcoin_ledger_nagive_segwit',
     label: 'Segwit',
-    addressType: 'bech32'
+    addressType: 'bech32',
   },
   {
     name: 'bitcoin_ledger_legacy',
     label: 'Legacy',
-    addressType: 'legacy'
-  }
-]
+    addressType: 'legacy',
+  },
+];
 
 export const LEDGER_OPTIONS = [
   {
     name: 'ETH',
     label: 'ETH',
     types: ['ethereum_ledger'],
-    chain: 'ethereum'
+    chain: 'ethereum',
   },
   {
     name: 'BTC',
     label: 'BTC',
     types: ['bitcoin_ledger_nagive_segwit', 'bitcoin_ledger_legacy'],
-    chain: 'bitcoin'
+    chain: 'bitcoin',
   },
   {
     name: 'RBTC',
     label: 'RSK',
     types: ['rsk_ledger'],
-    chain: 'rsk'
-  }
-]
+    chain: 'rsk',
+  },
+];

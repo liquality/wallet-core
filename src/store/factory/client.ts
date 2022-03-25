@@ -33,19 +33,14 @@ import { TerraWalletProvider } from '@liquality/terra-wallet-provider';
 import { TerraRpcProvider } from '@liquality/terra-rpc-provider';
 import { TerraSwapFindProvider } from '@liquality/terra-swap-find-provider';
 
-import {
-  BitcoinLedgerBridgeProvider,
-  EthereumLedgerBridgeProvider,
-  BitcoinLedgerBridgeApp,
-  EthereumLedgerBridgeApp,
-  LEDGER_BITCOIN_OPTIONS,
-} from '../../utils/ledger-bridge-provider';
 import { ChainId } from '@liquality/cryptoassets';
 
 import { isERC20 } from '../../utils/asset';
 import cryptoassets from '../../utils/cryptoassets';
 import buildConfig from '../../build.config';
 import { ChainNetworks } from '../../utils/networks';
+import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
+import { walletOptionsStore } from '../../walletOptions';
 
 function createBtcClient(network, mnemonic, accountType, derivationPath) {
   const isTestnet = network === 'testnet';
@@ -66,20 +61,14 @@ function createBtcClient(network, mnemonic, accountType, derivationPath) {
   if (accountType.includes('bitcoin_ledger')) {
     const option = LEDGER_BITCOIN_OPTIONS.find((o) => o.name === accountType);
     const { addressType } = option;
-    const bitcoinLedgerApp = new BitcoinLedgerBridgeApp(
-      network,
-      ChainId.Bitcoin
-    );
-    const ledger = new BitcoinLedgerBridgeProvider(
-      {
-        network: bitcoinNetwork,
+    const ledgerProvider =
+      walletOptionsStore.walletOptions.createBitcoinLedgerProvider(
+        network,
         addressType,
-        baseDerivationPath: derivationPath,
-      },
-      bitcoinLedgerApp
-    );
+        derivationPath
+      );
     // @ts-ignore
-    btcClient.addProvider(ledger);
+    btcClient.addProvider(ledgerProvider);
   } else {
     btcClient.addProvider(
       // @ts-ignore
@@ -122,19 +111,15 @@ function createEthereumClient(
 
   if (accountType === 'ethereum_ledger' || accountType === 'rsk_ledger') {
     const assetData = cryptoassets[asset];
-    const ethereumLedgerApp = new EthereumLedgerBridgeApp(
-      network,
-      assetData.chain || ChainId.Ethereum
-    );
-    const ledger = new EthereumLedgerBridgeProvider(
-      {
-        network: ethereumNetwork,
+    const chainId = assetData.chain || ChainId.Ethereum;
+    const ledgerProvider =
+      walletOptionsStore.walletOptions.createEthereumLedgerProvider(
+        network,
+        chainId,
         derivationPath,
-        hardfork,
-      },
-      ethereumLedgerApp
-    );
-    ethClient.addProvider(ledger);
+        hardfork
+      );
+    ethClient.addProvider(ledgerProvider);
   } else {
     ethClient.addProvider(
       new EthereumJsWalletProvider({

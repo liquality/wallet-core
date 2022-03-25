@@ -1,3 +1,9 @@
+import { BitcoinLedgerProvider } from '@liquality/bitcoin-ledger-provider';
+import { BitcoinNetwork } from '@liquality/bitcoin-networks';
+import { ChainId } from '@liquality/cryptoassets';
+import { EthereumLedgerProvider } from '@liquality/ethereum-ledger-provider';
+import { EthereumNetwork } from '@liquality/ethereum-networks';
+import { Network } from '@liquality/types';
 import { RootState } from './store/types';
 
 export interface ParsedCipherText {
@@ -26,4 +32,15 @@ export interface WalletOptions {
     decrypt(value: any, key: string): any;
   };
   createNotification(notification: Notification);
+  createBitcoinLedgerProvider?(
+    network: BitcoinNetwork,
+    addressType: string,
+    baseDerivationPath
+  ): BitcoinLedgerProvider;
+  createEthereumLedgerProvider?(
+    network: EthereumNetwork,
+    chain: ChainId,
+    derivationPath: string,
+    hardfork: string
+  ): EthereumLedgerProvider;
 }
