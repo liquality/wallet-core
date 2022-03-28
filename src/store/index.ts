@@ -4,23 +4,11 @@ import getters from './getters';
 import * as actions from './actions';
 import mutations from './mutations';
 
-const {
-  store,
-  moduleActionContext,
-  moduleGetterContext,
-  rootActionContext,
-  rootGetterContext,
-} = createDirectStore({
+const { store } = createDirectStore({
   state,
   getters,
   actions,
   mutations,
 });
 
-export {
-  store,
-  moduleActionContext,
-  moduleGetterContext,
-  rootActionContext,
-  rootGetterContext,
-};
+export default store;

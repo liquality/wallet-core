@@ -1,4 +1,4 @@
-import { store } from './store';
+import store from './store';
 import { WalletOptions } from './types';
 import { walletOptionsStore } from './walletOptions';
 

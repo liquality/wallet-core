@@ -8,13 +8,10 @@ import {
   assets as cryptoassets,
 } from '@liquality/cryptoassets';
 
-import { rootActionContext } from '../../store';
-
 export const createWallet = async (
-  context,
+  { commit },
   { key, mnemonic, imported = false }
 ) => {
-  const { commit } = rootActionContext(context);
   const id = uuidv4();
   const at = Date.now();
   const name = 'Account 1';
