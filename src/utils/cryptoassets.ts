@@ -5,7 +5,7 @@ let store;
 function getStore() {
   if (store) return store;
 
-  store = require('../store').store;
+  store = require('../store');
   return store;
 }
 
