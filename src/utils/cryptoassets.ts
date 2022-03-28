@@ -5,7 +5,7 @@ let store;
 function getStore() {
   if (store) return store;
 
-  store = require('../store');
+  store = require('../store').default;
   return store;
 }
 
