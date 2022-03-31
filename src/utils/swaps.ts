@@ -19,11 +19,6 @@ export function getSwapProviderConfig(network, providerId) {
   return buildConfig.swapProviders[network][providerId]
 }
 
-export function getSwapProviderIcon(network, providerId) {
-  const config = getSwapProviderConfig(network, providerId)
-  return require(`../assets/icons/swapProviders/${config.icon}?inline`)
-}
-
 export function getSwapProviderInfo(network, providerId) {
   const config = getSwapProviderConfig(network, providerId)
   const root = swapProviderRoot[config.type]

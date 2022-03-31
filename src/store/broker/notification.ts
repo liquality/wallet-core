@@ -1,5 +1,4 @@
 import { prettyBalance } from '../../utils/coinFormatter';
-import { getAssetIcon } from '../../utils/asset';
 import store from '../../store';
 import { walletOptionsStore } from '../../walletOptions';
 
@@ -33,7 +32,6 @@ const SEND_STATUS_MAP = {
 export const createNotification = (config) =>
   walletOptionsStore.walletOptions.createNotification({
     type: 'basic',
-    iconUrl: './icons/512x512.png',
     ...config,
   });
 
@@ -54,7 +52,6 @@ const createSendNotification = (item) => {
   const notification = SEND_STATUS_MAP[item.status](item);
 
   return createNotification({
-    iconUrl: getAssetIcon(item.from),
     ...notification,
   });
 };

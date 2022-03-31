@@ -15,7 +15,6 @@ export interface ParsedCipherText {
 export interface Notification {
   title: string;
   message: string;
-  iconUrl: string;
 }
 
 export interface WalletOptions {
