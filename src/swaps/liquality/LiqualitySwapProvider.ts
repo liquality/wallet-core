@@ -1,4 +1,3 @@
-// @ts-nocheck
 import axios from 'axios';
 import BN from 'bignumber.js';
 import { mapValues } from 'lodash';
@@ -28,20 +27,25 @@ export const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies[
 
 class LiqualitySwapProvider extends SwapProvider {
   async _getQuote({ from, to, amount }) {
-    from = 'BLABLA';
-    return (
-      await axios({
-        url: this.config.agent + '/api/swap/order',
-        method: 'post',
-        data: { from, to, fromAmount: amount },
-        headers: {
-          'x-requested-with': VERSION_STRING,
-          'x-liquality-user-agent': VERSION_STRING,
-        },
-      }).catch((e) => {
-        throw e.response?.data?.error || e;
-      })
-    ).data;
+    try {
+      return (
+        await axios({
+          url: this.config.agent + '/api/swap/order',
+          method: 'post',
+          data: { from, to, fromAmount: amount },
+          headers: {
+            'x-requested-with': VERSION_STRING,
+            'x-liquality-user-agent': VERSION_STRING,
+          },
+        })
+      ).data;
+    } catch (e) {
+      if (e?.response?.data?.error) {
+        throw new Error(e.response.data.error);
+      } else {
+        throw e;
+      }
+    }
   }
 
   async getSupportedPairs() {
@@ -117,7 +121,7 @@ class LiqualitySwapProvider extends SwapProvider {
       ..._quote,
       ...lockedQuote,
     };
-    if (await this.hasQuoteExpired({ network, walletId, swap: quote })) {
+    if (await this.hasQuoteExpired({ swap: quote })) {
       throw new Error('The quote is expired.');
     }
 
@@ -206,32 +210,19 @@ class LiqualitySwapProvider extends SwapProvider {
 
     if (
       txType === LiqualitySwapProvider.txTypes.SWAP_INITIATION &&
-      asset === 'UST'
+      asset === 'NEAR'
     ) {
-      const client = this.getClient(
-        network,
-        walletId,
-        asset,
-        quote.fromAccountId
-      );
-      const value = max
-        ? undefined
-        : new BN(quote.fromAmount).dividedBy(1_000_000); // format in UST
-      const taxFees = await client.getMethod('getTaxFees')(
-        value?.toFixed(),
-        'uusd',
-        max || !value
-      );
-
       const fees = {};
+      // default storage fee recommended by NEAR dev team
+      // It leaves 0.02$ dust in the wallet on max value
+      const storageFee = new BN(0.00125);
       for (const feePrice of feePrices) {
         fees[feePrice] = getTxFee(
           LiqualitySwapProvider.feeUnits[txType],
           asset,
           feePrice
-        ).plus(taxFees);
+        ).plus(storageFee);
       }
-
       return fees;
     }
 
@@ -251,7 +242,7 @@ class LiqualitySwapProvider extends SwapProvider {
 
   updateOrder(order) {
     return axios({
-      url: this.config.agent + '/api/swap/order/' + order.id,
+      url: this.config.agent + '/api/swap/order/' + order.orderId,
       method: 'post',
       data: {
         fromAddress: order.fromAddress,
@@ -320,7 +311,7 @@ class LiqualitySwapProvider extends SwapProvider {
   }
 
   async fundSwap({ swap, network, walletId }) {
-    if (await this.hasQuoteExpired({ network, walletId, swap })) {
+    if (await this.hasQuoteExpired({ swap })) {
       return { status: 'QUOTE_EXPIRED' };
     }
 
@@ -357,7 +348,7 @@ class LiqualitySwapProvider extends SwapProvider {
   }
 
   async reportInitiation({ swap, network, walletId }) {
-    if (await this.hasQuoteExpired({ network, walletId, swap })) {
+    if (await this.hasQuoteExpired({ swap })) {
       return { status: 'WAITING_FOR_REFUND' };
     }
 
@@ -417,6 +408,7 @@ class LiqualitySwapProvider extends SwapProvider {
 
       if (tx) {
         const toFundHash = tx.hash;
+
         const isVerified = await toClient.swap.verifyInitiateSwapTransaction(
           {
             value: new BN(swap.toAmount),
@@ -467,6 +459,7 @@ class LiqualitySwapProvider extends SwapProvider {
       network,
       walletId,
     });
+
     if (expirationUpdates) {
       return expirationUpdates;
     }
@@ -556,11 +549,7 @@ class LiqualitySwapProvider extends SwapProvider {
       const tx = await toClient.chain.getTransactionByHash(swap.toClaimHash);
 
       if (tx && tx.confirmations > 0) {
-        this.updateBalances({
-          network,
-          walletId,
-          assets: [swap.to, swap.from],
-        });
+        this.updateBalances(network, walletId, [swap.to, swap.from]);
 
         return {
           endTime: Date.now(),
@@ -729,6 +718,7 @@ class LiqualitySwapProvider extends SwapProvider {
       MATIC: 165000,
       ERC20: 600000 + 94500, // Contract creation + erc20 transfer
       ARBETH: 2400000,
+      AVAX: 165000,
     },
     SWAP_CLAIM: {
       BTC: 143,
@@ -738,10 +728,11 @@ class LiqualitySwapProvider extends SwapProvider {
       MATIC: 45000,
       NEAR: 8000000000000,
       SOL: 1,
-      LUNA: 440000,
-      UST: 440000,
+      LUNA: 800000,
+      UST: 800000,
       ERC20: 100000,
       ARBETH: 680000,
+      AVAX: 45000,
     },
   };
 
@@ -766,6 +757,7 @@ class LiqualitySwapProvider extends SwapProvider {
       label: 'Locking {from}',
       filterStatus: 'PENDING',
     },
+
     FUNDED: {
       step: 1,
       label: 'Locking {to}',
@@ -784,6 +776,7 @@ class LiqualitySwapProvider extends SwapProvider {
         };
       },
     },
+
     READY_TO_CLAIM: {
       step: 2,
       label: 'Claiming {to}',
@@ -814,6 +807,7 @@ class LiqualitySwapProvider extends SwapProvider {
       label: 'Refunding {from}',
       filterStatus: 'PENDING',
     },
+
     REFUNDED: {
       step: 3,
       label: 'Refunded',

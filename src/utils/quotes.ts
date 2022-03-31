@@ -1,8 +1,8 @@
 import BN from 'bignumber.js';
 import { unitToCurrency } from '@liquality/cryptoassets';
 import cryptoassets from './cryptoassets';
-import { SwapProviderType } from '../swaps/types';
-import { getSwapProviderConfig } from '../utils/swaps';
+import { getSwapProviderConfig } from './swaps';
+import { SwapProviderType } from './swapProviderType';
 
 export function calculateQuoteRate(quote) {
   const fromAmount = unitToCurrency(cryptoassets[quote.from], quote.fromAmount);

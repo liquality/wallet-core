@@ -1,9 +1,9 @@
-// @ts-nocheck
-
 import store from '../store';
-// import { createNotification } from '../broker/notification';
+import { createNotification } from '../store/broker/notification';
 
 class SwapProvider {
+  // TODO: types
+  config: any;
   constructor(config) {
     if (this.constructor === SwapProvider) {
       throw new TypeError(
@@ -15,20 +15,12 @@ class SwapProvider {
 
   async sendLedgerNotification(accountId, message) {
     const account = store.getters.accountItem(accountId);
-    // TODO: fix notifications
-    // if (account?.type.includes('ledger')) {
-    //   const notificationId = await createNotification({
-    //     title: 'Sign with Ledger',
-    //     message,
-    //   });
-    //   const listener = (_id) => {
-    //     if (_id === notificationId) {
-    //       browser.notifications.clear(_id);
-    //       browser.notifications.onClicked.removeListener(listener);
-    //     }
-    //   };
-    //   browser.notifications.onClicked.addListener(listener);
-    // }
+    if (account?.type.includes('ledger')) {
+      await createNotification({
+        title: 'Sign with Ledger',
+        message,
+      });
+    }
   }
 
   /**
@@ -72,7 +64,7 @@ class SwapProvider {
     quote,
     feePrices,
     max,
-  }) {
+  }): Promise<any> {
     throw new Error('`estimateFee` not implemented');
   }
 
@@ -124,7 +116,7 @@ class SwapProvider {
    * @param {string[]} assets
    */
   async updateBalances(network, walletId, assets) {
-    return store.dispatch('updateBalances', { network, walletId, assets });
+    return store.dispatch.updateBalances({ network, walletId, assets });
   }
 
   /**
@@ -136,7 +128,7 @@ class SwapProvider {
    * @returns string address
    */
   async getSwapAddress(network, walletId, asset, accountId) {
-    const [address] = await store.dispatch('getUnusedAddresses', {
+    const [address] = await store.dispatch.getUnusedAddresses({
       network,
       walletId,
       assets: [asset],
@@ -146,6 +138,7 @@ class SwapProvider {
   }
 
   get statuses() {
+    // @ts-ignore
     const statuses = this.constructor.statuses;
     if (typeof statuses === 'undefined')
       throw new Error(
@@ -155,6 +148,7 @@ class SwapProvider {
   }
 
   get fromTxType() {
+    // @ts-ignore
     const fromTxType = this.constructor.fromTxType;
     if (typeof fromTxType === 'undefined')
       throw new Error('`fromTxType` is not defined. e.g. "INITIATE"');
@@ -162,6 +156,7 @@ class SwapProvider {
   }
 
   get toTxType() {
+    // @ts-ignore
     const toTxType = this.constructor.toTxType;
     if (typeof toTxType === 'undefined')
       throw new Error('`toTxType` is not defined. e.g. "REDEEM"');
@@ -169,6 +164,7 @@ class SwapProvider {
   }
 
   get timelineDiagramSteps() {
+    // @ts-ignore
     const timelineDiagramSteps = this.constructor.timelineDiagramSteps;
     if (typeof timelineDiagramSteps === 'undefined')
       throw new Error(
@@ -178,6 +174,7 @@ class SwapProvider {
   }
 
   get totalSteps() {
+    // @ts-ignore
     const totalSteps = this.constructor.totalSteps;
     if (typeof totalSteps === 'undefined')
       throw new Error('`totalSteps` is not defined. e.g. 2');

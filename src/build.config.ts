@@ -1,7 +1,6 @@
-import { SwapProviderType } from './swaps/types';
-
 import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-mainnet.json';
 import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
+import { SwapProviderType } from './utils/swapProviderType';
 
 export default {
   defaultAssets: {
@@ -20,6 +19,7 @@ export default {
       'MATIC',
       'PWETH',
       'ARBETH',
+      'AVAX',
       'FISH',
       'LUNA',
       'UST',
@@ -35,6 +35,7 @@ export default {
       'MATIC',
       'PWETH',
       'ARBETH',
+      'AVAX',
       'SOL',
       'LUNA',
       'UST',
@@ -57,14 +58,21 @@ export default {
         type: SwapProviderType.LIQUALITY,
         agent:
           process.env.VUE_APP_AGENT_TESTNET_URL ||
-          'https://liquality.io/swap-testnet-dev/agent',
+          'https://testnet-dev-agent.liq-chainhub.net',
       },
-      liqualityBoost: {
+      liqualityBoostNativeToERC20: {
         name: 'Liquality Boost',
-        type: SwapProviderType.LIQUALITYBOOST,
+        type: SwapProviderType.LIQUALITYBOOST_NATIVE_TO_ERC20,
         network: 'testnet',
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC'],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
+      },
+      liqualityBoostERC20toNative: {
+        name: 'Liquality Boost',
+        type: SwapProviderType.LIQUALITYBOOST_ERC20_TO_NATIVE,
+        network: 'testnet',
+        icon: 'liqualityboost.svg',
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
       },
       uniswapV2: {
         name: 'Uniswap V2',
@@ -79,7 +87,7 @@ export default {
         thornode: 'https://testnet.thornode.thorchain.info',
       },
       sovryn: {
-        name: 'Sovyrn',
+        name: 'Sovryn',
         icon: 'sovryn.svg',
         type: SwapProviderType.SOVRYN,
         routerAddress: SovrynTestnetAddresses.swapNetwork,
@@ -92,14 +100,23 @@ export default {
         name: 'Liquality',
         icon: 'liquality.svg',
         type: SwapProviderType.LIQUALITY,
-        agent: 'https://liquality.io/swap-dev/agent',
+        agent:
+          process.env.VUE_APP_AGENT_MAINNET_URL ||
+          'https://mainnet-dev-agent.liq-chainhub.net',
       },
-      liqualityBoost: {
+      liqualityBoostNativeToERC20: {
         name: 'Liquality Boost',
-        type: SwapProviderType.LIQUALITYBOOST,
+        type: SwapProviderType.LIQUALITYBOOST_NATIVE_TO_ERC20,
         network: 'mainnet',
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['MATIC', 'RBTC'],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
+      },
+      liqualityBoostERC20toNative: {
+        name: 'Liquality Boost',
+        type: SwapProviderType.LIQUALITYBOOST_ERC20_TO_NATIVE,
+        network: 'mainnet',
+        icon: 'liqualityboost.svg',
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
       },
       uniswapV2: {
         name: 'Uniswap V2',
@@ -117,6 +134,7 @@ export default {
           ethereum: '0x3a712CC47aeb0F20A7C9dE157c05d74B11F172f5',
           polygon: '0x3a712CC47aeb0F20A7C9dE157c05d74B11F172f5',
           bsc: '0x3a712CC47aeb0F20A7C9dE157c05d74B11F172f5',
+          avalanche: '0x3a712CC47aeb0F20A7C9dE157c05d74B11F172f5',
         },
         referrerFee: 0.3,
       },
@@ -127,7 +145,7 @@ export default {
         bridgeEndpoint: 'http://3.131.33.161:3000/',
       },
       sovryn: {
-        name: 'Sovyrn',
+        name: 'Sovryn',
         icon: 'sovryn.svg',
         type: SwapProviderType.SOVRYN,
         routerAddress: SovrynMainnetAddresses.swapNetwork,
@@ -161,6 +179,7 @@ export default {
     'arbitrum',
     'terra',
     'fuse',
+    'avalanche',
   ],
-  supportedBridgeAssets: ['MATIC', 'RBTC'],
+  supportedBridgeAssets: ['MATIC', 'RBTC', 'AVAX'],
 };

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import BN from 'bignumber.js';
 import axios from 'axios';
 import * as ethers from 'ethers';
@@ -552,7 +551,7 @@ class ThorchainSwapProvider extends SwapProvider {
           );
 
           if (receiveTx && receiveTx.confirmations > 0) {
-            this.updateBalances({ network, walletId, assets: [asset] });
+            this.updateBalances(network, walletId, [asset]);
             const status = OUT_MEMO_TO_STATUS[memoAction];
             return {
               receiveTxHash: receiveTx.hash,

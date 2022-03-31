@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import BN from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import { LCDClient } from '@terra-money/terra.js';
@@ -132,7 +130,7 @@ class AstroportSwapProvider extends SwapProvider {
         const { status } = await client.getMethod('getTransactionByHash')(
           swap.swapTxHash
         );
-        this.updateBalances({ network, walletId, assets: [swap.from] });
+        this.updateBalances(network, walletId, [swap.from]);
         return {
           endTime: Date.now(),
           status,
@@ -154,6 +152,12 @@ class AstroportSwapProvider extends SwapProvider {
     }
 
     return updates;
+  }
+
+  // ======== MIN AMOUNT =======
+
+  getSwapLimit() {
+    return 2; // Min swap amount in USD
   }
 
   // ========= FEES ========
@@ -208,7 +212,7 @@ class AstroportSwapProvider extends SwapProvider {
     const erc20ToNative = fromInfo.type === 'erc20' && toInfo.type === 'native';
 
     // Select correct query and address depending on coin types
-    let contractData = {
+    let contractData: any = {
       address: '',
       query: '',
     };
@@ -258,7 +262,8 @@ class AstroportSwapProvider extends SwapProvider {
 
     pairAddress = address;
 
-    const rate = await rpc.wasm.contractQuery(address, query);
+    // TODO: type
+    const rate: any = await rpc.wasm.contractQuery(address, query);
 
     return { rate, fromTokenAddress, toTokenAddress, pairAddress };
   }
@@ -268,7 +273,8 @@ class AstroportSwapProvider extends SwapProvider {
 
     const query = getPairAddressQuery(tokenAddress);
 
-    const resp = await rpc.wasm.contractQuery(
+    // TODO: type
+    const resp: any = await rpc.wasm.contractQuery(
       'terra1fnywlw4edny3vw44x04xd67uzkdqluymgreu7g',
       query
     );

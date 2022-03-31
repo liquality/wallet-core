@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import BN from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import * as ethers from 'ethers';
@@ -32,6 +30,7 @@ const wrappedRbtcAddress = {
 };
 
 class SovrynSwapProvider extends SwapProvider {
+  _apiCache: any;
   constructor(config) {
     super(config);
     this._apiCache = {}; // chainId to RPC provider
@@ -214,7 +213,7 @@ class SovrynSwapProvider extends SwapProvider {
     const toInfo = cryptoassets[quote.to];
 
     const api = this._getApi(network, quote.from);
-    const coversionPath = quote.path;
+    const conversionPath = quote.path;
     const toAmountWithSlippage = this._calculateSlippage(
       quote.toAmount
     ).toString();
@@ -230,7 +229,7 @@ class SovrynSwapProvider extends SwapProvider {
         api
       );
       encodedData = wpContract.interface.encodeFunctionData('convertByPath', [
-        coversionPath,
+        conversionPath,
         quote.fromAmount,
         toAmountWithSlippage,
       ]);
@@ -244,7 +243,7 @@ class SovrynSwapProvider extends SwapProvider {
 
       // ignore affiliate and beneficiary
       encodedData = ssnContract.interface.encodeFunctionData('convertByPath', [
-        coversionPath,
+        conversionPath,
         quote.fromAmount,
         toAmountWithSlippage,
         '0x0000000000000000000000000000000000000000', // account that will receive the conversion result or 0x0 to send the result to the sender account
@@ -378,7 +377,7 @@ class SovrynSwapProvider extends SwapProvider {
         const { status } = await client.getMethod('getTransactionReceipt')(
           swap.swapTxHash
         );
-        this.updateBalances({ network, walletId, assets: [swap.from] });
+        this.updateBalances(network, walletId, [swap.from]);
         return {
           endTime: Date.now(),
           status: Number(status) === 1 ? 'SUCCESS' : 'FAILED',
@@ -434,7 +433,7 @@ class SovrynSwapProvider extends SwapProvider {
 
   // 0.5 slippage
   _calculateSlippage(amount) {
-    return new BN(amount).times(new new BN(0.995)()).toFixed(0);
+    return new BN(amount).times(new BN(0.995)).toFixed(0);
   }
 
   // ======== STATIC ========

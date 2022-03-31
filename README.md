@@ -15,3 +15,4 @@ adjustments:
 - Move SwapProviderType from  src/utils/swaps.ts into separate module to prevent cyclic dependency
 - Add createBitcoinLedgerProvider and createEthereumLedgerProvider to wallet options and call it from client.
 - Move ledger-bridge-provider/config utils to utils. Remove ledger bridge and provider code. 
+- Delete `requestOriginAccess.js`, `requestPermission.js` `requestUnlockWallet.js` actions. These should be in client app module.

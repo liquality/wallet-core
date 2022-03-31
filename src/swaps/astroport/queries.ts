@@ -1,9 +1,9 @@
-import { MsgExecuteContract } from '@terra-money/terra.js'
+import { MsgExecuteContract } from '@terra-money/terra.js';
 
 const ADDRESSES = {
   ASSETS_CONTRACT: 'terra1m6ywlgn6wrjuagcmmezzz2a029gtldhey5k552',
-  FACTORY_CONTRACT: 'terra16t7dpwwgx9n3lq6l6te3753lsjqwhxwpday9zx'
-}
+  FACTORY_CONTRACT: 'terra16t7dpwwgx9n3lq6l6te3753lsjqwhxwpday9zx',
+};
 
 // ============== Get Rate Queries ==============
 
@@ -12,8 +12,8 @@ const ADDRESSES = {
     1. UST <-> LUNA
     2. UST -> ERC20
  */
-export const getRateNativeToAsset = (fromAmount, asset, pairAddress) => {
-  const isDenom = asset === 'uluna' || asset === 'uusd'
+export const getRateNativeToAsset = (fromAmount, asset, pairAddress?) => {
+  const isDenom = asset === 'uluna' || asset === 'uusd';
 
   const query = {
     simulation: {
@@ -23,33 +23,33 @@ export const getRateNativeToAsset = (fromAmount, asset, pairAddress) => {
           // Apply this query when we do NATIVE <-> ERC20
           info: {
             native_token: {
-              denom: asset
-            }
-          }
+              denom: asset,
+            },
+          },
         }),
         ...(!isDenom && {
           // Apply this query when we do ERC20 <-> NATIVE
           info: {
             token: {
-              contract_addr: asset
-            }
-          }
-        })
-      }
-    }
-  }
+              contract_addr: asset,
+            },
+          },
+        }),
+      },
+    },
+  };
 
   // This address is for following pairs
   // UST <-> Luna
-  let address = ADDRESSES.ASSETS_CONTRACT
+  let address = ADDRESSES.ASSETS_CONTRACT;
 
   // This address is for UST -> ERC20
   if (pairAddress) {
-    address = pairAddress
+    address = pairAddress;
   }
 
-  return { query, address }
-}
+  return { query, address };
+};
 
 /*
   This can handle rates for:
@@ -57,9 +57,14 @@ export const getRateNativeToAsset = (fromAmount, asset, pairAddress) => {
     2. ERC20 <-> ERC20
     3. ERC20 -> UST
  */
-export const getRateERC20ToERC20 = (fromAmount, firstAsset, secondAsset, pairAddress) => {
-  const isFirstAssetDenom = firstAsset === 'uluna' || firstAsset === 'uusd'
-  const isSecondAssetDenom = secondAsset === 'uluna' || secondAsset === 'uusd'
+export const getRateERC20ToERC20 = (
+  fromAmount,
+  firstAsset,
+  secondAsset,
+  pairAddress?
+) => {
+  const isFirstAssetDenom = firstAsset === 'uluna' || firstAsset === 'uusd';
+  const isSecondAssetDenom = secondAsset === 'uluna' || secondAsset === 'uusd';
 
   const query = {
     simulate_swap_operations: {
@@ -71,62 +76,62 @@ export const getRateERC20ToERC20 = (fromAmount, firstAsset, secondAsset, pairAdd
               // Apply this query when we do LUNA <-> ERC20
               offer_asset_info: {
                 native_token: {
-                  denom: firstAsset
-                }
-              }
+                  denom: firstAsset,
+                },
+              },
             }),
             ...(!isFirstAssetDenom && {
               // Apply This query when we do ERC20 <-> ERC20
               offer_asset_info: {
                 token: {
-                  contract_addr: firstAsset
-                }
-              }
+                  contract_addr: firstAsset,
+                },
+              },
             }),
             ask_asset_info: {
-              native_token: { denom: 'uusd' }
-            }
-          }
+              native_token: { denom: 'uusd' },
+            },
+          },
         },
         {
           astro_swap: {
             offer_asset_info: {
-              native_token: { denom: 'uusd' }
+              native_token: { denom: 'uusd' },
             },
             ...(isSecondAssetDenom && {
               // Apply this query when we do ERC20 <-> LUNA
               ask_asset_info: {
                 native_token: {
-                  denom: secondAsset
-                }
-              }
+                  denom: secondAsset,
+                },
+              },
             }),
             ...(!isSecondAssetDenom && {
               // Apply this query when we do ERC20 <-> ERC20
               ask_asset_info: {
                 token: {
-                  contract_addr: secondAsset
-                }
-              }
-            })
-          }
-        }
-      ]
-    }
-  }
+                  contract_addr: secondAsset,
+                },
+              },
+            }),
+          },
+        },
+      ],
+    },
+  };
 
   // This address is for following pairs
   // Luna <-> ERC20
   // ERC20 <-> ERC20
-  let address = ADDRESSES.FACTORY_CONTRACT
+  let address = ADDRESSES.FACTORY_CONTRACT;
 
   // This address is used for ERC20 -> UST
   if (pairAddress) {
-    address = pairAddress
+    address = pairAddress;
   }
 
-  return { query, address }
-}
+  return { query, address };
+};
 
 // ============== Get Swap Messages ==============
 
@@ -135,8 +140,13 @@ export const getRateERC20ToERC20 = (fromAmount, firstAsset, secondAsset, pairAdd
     1. UST <-> Luna
     1. UST -> ERC20
 */
-export const buildSwapFromNativeTokenMsg = (quote, denom, address, pairAddress) => {
-  const to = pairAddress ? pairAddress : ADDRESSES.ASSETS_CONTRACT // This address is for UST <-> Luna pair
+export const buildSwapFromNativeTokenMsg = (
+  quote,
+  denom,
+  address,
+  pairAddress?
+) => {
+  const to = pairAddress ? pairAddress : ADDRESSES.ASSETS_CONTRACT; // This address is for UST <-> Luna pair
 
   return {
     data: {
@@ -150,21 +160,21 @@ export const buildSwapFromNativeTokenMsg = (quote, denom, address, pairAddress) 
               offer_asset: {
                 info: {
                   native_token: {
-                    denom
-                  }
+                    denom,
+                  },
                 },
-                amount: quote.fromAmount
+                amount: quote.fromAmount,
               },
-              to: address
-            }
+              to: address,
+            },
           },
           { [denom]: Number(quote.fromAmount) }
-        )
+        ),
       ],
-      gasLimit: 500_000
-    }
-  }
-}
+      gasLimit: 400_000,
+    },
+  };
+};
 
 /*
   This can handle swaps for:
@@ -178,9 +188,9 @@ export const buildSwapFromContractTokenMsg = (
   fromTokenAddress,
   toTokenAddress
 ) => {
-  const isERC20ToLuna = quote.to === 'LUNA'
-  const isLunaToERC20 = quote.from === 'LUNA'
-  const isERC20ToERC20 = quote.to !== 'LUNA' && quote.from !== 'LUNA'
+  const isERC20ToLuna = quote.to === 'LUNA';
+  const isLunaToERC20 = quote.from === 'LUNA';
+  const isERC20ToERC20 = quote.to !== 'LUNA' && quote.from !== 'LUNA';
 
   const swapMsg = {
     execute_swap_operations: {
@@ -191,53 +201,53 @@ export const buildSwapFromContractTokenMsg = (
             ...((isERC20ToERC20 || isERC20ToLuna) && {
               offer_asset_info: {
                 token: {
-                  contract_addr: fromTokenAddress
-                }
-              }
+                  contract_addr: fromTokenAddress,
+                },
+              },
             }),
             ...(isLunaToERC20 && {
               offer_asset_info: {
                 native_token: {
-                  denom: 'uluna'
-                }
-              }
+                  denom: 'uluna',
+                },
+              },
             }),
             ask_asset_info: {
               native_token: {
-                denom: 'uusd'
-              }
-            }
-          }
+                denom: 'uusd',
+              },
+            },
+          },
         },
         {
           astro_swap: {
             offer_asset_info: {
               native_token: {
-                denom: 'uusd'
-              }
+                denom: 'uusd',
+              },
             },
             ...((isLunaToERC20 || isERC20ToERC20) && {
               ask_asset_info: {
                 token: {
-                  contract_addr: toTokenAddress
-                }
-              }
+                  contract_addr: toTokenAddress,
+                },
+              },
             }),
             ...(isERC20ToLuna && {
               ask_asset_info: {
                 native_token: {
-                  denom: 'uluna'
-                }
-              }
-            })
-          }
-        }
-      ]
-    }
-  }
+                  denom: 'uluna',
+                },
+              },
+            }),
+          },
+        },
+      ],
+    },
+  };
 
   if (isERC20ToERC20 || isERC20ToLuna) {
-    const msgInBase64 = Buffer.from(JSON.stringify(swapMsg)).toString('base64')
+    const msgInBase64 = Buffer.from(JSON.stringify(swapMsg)).toString('base64');
 
     return {
       data: {
@@ -247,13 +257,13 @@ export const buildSwapFromContractTokenMsg = (
             send: {
               msg: msgInBase64,
               amount: quote.fromAmount,
-              contract: ADDRESSES.FACTORY_CONTRACT // USE FOR ERC20 <-> ERC20 AND ERC20 <-> LUNA Swaps
-            }
-          })
+              contract: ADDRESSES.FACTORY_CONTRACT, // USE FOR ERC20 <-> ERC20 AND ERC20 <-> LUNA Swaps
+            },
+          }),
         ],
-        gasLimit: 1_500_000
-      }
-    }
+        gasLimit: 1_500_000,
+      },
+    };
   }
 
   return {
@@ -265,12 +275,12 @@ export const buildSwapFromContractTokenMsg = (
           ADDRESSES.FACTORY_CONTRACT, // USE for Luna <-> ERC20 Swaps
           swapMsg,
           { ['uluna']: Number(quote.fromAmount) }
-        )
+        ),
       ],
-      gasLimit: 1_500_000
-    }
-  }
-}
+      gasLimit: 1_500_000,
+    },
+  };
+};
 
 /*
   This can handle swaps for:
@@ -285,9 +295,9 @@ export const buildSwapFromContractTokenToUSTMsg = (
 ) => {
   const msgInBase64 = Buffer.from(
     JSON.stringify({
-      swap: {}
+      swap: {},
     })
-  ).toString('base64')
+  ).toString('base64');
 
   return {
     data: {
@@ -297,14 +307,14 @@ export const buildSwapFromContractTokenToUSTMsg = (
           send: {
             msg: msgInBase64,
             amount: quote.fromAmount,
-            contract: pairAddress
-          }
-        })
+            contract: pairAddress,
+          },
+        }),
       ],
-      gasLimit: 400_000
-    }
-  }
-}
+      gasLimit: 400_000,
+    },
+  };
+};
 
 // ============== Get Pair Address ==============
 export const getPairAddressQuery = (tokenAddress) => ({
@@ -312,14 +322,14 @@ export const getPairAddressQuery = (tokenAddress) => ({
     asset_infos: [
       {
         token: {
-          contract_addr: tokenAddress
-        }
+          contract_addr: tokenAddress,
+        },
       },
       {
         native_token: {
-          denom: 'uusd'
-        }
-      }
-    ]
-  }
-})
+          denom: 'uusd',
+        },
+      },
+    ],
+  },
+});

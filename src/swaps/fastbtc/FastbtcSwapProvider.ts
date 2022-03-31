@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { io } from 'socket.io-client';
 import BN from 'bignumber.js';
 import { mapValues } from 'lodash';
@@ -17,6 +16,7 @@ const fastBtcSatoshiFee = 5000;
 const fastBtcPercentageFee = 0.2;
 
 class FastbtcSwapProvider extends SwapProvider {
+  socketConnection: any;
   constructor(config) {
     super(config);
     this.socketConnection = io(this.config.bridgeEndpoint, {
@@ -51,7 +51,8 @@ class FastbtcSwapProvider extends SwapProvider {
     ];
   }
 
-  async _getHistory(web3Addr) {
+  // TODO: return type
+  async _getHistory(web3Addr): Promise<any[]> {
     return new Promise((resolve, reject) => {
       this.socketConnection.emit('getDepositHistory', web3Addr, (res) => {
         if (res && res.error) {
@@ -62,7 +63,8 @@ class FastbtcSwapProvider extends SwapProvider {
     });
   }
 
-  async _getAddress(web3Addr) {
+  // TODO: type
+  async _getAddress(web3Addr): Promise<any> {
     return new Promise((resolve, reject) => {
       this.socketConnection.emit('getDepositAddress', web3Addr, (err, res) => {
         if (err) {
@@ -73,7 +75,8 @@ class FastbtcSwapProvider extends SwapProvider {
     });
   }
 
-  async _getTxAmount() {
+  // TODO: type
+  async _getTxAmount(): Promise<any> {
     return new Promise((resolve) => {
       this.socketConnection.emit('txAmount', (res) => {
         resolve(res);
@@ -110,7 +113,6 @@ class FastbtcSwapProvider extends SwapProvider {
   async sendSwap({ network, walletId, quote }) {
     if (quote.from !== 'BTC' || quote.to !== 'RBTC') return null;
     const toChain = cryptoassets[quote.to].chain;
-    const account = this.getAccount(quote.fromAccountId);
     const client = this.getClient(
       network,
       walletId,
@@ -127,8 +129,7 @@ class FastbtcSwapProvider extends SwapProvider {
     const relayAddress = await this._getAddress(toAddress);
 
     await this.sendLedgerNotification(
-      quote,
-      account,
+      quote.fromAccountId,
       'Signing required to complete the swap.'
     );
     const swapTx = await client.chain.sendTransaction({

@@ -1,6 +1,5 @@
-// @ts-nocheck
-
 import {
+  Asset,
   assets as cryptoassets,
   unitToCurrency,
 } from '@liquality/cryptoassets';
@@ -22,7 +21,7 @@ const TESTNET_CONTRACT_ADDRESSES = {
   SUSHI: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
   ANC: 'terra1747mad58h0w4y589y3sk84r5efqdev9q4r02pc',
 };
-const TESTNET_ASSETS = [
+const TESTNET_ASSETS: { [asset: string]: Asset } = [
   'BTC',
   'ETH',
   'RBTC',
@@ -33,6 +32,7 @@ const TESTNET_ASSETS = [
   'MATIC',
   'PWETH',
   'ARBETH',
+  'AVAX',
   'SOL',
   'SUSHI',
   'LUNA',
@@ -50,6 +50,7 @@ const TESTNET_ASSETS = [
 
 const mapLegacyProvidersToSupported = {
   oneinchV3: 'oneinchV4',
+  liqualityBoost: 'liqualityBoostNativeToERC20',
 };
 
 export default {
@@ -194,6 +195,7 @@ export default {
     return accountsData
       .map((account) => {
         const balances = Object.entries(account.balances)
+        // @ts-ignore TODO: typed getters
           .filter(([, balance]) => new BN(balance).gt(0))
           .reduce((accum, [asset, balance]) => {
             return {
@@ -288,8 +290,10 @@ export default {
 
     const chainAssets = Object.entries(cryptoassets).reduce(
       (chains, [asset, assetData]) => {
+        // @ts-ignore TODO: typed getters
         const assets = assetData.chain in chains ? chains[assetData.chain] : [];
         return Object.assign({}, chains, {
+          // @ts-ignore TODO: typed getters
           [assetData.chain]: [...assets, asset],
         });
       },

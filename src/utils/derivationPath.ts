@@ -2,7 +2,7 @@ import { ChainId } from '@liquality/cryptoassets';
 import { ChainNetworks } from '../utils/networks';
 import { BTC_ADDRESS_TYPE_TO_PREFIX } from '../utils/address';
 import { bitcoin } from '@liquality/types';
-import { LEDGER_BITCOIN_OPTIONS } from './ledger';
+import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
 
 const getBitcoinDerivationPath = (accountType, coinType, index) => {
   if (accountType.includes('ledger')) {
@@ -57,6 +57,10 @@ const derivationPaths = {
   },
   [ChainId.Arbitrum]: (network, index) => {
     const ethNetwork = ChainNetworks[ChainId.Arbitrum][network];
+    return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
+  },
+  [ChainId.Avalanche]: (network, index) => {
+    const ethNetwork = ChainNetworks[ChainId.Avalanche][network];
     return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
   },
   [ChainId.Solana]: (network, index) => {

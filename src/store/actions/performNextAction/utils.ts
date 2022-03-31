@@ -1,32 +1,36 @@
-import { random } from 'lodash'
-import { unlockAsset } from '../../utils'
+import { random } from 'lodash';
+import { unlockAsset } from '../../utils';
 
-export async function withLock({ dispatch }, { item, network, walletId, asset }, func) {
+export async function withLock(
+  { dispatch },
+  { item, network, walletId, asset },
+  func
+) {
   const lock = await dispatch('getLockForAsset', {
     item,
     network,
     walletId,
-    asset
-  })
+    asset,
+  });
   try {
-    return await func()
+    return await func();
   } finally {
-    unlockAsset(lock)
+    unlockAsset(lock);
   }
 }
 
 export async function withInterval(func) {
-  const updates = await func()
+  const updates = await func();
   if (updates) {
-    return updates
+    return updates;
   }
   return new Promise((resolve) => {
     const interval = setInterval(async () => {
-      const updates = await func()
+      const updates = await func();
       if (updates) {
-        clearInterval(interval)
-        resolve(updates)
+        clearInterval(interval);
+        resolve(updates);
       }
-    }, random(15000, 30000))
-  })
+    }, random(15000, 30000));
+  });
 }

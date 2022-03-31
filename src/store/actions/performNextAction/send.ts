@@ -1,48 +1,40 @@
-import { withInterval } from './utils';
+import { withInterval } from './utils'
 
-async function waitForConfirmations(
-  { getters, dispatch },
-  { transaction, network, walletId }
-) {
+async function waitForConfirmations({ getters, dispatch }, { transaction, network, walletId }) {
   const client = getters.client({
     network,
     walletId,
     asset: transaction.from,
-    accountId: transaction.accountId,
-  });
+    accountId: transaction.accountId
+  })
   try {
-    const tx = await client.chain.getTransactionByHash(transaction.txHash);
+    const tx = await client.chain.getTransactionByHash(transaction.txHash)
     if (tx && tx.confirmations > 0) {
       dispatch('updateBalances', {
         network,
         walletId,
-        assets: [transaction.from],
-      });
+        assets: [transaction.from]
+      })
 
       return {
         endTime: Date.now(),
-        status: tx.status,
-      };
+        status: tx.status
+      }
     }
   } catch (e) {
-    if (e.name === 'TxNotFoundError') console.warn(e);
-    else throw e;
+    if (e.name === 'TxNotFoundError') console.warn(e)
+    else throw e
   }
-
-  return null;
 }
 
-export const performNextTransactionAction = async (
-  store,
-  { network, walletId, transaction }
-) => {
-  let updates;
+export const performNextTransactionAction = async (store, { network, walletId, transaction }) => {
+  let updates
 
   if (transaction.status === 'WAITING_FOR_CONFIRMATIONS') {
     updates = await withInterval(async () =>
       waitForConfirmations(store, { transaction, network, walletId })
-    );
+    )
   }
 
-  return updates;
-};
+  return updates
+}

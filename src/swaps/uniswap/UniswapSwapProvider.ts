@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import BN from 'bignumber.js';
 import JSBI from 'jsbi';
 import { v4 as uuidv4 } from 'uuid';
@@ -37,6 +35,7 @@ import { SwapProvider } from '../SwapProvider';
 const SWAP_DEADLINE = 30 * 60; // 30 minutes
 
 class UniswapSwapProvider extends SwapProvider {
+  _apiCache: {};
   constructor(config) {
     super(config);
     this._apiCache = {};
@@ -79,6 +78,7 @@ class UniswapSwapProvider extends SwapProvider {
   getMinimumOutput(outputAmount) {
     // TODO: configurable slippage?
     const slippageTolerance = new Percent('50', '10000'); // 0.5%
+    // @ts-ignore
     const slippageAdjustedAmountOut = new Fraction(JSBI.BigInt(1))
       .add(slippageTolerance)
       .invert()

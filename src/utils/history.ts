@@ -88,6 +88,14 @@ export const SEND_STATUS_FILTER_MAP = {
   FAILED: 'FAILED',
 };
 
+export const getItemIcon = (name) => {
+  try {
+    return require(`../assets/icons/${name.toLowerCase()}.svg?inline`);
+  } catch (e) {
+    return require('../assets/icons/blank_asset.svg?inline');
+  }
+};
+
 export const applyActivityFilters = (activity, filters) => {
   const { types, statuses, dates } = filters;
   let data = [...activity];

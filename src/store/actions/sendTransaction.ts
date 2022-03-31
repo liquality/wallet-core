@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-// import { createHistoryNotification } from '../../broker/notification';
+import { createHistoryNotification } from '../broker/notification';
 import BN from 'bignumber.js';
 
 export const sendTransaction = async (
@@ -77,8 +77,7 @@ export const sendTransaction = async (
     accountId,
   });
 
-  // TODO: notifications
-  // createHistoryNotification(transaction);
+  createHistoryNotification(transaction);
 
   return tx;
 };

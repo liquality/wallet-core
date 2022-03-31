@@ -1,5 +1,7 @@
+import cryptoassets from '../../utils/cryptoassets';
+
 export const disableAssets = async (
-  { state, commit, getters },
+  { state, commit },
   { network, walletId, assets }
 ) => {
   commit('DISABLE_ASSETS', { network, walletId, assets });
@@ -8,7 +10,7 @@ export const disableAssets = async (
     .filter((a) => a.assets.some((s) => assets.includes(s)))
     .forEach((account) => {
       const _assets = assets.filter(
-        (asset) => getters.cryptoassets[asset]?.chain === account.chain
+        (asset) => cryptoassets[asset]?.chain === account.chain
       );
       commit('DISABLE_ACCOUNT_ASSETS', {
         network,

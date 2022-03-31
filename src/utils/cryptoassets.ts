@@ -1,3 +1,5 @@
+import { Asset } from "@liquality/cryptoassets";
+
 // Redefine the `cryptoassets` lib to pull from the getter - to include custom tokens
 let store;
 
@@ -9,7 +11,7 @@ function getStore() {
   return store;
 }
 
-const cryptoassets = new Proxy(
+const cryptoassets: { [asset: string]: Asset } = new Proxy(
   {},
   {
     get(target, name, receiver) {

@@ -103,7 +103,7 @@ function createEthereumClient(
   mnemonic,
   accountType,
   derivationPath,
-  hardfork = undefined
+  hardfork?
 ) {
   const ethClient = new Client();
   ethClient.addProvider(new EthereumRpcProvider({ uri: rpcApi }));
@@ -186,7 +186,7 @@ function createNearClient(network, mnemonic, derivationPath) {
   const nodeUrl =
     network === 'testnet'
       ? nearConfig.nodeUrl
-      : 'https://archival-rpc.mainnet.near.org';
+      : process.env.VUE_APP_NEAR_MAINNET_URL || nearConfig.nodeUrl;
   const nearNetwork = { ...nearConfig, nodeUrl };
   nearClient.addProvider(new NearRpcProvider(nearNetwork));
   nearClient.addProvider(
@@ -341,10 +341,45 @@ function createArbitrumClient(asset, network, mnemonic, derivationPath) {
   );
 }
 
+function createAvalancheClient(asset, network, mnemonic, derivationPath) {
+  const isTestnet = network === 'testnet';
+  const avalancheNetwork = ChainNetworks.avalanche[network];
+  const rpcApi = isTestnet
+    ? process.env.VUE_APP_AVALANCHE_TESTNET_NODE ||
+      'https://api.avax-test.network/ext/bc/C/rpc'
+    : process.env.VUE_APP_AVALANCHE_MAINNET_NODE ||
+      'https://api.avax.network/ext/bc/C/rpc';
+  const scraperApi = isTestnet
+    ? 'http://avax-testnet-api.liq-chainhub.net/'
+    : 'http://avax-mainnet-api.liq-chainhub.net/';
+  const feeProvider = new EthereumRpcFeeProvider({
+    slowMultiplier: 1,
+    averageMultiplier: 2,
+    fastMultiplier: 2.2,
+  });
+
+  return createEthereumClient(
+    asset,
+    network,
+    avalancheNetwork,
+    rpcApi,
+    scraperApi,
+    feeProvider,
+    mnemonic,
+    'default',
+    derivationPath
+  );
+}
+
 function createTerraClient(network, mnemonic, baseDerivationPath, asset) {
+  const isTestnet = network === 'testnet';
+  const terraNetwork = ChainNetworks.terra[network];
+
   let _asset, feeAsset, tokenAddress, stableFee;
 
-  const terraNetwork = ChainNetworks.terra[network];
+  const nodeUrl = isTestnet
+    ? terraNetwork.nodeUrl
+    : process.env.VUE_APP_TERRA_MAINNET_URL || terraNetwork.nodeUrl;
 
   switch (asset) {
     case 'LUNA': {
@@ -355,7 +390,7 @@ function createTerraClient(network, mnemonic, baseDerivationPath, asset) {
     case 'UST': {
       _asset = 'uusd';
       feeAsset = 'uusd';
-      stableFee = true;
+      stableFee = false;
       break;
     }
     default: {
@@ -369,11 +404,16 @@ function createTerraClient(network, mnemonic, baseDerivationPath, asset) {
   const terraClient = new Client();
 
   terraClient.addProvider(
-    new TerraRpcProvider(terraNetwork, _asset, feeAsset, tokenAddress)
+    new TerraRpcProvider(
+      { ...terraNetwork, nodeUrl },
+      _asset,
+      feeAsset,
+      tokenAddress
+    )
   );
   terraClient.addProvider(
     new TerraWalletProvider({
-      network: terraNetwork,
+      network: { ...terraNetwork, nodeUrl },
       mnemonic,
       baseDerivationPath,
       asset: _asset,
@@ -382,8 +422,12 @@ function createTerraClient(network, mnemonic, baseDerivationPath, asset) {
       stableFee,
     })
   );
-  terraClient.addProvider(new TerraSwapProvider(terraNetwork, _asset));
-  terraClient.addProvider(new TerraSwapFindProvider(terraNetwork, _asset));
+  terraClient.addProvider(
+    new TerraSwapProvider({ ...terraNetwork, nodeUrl }, _asset)
+  );
+  terraClient.addProvider(
+    new TerraSwapFindProvider({ ...terraNetwork, nodeUrl }, _asset)
+  );
 
   return terraClient;
 }
@@ -443,6 +487,8 @@ export const createClient = (
     return createSolanaClient(network, mnemonic, derivationPath);
   if (assetData.chain === 'terra')
     return createTerraClient(network, mnemonic, derivationPath, asset);
+  if (assetData.chain === 'avalanche')
+    return createAvalancheClient(asset, network, mnemonic, derivationPath);
   if (assetData.chain === 'fuse')
     return createFuseClient(asset, network, mnemonic, derivationPath);
 

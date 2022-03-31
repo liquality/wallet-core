@@ -1,5 +1,5 @@
 import { performNextTransactionAction } from './send';
-// import { createHistoryNotification } from '../../../broker/notification'
+import { createHistoryNotification } from '../../broker/notification';
 
 export const performNextAction = async (store, { network, walletId, id }) => {
   const { dispatch, commit, getters } = store;
@@ -27,7 +27,6 @@ export const performNextAction = async (store, { network, walletId, id }) => {
   } catch (e) {
     updates = { error: e.toString() };
   }
-
   if (updates) {
     commit('UPDATE_HISTORY', {
       network,
@@ -36,12 +35,10 @@ export const performNextAction = async (store, { network, walletId, id }) => {
       updates,
     });
 
-    // TODO: create notifications
-    // createHistoryNotification({
-    //   ...item,
-    //   ...updates
-    // })
-
+    createHistoryNotification({
+      ...item,
+      ...updates,
+    });
     if (!updates.error) {
       dispatch('performNextAction', { network, walletId, id });
     }

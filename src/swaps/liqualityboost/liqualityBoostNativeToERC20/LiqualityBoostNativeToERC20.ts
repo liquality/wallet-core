@@ -1,37 +1,48 @@
-// @ts-nocheck
-
 import BN from 'bignumber.js';
-import { SwapProvider } from '../SwapProvider';
+import { SwapProvider } from '../../SwapProvider';
 import { unitToCurrency, assets } from '@liquality/cryptoassets';
-import { withInterval } from '../../store/actions/performNextAction/utils';
-import { prettyBalance } from '../../utils/coinFormatter';
-import { isERC20, getNativeAsset } from '../../utils/asset';
-import { createSwapProvider } from '../../store/factory/swapProvider';
-import { LiqualitySwapProvider } from '../liquality/LiqualitySwapProvider';
-import { OneinchSwapProvider } from '../oneinch/OneinchSwapProvider';
+import { withInterval } from '../../../store/actions/performNextAction/utils';
+import { prettyBalance } from '../../../utils/coinFormatter';
+import { isERC20, getNativeAsset } from '../../../utils/asset';
+import { LiqualitySwapProvider } from '../../liquality/LiqualitySwapProvider';
+import { OneinchSwapProvider } from '../../oneinch/OneinchSwapProvider';
+import { createSwapProvider } from '../../../store/factory/swapProvider';
+import { SovrynSwapProvider } from '../../sovryn/SovrynSwapProvider';
 
 const slippagePercentage = 3;
 
-class LiqualityBoostSwapProvider extends SwapProvider {
+class LiqualityBoostNativeToERC20 extends SwapProvider {
+  liqualitySwapProvider: LiqualitySwapProvider;
+  sovrynSwapProvider: SovrynSwapProvider;
+  oneinchSwapProvider: OneinchSwapProvider;
+
+  // TODO: types
+  bridgeAssetToAutomatedMarketMaker: any;
+  supportedBridgeAssets: any;
+
   constructor(config) {
     super(config);
     this.liqualitySwapProvider = createSwapProvider(
       this.config.network,
       'liquality'
-    );
-    this.sovrynSwapProvider = createSwapProvider(this.config.network, 'sovryn');
+    ) as LiqualitySwapProvider;
+    this.sovrynSwapProvider = createSwapProvider(
+      this.config.network,
+      'sovryn'
+    ) as SovrynSwapProvider;
     this.supportedBridgeAssets = this.config.supportedBridgeAssets;
 
     if (this.config.network === 'mainnet') {
       this.oneinchSwapProvider = createSwapProvider(
         this.config.network,
         'oneinchV4'
-      );
+      ) as OneinchSwapProvider;
       this.bridgeAssetToAutomatedMarketMaker = {
         MATIC: this.oneinchSwapProvider,
         ETH: this.oneinchSwapProvider,
         BNB: this.oneinchSwapProvider,
         RBTC: this.sovrynSwapProvider,
+        AVAX: this.oneinchSwapProvider,
       };
     } else if (this.config.network === 'testnet') {
       this.bridgeAssetToAutomatedMarketMaker = {
@@ -115,8 +126,8 @@ class LiqualityBoostSwapProvider extends SwapProvider {
       walletId,
       asset,
       txType:
-        txType === LiqualityBoostSwapProvider.txTypes.SWAP
-          ? LiqualityBoostSwapProvider.txTypes.SWAP_CLAIM
+        txType === LiqualityBoostNativeToERC20.txTypes.SWAP
+          ? LiqualityBoostNativeToERC20.txTypes.SWAP_CLAIM
           : txType,
       quote: {
         ...quote,
@@ -126,7 +137,7 @@ class LiqualityBoostSwapProvider extends SwapProvider {
       feePrices,
       max,
     });
-    if (isERC20(asset) && txType === LiqualityBoostSwapProvider.txTypes.SWAP) {
+    if (isERC20(asset) && txType === LiqualityBoostNativeToERC20.txTypes.SWAP) {
       const automatedMarketMakerFees =
         await this.bridgeAssetToAutomatedMarketMaker[
           quote.bridgeAsset
@@ -134,7 +145,7 @@ class LiqualityBoostSwapProvider extends SwapProvider {
           network,
           walletId,
           asset,
-          txType: LiqualityBoostSwapProvider.txTypes.SWAP,
+          txType: LiqualityBoostNativeToERC20.txTypes.SWAP,
           quote: {
             ...quote,
             from: quote.bridgeAsset,
@@ -270,8 +281,8 @@ class LiqualityBoostSwapProvider extends SwapProvider {
     },
   };
 
-  static fromTxType = LiqualityBoostSwapProvider.txTypes.SWAP_INITIATION;
-  static toTxType = LiqualityBoostSwapProvider.txTypes.SWAP;
+  static fromTxType = LiqualityBoostNativeToERC20.txTypes.SWAP_INITIATION;
+  static toTxType = LiqualityBoostNativeToERC20.txTypes.SWAP;
 
   static timelineDiagramSteps = [
     'INITIATION',
@@ -283,4 +294,4 @@ class LiqualityBoostSwapProvider extends SwapProvider {
   static totalSteps = 5;
 }
 
-export { LiqualityBoostSwapProvider };
+export { LiqualityBoostNativeToERC20 };

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import axios from 'axios';
 import BN from 'bignumber.js';
 import { SwapProvider } from '../SwapProvider';
@@ -26,6 +25,7 @@ const chainToRpcProviders = {
   1: `https://mainnet.infura.io/v3/${buildConfig.infuraApiKey}`,
   56: 'https://bsc-dataseed.binance.org',
   137: 'https://polygon-rpc.com',
+  43114: 'https://api.avax.network/ext/bc/C/rpc',
 };
 
 class OneinchSwapProvider extends SwapProvider {
@@ -152,7 +152,6 @@ class OneinchSwapProvider extends SwapProvider {
     const chainId = ChainNetworks[toChain][network].chainId;
     if (toChain !== fromChain || !chainToRpcProviders[chainId]) return null;
 
-    const account = this.getAccount(quote.fromAccountId);
     const client = this.getClient(
       network,
       walletId,
@@ -167,7 +166,8 @@ class OneinchSwapProvider extends SwapProvider {
     );
     const fromAddress = chains[toChain].formatAddress(fromAddressRaw, network);
 
-    const swapParams = {
+    // TODO: type
+    const swapParams: any = {
       fromTokenAddress:
         cryptoassets[quote.from].contractAddress || nativeAssetAddress,
       toTokenAddress:
@@ -203,8 +203,7 @@ class OneinchSwapProvider extends SwapProvider {
     }
 
     await this.sendLedgerNotification(
-      quote,
-      account,
+      quote.fromAccountId,
       'Signing required to complete the swap.'
     );
     const swapTx = await client.chain.sendTransaction({
@@ -295,7 +294,7 @@ class OneinchSwapProvider extends SwapProvider {
         const { status } = await client.getMethod('getTransactionReceipt')(
           swap.swapTxHash
         );
-        this.updateBalances({ network, walletId, assets: [swap.from] });
+        this.updateBalances(network, walletId, [swap.from]);
         return {
           endTime: Date.now(),
           status: Number(status) === 1 ? 'SUCCESS' : 'FAILED',
