@@ -8,6 +8,7 @@ import { EthereumRpcProvider } from '@liquality/ethereum-rpc-provider';
 import { EthereumJsWalletProvider } from '@liquality/ethereum-js-wallet-provider';
 import { EthereumErc20Provider } from '@liquality/ethereum-erc20-provider';
 import { ChainNetworks } from '../utils/networks';
+import buildConfig from '../build.config';
 
 export const CHAIN_LOCK = {};
 
@@ -80,7 +81,7 @@ export const shouldApplyRskLegacyDerivation = async (
   });
 
   const client = new Client().addProvider(
-    new EthereumRpcProvider({ uri: process.env.VUE_APP_SOVRYN_RPC_URL_MAINNET })
+    new EthereumRpcProvider({ uri: buildConfig.rskRpcUrls.mainnet })
   );
 
   if (mnemonic) {

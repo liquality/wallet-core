@@ -208,7 +208,7 @@ export const tokenDetailProviders = {
     async getDetails(contractAddress) {
       return await fetchTokenDetails(
         contractAddress,
-        process.env.VUE_APP_SOVRYN_RPC_URL_MAINNET
+        buildConfig.rskRpcUrls.mainnet
       );
     },
   },

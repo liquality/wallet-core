@@ -50,6 +50,10 @@ export default {
     testnet: 'https://electrs-batch-testnet-api.liq-chainhub.net/',
     mainnet: 'https://electrs-batch-mainnet-api.liq-chainhub.net/',
   },
+  rskRpcUrls: {
+    testnet: 'https://testnet.sovryn.app/rpc',
+    mainnet: 'https://mainnet.sovryn.app/rpc'
+  },
   swapProviders: {
     testnet: {
       liquality: {
@@ -92,7 +96,7 @@ export default {
         type: SwapProviderType.SOVRYN,
         routerAddress: SovrynTestnetAddresses.swapNetwork,
         routerAddressRBTC: SovrynTestnetAddresses.proxy3,
-        rpcURL: process.env.VUE_APP_SOVRYN_RPC_URL_TESTNET,
+        rpcURL: 'https://testnet.sovryn.app/rpc',
       },
     },
     mainnet: {
@@ -150,7 +154,7 @@ export default {
         type: SwapProviderType.SOVRYN,
         routerAddress: SovrynMainnetAddresses.swapNetwork,
         routerAddressRBTC: SovrynMainnetAddresses.proxy3,
-        rpcURL: process.env.VUE_APP_SOVRYN_RPC_URL_MAINNET,
+        rpcURL: 'https://mainnet.sovryn.app/rpc',
       },
       thorchain: {
         name: 'Thorchain',

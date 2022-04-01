@@ -229,8 +229,8 @@ function createRskClient(
   const isTestnet = network === 'testnet';
   const rskNetwork = ChainNetworks.rsk[network];
   const rpcApi = isTestnet
-    ? process.env.VUE_APP_SOVRYN_RPC_URL_TESTNET
-    : process.env.VUE_APP_SOVRYN_RPC_URL_MAINNET;
+    ? buildConfig.rskRpcUrls.testnet
+    : buildConfig.rskRpcUrls.mainnet;
   const scraperApi = isTestnet
     ? 'https://rsk-testnet-api.liq-chainhub.net/'
     : 'https://rsk-mainnet-api.liq-chainhub.net/';
