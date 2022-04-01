@@ -1,6 +1,8 @@
 import store from './store';
 import { WalletOptions } from './types';
 import { walletOptionsStore } from './walletOptions';
+import buildConfig from './build.config'
+import * as migrations from './store/migrations'
 
 function setupWallet(options: WalletOptions) {
   walletOptionsStore.setOptions(options);
@@ -10,4 +12,4 @@ function setupWallet(options: WalletOptions) {
   return store;
 }
 
-export { setupWallet };
+export { setupWallet, buildConfig, migrations };
