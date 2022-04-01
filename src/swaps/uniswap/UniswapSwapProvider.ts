@@ -78,7 +78,6 @@ class UniswapSwapProvider extends SwapProvider {
   getMinimumOutput(outputAmount) {
     // TODO: configurable slippage?
     const slippageTolerance = new Percent('50', '10000'); // 0.5%
-    // @ts-ignore
     const slippageAdjustedAmountOut = new Fraction(JSBI.BigInt(1))
       .add(slippageTolerance)
       .invert()
