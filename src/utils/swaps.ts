@@ -1,18 +1,29 @@
 import buildConfig from '../build.config'
 import { SwapProviderType } from './swapProviderType'
 
-const swapProviderRoot = {
-  [SwapProviderType.LIQUALITY]: 'swaps/liquality',
-  [SwapProviderType.UNISWAPV2]: 'swaps/uniswap',
-  [SwapProviderType.ONEINCHV4]: 'swaps/oneinch',
-  [SwapProviderType.THORCHAIN]: 'swaps/thorchain',
-  [SwapProviderType.FASTBTC]: 'swaps/fastbtc',
+import liqualityInfo from '../swaps/liquality/info.json'
+import uniswapInfo from '../swaps/uniswap/info.json'
+import oneinchInfo from '../swaps/oneinch/info.json'
+import thorchainInfo from '../swaps/thorchain/info.json'
+import fastbtcInfo from '../swaps/fastbtc/info.json'
+import liqualityBoostNativeToERC20Info from '../swaps/liqualityboost/liqualityBoostNativeToERC20/info.json'
+import liqualityBoostERC20toNativeInfo from '../swaps/liqualityboost/liqualityBoostERC20toNative/info.json'
+import sovrynInfo from '../swaps/sovryn/info.json'
+import astroportInfo from '../swaps/astroport/info.json'
+
+
+const swapProviderInfo = {
+  [SwapProviderType.LIQUALITY]: liqualityInfo,
+  [SwapProviderType.UNISWAPV2]: uniswapInfo,
+  [SwapProviderType.ONEINCHV4]: oneinchInfo,
+  [SwapProviderType.THORCHAIN]: thorchainInfo,
+  [SwapProviderType.FASTBTC]: fastbtcInfo,
   [SwapProviderType.LIQUALITYBOOST_NATIVE_TO_ERC20]:
-    'swaps/liqualityboost/liqualityBoostNativeToERC20',
+  liqualityBoostNativeToERC20Info,
   [SwapProviderType.LIQUALITYBOOST_ERC20_TO_NATIVE]:
-    'swaps/liqualityboost/liqualityBoostERC20toNative',
-  [SwapProviderType.SOVRYN]: 'swaps/sovryn',
-  [SwapProviderType.ASTROPORT]: 'swaps/astroport'
+  liqualityBoostERC20toNativeInfo,
+  [SwapProviderType.SOVRYN]: sovrynInfo,
+  [SwapProviderType.ASTROPORT]: astroportInfo
 }
 
 export function getSwapProviderConfig(network, providerId) {
@@ -21,6 +32,5 @@ export function getSwapProviderConfig(network, providerId) {
 
 export function getSwapProviderInfo(network, providerId) {
   const config = getSwapProviderConfig(network, providerId)
-  const root = swapProviderRoot[config.type]
-  return require(`../${root}/info.json`)
+  return swapProviderInfo[config.type]
 }
