@@ -5,10 +5,8 @@ const PBKDF2_ITERATIONS = 1000000;
 const PBKDF2_LENGTH = 32;
 const PBKDF2_DIGEST = 'sha256';
 
-const { crypto } = walletOptionsStore.walletOptions;
-
 async function pbkdf2(password, salt) {
-  return crypto.pbkdf2(
+  return walletOptionsStore.walletOptions.crypto.pbkdf2(
     password,
     salt,
     PBKDF2_ITERATIONS,
@@ -55,7 +53,10 @@ const JsonFormatter = {
 async function encrypt(value, key) {
   const keySalt = Enc.Hex.stringify(Lib.WordArray.random(16));
   const derivedKey = await pbkdf2(key, keySalt);
-  const rawEncryptedValue = crypto.encrypt(value, derivedKey);
+  const rawEncryptedValue = walletOptionsStore.walletOptions.crypto.encrypt(
+    value,
+    derivedKey
+  );
   return {
     encrypted: JsonFormatter.stringify(rawEncryptedValue),
     keySalt,
@@ -68,7 +69,10 @@ async function decrypt(encrypted, key, keySalt) {
   const encryptedValue = JsonFormatter.parse(encrypted);
   try {
     const derivedKey = await pbkdf2(key, keySalt);
-    const decryptedValue = crypto.decrypt(encryptedValue, derivedKey);
+    const decryptedValue = walletOptionsStore.walletOptions.crypto.decrypt(
+      encryptedValue,
+      derivedKey
+    );
     return decryptedValue.toString(Enc.Utf8);
   } catch (e) {
     return false;
