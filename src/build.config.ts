@@ -52,7 +52,7 @@ export default {
   },
   rskRpcUrls: {
     testnet: 'https://testnet.sovryn.app/rpc',
-    mainnet: 'https://mainnet.sovryn.app/rpc'
+    mainnet: 'https://mainnet.sovryn.app/rpc',
   },
   swapProviders: {
     testnet: {
@@ -69,14 +69,14 @@ export default {
         type: SwapProviderType.LIQUALITYBOOST_NATIVE_TO_ERC20,
         network: 'testnet',
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
       liqualityBoostERC20toNative: {
         name: 'Liquality Boost',
         type: SwapProviderType.LIQUALITYBOOST_ERC20_TO_NATIVE,
         network: 'testnet',
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
       uniswapV2: {
         name: 'Uniswap V2',
@@ -113,14 +113,14 @@ export default {
         type: SwapProviderType.LIQUALITYBOOST_NATIVE_TO_ERC20,
         network: 'mainnet',
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
       liqualityBoostERC20toNative: {
         name: 'Liquality Boost',
         type: SwapProviderType.LIQUALITYBOOST_ERC20_TO_NATIVE,
         network: 'mainnet',
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
       uniswapV2: {
         name: 'Uniswap V2',
