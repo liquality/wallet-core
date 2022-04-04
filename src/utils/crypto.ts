@@ -53,10 +53,8 @@ const JsonFormatter = {
 async function encrypt(value, key) {
   const keySalt = Enc.Hex.stringify(Lib.WordArray.random(16));
   const derivedKey = await pbkdf2(key, keySalt);
-  const rawEncryptedValue = walletOptionsStore.walletOptions.crypto.encrypt(
-    value,
-    derivedKey
-  );
+  const rawEncryptedValue =
+    await walletOptionsStore.walletOptions.crypto.encrypt(value, derivedKey);
   return {
     encrypted: JsonFormatter.stringify(rawEncryptedValue),
     keySalt,
@@ -69,10 +67,11 @@ async function decrypt(encrypted, key, keySalt) {
   const encryptedValue = JsonFormatter.parse(encrypted);
   try {
     const derivedKey = await pbkdf2(key, keySalt);
-    const decryptedValue = walletOptionsStore.walletOptions.crypto.decrypt(
-      encryptedValue,
-      derivedKey
-    );
+    const decryptedValue =
+      await walletOptionsStore.walletOptions.crypto.decrypt(
+        encryptedValue,
+        derivedKey
+      );
     return decryptedValue.toString(Enc.Utf8);
   } catch (e) {
     return false;

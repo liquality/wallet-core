@@ -27,8 +27,8 @@ export interface WalletOptions {
       length: number,
       digest: string
     ): Promise<string>;
-    encrypt(value: string, key: string): any;
-    decrypt(value: any, key: string): any;
+    encrypt(value: string, key: string): Promise<any>;
+    decrypt(value: any, key: string): Promise<any>;
   };
   createNotification(notification: Notification);
   createBitcoinLedgerProvider?(
