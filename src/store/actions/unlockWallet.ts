@@ -1,7 +1,7 @@
 import { decrypt } from '../../utils/crypto';
 
 export const unlockWallet = async ({ commit, state }, { key }) => {
-  let wallets = await decrypt(state.encryptedWallets, key, state.keySalt);
+  const wallets = await decrypt(state.encryptedWallets, key, state.keySalt);
 
   if (!wallets) {
     throw new Error(

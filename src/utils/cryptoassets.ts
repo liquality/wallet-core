@@ -1,4 +1,4 @@
-import { Asset } from "@liquality/cryptoassets";
+import { Asset } from '@liquality/cryptoassets';
 
 // Redefine the `cryptoassets` lib to pull from the getter - to include custom tokens
 let store;
@@ -7,7 +7,7 @@ let store;
 function getStore() {
   if (store) return store;
 
-  store = require('../store').default;
+  store = require('../store').default; // eslint-disable-line
   return store;
 }
 

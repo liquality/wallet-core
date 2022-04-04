@@ -35,7 +35,7 @@ import { SwapProvider } from '../SwapProvider';
 const SWAP_DEADLINE = 30 * 60; // 30 minutes
 
 class UniswapSwapProvider extends SwapProvider {
-  _apiCache: {};
+  _apiCache: any;
   constructor(config) {
     super(config);
     this._apiCache = {};

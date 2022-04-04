@@ -183,7 +183,7 @@ class AstroportSwapProvider extends SwapProvider {
     const fees = {};
 
     for (const feePrice of feePrices) {
-      let fee = new BN(gasLimit).times(feePrice);
+      const fee = new BN(gasLimit).times(feePrice);
       fees[feePrice] = unitToCurrency(cryptoassets[nativeAsset], fee).toFixed();
     }
 
@@ -224,7 +224,7 @@ class AstroportSwapProvider extends SwapProvider {
       query: '',
     };
 
-    let pairAddress, fromTokenAddress, toTokenAddress;
+    let fromTokenAddress, toTokenAddress;
 
     if (nativeToNative) {
       const fromDenom = this._getDenom(fromInfo.code);
@@ -267,7 +267,7 @@ class AstroportSwapProvider extends SwapProvider {
 
     const { address, query } = contractData;
 
-    pairAddress = address;
+    const pairAddress = address;
 
     // TODO: type
     const rate: any = await rpc.wasm.contractQuery(address, query);

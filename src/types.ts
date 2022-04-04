@@ -3,7 +3,6 @@ import { BitcoinNetwork } from '@liquality/bitcoin-networks';
 import { ChainId } from '@liquality/cryptoassets';
 import { EthereumLedgerProvider } from '@liquality/ethereum-ledger-provider';
 import { EthereumNetwork } from '@liquality/ethereum-networks';
-import { Network } from '@liquality/types';
 import { RootState } from './store/types';
 
 export interface ParsedCipherText {

@@ -347,7 +347,7 @@ class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  async reportInitiation({ swap, network, walletId }) {
+  async reportInitiation({ swap }) {
     if (await this.hasQuoteExpired({ swap })) {
       return { status: 'WAITING_FOR_REFUND' };
     }
@@ -634,7 +634,7 @@ class LiqualitySwapProvider extends SwapProvider {
     let updates;
     switch (swap.status) {
       case 'INITIATED':
-        updates = await this.reportInitiation({ swap, network, walletId });
+        updates = await this.reportInitiation({ swap });
         break;
 
       case 'INITIATION_REPORTED':
