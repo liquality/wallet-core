@@ -25,7 +25,7 @@ const initialState: RootState = {
   history: {},
   marketData: {},
 
-  activeNetwork: Network.Testnet,
+  activeNetwork: Network.Mainnet,
   activeWalletId: null,
 
   keyUpdatedAt: null,
