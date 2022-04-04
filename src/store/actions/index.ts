@@ -11,7 +11,6 @@ export * from './proxyMutation';
 export * from './replyUnlockWallet';
 export * from './replyOriginAccess';
 export * from './replyPermission';
-export * from './handlePaymentUri';
 export * from './executeRequest';
 export * from './retrySwap';
 export * from './sendTransaction';
