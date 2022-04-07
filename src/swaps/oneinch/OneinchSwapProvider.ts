@@ -98,7 +98,7 @@ class OneinchSwapProvider extends SwapProvider {
       network,
       walletId,
       quote.from,
-      quote.fromAccountId
+      quote.toAccountId
     );
     const fromAddress = chains[fromChain].formatAddress(
       fromAddressRaw,

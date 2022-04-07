@@ -8,7 +8,6 @@ import { LiqualitySwapProvider } from '../../liquality/LiqualitySwapProvider';
 import { OneinchSwapProvider } from '../../oneinch/OneinchSwapProvider';
 import { SovrynSwapProvider } from '../../sovryn/SovrynSwapProvider';
 import { createSwapProvider } from '../../../store/factory/swapProvider';
-import { AstroportSwapProvider } from '../../astroport/AstroportSwapProvider';
 
 const slippagePercentage = 3;
 
@@ -16,7 +15,6 @@ class LiqualityBoostERC20toNative extends SwapProvider {
   liqualitySwapProvider: LiqualitySwapProvider;
   sovrynSwapProvider: SovrynSwapProvider;
   oneinchSwapProvider: OneinchSwapProvider;
-  astroportSwapProvider: AstroportSwapProvider;
 
   // TODO: types
   bridgeAssetToAutomatedMarketMaker: any;
@@ -39,19 +37,12 @@ class LiqualityBoostERC20toNative extends SwapProvider {
         this.config.network,
         'oneinchV4'
       ) as OneinchSwapProvider;
-      this.astroportSwapProvider = createSwapProvider(
-        this.config.network,
-        'astroport'
-      ) as AstroportSwapProvider;
-
       this.bridgeAssetToAutomatedMarketMaker = {
         MATIC: this.oneinchSwapProvider,
         ETH: this.oneinchSwapProvider,
         BNB: this.oneinchSwapProvider,
         RBTC: this.sovrynSwapProvider,
         AVAX: this.oneinchSwapProvider,
-        UST: this.astroportSwapProvider,
-        LUNA: this.astroportSwapProvider,
       };
     } else if (this.config.network === 'testnet') {
       this.bridgeAssetToAutomatedMarketMaker = {
@@ -103,7 +94,6 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       bridgeAsset,
       bridgeAssetAmount: quote.toAmount,
       path: quote.path,
-      fromTokenAddress: quote.fromTokenAddress, // for Terra ERC20
     };
   }
 
@@ -141,13 +131,14 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     feePrices,
     max,
   }) {
+    // bridge asset -> 'to' asset
     const liqualityFees = await this.liqualitySwapProvider.estimateFees({
       network,
       walletId,
       asset,
       txType:
         txType === LiqualityBoostERC20toNative.txTypes.SWAP
-          ? LiqualityBoostERC20toNative.txTypes.SWAP_INITIATION
+          ? LiqualityBoostERC20toNative.txTypes.SWAP_CLAIM
           : txType,
       quote: {
         ...quote,
@@ -159,7 +150,11 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       max,
     });
 
-    if (txType === LiqualityBoostERC20toNative.txTypes.SWAP) {
+    // 'from' asset -> bridge asset
+    if (
+      !isERC20(asset) &&
+      txType === LiqualityBoostERC20toNative.txTypes.SWAP
+    ) {
       const automatedMarketMakerFees =
         await this.bridgeAssetToAutomatedMarketMaker[
           quote.bridgeAsset

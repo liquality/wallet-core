@@ -8,7 +8,6 @@ import { LiqualitySwapProvider } from '../../liquality/LiqualitySwapProvider';
 import { OneinchSwapProvider } from '../../oneinch/OneinchSwapProvider';
 import { createSwapProvider } from '../../../store/factory/swapProvider';
 import { SovrynSwapProvider } from '../../sovryn/SovrynSwapProvider';
-import { AstroportSwapProvider } from '../../astroport/AstroportSwapProvider';
 
 const slippagePercentage = 3;
 
@@ -16,7 +15,6 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
   liqualitySwapProvider: LiqualitySwapProvider;
   sovrynSwapProvider: SovrynSwapProvider;
   oneinchSwapProvider: OneinchSwapProvider;
-  astroportSwapProvider: AstroportSwapProvider;
 
   // TODO: types
   bridgeAssetToAutomatedMarketMaker: any;
@@ -39,19 +37,12 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
         this.config.network,
         'oneinchV4'
       ) as OneinchSwapProvider;
-      this.astroportSwapProvider = createSwapProvider(
-        this.config.network,
-        'astroport'
-      ) as AstroportSwapProvider;
-
       this.bridgeAssetToAutomatedMarketMaker = {
         MATIC: this.oneinchSwapProvider,
         ETH: this.oneinchSwapProvider,
         BNB: this.oneinchSwapProvider,
         RBTC: this.sovrynSwapProvider,
         AVAX: this.oneinchSwapProvider,
-        UST: this.astroportSwapProvider,
-        LUNA: this.astroportSwapProvider,
       };
     } else if (this.config.network === 'testnet') {
       this.bridgeAssetToAutomatedMarketMaker = {
@@ -146,8 +137,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       feePrices,
       max,
     });
-
-    if (txType === LiqualityBoostNativeToERC20.txTypes.SWAP) {
+    if (isERC20(asset) && txType === LiqualityBoostNativeToERC20.txTypes.SWAP) {
       const automatedMarketMakerFees =
         await this.bridgeAssetToAutomatedMarketMaker[
           quote.bridgeAsset
@@ -174,7 +164,6 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       }
       return totalFees;
     }
-
     return liqualityFees;
   }
 
