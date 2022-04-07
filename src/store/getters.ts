@@ -195,7 +195,7 @@ export default {
     return accountsData
       .map((account) => {
         const balances = Object.entries(account.balances)
-        // @ts-ignore TODO: typed getters
+          // @ts-ignore TODO: typed getters
           .filter(([, balance]) => new BN(balance).gt(0))
           .reduce((accum, [asset, balance]) => {
             return {
