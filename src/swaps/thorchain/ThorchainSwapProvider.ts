@@ -192,6 +192,10 @@ class ThorchainSwapProvider extends SwapProvider {
     };
   }
 
+  async getMin({ network, from, to, amount }) {
+    return 500
+  }
+
   async networkFees(asset) {
     const assetCode = isERC20(asset)
       ? chains[cryptoassets[asset].chain].nativeAsset

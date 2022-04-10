@@ -107,6 +107,10 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     };
   }
 
+  async getMin({ network, from, to, amount }) {
+    this.liqualitySwapProvider.getMin({ network, from, to, amount })
+  }
+
   async newSwap({ network, walletId, quote: _quote }) {
     // ERC20 -> Bridge asset
     const result = await this.bridgeAssetToAutomatedMarketMaker[

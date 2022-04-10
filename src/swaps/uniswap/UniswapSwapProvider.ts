@@ -142,6 +142,10 @@ class UniswapSwapProvider extends SwapProvider {
     };
   }
 
+  async getMin({ network, from, to, amount }) {
+    return 2;
+  }
+
   async requiresApproval({ network, walletId, quote }) {
     if (!isERC20(quote.from)) return false;
 

@@ -74,7 +74,6 @@ class LiqualitySwapProvider extends SwapProvider {
         rate: new BN(market.rate).toFixed(),
         provider: this.config.providerId,
       }));
-
     return pairs;
   }
 
@@ -104,6 +103,15 @@ class LiqualitySwapProvider extends SwapProvider {
       fromAmount: fromAmount,
       toAmount: toAmount,
     };
+  }
+
+  async getMin({ network, from, to, amount }) {
+    const pairs = await this.getSupportedPairs()
+    for(const pair of pairs){
+      if(pair.from ==from && pair.to == to ){
+        return pair.min;
+      }
+    }
   }
 
   async newSwap({ network, walletId, quote: _quote }) {

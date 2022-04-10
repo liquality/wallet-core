@@ -180,6 +180,15 @@ class SwapProvider {
       throw new Error('`totalSteps` is not defined. e.g. 2');
     return totalSteps;
   }
+
+    /**
+   * Get a quote for the specified parameters
+   * @param {{ network, from, to, amount }} options
+   */
+  // eslint-disable-next-line no-unused-vars
+  getMin({ network, from, to, amount }) {
+    throw new Error('`getMin` not implemented');
+  }
 }
 
 export { SwapProvider };

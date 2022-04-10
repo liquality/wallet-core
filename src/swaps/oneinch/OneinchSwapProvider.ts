@@ -80,6 +80,10 @@ class OneinchSwapProvider extends SwapProvider {
     };
   }
 
+  async getMin({ network, from, to, amount }) {
+    return 2;
+  }
+
   async approveTokens({ network, walletId, quote }) {
     const fromChain = cryptoassets[quote.from].chain;
     const toChain = cryptoassets[quote.to].chain;

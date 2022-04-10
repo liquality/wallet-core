@@ -80,6 +80,10 @@ class SovrynSwapProvider extends SwapProvider {
     };
   }
 
+  async getMin({ network, from, to, amount }) {
+    return 2;
+  }
+
   async newSwap({ network, walletId, quote }) {
     const approvalRequired = isERC20(quote.from);
     const updates = approvalRequired

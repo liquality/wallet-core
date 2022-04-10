@@ -167,6 +167,10 @@ class AstroportSwapProvider extends SwapProvider {
     return 2; // Min swap amount in USD
   }
 
+  async getMin({ network, from, to, amount }) {
+    return 2;
+  }
+
   // ========= FEES ========
 
   async estimateFees({ asset, txType, quote, feePrices }) {

@@ -51,6 +51,10 @@ class FastbtcSwapProvider extends SwapProvider {
     ];
   }
 
+  async getMin({ network, from, to, amount }) {
+    return await this.getSupportedPairs()[0]?.min
+  }
+
   // TODO: return type
   async _getHistory(web3Addr): Promise<any[]> {
     return new Promise((resolve, reject) => {

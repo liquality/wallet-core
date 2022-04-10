@@ -99,6 +99,10 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
     };
   }
 
+  async getMin({ network, from, to, amount }) {
+    this.liqualitySwapProvider.getMin({ network, from, to, amount })
+  }
+
   async newSwap({ network, walletId, quote: _quote }) {
     const result = await this.liqualitySwapProvider.newSwap({
       network,
