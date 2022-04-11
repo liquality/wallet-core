@@ -33,8 +33,12 @@ export interface CustomToken {
   chain: ChainId;
 }
 
-export enum AccountType { // TODO: more?
+export enum AccountType {
   Default = 'default',
+  BitcoinLedgerNativeSegwit = 'bitcoin_ledger_nagive_segwit',
+  BitcoinLedgerLegacy = 'bitcoin_ledger_legacy',
+  EthereumLedger = 'ethereum_ledger',
+  RskLedger = 'rsk_ledger',
 }
 
 export interface Account {
@@ -50,7 +54,7 @@ export interface Account {
   assets: Asset[];
   balances: Record<Asset, string>;
   createdAt: number;
-  updatedAt: number;
+  updatedAt?: number;
   color: string;
   enabled: boolean;
 }
@@ -58,9 +62,10 @@ export interface Account {
 export interface MarketData {
   from: Asset;
   to: Asset;
-  rate?: number;
-  max?: string;
-  min?: string;
+  provider: string;
+  rate: number;
+  max: string;
+  min: string;
 }
 
 export enum FeeLabel {

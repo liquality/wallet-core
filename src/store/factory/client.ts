@@ -41,8 +41,14 @@ import buildConfig from '../../build.config';
 import { ChainNetworks } from '../../utils/networks';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { walletOptionsStore } from '../../walletOptions';
+import { AccountType } from '../types';
 
-function createBtcClient(network, mnemonic, accountType, derivationPath) {
+function createBtcClient(
+  network,
+  mnemonic,
+  accountType: AccountType,
+  derivationPath
+) {
   const isTestnet = network === 'testnet';
   const bitcoinNetwork = ChainNetworks.bitcoin[network];
   const esploraApi = buildConfig.exploraApis[network];
@@ -60,7 +66,15 @@ function createBtcClient(network, mnemonic, accountType, derivationPath) {
 
   if (accountType.includes('bitcoin_ledger')) {
     const option = LEDGER_BITCOIN_OPTIONS.find((o) => o.name === accountType);
+    if (!option) {
+      throw new Error(`Account type ${accountType} not an option`);
+    }
     const { addressType } = option;
+    if (!walletOptionsStore.walletOptions.createBitcoinLedgerProvider) {
+      throw new Error(
+        'Wallet Options: createBitcoinLedgerProvider is not defined - unable to build ledger client'
+      );
+    }
     const ledgerProvider =
       walletOptionsStore.walletOptions.createBitcoinLedgerProvider(
         network,
@@ -101,7 +115,7 @@ function createEthereumClient(
   scraperApi,
   feeProvider,
   mnemonic,
-  accountType,
+  accountType: AccountType,
   derivationPath,
   hardfork?
 ) {
@@ -109,9 +123,17 @@ function createEthereumClient(
   ethClient.addProvider(new EthereumRpcProvider({ uri: rpcApi }));
   ethClient.addProvider(feeProvider);
 
-  if (accountType === 'ethereum_ledger' || accountType === 'rsk_ledger') {
+  if (
+    accountType === AccountType.EthereumLedger ||
+    accountType === AccountType.RskLedger
+  ) {
     const assetData = cryptoassets[asset];
     const chainId = assetData.chain || ChainId.Ethereum;
+    if (!walletOptionsStore.walletOptions.createEthereumLedgerProvider) {
+      throw new Error(
+        'Wallet Options: createEthereumLedgerProvider is not defined - unable to build ledger client'
+      );
+    }
     const ledgerProvider =
       walletOptionsStore.walletOptions.createEthereumLedgerProvider(
         network,
@@ -133,6 +155,11 @@ function createEthereumClient(
 
   if (isERC20(asset)) {
     const contractAddress = cryptoassets[asset].contractAddress;
+    if (!contractAddress) {
+      throw new Error(
+        `Client creation failed. Could not retrieve contract address for ${asset}`
+      );
+    }
     ethClient.addProvider(new EthereumErc20Provider(contractAddress));
     ethClient.addProvider(new EthereumErc20SwapProvider());
     if (scraperApi)
@@ -276,7 +303,7 @@ function createBSCClient(asset, network, mnemonic, derivationPath) {
     scraperApi,
     feeProvider,
     mnemonic,
-    'default',
+    AccountType.Default,
     derivationPath
   );
 }
@@ -307,7 +334,7 @@ function createPolygonClient(asset, network, mnemonic, derivationPath) {
     scraperApi,
     feeProvider,
     mnemonic,
-    'default',
+    AccountType.Default,
     derivationPath,
     'london'
   );
@@ -336,7 +363,7 @@ function createArbitrumClient(asset, network, mnemonic, derivationPath) {
     scraperApi,
     feeProvider,
     mnemonic,
-    'default',
+    AccountType.Default,
     derivationPath
   );
 }
@@ -366,7 +393,7 @@ function createAvalancheClient(asset, network, mnemonic, derivationPath) {
     scraperApi,
     feeProvider,
     mnemonic,
-    'default',
+    AccountType.Default,
     derivationPath
   );
 }
@@ -451,7 +478,7 @@ function createFuseClient(asset, network, mnemonic, derivationPath) {
     scraperApi,
     feeProvider,
     mnemonic,
-    'default',
+    AccountType.Default,
     derivationPath
   );
 }

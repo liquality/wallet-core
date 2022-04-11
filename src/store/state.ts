@@ -6,14 +6,14 @@ const initialState: RootState = {
   version: LATEST_VERSION,
 
   // <do not keep these in localStorage>
-  key: null,
+  key: '',
   wallets: [],
-  unlockedAt: null,
+  unlockedAt: 0,
   // </do not keep these in localStorage>
 
   brokerReady: true,
 
-  encryptedWallets: null,
+  encryptedWallets: '',
 
   enabledAssets: {},
   customTokens: {},
@@ -26,12 +26,12 @@ const initialState: RootState = {
   marketData: {},
 
   activeNetwork: Network.Mainnet,
-  activeWalletId: null,
+  activeWalletId: '',
 
-  keyUpdatedAt: null,
-  keySalt: null,
-  termsAcceptedAt: null,
-  setupAt: null,
+  keyUpdatedAt: 0,
+  keySalt: '',
+  termsAcceptedAt: 0,
+  setupAt: 0,
 
   injectEthereum: true,
   injectEthereumChain: ChainId.Ethereum,
@@ -40,14 +40,14 @@ const initialState: RootState = {
   externalConnections: {},
   rskLegacyDerivation: false,
   analytics: {
-    userId: null,
-    acceptedDate: null,
-    askedDate: null,
+    userId: '',
+    acceptedDate: 0,
+    askedDate: 0,
     askedTimes: 0,
     notAskAgain: false,
   },
   experiments: {},
-  watsNewModalVersion: null,
+  watsNewModalVersion: '',
   enabledChains: {},
 };
 

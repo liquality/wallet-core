@@ -3,10 +3,14 @@ import { ChainNetworks } from '../utils/networks';
 import { BTC_ADDRESS_TYPE_TO_PREFIX } from '../utils/address';
 import { bitcoin } from '@liquality/types';
 import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
+import { AccountType } from '../store/types';
 
 const getBitcoinDerivationPath = (accountType, coinType, index) => {
   if (accountType.includes('ledger')) {
     const option = LEDGER_BITCOIN_OPTIONS.find((o) => o.name === accountType);
+    if (!option) {
+      throw new Error(`Option not found for account type ${accountType}`);
+    }
     const { addressType } = option;
     return `${BTC_ADDRESS_TYPE_TO_PREFIX[addressType]}'/${coinType}'/${index}'`;
   } else {
@@ -20,7 +24,7 @@ const getEthereumBasedDerivationPath = (coinType, index) =>
   `m/44'/${coinType}'/${index}'/0/0`;
 
 const derivationPaths = {
-  [ChainId.Bitcoin]: (network, index, accountType = 'default') => {
+  [ChainId.Bitcoin]: (network, index, accountType = AccountType.Default) => {
     const bitcoinNetwork = ChainNetworks[ChainId.Bitcoin][network];
     return getBitcoinDerivationPath(
       accountType,
@@ -32,9 +36,9 @@ const derivationPaths = {
     const ethNetwork = ChainNetworks[ChainId.Ethereum][network];
     return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
   },
-  [ChainId.Rootstock]: (network, index, accountType = 'default') => {
+  [ChainId.Rootstock]: (network, index, accountType = AccountType.Default) => {
     let coinType;
-    if (accountType === 'rsk_ledger') {
+    if (accountType === AccountType.RskLedger) {
       coinType = network === 'mainnet' ? '137' : '37310';
     } else {
       const ethNetwork = ChainNetworks[ChainId.Rootstock][network];
@@ -77,6 +81,11 @@ const derivationPaths = {
   },
 };
 
-export const getDerivationPath = (chainId, network, index, accountType) => {
+export const getDerivationPath = (
+  chainId,
+  network,
+  index,
+  accountType: AccountType
+) => {
   return derivationPaths[chainId](network, index, accountType);
 };

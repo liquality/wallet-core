@@ -14,7 +14,7 @@ function getStore() {
 const cryptoassets: { [asset: string]: Asset } = new Proxy(
   {},
   {
-    get(target, name, receiver) {
+    get(_target, name, receiver) {
       return Reflect.get(
         { ...getStore().getters.cryptoassets },
         name,

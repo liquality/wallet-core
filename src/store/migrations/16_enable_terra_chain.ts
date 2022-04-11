@@ -2,6 +2,7 @@ import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { Networks } from '../../utils/networks';
 import { getDerivationPath } from '../../utils/derivationPath';
 import { chains, ChainId } from '@liquality/cryptoassets';
+import { AccountType } from '../types';
 
 export const enableTerraChain = {
   version: 16,
@@ -24,7 +25,7 @@ export const enableTerraChain = {
             ChainId.Terra,
             network,
             0,
-            'default'
+            AccountType.Default
           );
           const terraAccount = accountCreator({
             walletId,
@@ -36,7 +37,7 @@ export const enableTerraChain = {
               addresses: [],
               assets: ['LUNA', 'UST'],
               balances: {},
-              type: 'default',
+              type: AccountType.Default,
               index: 0,
               derivationPath,
               color: getNextAccountColor(ChainId.Terra, 0),

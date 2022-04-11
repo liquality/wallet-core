@@ -2,6 +2,7 @@ import { getDerivationPath } from '../../utils/derivationPath';
 import { Networks } from '../../utils/networks';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { ChainId, chains } from '@liquality/cryptoassets';
+import { Account, AccountType } from '../types';
 
 export const accountSetDerivationPath = {
   version: 14,
@@ -21,7 +22,7 @@ export const accountSetDerivationPath = {
 
       for (const network of Networks) {
         const accounts = state.accounts[walletId][network];
-        const updatedAccounts = [];
+        const updatedAccounts: Account[] = [];
         for (const account of accounts) {
           const derivationPath = getDerivationPath(
             account.chain,
@@ -55,7 +56,7 @@ export const accountSetDerivationPath = {
                 addresses: [],
                 assets: [...account.assets],
                 balances: {},
-                type: 'default',
+                type: AccountType.Default,
                 index: 0,
                 derivationPath: `m/44'/${coinType}'/0'/0/0`,
                 color: getNextAccountColor(ChainId.Rootstock, 1),

@@ -21,14 +21,15 @@ import {
   buildSwapFromContractTokenToUSTMsg,
   getPairAddressQuery,
 } from './queries';
-import { SwapProvider } from '../SwapProvider';
+import { QuoteRequest, SwapProvider } from '../SwapProvider';
 
 class AstroportSwapProvider extends SwapProvider {
   async getSupportedPairs() {
     return [];
   }
 
-  async getQuote({ from, to, amount }) {
+  // @ts-ignore TODO: check return type
+  async getQuote({ from, to, amount }: QuoteRequest) {
     const fromInfo = cryptoassets[from];
     const toInfo = cryptoassets[to];
 
@@ -36,7 +37,7 @@ class AstroportSwapProvider extends SwapProvider {
     if (
       fromInfo.chain !== ChainId.Terra ||
       toInfo.chain !== ChainId.Terra ||
-      amount <= 0
+      amount.lt(0)
     ) {
       return null;
     }
@@ -126,7 +127,7 @@ class AstroportSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         const { status } = await client.getMethod('getTransactionByHash')(
           swap.swapTxHash
         );
@@ -142,7 +143,7 @@ class AstroportSwapProvider extends SwapProvider {
     }
   }
 
-  async performNextSwapAction(store, { network, walletId, swap }) {
+  async performNextSwapAction(_store, { network, walletId, swap }) {
     let updates;
 
     if (swap.status === 'WAITING_FOR_SWAP_CONFIRMATIONS') {

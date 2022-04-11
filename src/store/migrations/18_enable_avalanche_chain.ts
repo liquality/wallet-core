@@ -2,6 +2,7 @@ import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { Networks } from '../../utils/networks';
 import { getDerivationPath } from '../../utils/derivationPath';
 import { chains, ChainId } from '@liquality/cryptoassets';
+import { AccountType } from '../types';
 
 export const enableAvalancheChain = {
   version: 18,
@@ -27,7 +28,7 @@ export const enableAvalancheChain = {
             ChainId.Avalanche,
             network,
             0,
-            'default'
+            AccountType.Default
           );
           const avalancheAccount = accountCreator({
             walletId,
@@ -39,7 +40,7 @@ export const enableAvalancheChain = {
               addresses: [],
               assets: ['AVAX'],
               balances: {},
-              type: 'default',
+              type: AccountType.Default,
               index: 0,
               derivationPath,
               color: getNextAccountColor(ChainId.Avalanche, 0),

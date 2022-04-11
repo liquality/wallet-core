@@ -1,7 +1,23 @@
-import store from '../store';
+import BigNumber from 'bignumber.js';
+import store, { OriginalStore } from '../store';
 import { createNotification } from '../store/broker/notification';
+import { Asset, MarketData, Network, SwapHistoryItem } from '../store/types';
 
-class SwapProvider {
+export type SwapQuote = {
+  from: Asset;
+  to: Asset;
+  fromAmount: BigNumber;
+  toAmount: BigNumber;
+};
+
+export type QuoteRequest = {
+  network: Network;
+  from: string;
+  to: string;
+  amount: BigNumber;
+};
+
+abstract class SwapProvider {
   // TODO: types
   config: any;
   constructor(config) {
@@ -28,27 +44,34 @@ class SwapProvider {
    * @param {{ network }} network
    */
   // eslint-disable-next-line no-unused-vars
-  getSupportedPairs({ network }) {
-    throw new Error('`getSupportedPairs` not implemented');
-  }
+  abstract getSupportedPairs({ network }: { network: Network });
 
   /**
    * Get a quote for the specified parameters
    * @param {{ network, from, to, amount }} options
    */
   // eslint-disable-next-line no-unused-vars
-  getQuote({ network, from, to, amount }) {
-    throw new Error('`getQuote` not implemented');
-  }
+  abstract getQuote({
+    network,
+    from,
+    to,
+    amount,
+  }: QuoteRequest): Promise<SwapQuote | null>;
 
   /**
    * Create a new swap for the given quote
    * @param {{ network, walletId, quote }} options
    */
   // eslint-disable-next-line no-unused-vars
-  newSwap({ network, walletId, quote }) {
-    throw new Error('`newSwap` not implemented');
-  }
+  abstract newSwap({
+    network,
+    walletId,
+    quote,
+  }: {
+    network: Network;
+    walletId: string;
+    quote: SwapQuote;
+  }): Promise<Partial<SwapHistoryItem>>;
 
   /**
    * Estimate the fees for the given parameters
@@ -56,7 +79,7 @@ class SwapProvider {
    * @return Object of key feePrice and value fee
    */
   // eslint-disable-next-line no-unused-vars
-  async estimateFees({
+  abstract estimateFees({
     network,
     walletId,
     asset,
@@ -64,9 +87,15 @@ class SwapProvider {
     quote,
     feePrices,
     max,
-  }): Promise<any> {
-    throw new Error('`estimateFee` not implemented');
-  }
+  }: {
+    network: Network;
+    walletId: string;
+    asset: Asset;
+    txType: string;
+    quote: SwapQuote;
+    feePrices: number[];
+    max: boolean;
+  }): Promise<{ [price: number]: BigNumber } | null>;
 
   /**
    * This hook is called when state updates are required
@@ -75,17 +104,22 @@ class SwapProvider {
    * @return updates An object representing updates to the current swap in the history
    */
   // eslint-disable-next-line no-unused-vars
-  async performNextSwapAction(store, { network, walletId, swap }) {
-    throw new Error('`newSwap` not implemented');
-  }
+  abstract performNextSwapAction(
+    store: OriginalStore,
+    {
+      network,
+      walletId,
+      swap,
+    }: { network: Network; walletId: string; swap: SwapHistoryItem }
+  ): Promise<Partial<SwapHistoryItem>>;
 
   /**
    * Get market data
    * @param {string} network
    * @return account
    */
-  getMarketData(network) {
-    return store.state.marketData[network];
+  getMarketData(network: Network): MarketData[] {
+    return store.state.marketData[network] as MarketData[];
   }
 
   /**

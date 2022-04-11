@@ -41,6 +41,7 @@ class SovrynSwapProvider extends SwapProvider {
   }
 
   // returns rates between tokens
+  // @ts-ignore
   async getQuote({ network, from, to, amount }) {
     const fromInfo = cryptoassets[from];
     const toInfo = cryptoassets[to];
@@ -75,7 +76,7 @@ class SovrynSwapProvider extends SwapProvider {
       from,
       to,
       fromAmount: fromAmountInUnit,
-      toAmount: rate.toString(),
+      toAmount: rate.toString(), // TODO: ??? Should be Bignumber
       path: path,
     };
   }
@@ -102,7 +103,7 @@ class SovrynSwapProvider extends SwapProvider {
     const fromInfo = cryptoassets[quote.from];
     const toInfo = cryptoassets[quote.to];
     const erc20 = new ethers.Contract(
-      fromInfo.contractAddress.toLowerCase(),
+      fromInfo.contractAddress!.toLowerCase(),
       ERC20.abi,
       this._getApi(network, quote.from)
     );
@@ -137,7 +138,7 @@ class SovrynSwapProvider extends SwapProvider {
     const fromInfo = cryptoassets[quote.from];
     const toInfo = cryptoassets[quote.to];
     const erc20 = new ethers.Contract(
-      fromInfo.contractAddress.toLowerCase(),
+      fromInfo.contractAddress!.toLowerCase(),
       ERC20.abi,
       this._getApi(network, quote.from)
     );
@@ -171,8 +172,8 @@ class SovrynSwapProvider extends SwapProvider {
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
-      to: fromInfo.contractAddress,
-      value: 0,
+      to: fromInfo.contractAddress!,
+      value: new BN(0),
       data: encodedData,
       fee: quote.fee,
     };
@@ -219,7 +220,7 @@ class SovrynSwapProvider extends SwapProvider {
     ).toString();
 
     let encodedData;
-    let routerAddress;
+    let routerAddress: string;
     if (fromInfo.type === 'native' || toInfo.type === 'native') {
       // use routerAddressRBTC when native token is present in the swap
       routerAddress = this.config.routerAddressRBTC.toLowerCase();
@@ -252,7 +253,7 @@ class SovrynSwapProvider extends SwapProvider {
       ]);
     }
 
-    const value = isERC20(quote.from) ? 0 : new BN(quote.fromAmount);
+    const value = isERC20(quote.from) ? new BN(0) : new BN(quote.fromAmount);
 
     const fromAddressRaw = await this.getSwapAddress(
       network,
@@ -350,7 +351,7 @@ class SovrynSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
           status: 'APPROVE_CONFIRMED',
@@ -372,7 +373,7 @@ class SovrynSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
         const { status } = await client.getMethod('getTransactionReceipt')(
           swap.swapTxHash

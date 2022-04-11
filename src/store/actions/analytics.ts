@@ -27,7 +27,7 @@ export const setAnalyticsResponse = async ({ commit }, { accepted }) => {
   }
 };
 
-export const initializeAnalytics = async ({ commit, dispatch, state }) => {
+export const initializeAnalytics = async ({ dispatch, state }) => {
   if (!state.analytics || !state.analytics.userId) {
     await dispatch('initializeAnalyticsPreferences', { accepted: false });
     return false;

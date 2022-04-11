@@ -1,10 +1,12 @@
 import { WalletOptions } from '../types';
 
-const walletOptionsStore = {
-  walletOptions: null as WalletOptions,
+class WalletOptionsStore {
+  walletOptions: WalletOptions;
   setOptions(options: WalletOptions) {
     this.walletOptions = options;
-  },
-};
+  }
+}
+
+const walletOptionsStore = new WalletOptionsStore();
 
 export { walletOptionsStore };

@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { getDerivationPath } from '../utils/derivationPath';
 import { chains } from '@liquality/cryptoassets';
+import { Account } from '../store/types';
 
-export const accountCreator = (payload) => {
+export const accountCreator = (payload): Account => {
   const { network, walletId, account } = payload;
   const {
     name,
@@ -47,7 +48,6 @@ export const accountCreator = (payload) => {
     assets,
     balances: balances || {},
     createdAt,
-    updatedAt: null,
     color,
     enabled,
   };

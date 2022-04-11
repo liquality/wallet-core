@@ -1,5 +1,5 @@
 import axios from 'axios';
-import BN from 'bignumber.js';
+import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
 import { SwapProvider } from '../SwapProvider';
 import {
@@ -238,6 +238,13 @@ class LiqualitySwapProvider extends SwapProvider {
 
       return fees;
     }
+
+    const fees = {};
+    for (const feePrice of feePrices) {
+      fees[feePrice] = new BigNumber(0);
+    }
+
+    return fees;
   }
 
   updateOrder(order) {
@@ -341,6 +348,10 @@ class LiqualitySwapProvider extends SwapProvider {
       swap.fee
     );
 
+    if (!fundTx) {
+      throw new Error('Funding transaction returned null');
+    }
+
     return {
       fundTxHash: fundTx.hash,
       status: 'FUNDED',
@@ -378,7 +389,7 @@ class LiqualitySwapProvider extends SwapProvider {
     try {
       const tx = await fromClient.chain.getTransactionByHash(swap.fromFundHash);
 
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           status: 'INITIATION_CONFIRMED',
         };
@@ -432,8 +443,9 @@ class LiqualitySwapProvider extends SwapProvider {
           toFundHash
         );
         const fundingConfirmed = fundingTransaction
-          ? fundingTransaction.confirmations >=
-            chains[cryptoassets[swap.to].chain].safeConfirmations
+          ? fundingTransaction.confirmations &&
+            fundingTransaction.confirmations >=
+              chains[cryptoassets[swap.to].chain].safeConfirmations
           : true;
 
         if (isVerified && fundingConfirmed) {
@@ -477,6 +489,7 @@ class LiqualitySwapProvider extends SwapProvider {
 
     if (
       tx &&
+      tx.confirmations &&
       tx.confirmations >= chains[cryptoassets[swap.to].chain].safeConfirmations
     ) {
       return {
@@ -548,7 +561,7 @@ class LiqualitySwapProvider extends SwapProvider {
     try {
       const tx = await toClient.chain.getTransactionByHash(swap.toClaimHash);
 
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         this.updateBalances(network, walletId, [swap.to, swap.from]);
 
         return {
@@ -588,7 +601,7 @@ class LiqualitySwapProvider extends SwapProvider {
     try {
       const tx = await fromClient.chain.getTransactionByHash(swap.refundHash);
 
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
           status: 'REFUNDED',

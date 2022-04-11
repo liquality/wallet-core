@@ -1,6 +1,7 @@
 import buildConfig from '../../build.config';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { chains, assets as cryptoassets } from '@liquality/cryptoassets';
+import { AccountType } from '../types';
 
 export const multipleAccountSupport = {
   // multiple account support
@@ -25,7 +26,7 @@ export const multipleAccountSupport = {
 
         const chain = chains[chainId];
 
-        const addresses = [];
+        const addresses: string[] = [];
 
         if (
           state.addresses &&
@@ -45,7 +46,7 @@ export const multipleAccountSupport = {
             addresses,
             assets,
             balances: {},
-            type: 'default',
+            type: AccountType.Default,
             index: 0,
             color: getNextAccountColor(chainId, 0),
           },

@@ -52,6 +52,7 @@ class OneinchSwapProvider extends SwapProvider {
     });
   }
 
+  // @ts-ignore TODO: Amounts should be in BigNumber to prevent loss of precision
   async getQuote({ network, from, to, amount }) {
     if (!isEthereumChain(from) || !isEthereumChain(to) || amount <= 0)
       return null;
@@ -90,7 +91,7 @@ class OneinchSwapProvider extends SwapProvider {
       chainToRpcProviders[chainId]
     );
     const erc20 = new ethers.Contract(
-      cryptoassets[quote.from].contractAddress,
+      cryptoassets[quote.from].contractAddress!,
       ERC20.abi,
       api
     );
@@ -255,6 +256,8 @@ class OneinchSwapProvider extends SwapProvider {
       }
       return fees;
     }
+
+    return null;
   }
 
   async waitForApproveConfirmations({ swap, network, walletId }) {
@@ -267,7 +270,7 @@ class OneinchSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
           status: 'APPROVE_CONFIRMED',
@@ -289,7 +292,7 @@ class OneinchSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
         const { status } = await client.getMethod('getTransactionReceipt')(
           swap.swapTxHash

@@ -1,4 +1,4 @@
-import BN from 'bignumber.js';
+import BN, { BigNumber } from 'bignumber.js';
 import JSBI from 'jsbi';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -68,7 +68,7 @@ class UniswapSwapProvider extends SwapProvider {
 
     return new Token(
       chainId,
-      assetData.contractAddress,
+      assetData.contractAddress!,
       assetData.decimals,
       assetData.code,
       assetData.name
@@ -116,6 +116,10 @@ class UniswapSwapProvider extends SwapProvider {
     const token1 = [tokenA, tokenB].find(
       (token) => token.address === token1Address
     );
+
+    if (!token0 || !token1) {
+      throw new Error('UniswapSwapProvider: unable to calculate token0 token1');
+    }
     const pair = new Pair(
       CurrencyAmount.fromRawAmount(token0, reserves.reserve0.toString()),
       CurrencyAmount.fromRawAmount(token1, reserves.reserve1.toString())
@@ -148,7 +152,7 @@ class UniswapSwapProvider extends SwapProvider {
     const fromChain = cryptoassets[quote.from].chain;
     const api = this.getApi(network, quote.from);
     const erc20 = new ethers.Contract(
-      cryptoassets[quote.from].contractAddress,
+      cryptoassets[quote.from].contractAddress!,
       ERC20.abi,
       api
     );
@@ -180,7 +184,7 @@ class UniswapSwapProvider extends SwapProvider {
   async buildApprovalTx({ network, walletId, quote }) {
     const api = this.getApi(network, quote.from);
     const erc20 = new ethers.Contract(
-      cryptoassets[quote.from].contractAddress,
+      cryptoassets[quote.from].contractAddress!,
       ERC20.abi,
       api
     );
@@ -208,8 +212,8 @@ class UniswapSwapProvider extends SwapProvider {
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
-      to: cryptoassets[quote.from].contractAddress,
-      value: 0,
+      to: cryptoassets[quote.from].contractAddress!,
+      value: new BigNumber(0),
       data: encodedData,
       fee: quote.fee,
     };
@@ -313,7 +317,9 @@ class UniswapSwapProvider extends SwapProvider {
       );
     }
 
-    const value = isERC20(quote.from) ? 0 : new BN(quote.fromAmount);
+    const value = isERC20(quote.from)
+      ? new BigNumber(0)
+      : new BN(quote.fromAmount);
 
     const fromChain = cryptoassets[quote.from].chain;
     const fromAddressRaw = await this.getSwapAddress(
@@ -425,7 +431,7 @@ class UniswapSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
           status: 'APPROVE_CONFIRMED',
@@ -447,7 +453,7 @@ class UniswapSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
         const { status } = await client.getMethod('getTransactionReceipt')(
           swap.swapTxHash

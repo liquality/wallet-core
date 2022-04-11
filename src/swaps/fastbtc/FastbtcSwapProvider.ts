@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 import BN from 'bignumber.js';
 import { mapValues } from 'lodash';
-import { SwapProvider } from '../SwapProvider';
+import { QuoteRequest, SwapProvider } from '../SwapProvider';
 import { v4 as uuidv4 } from 'uuid';
 import {
   chains,
@@ -84,7 +84,8 @@ class FastbtcSwapProvider extends SwapProvider {
     });
   }
 
-  async getQuote({ from, to, amount }) {
+  // @ts-ignore
+  async getQuote({ from, to, amount }: QuoteRequest) {
     if (from !== 'BTC' || to !== 'RBTC') return null;
     const fromAmountInUnit = new BN(
       currencyToUnit(cryptoassets[from], new BN(amount))
@@ -192,7 +193,7 @@ class FastbtcSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
           status: 'WAITING_FOR_RECEIVE',
@@ -256,7 +257,7 @@ class FastbtcSwapProvider extends SwapProvider {
     }
   }
 
-  async performNextSwapAction(store, { network, walletId, swap }) {
+  async performNextSwapAction(_store, { network, walletId, swap }) {
     let updates;
 
     switch (swap.status) {

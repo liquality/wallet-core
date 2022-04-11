@@ -7,6 +7,7 @@ import {
   chains,
   assets as cryptoassets,
 } from '@liquality/cryptoassets';
+import { AccountType } from '../types';
 
 export const createWallet = async (
   { commit },
@@ -59,7 +60,7 @@ export const createWallet = async (
           addresses: [],
           assets,
           balances: {},
-          type: 'default',
+          type: AccountType.Default,
           index: 0,
           color: getNextAccountColor(chainId, 0),
           enabled: true,
@@ -83,7 +84,7 @@ export const createWallet = async (
             addresses: [],
             assets,
             balances: {},
-            type: 'default',
+            type: AccountType.Default,
             index: 0,
             derivationPath: `m/44'/${coinType}'/0'/0/0`,
             color: getNextAccountColor(ChainId.Rootstock, 1),

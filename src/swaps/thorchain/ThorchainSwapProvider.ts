@@ -1,4 +1,4 @@
-import BN from 'bignumber.js';
+import BN, { BigNumber } from 'bignumber.js';
 import axios from 'axios';
 import * as ethers from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
@@ -56,7 +56,7 @@ const toPoolBalance = (baseAmountString) =>
 // Probably cryptoassets should adopt that kind of naming for assets
 const toThorchainAsset = (asset) => {
   return isERC20(asset)
-    ? `ETH.${asset}-${cryptoassets[asset].contractAddress.toUpperCase()}`
+    ? `ETH.${asset}-${cryptoassets[asset].contractAddress!.toUpperCase()}`
     : `${asset}.${asset}`;
 };
 
@@ -132,12 +132,12 @@ class ThorchainSwapProvider extends SwapProvider {
       (pool) => pool.asset === toThorchainAsset(to)
     );
 
-    if (!fromPoolData || !toPoolData) return; // Pool doesn't exist
+    if (!fromPoolData || !toPoolData) return null; // Pool doesn't exist
     if (
       fromPoolData.status.toLowerCase() !== 'available' ||
       toPoolData.status.toLowerCase() !== 'available'
     )
-      return; // Pool is not available
+      return null; // Pool is not available
 
     const getPool = (poolData) => {
       return {
@@ -225,13 +225,16 @@ class ThorchainSwapProvider extends SwapProvider {
       buildConfig.infuraApiKey
     );
     const erc20 = new ethers.Contract(
-      cryptoassets[quote.from].contractAddress,
+      cryptoassets[quote.from].contractAddress!,
       ERC20.abi,
       api
     );
 
     const inboundAddresses = await this._getInboundAddresses();
     const fromThorchainAsset = assetFromString(toThorchainAsset(quote.from));
+    if (!fromThorchainAsset) {
+      throw new Error('Thorchain asset does not exist');
+    }
     const routerAddress = inboundAddresses.find(
       (inbound) => inbound.chain === fromThorchainAsset.chain
     ).router;
@@ -269,8 +272,8 @@ class ThorchainSwapProvider extends SwapProvider {
       quote.fromAccountId
     );
     const approveTx = await client.chain.sendTransaction({
-      to: cryptoassets[quote.from].contractAddress,
-      value: 0,
+      to: cryptoassets[quote.from].contractAddress!,
+      value: new BigNumber(0),
       data: encodedData,
       fee: quote.fee,
     });
@@ -291,6 +294,9 @@ class ThorchainSwapProvider extends SwapProvider {
     const inboundAddresses = await this._getInboundAddresses();
 
     const fromThorchainAsset = assetFromString(toThorchainAsset(quote.from));
+    if (!fromThorchainAsset) {
+      throw new Error('Thorchain asset does not exist');
+    }
     const to = inboundAddresses.find(
       (inbound) => inbound.chain === fromThorchainAsset.chain
     ).address; // Will be `router` for ETH
@@ -321,6 +327,9 @@ class ThorchainSwapProvider extends SwapProvider {
     const inboundAddresses = await this._getInboundAddresses();
 
     const fromThorchainAsset = assetFromString(toThorchainAsset(quote.from));
+    if (!fromThorchainAsset) {
+      throw new Error('Thorchain asset does not exist');
+    }
     const routerAddress = inboundAddresses.find(
       (inbound) => inbound.chain === fromThorchainAsset.chain
     ).router;
@@ -352,7 +361,9 @@ class ThorchainSwapProvider extends SwapProvider {
       'deposit',
       [to, tokenAddress, amountHex, memo]
     );
-    const value = isERC20(quote.from) ? 0 : new BN(quote.fromAmount);
+    const value = isERC20(quote.from)
+      ? new BigNumber(0)
+      : new BN(quote.fromAmount);
 
     const client = this.getClient(
       network,
@@ -394,6 +405,9 @@ class ThorchainSwapProvider extends SwapProvider {
       8
     );
     const thorchainAsset = assetFromString(toThorchainAsset(quote.to));
+    if (!thorchainAsset) {
+      throw new Error('Thorchain asset does not exist');
+    }
     return getSwapMemo({ asset: thorchainAsset, address: toAddress, limit });
   }
 
@@ -479,6 +493,8 @@ class ThorchainSwapProvider extends SwapProvider {
       }
       return fees;
     }
+
+    return null;
   }
 
   async waitForApproveConfirmations({ swap, network, walletId }) {
@@ -491,7 +507,7 @@ class ThorchainSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
           status: 'APPROVE_CONFIRMED',
@@ -513,7 +529,7 @@ class ThorchainSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.fromFundHash);
-      if (tx && tx.confirmations > 0) {
+      if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
           status: 'WAITING_FOR_RECEIVE',
@@ -550,7 +566,11 @@ class ThorchainSwapProvider extends SwapProvider {
             receiveHash
           );
 
-          if (receiveTx && receiveTx.confirmations > 0) {
+          if (
+            receiveTx &&
+            receiveTx.confirmations &&
+            receiveTx.confirmations > 0
+          ) {
             this.updateBalances(network, walletId, [asset]);
             const status = OUT_MEMO_TO_STATUS[memoAction];
             return {

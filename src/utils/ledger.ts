@@ -1,33 +1,38 @@
+import { AccountType } from '../store/types';
+
 export const LEDGER_BITCOIN_OPTIONS = [
   {
-    name: 'bitcoin_ledger_nagive_segwit',
+    name: AccountType.BitcoinLedgerNativeSegwit,
     label: 'Segwit',
-    addressType: 'bech32'
+    addressType: 'bech32',
   },
   {
-    name: 'bitcoin_ledger_legacy',
+    name: AccountType.BitcoinLedgerLegacy,
     label: 'Legacy',
-    addressType: 'legacy'
-  }
-]
+    addressType: 'legacy',
+  },
+];
 
 export const LEDGER_OPTIONS = [
   {
     name: 'ETH',
     label: 'ETH',
-    types: ['ethereum_ledger'],
-    chain: 'ethereum'
+    types: [AccountType.EthereumLedger],
+    chain: 'ethereum',
   },
   {
     name: 'BTC',
     label: 'BTC',
-    types: ['bitcoin_ledger_nagive_segwit', 'bitcoin_ledger_legacy'],
-    chain: 'bitcoin'
+    types: [
+      AccountType.BitcoinLedgerNativeSegwit,
+      AccountType.BitcoinLedgerLegacy,
+    ],
+    chain: 'bitcoin',
   },
   {
     name: 'RBTC',
     label: 'RSK',
-    types: ['rsk_ledger'],
-    chain: 'rsk'
-  }
-]
+    types: [AccountType.RskLedger],
+    chain: 'rsk',
+  },
+];

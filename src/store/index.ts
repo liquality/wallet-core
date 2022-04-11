@@ -8,7 +8,13 @@ import mutations from './mutations';
 
 Vue.use(Vuex);
 
-const { store } = createDirectStore({
+const {
+  store,
+  rootActionContext,
+  rootGetterContext,
+  moduleActionContext,
+  moduleGetterContext,
+} = createDirectStore({
   state,
   getters,
   actions,
@@ -16,3 +22,10 @@ const { store } = createDirectStore({
 });
 
 export default store;
+export type OriginalStore = typeof store.original;
+export {
+  rootActionContext,
+  rootGetterContext,
+  moduleActionContext,
+  moduleGetterContext,
+};
