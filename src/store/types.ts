@@ -16,7 +16,14 @@ export enum Network {
 export type WalletId = string;
 export type AccountId = string;
 export type Asset = string;
-
+export type FiatRates = Record<Asset, number>;
+export type AnalyticsState = {
+  userId: string;
+  acceptedDate: number;
+  askedDate: number;
+  askedTimes: number;
+  notAskAgain: boolean;
+};
 export interface Wallet {
   id: WalletId;
   name: string;
@@ -131,7 +138,7 @@ export enum ExperimentType {
 }
 
 export type ChainAccountIdMap = {
-  ChainId: string[];
+  [key in ChainId]: string[];
 };
 
 export interface Connections extends ChainAccountIdMap {
@@ -158,7 +165,7 @@ export interface RootState {
 
   accounts: WalletIdNetworkMap<Account[]>;
 
-  fiatRates: Record<Asset, number>;
+  fiatRates: FiatRates;
   fees: NetworkWalletIdMap<Record<Asset, FeeDetails>>;
   history: NetworkWalletIdMap<HistoryItem[]>;
   marketData: Partial<Record<Network, MarketData[]>>;
@@ -177,13 +184,7 @@ export interface RootState {
 
   externalConnections: ExternalConnections;
   rskLegacyDerivation: boolean;
-  analytics: {
-    userId: string;
-    acceptedDate: number;
-    askedDate: number;
-    askedTimes: number;
-    notAskAgain: boolean;
-  };
+  analytics: AnalyticsState;
   experiments: Partial<Record<ExperimentType, boolean>>;
   watsNewModalVersion: string;
   enabledChains: WalletIdNetworkMap<ChainId[]>;

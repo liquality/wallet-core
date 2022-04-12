@@ -6,7 +6,7 @@ import { Account, AccountType } from '../types';
 
 export const accountSetDerivationPath = {
   version: 14,
-  migrate: async (state) => {
+  migrate: async (state: any) => {
     const hasAccounts = Object.keys(state.accounts || {}).length > 0;
 
     if (!hasAccounts) {
@@ -15,10 +15,10 @@ export const accountSetDerivationPath = {
       };
     }
 
-    const _accounts = {};
+    const _accounts: any = {};
 
     for (const walletId in state.accounts) {
-      _accounts[walletId] = {};
+      _accounts[walletId] = { mainnet: [], testnet: [] };
 
       for (const network of Networks) {
         const accounts = state.accounts[walletId][network];
@@ -65,7 +65,7 @@ export const accountSetDerivationPath = {
             updatedAccounts.push(_account);
           }
         }
-        _accounts[walletId][network] = updatedAccounts;
+        _accounts[walletId]![network] = updatedAccounts;
       }
     }
 

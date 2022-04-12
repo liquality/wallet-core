@@ -1,9 +1,9 @@
 export const removeInjectionEnabled = {
   version: 17,
-  migrate: async (state) => {
-    delete state.injectionEnabled
+  migrate: async (state: any) => {
+    delete state.injectionEnabled;
     return {
-      ...state
-    }
-  }
-}
+      ...state,
+    };
+  },
+};

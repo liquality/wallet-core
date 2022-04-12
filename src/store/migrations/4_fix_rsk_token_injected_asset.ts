@@ -1,12 +1,12 @@
 export const fixRSKTokenInjectedAsset = {
   // Fix for RSK token injected asset
   version: 4,
-  migrate: async (state) => {
+  migrate: async (state: any) => {
     if (state.injectEthereumAsset === 'RSK') {
-      const injectEthereumAsset = 'RBTC'
-      return { ...state, injectEthereumAsset }
+      const injectEthereumAsset = 'RBTC';
+      return { ...state, injectEthereumAsset };
     }
 
-    return { ...state }
-  }
-}
+    return { ...state };
+  },
+};

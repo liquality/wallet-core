@@ -1,27 +1,27 @@
 export const multiProviderSwaps = {
   // Multi provider swaps
   version: 7,
-  migrate: async (state) => {
-    const walletId = state.activeWalletId
+  migrate: async (state: any) => {
+    const walletId = state.activeWalletId;
 
-    const migrateHistory = (state, network, walletId) => {
-      const walletHistory = state.history[network]?.[walletId]
+    const migrateHistory = (state: any, network: string, walletId: string) => {
+      const walletHistory = state.history[network]?.[walletId];
       return walletHistory && walletHistory.length
-        ? walletHistory.map((item) =>
+        ? walletHistory.map((item: any) =>
             item.type === 'SWAP' ? { ...item, provider: 'liquality' } : item
           )
-        : []
-    }
+        : [];
+    };
 
     const history = {
       mainnet: {
-        [walletId]: migrateHistory(state, 'mainnet', walletId)
+        [walletId]: migrateHistory(state, 'mainnet', walletId),
       },
       testnet: {
-        [walletId]: migrateHistory(state, 'testnet', walletId)
-      }
-    }
+        [walletId]: migrateHistory(state, 'testnet', walletId),
+      },
+    };
 
-    return { ...state, history }
-  }
-}
+    return { ...state, history };
+  },
+};

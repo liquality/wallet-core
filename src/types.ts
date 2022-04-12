@@ -29,11 +29,11 @@ export interface WalletOptions {
     encrypt(value: string, key: string): Promise<any>;
     decrypt(value: any, key: string): Promise<any>;
   };
-  createNotification(notification: Notification);
+  createNotification(notification: Notification): void;
   createBitcoinLedgerProvider?(
     network: BitcoinNetwork,
     addressType: string,
-    baseDerivationPath
+    baseDerivationPath: string
   ): BitcoinLedgerProvider;
   createEthereumLedgerProvider?(
     network: EthereumNetwork,

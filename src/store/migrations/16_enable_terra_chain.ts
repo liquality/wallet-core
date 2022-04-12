@@ -6,16 +6,16 @@ import { AccountType } from '../types';
 
 export const enableTerraChain = {
   version: 16,
-  migrate: async (state) => {
-    const accounts = {};
-    const enabledChains = {};
+  migrate: async (state: any) => {
+    const accounts: any = {};
+    const enabledChains: any = {};
     for (const walletId in state.accounts) {
       accounts[walletId] = {};
       enabledChains[walletId] = {};
 
       for (const network of Networks) {
         const accountExists = state.accounts[walletId][network].find(
-          (account) => account.chain === ChainId.Terra
+          (account: any) => account.chain === ChainId.Terra
         );
         if (accountExists) {
           accounts[walletId][network] = [...state.accounts[walletId][network]];
@@ -65,7 +65,7 @@ export const enableTerraChain = {
       }
     }
 
-    const enabledAssets = {};
+    const enabledAssets: any = {};
     for (const network of Networks) {
       enabledAssets[network] = {};
       for (const walletId in state.enabledAssets[network]) {

@@ -1,30 +1,32 @@
-import { shouldApplyRskLegacyDerivation } from '../utils'
+import { shouldApplyRskLegacyDerivation } from '../utils';
 
-const rskLegacyDerivationMigration = async (state) => {
-  const hasAccounts = Object.keys(state.accounts || {}).length > 0
+const rskLegacyDerivationMigration = async (state: any) => {
+  const hasAccounts = Object.keys(state.accounts || {}).length > 0;
 
   if (!hasAccounts) {
     return {
-      ...state
-    }
+      ...state,
+    };
   }
 
-  const rskLegacyDerivation = await shouldApplyRskLegacyDerivation(state.accounts)
+  const rskLegacyDerivation = await shouldApplyRskLegacyDerivation(
+    state.accounts
+  );
 
   return {
     ...state,
-    rskLegacyDerivation
-  }
-}
+    rskLegacyDerivation,
+  };
+};
 
 export const rskLegacyDerivationPath = {
   // rskLegacyDerivation
   version: 11,
-  migrate: rskLegacyDerivationMigration
-}
+  migrate: rskLegacyDerivationMigration,
+};
 
 export const rskLegacyDerivationPathFix = {
   // rskLegacyDerivation for fix
   version: 12,
-  migrate: rskLegacyDerivationMigration
-}
+  migrate: rskLegacyDerivationMigration,
+};

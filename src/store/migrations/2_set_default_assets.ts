@@ -3,7 +3,7 @@ import buildConfig from '../../build.config';
 // Set the default assets
 export const setDefaultAssets = {
   version: 2,
-  migrate: async (state) => {
+  migrate: async (state: any) => {
     const enabledAssets = {
       mainnet: {
         [state.activeWalletId]: buildConfig.defaultAssets.mainnet,

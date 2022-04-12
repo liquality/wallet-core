@@ -21,6 +21,7 @@ import { accountsChainsSetEnabled } from './15_accounts_chains_set_enabled';
 import { enableTerraChain } from './16_enable_terra_chain';
 import { removeInjectionEnabled } from './17_remove_injection_enabled';
 import { enableAvalancheChain } from './18_enable_avalanche_chain';
+import { RootState } from '../types';
 
 const migrations = [
   firstMigration, // v1
@@ -45,12 +46,12 @@ const migrations = [
 
 const LATEST_VERSION = migrations[migrations.length - 1].version;
 
-function isMigrationNeeded(state) {
+function isMigrationNeeded(state: RootState) {
   const currentVersion = state.version || 0;
   return currentVersion < LATEST_VERSION;
 }
 
-async function processMigrations(state) {
+async function processMigrations(state: RootState) {
   const currentVersion = state.version || 0;
 
   let newState = cloneDeep(state);

@@ -1,15 +1,19 @@
 import buildConfig from '../../build.config';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
-import { chains, assets as cryptoassets } from '@liquality/cryptoassets';
+import {
+  chains,
+  assets as cryptoassets,
+  ChainId,
+} from '@liquality/cryptoassets';
 import { AccountType } from '../types';
 
 export const multipleAccountSupport = {
   // multiple account support
   version: 5,
-  migrate: async (state) => {
+  migrate: async (state: any) => {
     const { enabledAssets } = state;
     const walletId = state.activeWalletId;
-    const accounts = {
+    const accounts: any = {
       [walletId]: {
         mainnet: [],
         testnet: [],
@@ -19,8 +23,8 @@ export const multipleAccountSupport = {
     buildConfig.networks.forEach((network) => {
       const assetKeys = enabledAssets[network]?.[walletId] || [];
 
-      buildConfig.chains.forEach((chainId) => {
-        const assets = assetKeys.filter((asset) => {
+      buildConfig.chains.forEach((chainId: ChainId) => {
+        const assets = assetKeys.filter((asset: string) => {
           return cryptoassets[asset]?.chain === chainId;
         });
 
@@ -62,28 +66,34 @@ export const multipleAccountSupport = {
     // Move .network property to .chain
     const customTokens = {
       mainnet: {
-        [walletId]: state.customTokens.mainnet?.[walletId]?.map((token) => {
-          const newCustomToken = { ...token, chain: token.network };
-          delete newCustomToken.network;
-          return newCustomToken;
-        }),
+        [walletId]: state.customTokens.mainnet?.[walletId]?.map(
+          (token: any) => {
+            const newCustomToken = { ...token, chain: token.network };
+            delete newCustomToken.network;
+            return newCustomToken;
+          }
+        ),
       },
       testnet: {
-        [walletId]: state.customTokens.testnet?.[walletId]?.map((token) => {
-          const newCustomToken = { ...token, chain: token.network };
-          delete newCustomToken.network;
-          return newCustomToken;
-        }),
+        [walletId]: state.customTokens.testnet?.[walletId]?.map(
+          (token: any) => {
+            const newCustomToken = { ...token, chain: token.network };
+            delete newCustomToken.network;
+            return newCustomToken;
+          }
+        ),
       },
     };
 
-    const migrateHistory = (state, network, walletId) => {
+    const migrateHistory = (state: any, network: string, walletId: string) => {
       return (
         state.history[network]?.[walletId]
           // Remove defunct swap statuses
-          ?.filter((item) => !['QUOTE', 'SECRET_READY'].includes(item.status))
+          ?.filter(
+            (item: any) => !['QUOTE', 'SECRET_READY'].includes(item.status)
+          )
           // INITIATION statuses should be moved to FUNDED to prevent double funding
-          .map((item) =>
+          .map((item: any) =>
             ['INITIATION_REPORTED', 'INITIATION_CONFIRMED'].includes(
               item.status
             )
@@ -91,16 +101,16 @@ export const multipleAccountSupport = {
               : item
           )
           // Account ids should be assigned to swaps
-          .map((item) => {
+          .map((item: any) => {
             if (item.type !== 'SWAP') return item;
 
             const fromChain = cryptoassets[item.from].chain;
             const toChain = cryptoassets[item.to].chain;
             const fromAccountId = accounts[walletId][network].find(
-              (account) => account.chain === fromChain
+              (account: any) => account.chain === fromChain
             ).id;
             const toAccountId = accounts[walletId][network].find(
-              (account) => account.chain === toChain
+              (account: any) => account.chain === toChain
             ).id;
 
             return { ...item, fromAccountId, toAccountId };

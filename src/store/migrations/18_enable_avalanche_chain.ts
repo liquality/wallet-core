@@ -6,9 +6,9 @@ import { AccountType } from '../types';
 
 export const enableAvalancheChain = {
   version: 18,
-  migrate: async (state) => {
-    const accounts = {};
-    const enabledChains = {};
+  migrate: async (state: any) => {
+    const accounts: any = {};
+    const enabledChains: any = {};
     for (const walletId in state.accounts) {
       accounts[walletId] = {};
       enabledChains[walletId] = {};
@@ -17,7 +17,7 @@ export const enableAvalancheChain = {
         const accountExistsAndProperlyInitialized = state.accounts[walletId][
           network
         ].find(
-          (account) =>
+          (account: any) =>
             account.chain === ChainId.Avalanche && account.assets?.length > 0
         );
         if (accountExistsAndProperlyInitialized) {
@@ -68,7 +68,7 @@ export const enableAvalancheChain = {
       }
     }
 
-    const enabledAssets = {};
+    const enabledAssets: any = {};
     for (const network of Networks) {
       enabledAssets[network] = {};
       for (const walletId in state.enabledAssets[network]) {
