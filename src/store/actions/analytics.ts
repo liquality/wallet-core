@@ -37,6 +37,7 @@ export const initializeAnalytics = async ({ dispatch, state }) => {
       .init(process.env.VUE_APP_AMPLITUDE_API_KEY, state.analytics?.userId);
     return true;
   }
+  return false;
 };
 
 export const trackAnalytics = ({ state }, { event, properties = {} }) => {
