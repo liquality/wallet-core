@@ -19,9 +19,11 @@ const defaultWalletOptions: WalletOptions = {
         );
       });
     },
+    // @ts-ignore
     encrypt(value, key) {
       return AES.encrypt(value, key);
     },
+    // @ts-ignore
     decrypt(value, key) {
       return AES.decrypt(value, key);
     },

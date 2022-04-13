@@ -55,7 +55,7 @@ export const updateBalances = async (
           try {
             const balance =
               addresses.length === 0
-                ? 0
+                ? '0'
                 : (await _client.chain.getBalance(addresses)).toString();
 
             commit.UPDATE_BALANCE({

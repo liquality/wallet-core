@@ -203,7 +203,7 @@ export default {
       accountId: AccountId;
       walletId: WalletId;
       asset: Asset;
-      balance: BigNumber;
+      balance: string;
     }
   ) {
     const accounts = state.accounts[walletId]![network];
