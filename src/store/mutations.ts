@@ -1,6 +1,5 @@
 import { ChainId } from '@liquality/cryptoassets';
 import { FeeDetails } from '@liquality/types';
-import BigNumber from 'bignumber.js';
 import Vue from 'vue';
 import {
   Account,
