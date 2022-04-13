@@ -32,21 +32,14 @@ export const initializeAnalytics = async ({ dispatch, state }) => {
     await dispatch('initializeAnalyticsPreferences', { accepted: false });
     return false;
   } else if (state.analytics?.acceptedDate && useAnalytics) {
-    amplitude
-      .getInstance()
-      .init(process.env.VUE_APP_AMPLITUDE_API_KEY, state.analytics?.userId);
+    amplitude.getInstance().init(process.env.VUE_APP_AMPLITUDE_API_KEY, state.analytics?.userId);
     return true;
   }
   return false;
 };
 
 export const trackAnalytics = ({ state }, { event, properties = {} }) => {
-  if (
-    useAnalytics &&
-    state.analytics &&
-    state.analytics.acceptedDate &&
-    state.analytics.userId
-  ) {
+  if (useAnalytics && state.analytics && state.analytics.acceptedDate && state.analytics.userId) {
     const { activeNetwork, activeWalletId, version } = state;
     return amplitude.getInstance().logEvent(event, {
       ...properties,

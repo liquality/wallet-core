@@ -1,9 +1,6 @@
 import { attemptToLockAsset, waitForRandom, emitter } from '../utils';
 
-export const getLockForAsset = async (
-  { dispatch, commit },
-  { network, walletId, asset, item }
-) => {
+export const getLockForAsset = async ({ dispatch, commit }, { network, walletId, asset, item }) => {
   const { key, success } = attemptToLockAsset(network, walletId, asset);
 
   if (!success) {
@@ -16,9 +13,7 @@ export const getLockForAsset = async (
       },
     });
 
-    await new Promise((resolve) =>
-      emitter.once(`unlock:${key}`, () => resolve(null))
-    );
+    await new Promise((resolve) => emitter.once(`unlock:${key}`, () => resolve(null)));
 
     return dispatch('getLockForAsset', { network, walletId, asset, item });
   }

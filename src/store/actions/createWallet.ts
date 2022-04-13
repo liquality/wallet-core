@@ -2,26 +2,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { encrypt } from '../../utils/crypto';
 import buildConfig from '../../build.config';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
-import {
-  ChainId,
-  chains,
-  assets as cryptoassets,
-} from '@liquality/cryptoassets';
+import { ChainId, chains, assets as cryptoassets } from '@liquality/cryptoassets';
 import { AccountType } from '../types';
 
-export const createWallet = async (
-  { commit },
-  { key, mnemonic, imported = false }
-) => {
+export const createWallet = async ({ commit }, { key, mnemonic, imported = false }) => {
   const id = uuidv4();
   const at = Date.now();
   const name = 'Account 1';
   const wallet = { id, name, mnemonic, at, imported };
   const { networks, defaultAssets } = buildConfig;
-  const { encrypted: encryptedWallets, keySalt } = await encrypt(
-    JSON.stringify([wallet]),
-    key
-  );
+  const { encrypted: encryptedWallets, keySalt } = await encrypt(JSON.stringify([wallet]), key);
 
   commit('CREATE_WALLET', { keySalt, encryptedWallets, wallet });
   commit('CHANGE_ACTIVE_WALLETID', { walletId: id });

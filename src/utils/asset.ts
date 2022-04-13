@@ -1,7 +1,4 @@
-import {
-  chains,
-  isEthereumChain as _isEthereumChain,
-} from '@liquality/cryptoassets';
+import { chains, isEthereumChain as _isEthereumChain } from '@liquality/cryptoassets';
 import cryptoassets from '../utils/cryptoassets';
 import * as ethers from 'ethers';
 import axios from 'axios';
@@ -132,11 +129,7 @@ export const isEthereumChain = (asset) => {
 
 export const isEthereumNativeAsset = (asset) => {
   const chainId = cryptoassets[asset]?.chain;
-  if (
-    chainId &&
-    _isEthereumChain(chainId) &&
-    chains[chainId].nativeAsset === asset
-  ) {
+  if (chainId && _isEthereumChain(chainId) && chains[chainId].nativeAsset === asset) {
     return true;
   }
 
@@ -190,42 +183,27 @@ export const getExplorerTransactionHash = (asset, hash) => {
 export const tokenDetailProviders = {
   ethereum: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(
-        contractAddress,
-        `https://mainnet.infura.io/v3/${buildConfig.infuraApiKey}`
-      );
+      return await fetchTokenDetails(contractAddress, `https://mainnet.infura.io/v3/${buildConfig.infuraApiKey}`);
     },
   },
   polygon: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(
-        contractAddress,
-        'https://polygon-rpc.com'
-      );
+      return await fetchTokenDetails(contractAddress, 'https://polygon-rpc.com');
     },
   },
   rsk: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(
-        contractAddress,
-        buildConfig.rskRpcUrls.mainnet
-      );
+      return await fetchTokenDetails(contractAddress, buildConfig.rskRpcUrls.mainnet);
     },
   },
   bsc: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(
-        contractAddress,
-        'https://bsc-dataseed.binance.org'
-      );
+      return await fetchTokenDetails(contractAddress, 'https://bsc-dataseed.binance.org');
     },
   },
   arbitrum: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(
-        contractAddress,
-        'https://arb1.arbitrum.io/rpc'
-      );
+      return await fetchTokenDetails(contractAddress, 'https://arb1.arbitrum.io/rpc');
     },
   },
   terra: {
@@ -235,10 +213,7 @@ export const tokenDetailProviders = {
   },
   avalanche: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(
-        contractAddress,
-        'https://api.avax.network/ext/bc/C/rpc'
-      );
+      return await fetchTokenDetails(contractAddress, 'https://api.avax.network/ext/bc/C/rpc');
     },
   },
   fuse: {
@@ -250,17 +225,9 @@ export const tokenDetailProviders = {
 
 const fetchTokenDetails = async (contractAddress, rpcUrl) => {
   const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl);
-  const contract = new ethers.Contract(
-    contractAddress.toLowerCase(),
-    tokenABI,
-    provider
-  );
+  const contract = new ethers.Contract(contractAddress.toLowerCase(), tokenABI, provider);
 
-  const [decimals, name, symbol] = await Promise.all([
-    contract.decimals(),
-    contract.name(),
-    contract.symbol(),
-  ]);
+  const [decimals, name, symbol] = await Promise.all([contract.decimals(), contract.name(), contract.symbol()]);
 
   return { decimals, name, symbol };
 };

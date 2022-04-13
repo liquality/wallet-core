@@ -1,9 +1,6 @@
 import { withInterval } from './utils';
 
-async function waitForConfirmations(
-  { getters, dispatch },
-  { transaction, network, walletId }
-) {
+async function waitForConfirmations({ getters, dispatch }, { transaction, network, walletId }) {
   const client = getters.client({
     network,
     walletId,
@@ -30,16 +27,11 @@ async function waitForConfirmations(
   }
 }
 
-export const performNextTransactionAction = async (
-  store,
-  { network, walletId, transaction }
-) => {
+export const performNextTransactionAction = async (store, { network, walletId, transaction }) => {
   let updates;
 
   if (transaction.status === 'WAITING_FOR_CONFIRMATIONS') {
-    updates = await withInterval(async () =>
-      waitForConfirmations(store, { transaction, network, walletId })
-    );
+    updates = await withInterval(async () => waitForConfirmations(store, { transaction, network, walletId }));
   }
 
   return updates;

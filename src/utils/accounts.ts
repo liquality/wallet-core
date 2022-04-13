@@ -5,28 +5,13 @@ import { Account } from '../store/types';
 
 export const accountCreator = (payload): Account => {
   const { network, walletId, account } = payload;
-  const {
-    name,
-    alias,
-    chain,
-    index,
-    addresses,
-    assets,
-    balances,
-    type,
-    color,
-  } = account;
+  const { name, alias, chain, index, addresses, assets, balances, type, color } = account;
 
-  const enabled =
-    account.enabled !== null && account.enabled !== undefined
-      ? account.enabled
-      : true;
+  const enabled = account.enabled !== null && account.enabled !== undefined ? account.enabled : true;
 
   const _addresses = addresses.map((a) => {
     const address = chains[chain].formatAddress(a, network);
-    return address.startsWith('0x')
-      ? address.substring(2, address.length)
-      : address;
+    return address.startsWith('0x') ? address.substring(2, address.length) : address;
   });
 
   const derivationPath = account.derivationPath

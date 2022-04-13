@@ -12,12 +12,10 @@ export const accountsChainsSetEnabled = {
       enabledChains[walletId] = {};
 
       for (const network of Networks) {
-        const updatedAccounts = state.accounts[walletId][network].map(
-          (a: any) => ({
-            ...a,
-            enabled: true,
-          })
-        );
+        const updatedAccounts = state.accounts[walletId][network].map((a: any) => ({
+          ...a,
+          enabled: true,
+        }));
         accounts[walletId][network] = updatedAccounts;
         enabledChains[walletId][network] = [...buildConfig.chains];
       }

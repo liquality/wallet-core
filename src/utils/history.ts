@@ -18,10 +18,7 @@ export function getStatusLabel(item) {
     return SEND_STATUS_LABEL_MAP[item.status] || '';
   }
   if (item.type === 'SWAP') {
-    const swapProvider = store.getters.swapProvider(
-      item.network,
-      item.provider
-    );
+    const swapProvider = store.getters.swapProvider(item.network, item.provider);
     return (
       swapProvider.statuses[item.status].label
         .replace('{from}', item.from)
@@ -36,10 +33,7 @@ export function getStep(item) {
     return SEND_STATUS_STEP_MAP[item.status];
   }
   if (item.type === 'SWAP') {
-    const swapProvider = store.getters.swapProvider(
-      item.network,
-      item.provider
-    );
+    const swapProvider = store.getters.swapProvider(item.network, item.provider);
     return swapProvider.statuses[item.status].step;
   }
 }

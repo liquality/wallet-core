@@ -2,19 +2,12 @@ import BN from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import * as ethers from 'ethers';
 
-import {
-  chains,
-  currencyToUnit,
-  unitToCurrency,
-} from '@liquality/cryptoassets';
+import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import cryptoassets from '../../utils/cryptoassets';
 import { isERC20 } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import { ChainNetworks } from '../../utils/networks';
-import {
-  withInterval,
-  withLock,
-} from '../../store/actions/performNextAction/utils';
+import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { SwapProvider } from '../SwapProvider';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 
@@ -47,15 +40,10 @@ class SovrynSwapProvider extends SwapProvider {
     const toInfo = cryptoassets[to];
 
     // only RSK network swaps
-    if (fromInfo.chain !== 'rsk' || toInfo.chain !== 'rsk' || amount <= 0)
-      return null;
+    if (fromInfo.chain !== 'rsk' || toInfo.chain !== 'rsk' || amount <= 0) return null;
 
-    const fromTokenAddress = (
-      fromInfo.contractAddress || wrappedRbtcAddress[network]
-    ).toLowerCase();
-    const toTokenAddress = (
-      toInfo.contractAddress || wrappedRbtcAddress[network]
-    ).toLowerCase();
+    const fromTokenAddress = (fromInfo.contractAddress || wrappedRbtcAddress[network]).toLowerCase();
+    const toTokenAddress = (toInfo.contractAddress || wrappedRbtcAddress[network]).toLowerCase();
     const fromAmountInUnit = currencyToUnit(fromInfo, new BN(amount)).toFixed();
 
     const ssnContract = new ethers.Contract(
@@ -65,10 +53,7 @@ class SovrynSwapProvider extends SwapProvider {
     );
 
     // generate path
-    const path = await ssnContract.conversionPath(
-      fromTokenAddress,
-      toTokenAddress
-    );
+    const path = await ssnContract.conversionPath(fromTokenAddress, toTokenAddress);
     // calculate rates
     const rate = await ssnContract.rateByPath(path, fromAmountInUnit);
 
@@ -108,25 +93,13 @@ class SovrynSwapProvider extends SwapProvider {
       this._getApi(network, quote.from)
     );
 
-    const fromAddressRaw = await this.getSwapAddress(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
-    const fromAddress = chains[fromInfo.chain].formatAddress(
-      fromAddressRaw,
-      network
-    );
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw, network);
     const spender = (
-      fromInfo.type === 'native' || toInfo.type === 'native'
-        ? this.config.routerAddressRBTC
-        : this.config.routerAddress
+      fromInfo.type === 'native' || toInfo.type === 'native' ? this.config.routerAddressRBTC : this.config.routerAddress
     ).toLowerCase();
     const allowance = await erc20.allowance(fromAddress.toLowerCase(), spender);
-    const inputAmount = ethers.BigNumber.from(
-      new BN(quote.fromAmount).toFixed()
-    );
+    const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
     if (allowance.gte(inputAmount)) {
       return false;
     }
@@ -143,32 +116,17 @@ class SovrynSwapProvider extends SwapProvider {
       this._getApi(network, quote.from)
     );
 
-    const inputAmount = ethers.BigNumber.from(
-      new BN(quote.fromAmount).toFixed()
-    );
+    const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
     const inputAmountHex = inputAmount.toHexString();
     // in case native token is involved -> give allowance to wrapper contract
     const spender = (
-      fromInfo.type === 'native' || toInfo.type === 'native'
-        ? this.config.routerAddressRBTC
-        : this.config.routerAddress
+      fromInfo.type === 'native' || toInfo.type === 'native' ? this.config.routerAddressRBTC : this.config.routerAddress
     ).toLowerCase();
-    const encodedData = erc20.interface.encodeFunctionData('approve', [
-      spender,
-      inputAmountHex,
-    ]);
+    const encodedData = erc20.interface.encodeFunctionData('approve', [spender, inputAmountHex]);
 
     const fromChain = fromInfo.chain;
-    const fromAddressRaw = await this.getSwapAddress(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
-    const fromAddress = chains[fromChain].formatAddress(
-      fromAddressRaw,
-      network
-    );
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw, network);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
@@ -192,12 +150,7 @@ class SovrynSwapProvider extends SwapProvider {
     }
 
     const txData = await this.buildApprovalTx({ network, walletId, quote });
-    const client = this.getClient(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
+    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const approveTx = await client.chain.sendTransaction(txData);
 
     return {
@@ -215,20 +168,14 @@ class SovrynSwapProvider extends SwapProvider {
 
     const api = this._getApi(network, quote.from);
     const conversionPath = quote.path;
-    const toAmountWithSlippage = this._calculateSlippage(
-      quote.toAmount
-    ).toString();
+    const toAmountWithSlippage = this._calculateSlippage(quote.toAmount).toString();
 
     let encodedData;
     let routerAddress: string;
     if (fromInfo.type === 'native' || toInfo.type === 'native') {
       // use routerAddressRBTC when native token is present in the swap
       routerAddress = this.config.routerAddressRBTC.toLowerCase();
-      const wpContract = new ethers.Contract(
-        routerAddress,
-        RBTCWrapperProxyABI,
-        api
-      );
+      const wpContract = new ethers.Contract(routerAddress, RBTCWrapperProxyABI, api);
       encodedData = wpContract.interface.encodeFunctionData('convertByPath', [
         conversionPath,
         quote.fromAmount,
@@ -236,11 +183,7 @@ class SovrynSwapProvider extends SwapProvider {
       ]);
     } else {
       routerAddress = this.config.routerAddress.toLowerCase();
-      const ssnContract = new ethers.Contract(
-        routerAddress,
-        SovrynSwapNetworkABI,
-        api
-      );
+      const ssnContract = new ethers.Contract(routerAddress, SovrynSwapNetworkABI, api);
 
       // ignore affiliate and beneficiary
       encodedData = ssnContract.interface.encodeFunctionData('convertByPath', [
@@ -255,16 +198,8 @@ class SovrynSwapProvider extends SwapProvider {
 
     const value = isERC20(quote.from) ? new BN(0) : new BN(quote.fromAmount);
 
-    const fromAddressRaw = await this.getSwapAddress(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
-    const fromAddress = chains[fromInfo.chain].formatAddress(
-      fromAddressRaw,
-      network
-    );
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw, network);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
@@ -277,17 +212,9 @@ class SovrynSwapProvider extends SwapProvider {
 
   async sendSwap({ network, walletId, quote }) {
     const txData = await this.buildSwapTx({ network, walletId, quote });
-    const client = this.getClient(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
+    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 
-    await this.sendLedgerNotification(
-      quote.fromAccountId,
-      'Signing required to complete the swap.'
-    );
+    await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
     const swapTx = await client.chain.sendTransaction(txData);
 
     return {
@@ -300,8 +227,7 @@ class SovrynSwapProvider extends SwapProvider {
   //  ======== FEES ========
 
   async estimateFees({ network, walletId, asset, txType, quote, feePrices }) {
-    if (txType !== SovrynSwapProvider.fromTxType)
-      throw new Error(`Invalid tx type ${txType}`);
+    if (txType !== SovrynSwapProvider.fromTxType) throw new Error(`Invalid tx type ${txType}`);
 
     const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
     const account = this.getAccount(quote.fromAccountId);
@@ -342,12 +268,7 @@ class SovrynSwapProvider extends SwapProvider {
   // ======== STATE TRANSITIONS ========
 
   async waitForApproveConfirmations({ swap, network, walletId }) {
-    const client = this.getClient(
-      network,
-      walletId,
-      swap.from,
-      swap.fromAccountId
-    );
+    const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
@@ -364,20 +285,13 @@ class SovrynSwapProvider extends SwapProvider {
   }
 
   async waitForSwapConfirmations({ swap, network, walletId }) {
-    const client = this.getClient(
-      network,
-      walletId,
-      swap.from,
-      swap.fromAccountId
-    );
+    const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
-        const { status } = await client.getMethod('getTransactionReceipt')(
-          swap.swapTxHash
-        );
+        const { status } = await client.getMethod('getTransactionReceipt')(swap.swapTxHash);
         this.updateBalances(network, walletId, [swap.from]);
         return {
           endTime: Date.now(),
@@ -395,21 +309,15 @@ class SovrynSwapProvider extends SwapProvider {
 
     switch (swap.status) {
       case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
-        updates = await withInterval(async () =>
-          this.waitForApproveConfirmations({ swap, network, walletId })
-        );
+        updates = await withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
         break;
       case 'APPROVE_CONFIRMED':
-        updates = await withLock(
-          store,
-          { item: swap, network, walletId, asset: swap.from },
-          async () => this.sendSwap({ quote: swap, network, walletId })
+        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+          this.sendSwap({ quote: swap, network, walletId })
         );
         break;
       case 'WAITING_FOR_SWAP_CONFIRMATIONS':
-        updates = await withInterval(async () =>
-          this.waitForSwapConfirmations({ swap, network, walletId })
-        );
+        updates = await withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
         break;
     }
 
@@ -424,9 +332,7 @@ class SovrynSwapProvider extends SwapProvider {
     if (chainId in this._apiCache) {
       return this._apiCache[chainId];
     } else {
-      const api = new ethers.providers.StaticJsonRpcProvider(
-        this.config.rpcURL
-      );
+      const api = new ethers.providers.StaticJsonRpcProvider(this.config.rpcURL);
       this._apiCache[chainId] = api;
       return api;
     }
@@ -475,9 +381,7 @@ class SovrynSwapProvider extends SwapProvider {
       filterStatus: 'COMPLETED',
       notification(swap) {
         return {
-          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${
-            swap.to
-          } ready to use`,
+          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
         };
       },
     },

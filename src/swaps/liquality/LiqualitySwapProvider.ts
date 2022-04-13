@@ -2,26 +2,17 @@ import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
 import { SwapProvider } from '../SwapProvider';
-import {
-  chains,
-  unitToCurrency,
-  currencyToUnit,
-} from '@liquality/cryptoassets';
+import { chains, unitToCurrency, currencyToUnit } from '@liquality/cryptoassets';
 import { sha256 } from '@liquality/crypto';
 import pkg from '../../../package.json';
-import {
-  withLock,
-  withInterval,
-} from '../../store/actions/performNextAction/utils';
+import { withLock, withInterval } from '../../store/actions/performNextAction/utils';
 import { timestamp, wait } from '../../store/utils';
 import { prettyBalance } from '../../utils/coinFormatter';
 import { isERC20 } from '../../utils/asset';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
 
-export const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies[
-  '@liquality/client'
-]
+export const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies['@liquality/client']
   .replace('^', '')
   .replace('~', '')})`;
 
@@ -65,12 +56,8 @@ class LiqualitySwapProvider extends SwapProvider {
       .map((market) => ({
         from: market.from,
         to: market.to,
-        min: new BN(
-          unitToCurrency(cryptoassets[market.from], market.min)
-        ).toFixed(),
-        max: new BN(
-          unitToCurrency(cryptoassets[market.from], market.max)
-        ).toFixed(),
+        min: new BN(unitToCurrency(cryptoassets[market.from], market.min)).toFixed(),
+        max: new BN(unitToCurrency(cryptoassets[market.from], market.max)).toFixed(),
         rate: new BN(market.rate).toFixed(),
         provider: this.config.providerId,
       }));
@@ -93,10 +80,7 @@ class LiqualitySwapProvider extends SwapProvider {
     if (!market) return null;
 
     const fromAmount = currencyToUnit(cryptoassets[from], amount);
-    const toAmount = currencyToUnit(
-      cryptoassets[to],
-      new BN(amount).times(new BN(market.rate))
-    );
+    const toAmount = currencyToUnit(cryptoassets[to], new BN(amount).times(new BN(market.rate)));
 
     return {
       from,
@@ -125,25 +109,10 @@ class LiqualitySwapProvider extends SwapProvider {
       throw new Error('The quote is expired.');
     }
 
-    quote.fromAddress = await this.getSwapAddress(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
-    quote.toAddress = await this.getSwapAddress(
-      network,
-      walletId,
-      quote.to,
-      quote.toAccountId
-    );
+    quote.fromAddress = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+    quote.toAddress = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
 
-    const fromClient = this.getClient(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
+    const fromClient = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 
     const message = [
       'Creating a swap with following terms:',
@@ -181,47 +150,22 @@ class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  async estimateFees({
-    network,
-    walletId,
-    asset,
-    txType,
-    quote,
-    feePrices,
-    max,
-  }) {
-    if (
-      txType === LiqualitySwapProvider.txTypes.SWAP_INITIATION &&
-      asset === 'BTC'
-    ) {
-      const client = this.getClient(
-        network,
-        walletId,
-        asset,
-        quote.fromAccountId
-      );
+  async estimateFees({ network, walletId, asset, txType, quote, feePrices, max }) {
+    if (txType === LiqualitySwapProvider.txTypes.SWAP_INITIATION && asset === 'BTC') {
+      const client = this.getClient(network, walletId, asset, quote.fromAccountId);
       const value = max ? undefined : new BN(quote.fromAmount);
       const txs = feePrices.map((fee) => ({ to: '', value, fee }));
       const totalFees = await client.getMethod('getTotalFees')(txs, max);
-      return mapValues(totalFees, (f) =>
-        unitToCurrency(cryptoassets[asset], f)
-      );
+      return mapValues(totalFees, (f) => unitToCurrency(cryptoassets[asset], f));
     }
 
-    if (
-      txType === LiqualitySwapProvider.txTypes.SWAP_INITIATION &&
-      asset === 'NEAR'
-    ) {
+    if (txType === LiqualitySwapProvider.txTypes.SWAP_INITIATION && asset === 'NEAR') {
       const fees = {};
       // default storage fee recommended by NEAR dev team
       // It leaves 0.02$ dust in the wallet on max value
       const storageFee = new BN(0.00125);
       for (const feePrice of feePrices) {
-        fees[feePrice] = getTxFee(
-          LiqualitySwapProvider.feeUnits[txType],
-          asset,
-          feePrice
-        ).plus(storageFee);
+        fees[feePrice] = getTxFee(LiqualitySwapProvider.feeUnits[txType], asset, feePrice).plus(storageFee);
       }
       return fees;
     }
@@ -229,11 +173,7 @@ class LiqualitySwapProvider extends SwapProvider {
     if (txType in LiqualitySwapProvider.feeUnits) {
       const fees = {};
       for (const feePrice of feePrices) {
-        fees[feePrice] = getTxFee(
-          LiqualitySwapProvider.feeUnits[txType],
-          asset,
-          feePrice
-        );
+        fees[feePrice] = getTxFee(LiqualitySwapProvider.feeUnits[txType], asset, feePrice);
       }
 
       return fees;
@@ -324,17 +264,9 @@ class LiqualitySwapProvider extends SwapProvider {
 
     if (!isERC20(swap.from)) return { status: 'FUNDED' }; // Skip. Only ERC20 swaps need funding
 
-    const fromClient = this.getClient(
-      network,
-      walletId,
-      swap.from,
-      swap.fromAccountId
-    );
+    const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
-    await this.sendLedgerNotification(
-      swap.fromAccountId,
-      'Signing required to fund the swap.'
-    );
+    await this.sendLedgerNotification(swap.fromAccountId, 'Signing required to fund the swap.');
 
     const fundTx = await fromClient.swap.fundSwap(
       {
@@ -379,12 +311,7 @@ class LiqualitySwapProvider extends SwapProvider {
     });
     if (counterPartyInitiation) return counterPartyInitiation;
 
-    const fromClient = this.getClient(
-      network,
-      walletId,
-      swap.from,
-      swap.fromAccountId
-    );
+    const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
       const tx = await fromClient.chain.getTransactionByHash(swap.fromFundHash);
@@ -401,12 +328,7 @@ class LiqualitySwapProvider extends SwapProvider {
   }
 
   async findCounterPartyInitiation({ swap, network, walletId }) {
-    const toClient = this.getClient(
-      network,
-      walletId,
-      swap.to,
-      swap.toAccountId
-    );
+    const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
 
     try {
       const tx = await toClient.swap.findInitiateSwapTransaction({
@@ -444,8 +366,7 @@ class LiqualitySwapProvider extends SwapProvider {
         );
         const fundingConfirmed = fundingTransaction
           ? fundingTransaction.confirmations &&
-            fundingTransaction.confirmations >=
-              chains[cryptoassets[swap.to].chain].safeConfirmations
+            fundingTransaction.confirmations >= chains[cryptoassets[swap.to].chain].safeConfirmations
           : true;
 
         if (isVerified && fundingConfirmed) {
@@ -456,12 +377,7 @@ class LiqualitySwapProvider extends SwapProvider {
         }
       }
     } catch (e) {
-      if (
-        ['BlockNotFoundError', 'PendingTxError', 'TxNotFoundError'].includes(
-          e.name
-        )
-      )
-        console.warn(e);
+      if (['BlockNotFoundError', 'PendingTxError', 'TxNotFoundError'].includes(e.name)) console.warn(e);
       else throw e;
     }
 
@@ -478,20 +394,11 @@ class LiqualitySwapProvider extends SwapProvider {
   }
 
   async confirmCounterPartyInitiation({ swap, network, walletId }) {
-    const toClient = this.getClient(
-      network,
-      walletId,
-      swap.to,
-      swap.toAccountId
-    );
+    const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
 
     const tx = await toClient.chain.getTransactionByHash(swap.toFundHash);
 
-    if (
-      tx &&
-      tx.confirmations &&
-      tx.confirmations >= chains[cryptoassets[swap.to].chain].safeConfirmations
-    ) {
+    if (tx && tx.confirmations && tx.confirmations >= chains[cryptoassets[swap.to].chain].safeConfirmations) {
       return {
         status: 'READY_TO_CLAIM',
       };
@@ -518,17 +425,9 @@ class LiqualitySwapProvider extends SwapProvider {
       return expirationUpdates;
     }
 
-    const toClient = this.getClient(
-      network,
-      walletId,
-      swap.to,
-      swap.toAccountId
-    );
+    const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
 
-    await this.sendLedgerNotification(
-      swap.toAccountId,
-      'Signing required to claim the swap.'
-    );
+    await this.sendLedgerNotification(swap.toAccountId, 'Signing required to claim the swap.');
 
     const toClaimTx = await toClient.swap.claimSwap(
       {
@@ -551,12 +450,7 @@ class LiqualitySwapProvider extends SwapProvider {
   }
 
   async waitForClaimConfirmations({ swap, network, walletId }) {
-    const toClient = this.getClient(
-      network,
-      walletId,
-      swap.to,
-      swap.toAccountId
-    );
+    const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
 
     try {
       const tx = await toClient.chain.getTransactionByHash(swap.toClaimHash);
@@ -592,12 +486,7 @@ class LiqualitySwapProvider extends SwapProvider {
   }
 
   async waitForRefundConfirmations({ swap, network, walletId }) {
-    const fromClient = this.getClient(
-      network,
-      walletId,
-      swap.from,
-      swap.fromAccountId
-    );
+    const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
     try {
       const tx = await fromClient.chain.getTransactionByHash(swap.refundHash);
 
@@ -614,16 +503,8 @@ class LiqualitySwapProvider extends SwapProvider {
   }
 
   async refundSwap({ swap, network, walletId }) {
-    const fromClient = this.getClient(
-      network,
-      walletId,
-      swap.from,
-      swap.fromAccountId
-    );
-    await this.sendLedgerNotification(
-      swap.fromAccountId,
-      'Signing required to refund the swap.'
-    );
+    const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
+    await this.sendLedgerNotification(swap.fromAccountId, 'Signing required to refund the swap.');
     const refundTx = await fromClient.swap.refundSwap(
       {
         value: new BN(swap.fromAmount),
@@ -651,63 +532,45 @@ class LiqualitySwapProvider extends SwapProvider {
         break;
 
       case 'INITIATION_REPORTED':
-        updates = await withInterval(async () =>
-          this.confirmInitiation({ swap, network, walletId })
-        );
+        updates = await withInterval(async () => this.confirmInitiation({ swap, network, walletId }));
         break;
 
       case 'INITIATION_CONFIRMED':
-        updates = await withLock(
-          store,
-          { item: swap, network, walletId, asset: swap.from },
-          async () => this.fundSwap({ swap, network, walletId })
+        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+          this.fundSwap({ swap, network, walletId })
         );
         break;
 
       case 'FUNDED':
-        updates = await withInterval(async () =>
-          this.findCounterPartyInitiation({ swap, network, walletId })
-        );
+        updates = await withInterval(async () => this.findCounterPartyInitiation({ swap, network, walletId }));
         break;
 
       case 'CONFIRM_COUNTER_PARTY_INITIATION':
-        updates = await withInterval(async () =>
-          this.confirmCounterPartyInitiation({ swap, network, walletId })
-        );
+        updates = await withInterval(async () => this.confirmCounterPartyInitiation({ swap, network, walletId }));
         break;
 
       case 'READY_TO_CLAIM':
-        updates = await withLock(
-          store,
-          { item: swap, network, walletId, asset: swap.to },
-          async () => this.claimSwap({ swap, network, walletId })
+        updates = await withLock(store, { item: swap, network, walletId, asset: swap.to }, async () =>
+          this.claimSwap({ swap, network, walletId })
         );
         break;
 
       case 'WAITING_FOR_CLAIM_CONFIRMATIONS':
-        updates = await withInterval(async () =>
-          this.waitForClaimConfirmations({ swap, network, walletId })
-        );
+        updates = await withInterval(async () => this.waitForClaimConfirmations({ swap, network, walletId }));
         break;
 
       case 'WAITING_FOR_REFUND':
-        updates = await withInterval(async () =>
-          this.waitForRefund({ swap, network, walletId })
-        );
+        updates = await withInterval(async () => this.waitForRefund({ swap, network, walletId }));
         break;
 
       case 'GET_REFUND':
-        updates = await withLock(
-          store,
-          { item: swap, network, walletId, asset: swap.from },
-          async () => this.refundSwap({ swap, network, walletId })
+        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+          this.refundSwap({ swap, network, walletId })
         );
         break;
 
       case 'WAITING_FOR_REFUND_CONFIRMATIONS':
-        updates = await withInterval(async () =>
-          this.waitForRefundConfirmations({ swap, network, walletId })
-        );
+        updates = await withInterval(async () => this.waitForRefundConfirmations({ swap, network, walletId }));
         break;
     }
 
@@ -782,10 +645,7 @@ class LiqualitySwapProvider extends SwapProvider {
       filterStatus: 'PENDING',
       notification(swap) {
         return {
-          message: `Counterparty sent ${prettyBalance(
-            swap.toAmount,
-            swap.to
-          )} ${swap.to} to escrow`,
+          message: `Counterparty sent ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} to escrow`,
         };
       },
     },
@@ -827,10 +687,7 @@ class LiqualitySwapProvider extends SwapProvider {
       filterStatus: 'REFUNDED',
       notification(swap) {
         return {
-          message: `Swap refunded, ${prettyBalance(
-            swap.fromAmount,
-            swap.from
-          )} ${swap.from} returned`,
+          message: `Swap refunded, ${prettyBalance(swap.fromAmount, swap.from)} ${swap.from} returned`,
         };
       },
     },
@@ -840,9 +697,7 @@ class LiqualitySwapProvider extends SwapProvider {
       filterStatus: 'COMPLETED',
       notification(swap) {
         return {
-          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${
-            swap.to
-          } ready to use`,
+          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
         };
       },
     },
@@ -856,11 +711,7 @@ class LiqualitySwapProvider extends SwapProvider {
   static fromTxType = LiqualitySwapProvider.txTypes.SWAP_INITIATION;
   static toTxType = LiqualitySwapProvider.txTypes.SWAP_CLAIM;
 
-  static timelineDiagramSteps = [
-    'INITIATION',
-    'AGENT_INITIATION',
-    'CLAIM_OR_REFUND',
-  ];
+  static timelineDiagramSteps = ['INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
 
   static totalSteps = 4;
 }

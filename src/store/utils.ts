@@ -1,5 +1,5 @@
 // @ts-nocheck
-import EventEmitter from 'events'
+import EventEmitter from 'events';
 import { random, findKey, mapKeys, mapValues } from 'lodash';
 import axios from 'axios';
 import cryptoassets from '../utils/cryptoassets';
@@ -12,10 +12,9 @@ import buildConfig from '../build.config';
 
 export const CHAIN_LOCK = {};
 
-export const emitter = new EventEmitter()
+export const emitter = new EventEmitter();
 
-const wait = (millis) =>
-  new Promise((resolve) => setTimeout(() => resolve(), millis));
+const wait = (millis) => new Promise((resolve) => setTimeout(() => resolve(), millis));
 
 export { wait };
 
@@ -52,19 +51,13 @@ const COIN_GECKO_API = 'https://api.coingecko.com/api/v3';
 
 const getRskERC20Assets = () => {
   const erc20 = Object.keys(cryptoassets).filter(
-    (asset) =>
-      cryptoassets[asset].chain === 'rsk' &&
-      cryptoassets[asset].type === 'erc20'
+    (asset) => cryptoassets[asset].chain === 'rsk' && cryptoassets[asset].type === 'erc20'
   );
 
   return erc20.map((erc) => cryptoassets[erc]);
 };
 
-export const shouldApplyRskLegacyDerivation = async (
-  accounts,
-  mnemonic?,
-  indexPath = 0
-) => {
+export const shouldApplyRskLegacyDerivation = async (accounts, mnemonic?, indexPath = 0) => {
   const rskERC20Assets = getRskERC20Assets();
   const walletIds = Object.keys(accounts);
 
@@ -80,9 +73,7 @@ export const shouldApplyRskLegacyDerivation = async (
     });
   });
 
-  const client = new Client().addProvider(
-    new EthereumRpcProvider({ uri: buildConfig.rskRpcUrls.mainnet })
-  );
+  const client = new Client().addProvider(new EthereumRpcProvider({ uri: buildConfig.rskRpcUrls.mainnet }));
 
   if (mnemonic) {
     client.addProvider(
@@ -100,18 +91,13 @@ export const shouldApplyRskLegacyDerivation = async (
 
   const erc20BalancesPromises = rskERC20Assets.map((asset) => {
     const client = new Client()
-      .addProvider(
-        new EthereumRpcProvider({ uri: 'https://public-node.rsk.co' })
-      )
+      .addProvider(new EthereumRpcProvider({ uri: 'https://public-node.rsk.co' }))
       .addProvider(new EthereumErc20Provider(asset.contractAddress));
 
     return client.chain.getBalance(addresses);
   });
 
-  const balances = await Promise.all([
-    client.chain.getBalance(addresses),
-    ...erc20BalancesPromises,
-  ]);
+  const balances = await Promise.all([client.chain.getBalance(addresses), ...erc20BalancesPromises]);
 
   return balances.some((amount) => amount.isGreaterThan(0));
 };
@@ -121,25 +107,16 @@ export async function getPrices(baseCurrencies, toCurrency) {
     .filter((currency) => cryptoassets[currency]?.coinGeckoId)
     .map((currency) => cryptoassets[currency].coinGeckoId);
   const { data } = await axios.get(
-    `${COIN_GECKO_API}/simple/price?ids=${coindIds.join(
-      ','
-    )}&vs_currencies=${toCurrency}`
+    `${COIN_GECKO_API}/simple/price?ids=${coindIds.join(',')}&vs_currencies=${toCurrency}`
   );
-  let prices = mapKeys(data, (v, coinGeckoId) =>
-    findKey(cryptoassets, (asset) => asset.coinGeckoId === coinGeckoId)
-  );
-  prices = mapValues(prices, (rates) =>
-    mapKeys(rates, (v, k) => k.toUpperCase())
-  );
+  let prices = mapKeys(data, (v, coinGeckoId) => findKey(cryptoassets, (asset) => asset.coinGeckoId === coinGeckoId));
+  prices = mapValues(prices, (rates) => mapKeys(rates, (v, k) => k.toUpperCase()));
 
   for (const baseCurrency of baseCurrencies) {
     if (!prices[baseCurrency] && cryptoassets[baseCurrency]?.matchingAsset) {
       prices[baseCurrency] = prices[cryptoassets[baseCurrency]?.matchingAsset];
     }
   }
-  const symbolPrices = mapValues(
-    prices,
-    (rates) => rates[toCurrency.toUpperCase()]
-  );
+  const symbolPrices = mapValues(prices, (rates) => rates[toCurrency.toUpperCase()]);
   return symbolPrices;
 }

@@ -1,1 +1,1 @@
-export * from './getLedgerAccounts'
+export * from './getLedgerAccounts';

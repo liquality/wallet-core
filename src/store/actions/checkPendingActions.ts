@@ -2,10 +2,7 @@ import { Networks } from '../../utils/networks';
 
 const COMPLETED_STATES = ['SUCCESS', 'REFUNDED']; // TODO: Pull this out so it's being used everywhere else (Transaction icons etc.)
 
-export const checkPendingActions = async (
-  { state, dispatch },
-  { walletId }
-) => {
+export const checkPendingActions = async ({ state, dispatch }, { walletId }) => {
   Networks.forEach((network) => {
     const history = state.history[network]?.[walletId];
     if (!history) return;

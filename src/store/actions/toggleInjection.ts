@@ -1,3 +1,3 @@
 export const toggleInjection = ({ commit }) => {
-  commit('TOGGLE_INJECTION')
-}
+  commit('TOGGLE_INJECTION');
+};

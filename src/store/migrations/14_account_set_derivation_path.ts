@@ -24,12 +24,7 @@ export const accountSetDerivationPath = {
         const accounts = state.accounts[walletId][network];
         const updatedAccounts: Account[] = [];
         for (const account of accounts) {
-          const derivationPath = getDerivationPath(
-            account.chain,
-            network,
-            account.index,
-            account.type
-          );
+          const derivationPath = getDerivationPath(account.chain, network, account.index, account.type);
           const updatedAccount = {
             ...account,
             alias: '',
@@ -39,10 +34,7 @@ export const accountSetDerivationPath = {
           };
           updatedAccounts.push(updatedAccount);
 
-          if (
-            account.chain === ChainId.Rootstock &&
-            !account.type.includes('ledger')
-          ) {
+          if (account.chain === ChainId.Rootstock && !account.type.includes('ledger')) {
             // get the legacy rsk derivation path
             const coinType = network === 'mainnet' ? '137' : '37310';
             const chain = chains[ChainId.Rootstock];

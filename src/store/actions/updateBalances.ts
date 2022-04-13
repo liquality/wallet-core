@@ -7,16 +7,10 @@ import { Asset } from '../types';
 
 export const updateBalances = async (
   context,
-  {
-    network,
-    walletId,
-    assets,
-  }: { network: Network; walletId: string; assets: Asset[] }
+  { network, walletId, assets }: { network: Network; walletId: string; assets: Asset[] }
 ) => {
   const { state, commit, getters } = rootActionContext(context);
-  let accounts = state.accounts[walletId]?.[network].filter(
-    (a) => a.assets && a.assets.length > 0 && a.enabled
-  );
+  let accounts = state.accounts[walletId]?.[network].filter((a) => a.assets && a.assets.length > 0 && a.enabled);
 
   if (!accounts) return;
 
@@ -53,10 +47,7 @@ export const updateBalances = async (
           }
 
           try {
-            const balance =
-              addresses.length === 0
-                ? '0'
-                : (await _client.chain.getBalance(addresses)).toString();
+            const balance = addresses.length === 0 ? '0' : (await _client.chain.getBalance(addresses)).toString();
 
             commit.UPDATE_BALANCE({
               network,
@@ -72,14 +63,9 @@ export const updateBalances = async (
           // Commit to the state the addresses
           let updatedAddresses: string[] = [];
           if (account.chain === ChainId.Bitcoin) {
-            const addressExists = addresses.some((a) =>
-              account.addresses.includes(a.address)
-            );
+            const addressExists = addresses.some((a) => account.addresses.includes(a.address));
             if (!addressExists) {
-              updatedAddresses = [
-                ...account.addresses,
-                ...addresses.map((a) => a.address),
-              ];
+              updatedAddresses = [...account.addresses, ...addresses.map((a) => a.address)];
             } else {
               updatedAddresses = [...account.addresses];
             }

@@ -5,17 +5,15 @@ export const rskFishToken = {
   version: 13,
   migrate: async (state: any) => {
     const { activeWalletId, enabledAssets } = state;
-    const mainnetAccounts = state.accounts[activeWalletId].mainnet.map(
-      (account: Account) => {
-        if (account.chain === ChainId.Rootstock) {
-          return {
-            ...account,
-            assets: [...account.assets, 'FISH'],
-          };
-        }
-        return account;
+    const mainnetAccounts = state.accounts[activeWalletId].mainnet.map((account: Account) => {
+      if (account.chain === ChainId.Rootstock) {
+        return {
+          ...account,
+          assets: [...account.assets, 'FISH'],
+        };
       }
-    );
+      return account;
+    });
 
     return {
       ...state,

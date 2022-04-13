@@ -10,9 +10,9 @@ adjustments:
 - Remove direct cyclical dependency by doing dynamic require in cryptoassets
 - Add types to state at types.ts
 - Remove usage of "Object" in getters.js
-- Add setInitialState and commit 
+- Add setInitialState and commit
 - setupWallet function taking options and initialising state, createNotification
-- Move SwapProviderType from  src/utils/swaps.ts into separate module to prevent cyclic dependency
+- Move SwapProviderType from src/utils/swaps.ts into separate module to prevent cyclic dependency
 - Add createBitcoinLedgerProvider and createEthereumLedgerProvider to wallet options and call it from client.
-- Move ledger-bridge-provider/config utils to utils. Remove ledger bridge and provider code. 
+- Move ledger-bridge-provider/config utils to utils. Remove ledger bridge and provider code.
 - Delete `requestOriginAccess.js`, `requestPermission.js` `requestUnlockWallet.js` actions. These should be in client app module.

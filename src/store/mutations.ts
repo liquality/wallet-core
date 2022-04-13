@@ -19,41 +19,22 @@ import {
   WalletId,
 } from './types';
 
-const ensureNetworkWalletTree = (
-  ref: any,
-  network: Network,
-  walletId: WalletId,
-  initialValue: any
-) => {
+const ensureNetworkWalletTree = (ref: any, network: Network, walletId: WalletId, initialValue: any) => {
   if (!ref[network]) Vue.set(ref, network, {});
   if (!ref[network][walletId]) Vue.set(ref[network], walletId, initialValue);
 };
 
-const ensureOriginWalletTree = (
-  ref: any,
-  walletId: WalletId,
-  origin: string,
-  initialValue: any
-) => {
+const ensureOriginWalletTree = (ref: any, walletId: WalletId, origin: string, initialValue: any) => {
   if (!ref[walletId]) Vue.set(ref, walletId, {});
   if (!ref[walletId][origin]) Vue.set(ref[walletId], origin, initialValue);
 };
 
-const ensureAccountsWalletTree = (
-  ref: any,
-  walletId: WalletId,
-  network: Network,
-  initialValue: any
-) => {
+const ensureAccountsWalletTree = (ref: any, walletId: WalletId, network: Network, initialValue: any) => {
   if (!ref[walletId]) Vue.set(ref, walletId, {});
   if (!ref[walletId][network]) Vue.set(ref[walletId], network, initialValue);
 };
 
-const ensureEnableChainsWalletTree = (
-  ref: RootState,
-  walletId: WalletId,
-  network: Network
-) => {
+const ensureEnableChainsWalletTree = (ref: RootState, walletId: WalletId, network: Network) => {
   if (!ref.enabledChains) {
     Vue.set(ref, 'enabledChains', {});
   }
@@ -76,11 +57,7 @@ export default {
   },
   CREATE_WALLET(
     state: RootState,
-    {
-      keySalt,
-      encryptedWallets,
-      wallet,
-    }: { keySalt: string; encryptedWallets: string; wallet: Wallet }
+    { keySalt, encryptedWallets, wallet }: { keySalt: string; encryptedWallets: string; wallet: Wallet }
   ) {
     state.encryptedWallets = encryptedWallets;
     state.keySalt = keySalt;
@@ -95,10 +72,7 @@ export default {
   ACCEPT_TNC(state: RootState) {
     state.termsAcceptedAt = Date.now();
   },
-  CHANGE_ACTIVE_WALLETID(
-    state: RootState,
-    { walletId }: { walletId: WalletId }
-  ) {
+  CHANGE_ACTIVE_WALLETID(state: RootState, { walletId }: { walletId: WalletId }) {
     state.activeWalletId = walletId;
   },
   CHANGE_ACTIVE_NETWORK(state: RootState, { network }: { network: Network }) {
@@ -106,11 +80,7 @@ export default {
   },
   CHANGE_PASSWORD(
     state: RootState,
-    {
-      key,
-      keySalt,
-      encryptedWallets,
-    }: { key: string; keySalt: string; encryptedWallets: string }
+    { key, keySalt, encryptedWallets }: { key: string; keySalt: string; encryptedWallets: string }
   ) {
     state.key = key;
     state.keySalt = keySalt;
@@ -122,25 +92,14 @@ export default {
     state.unlockedAt = 0;
     state.wallets = [];
   },
-  UNLOCK_WALLET(
-    state: RootState,
-    {
-      key,
-      wallets,
-      unlockedAt,
-    }: { key: string; wallets: Wallet[]; unlockedAt: 0 }
-  ) {
+  UNLOCK_WALLET(state: RootState, { key, wallets, unlockedAt }: { key: string; wallets: Wallet[]; unlockedAt: 0 }) {
     state.key = key;
     state.wallets = wallets;
     state.unlockedAt = unlockedAt;
   },
   NEW_SWAP(
     state: RootState,
-    {
-      network,
-      walletId,
-      swap,
-    }: { network: Network; walletId: WalletId; swap: SwapHistoryItem }
+    { network, walletId, swap }: { network: Network; walletId: WalletId; swap: SwapHistoryItem }
   ) {
     ensureNetworkWalletTree(state.history, network, walletId, []);
 
@@ -148,11 +107,7 @@ export default {
   },
   NEW_TRASACTION(
     state: RootState,
-    {
-      network,
-      walletId,
-      transaction,
-    }: { network: Network; walletId: WalletId; transaction: SendHistoryItem }
+    { network, walletId, transaction }: { network: Network; walletId: WalletId; transaction: SendHistoryItem }
   ) {
     ensureNetworkWalletTree(state.history, network, walletId, []);
 
@@ -175,14 +130,7 @@ export default {
     const item = state.history[network]![walletId].find((i) => i.id === id);
     Object.assign(item, updates);
   },
-  REMOVE_ORDER(
-    state: RootState,
-    {
-      network,
-      walletId,
-      id,
-    }: { network: Network; walletId: WalletId; id: string }
-  ) {
+  REMOVE_ORDER(state: RootState, { network, walletId, id }: { network: Network; walletId: WalletId; id: string }) {
     Vue.set(
       state.history[network]!,
       walletId,
@@ -227,12 +175,7 @@ export default {
   },
   UPDATE_FEES(
     state: RootState,
-    {
-      network,
-      walletId,
-      asset,
-      fees,
-    }: { network: Network; walletId: WalletId; asset: Asset; fees: FeeDetails }
+    { network, walletId, asset, fees }: { network: Network; walletId: WalletId; asset: Asset; fees: FeeDetails }
   ) {
     ensureNetworkWalletTree(state.fees, network, walletId, {});
 
@@ -241,16 +184,10 @@ export default {
   UPDATE_FIAT_RATES(state: RootState, { fiatRates }: { fiatRates: FiatRates }) {
     state.fiatRates = Object.assign({}, state.fiatRates, fiatRates);
   },
-  UPDATE_MARKET_DATA(
-    state: RootState,
-    { network, marketData }: { network: Network; marketData: MarketData[] }
-  ) {
+  UPDATE_MARKET_DATA(state: RootState, { network, marketData }: { network: Network; marketData: MarketData[] }) {
     Vue.set(state.marketData, network, marketData);
   },
-  SET_ETHEREUM_INJECTION_CHAIN(
-    state: RootState,
-    { chain }: { chain: ChainId }
-  ) {
+  SET_ETHEREUM_INJECTION_CHAIN(state: RootState, { chain }: { chain: ChainId }) {
     state.injectEthereumChain = chain;
   },
   ENABLE_ETHEREUM_INJECTION(state: RootState) {
@@ -261,30 +198,20 @@ export default {
   },
   ENABLE_ASSETS(
     state: RootState,
-    {
-      network,
-      walletId,
-      assets,
-    }: { network: Network; walletId: WalletId; assets: Asset[] }
+    { network, walletId, assets }: { network: Network; walletId: WalletId; assets: Asset[] }
   ) {
     ensureNetworkWalletTree(state.enabledAssets, network, walletId, []);
     state.enabledAssets[network]![walletId].push(...assets);
   },
   DISABLE_ASSETS(
     state: RootState,
-    {
-      network,
-      walletId,
-      assets,
-    }: { network: Network; walletId: WalletId; assets: Asset[] }
+    { network, walletId, assets }: { network: Network; walletId: WalletId; assets: Asset[] }
   ) {
     ensureNetworkWalletTree(state.enabledAssets, network, walletId, []);
     Vue.set(
       state.enabledAssets[network]!,
       walletId,
-      state.enabledAssets[network]![walletId].filter(
-        (asset) => !assets.includes(asset)
-      )
+      state.enabledAssets[network]![walletId].filter((asset) => !assets.includes(asset))
     );
   },
   DISABLE_ACCOUNT_ASSETS(
@@ -308,9 +235,7 @@ export default {
       if (index >= 0) {
         const _account = accounts[index];
         const { balances } = _account;
-        const balanceAssets = Object.keys(balances).filter((asset) =>
-          assets.includes(asset)
-        );
+        const balanceAssets = Object.keys(balances).filter((asset) => assets.includes(asset));
         for (const asset of balanceAssets) {
           delete balances[asset];
         }
@@ -326,9 +251,7 @@ export default {
     Vue.set(
       state.enabledAssets[network]!,
       walletId,
-      state.enabledAssets[network]![walletId].filter(
-        (asset) => !assets.includes(asset)
-      )
+      state.enabledAssets[network]![walletId].filter((asset) => !assets.includes(asset))
     );
   },
   ENABLE_ACCOUNT_ASSETS(
@@ -353,10 +276,7 @@ export default {
         const _account = accounts[index];
         const updatedAccount = {
           ..._account,
-          assets: [
-            ..._account.assets.filter((asset) => !assets.includes(asset)),
-            ...assets,
-          ],
+          assets: [..._account.assets.filter((asset) => !assets.includes(asset)), ...assets],
         };
 
         Vue.set(state.accounts[walletId]![network], index, updatedAccount);
@@ -365,22 +285,14 @@ export default {
   },
   ADD_CUSTOM_TOKEN(
     state: RootState,
-    {
-      network,
-      walletId,
-      customToken,
-    }: { network: Network; walletId: WalletId; customToken: CustomToken }
+    { network, walletId, customToken }: { network: Network; walletId: WalletId; customToken: CustomToken }
   ) {
     ensureNetworkWalletTree(state.customTokens, network, walletId, []);
     state.customTokens[network]![walletId].push(customToken);
   },
   REMOVE_CUSTOM_TOKEN(
     state: RootState,
-    {
-      network,
-      walletId,
-      customToken,
-    }: { network: Network; walletId: WalletId; customToken: CustomToken }
+    { network, walletId, customToken }: { network: Network; walletId: WalletId; customToken: CustomToken }
   ) {
     ensureNetworkWalletTree(state.customTokens, network, walletId, []);
     const indexOfToken = state.customTokens[network]![walletId].findIndex(
@@ -394,11 +306,7 @@ export default {
   // ACCOUNTS
   CREATE_ACCOUNT(
     state: RootState,
-    {
-      network,
-      walletId,
-      account,
-    }: { network: Network; walletId: WalletId; account: Account }
+    { network, walletId, account }: { network: Network; walletId: WalletId; account: Account }
   ) {
     if (!state.accounts[walletId]) {
       Vue.set(state.accounts, walletId, {
@@ -413,11 +321,7 @@ export default {
   },
   UPDATE_ACCOUNT(
     state: RootState,
-    {
-      network,
-      walletId,
-      account,
-    }: { network: Network; walletId: WalletId; account: Account }
+    { network, walletId, account }: { network: Network; walletId: WalletId; account: Account }
   ) {
     const { id, name, addresses, assets, balances, updatedAt } = account;
     const accounts = state.accounts[walletId]![network];
@@ -439,14 +343,7 @@ export default {
       }
     }
   },
-  REMOVE_ACCOUNT(
-    state: RootState,
-    {
-      walletId,
-      id,
-      network,
-    }: { walletId: WalletId; id: AccountId; network: Network }
-  ) {
+  REMOVE_ACCOUNT(state: RootState, { walletId, id, network }: { walletId: WalletId; id: AccountId; network: Network }) {
     const accounts = state.accounts[walletId]![network];
 
     if (accounts) {
@@ -491,24 +388,11 @@ export default {
   },
   SET_EXTERNAL_CONNECTION_DEFAULT(
     state: RootState,
-    {
-      origin,
-      activeWalletId,
-      accountId,
-    }: { origin: string; activeWalletId: WalletId; accountId: AccountId }
+    { origin, activeWalletId, accountId }: { origin: string; activeWalletId: WalletId; accountId: AccountId }
   ) {
-    ensureOriginWalletTree(
-      state.externalConnections,
-      activeWalletId,
-      origin,
-      {}
-    );
+    ensureOriginWalletTree(state.externalConnections, activeWalletId, origin, {});
 
-    Vue.set(
-      state.externalConnections[activeWalletId][origin],
-      'defaultEthereum',
-      accountId
-    );
+    Vue.set(state.externalConnections[activeWalletId][origin], 'defaultEthereum', accountId);
   },
   ADD_EXTERNAL_CONNECTION(
     state: RootState,
@@ -524,23 +408,12 @@ export default {
       chain: ChainId;
     }
   ) {
-    ensureOriginWalletTree(
-      state.externalConnections,
-      activeWalletId,
-      origin,
-      {}
-    );
+    ensureOriginWalletTree(state.externalConnections, activeWalletId, origin, {});
 
-    const accounts =
-      state.externalConnections[activeWalletId]?.[origin]?.[chain] || [];
-    Vue.set(state.externalConnections[activeWalletId][origin], chain, [
-      ...new Set([accountId, ...accounts]),
-    ]);
+    const accounts = state.externalConnections[activeWalletId]?.[origin]?.[chain] || [];
+    Vue.set(state.externalConnections[activeWalletId][origin], chain, [...new Set([accountId, ...accounts])]);
   },
-  REMOVE_EXTERNAL_CONNECTIONS(
-    state: RootState,
-    { activeWalletId }: { activeWalletId: WalletId }
-  ) {
+  REMOVE_EXTERNAL_CONNECTIONS(state: RootState, { activeWalletId }: { activeWalletId: WalletId }) {
     Vue.set(state.externalConnections, activeWalletId, {});
   },
   SET_ANALYTICS_PREFERENCES(state: RootState, payload: AnalyticsState) {
@@ -556,10 +429,7 @@ export default {
       [name]: experiments && experiments[name] ? !experiments[name] : true,
     };
   },
-  SET_WATS_NEW_MODAL_VERSION(
-    state: RootState,
-    { version }: { version: string }
-  ) {
+  SET_WATS_NEW_MODAL_VERSION(state: RootState, { version }: { version: string }) {
     state.watsNewModalVersion = version;
   },
   TOGGLE_BLOCKCHAIN(
@@ -580,13 +450,9 @@ export default {
 
     const chains = state.enabledChains[walletId]![network];
     if (enable) {
-      Vue.set(state.enabledChains[walletId]!, network, [
-        ...new Set([...chains, chainId]),
-      ]);
+      Vue.set(state.enabledChains[walletId]!, network, [...new Set([...chains, chainId])]);
     } else {
-      Vue.set(state.enabledChains[walletId]!, network, [
-        ...new Set([...chains.filter((c) => c !== chainId)]),
-      ]);
+      Vue.set(state.enabledChains[walletId]!, network, [...new Set([...chains.filter((c) => c !== chainId)])]);
     }
   },
   TOGGLE_ACCOUNT(
@@ -605,9 +471,7 @@ export default {
   ) {
     ensureAccountsWalletTree(state.accounts, walletId, network, []);
 
-    const index = state.accounts[walletId]![network].findIndex(
-      (a) => a.id === accountId
-    );
+    const index = state.accounts[walletId]![network].findIndex((a) => a.id === accountId);
 
     if (index >= 0) {
       const _account = state.accounts[walletId]![network][index];

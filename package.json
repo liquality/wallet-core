@@ -98,6 +98,7 @@
     "build": "tsc -p src/",
     "watch": "tsc -w -p src/",
     "lint": "eslint . --ext .ts",
+    "prettier:fix": "prettier --write .",
     "test": "jest --coverage",
     "test:watch": "jest --watch"
   }

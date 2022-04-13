@@ -3,7 +3,7 @@ import { BitcoinNetwork } from '@liquality/bitcoin-networks';
 import { ChainId } from '@liquality/cryptoassets';
 import { EthereumLedgerProvider } from '@liquality/ethereum-ledger-provider';
 import { EthereumNetwork } from '@liquality/ethereum-networks';
-import { RootState } from './store/types';
+import { Network, RootState } from './store/types';
 
 export interface ParsedCipherText {
   ct: string;
@@ -19,26 +19,22 @@ export interface Notification {
 export interface WalletOptions {
   initialState?: RootState;
   crypto: {
-    pbkdf2(
-      password: string,
-      salt: string,
-      iterations: number,
-      length: number,
-      digest: string
-    ): Promise<string>;
+    pbkdf2(password: string, salt: string, iterations: number, length: number, digest: string): Promise<string>;
     encrypt(value: string, key: string): Promise<any>;
     decrypt(value: any, key: string): Promise<any>;
   };
   createNotification(notification: Notification): void;
   createBitcoinLedgerProvider?(
-    network: BitcoinNetwork,
+    network: Network,
+    bitcoinNetwork: BitcoinNetwork,
     addressType: string,
     baseDerivationPath: string
   ): BitcoinLedgerProvider;
   createEthereumLedgerProvider?(
-    network: EthereumNetwork,
+    network: Network,
+    ethereumNetwork: EthereumNetwork,
     chain: ChainId,
     derivationPath: string,
-    hardfork: string
+    hardfork?: string
   ): EthereumLedgerProvider;
 }

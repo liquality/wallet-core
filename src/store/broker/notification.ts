@@ -6,25 +6,19 @@ const SEND_STATUS_MAP = {
   WAITING_FOR_CONFIRMATIONS(item) {
     return {
       title: `New ${item.from} Transaction`,
-      message: `Sending ${prettyBalance(item.amount, item.from)} ${
-        item.from
-      } to ${item.toAddress}`,
+      message: `Sending ${prettyBalance(item.amount, item.from)} ${item.from} to ${item.toAddress}`,
     };
   },
   Failed(item) {
     return {
       title: `${item.from} Transaction Failed`,
-      message: `Failed to send ${prettyBalance(item.amount, item.from)} ${
-        item.from
-      } to ${item.toAddress}`,
+      message: `Failed to send ${prettyBalance(item.amount, item.from)} ${item.from} to ${item.toAddress}`,
     };
   },
   SUCCESS(item) {
     return {
       title: `${item.from} Transaction Confirmed`,
-      message: `Sent ${prettyBalance(item.amount, item.from)} ${item.from} to ${
-        item.toAddress
-      }`,
+      message: `Sent ${prettyBalance(item.amount, item.from)} ${item.from} to ${item.toAddress}`,
     };
   },
 };

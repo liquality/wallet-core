@@ -6,17 +6,10 @@ const defaultWalletOptions: WalletOptions = {
   crypto: {
     async pbkdf2(password, salt, iterations, length, digest) {
       return new Promise((resolve, reject) => {
-        _pbkdf2.pbkdf2(
-          password,
-          salt,
-          iterations,
-          length,
-          digest,
-          (err, derivedKey) => {
-            if (err) reject(err);
-            else resolve(Buffer.from(derivedKey).toString('hex'));
-          }
-        );
+        _pbkdf2.pbkdf2(password, salt, iterations, length, digest, (err, derivedKey) => {
+          if (err) reject(err);
+          else resolve(Buffer.from(derivedKey).toString('hex'));
+        });
       });
     },
     // @ts-ignore

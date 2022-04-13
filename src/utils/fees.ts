@@ -33,9 +33,7 @@ function getSendFee(asset, feePrice) {
 function getTxFee(units, _asset, _feePrice) {
   const chainId = cryptoassets[_asset].chain;
   const nativeAsset = chains[chainId].nativeAsset;
-  const feePrice = isEthereumChain(_asset)
-    ? new BN(_feePrice).times(1e9)
-    : _feePrice; // ETH fee price is in gwei
+  const feePrice = isEthereumChain(_asset) ? new BN(_feePrice).times(1e9) : _feePrice; // ETH fee price is in gwei
   const asset = isERC20(_asset) ? 'ERC20' : _asset;
   const feeUnits = units[asset];
   const fee = new BN(feeUnits).times(feePrice);

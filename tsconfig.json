@@ -1,4 +1,5 @@
-{/*TODO: switch more rules to true*/
+{
+  /*TODO: switch more rules to true*/
   "compilerOptions": {
     "target": "es6",
     "declaration": true,
@@ -12,7 +13,5 @@
     "resolveJsonModule": true,
     "composite": true
   },
-  "files": [
-    "package.json"
-  ],
+  "files": ["package.json"]
 }

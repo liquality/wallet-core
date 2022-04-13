@@ -2,10 +2,7 @@ import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { chains } from '@liquality/cryptoassets';
 import { AccountType } from '../types';
 
-export const enableAssets = async (
-  { state, commit, dispatch, getters },
-  { network, walletId, assets }
-) => {
+export const enableAssets = async ({ state, commit, dispatch, getters }, { network, walletId, assets }) => {
   commit('ENABLE_ASSETS', { network, walletId, assets });
   const accounts = state.accounts[walletId]?.[network] || [];
 
@@ -17,9 +14,7 @@ export const enableAssets = async (
     .filter((chainId) => !accountsChains.includes(chainId))
     .map(async (chainId) => {
       const chain = chains[chainId];
-      const _assets = assets.filter(
-        (asset) => getters.cryptoassets[asset]?.chain === chainId
-      );
+      const _assets = assets.filter((asset) => getters.cryptoassets[asset]?.chain === chainId);
       const _account = accountCreator({
         walletId,
         network,
@@ -49,9 +44,7 @@ export const enableAssets = async (
 
   accounts.forEach(async (account) => {
     const accountId = account.id;
-    const _assets = assets.filter(
-      (asset) => getters.cryptoassets[asset]?.chain === account.chain
-    );
+    const _assets = assets.filter((asset) => getters.cryptoassets[asset]?.chain === account.chain);
     if (_assets && _assets.length > 0) {
       commit('ENABLE_ACCOUNT_ASSETS', {
         network,

@@ -2,14 +2,7 @@ import BN, { BigNumber } from 'bignumber.js';
 import JSBI from 'jsbi';
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-  Token,
-  WETH9,
-  CurrencyAmount,
-  TradeType,
-  Fraction,
-  Percent,
-} from '@uniswap/sdk-core';
+import { Token, WETH9, CurrencyAmount, TradeType, Fraction, Percent } from '@uniswap/sdk-core';
 import { Route, Trade, Pair } from '@uniswap/v2-sdk';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import UniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json';
@@ -17,19 +10,12 @@ import UniswapV2Router from '@uniswap/v2-periphery/build/IUniswapV2Router02.json
 import * as ethers from 'ethers';
 
 import buildConfig from '../../build.config';
-import {
-  chains,
-  currencyToUnit,
-  unitToCurrency,
-} from '@liquality/cryptoassets';
+import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import cryptoassets from '../../utils/cryptoassets';
 import { isEthereumChain, isERC20 } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import { ChainNetworks } from '../../utils/networks';
-import {
-  withInterval,
-  withLock,
-} from '../../store/actions/performNextAction/utils';
+import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { SwapProvider } from '../SwapProvider';
 
 const SWAP_DEADLINE = 30 * 60; // 30 minutes
@@ -51,10 +37,7 @@ class UniswapSwapProvider extends SwapProvider {
     if (chainId in this._apiCache) {
       return this._apiCache[chainId];
     } else {
-      const api = new ethers.providers.InfuraProvider(
-        chainId,
-        buildConfig.infuraApiKey
-      );
+      const api = new ethers.providers.InfuraProvider(chainId, buildConfig.infuraApiKey);
       this._apiCache[chainId] = api;
       return api;
     }
@@ -66,13 +49,7 @@ class UniswapSwapProvider extends SwapProvider {
     }
     const assetData = cryptoassets[asset];
 
-    return new Token(
-      chainId,
-      assetData.contractAddress!,
-      assetData.decimals,
-      assetData.code,
-      assetData.name
-    );
+    return new Token(chainId, assetData.contractAddress!, assetData.decimals, assetData.code, assetData.name);
   }
 
   getMinimumOutput(outputAmount) {
@@ -82,21 +59,14 @@ class UniswapSwapProvider extends SwapProvider {
       .add(slippageTolerance)
       .invert()
       .multiply(outputAmount.quotient).quotient;
-    return CurrencyAmount.fromRawAmount(
-      outputAmount.currency,
-      slippageAdjustedAmountOut
-    );
+    return CurrencyAmount.fromRawAmount(outputAmount.currency, slippageAdjustedAmountOut);
   }
 
   async getQuote({ network, from, to, amount }) {
     // Uniswap only provides liquidity for ethereum tokens
     if (!isEthereumChain(from) || !isEthereumChain(to)) return null;
     // Only uniswap on ethereum is supported atm
-    if (
-      cryptoassets[from].chain !== 'ethereum' ||
-      cryptoassets[to].chain !== 'ethereum'
-    )
-      return null;
+    if (cryptoassets[from].chain !== 'ethereum' || cryptoassets[to].chain !== 'ethereum') return null;
 
     const chainId = ChainNetworks[cryptoassets[from].chain][network].chainId;
 
@@ -110,12 +80,8 @@ class UniswapSwapProvider extends SwapProvider {
     const reserves = await contract.getReserves();
     const token0Address = await contract.token0();
     const token1Address = await contract.token1();
-    const token0 = [tokenA, tokenB].find(
-      (token) => token.address === token0Address
-    );
-    const token1 = [tokenA, tokenB].find(
-      (token) => token.address === token1Address
-    );
+    const token0 = [tokenA, tokenB].find((token) => token.address === token0Address);
+    const token1 = [tokenA, tokenB].find((token) => token.address === token1Address);
 
     if (!token0 || !token1) {
       throw new Error('UniswapSwapProvider: unable to calculate token0 token1');
@@ -128,16 +94,10 @@ class UniswapSwapProvider extends SwapProvider {
     const route = new Route([pair], tokenA, tokenB);
 
     const fromAmountInUnit = currencyToUnit(cryptoassets[from], new BN(amount));
-    const tokenAmount = CurrencyAmount.fromRawAmount(
-      tokenA,
-      fromAmountInUnit.toFixed()
-    );
+    const tokenAmount = CurrencyAmount.fromRawAmount(tokenA, fromAmountInUnit.toFixed());
     const trade = new Trade(route, tokenAmount, TradeType.EXACT_INPUT);
 
-    const toAmountInUnit = currencyToUnit(
-      cryptoassets[to],
-      new BN(trade.outputAmount.toExact())
-    );
+    const toAmountInUnit = currencyToUnit(cryptoassets[to], new BN(trade.outputAmount.toExact()));
     return {
       from,
       to,
@@ -151,29 +111,12 @@ class UniswapSwapProvider extends SwapProvider {
 
     const fromChain = cryptoassets[quote.from].chain;
     const api = this.getApi(network, quote.from);
-    const erc20 = new ethers.Contract(
-      cryptoassets[quote.from].contractAddress!,
-      ERC20.abi,
-      api
-    );
+    const erc20 = new ethers.Contract(cryptoassets[quote.from].contractAddress!, ERC20.abi, api);
 
-    const fromAddressRaw = await this.getSwapAddress(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
-    const fromAddress = chains[fromChain].formatAddress(
-      fromAddressRaw,
-      network
-    );
-    const allowance = await erc20.allowance(
-      fromAddress,
-      this.config.routerAddress
-    );
-    const inputAmount = ethers.BigNumber.from(
-      new BN(quote.fromAmount).toFixed()
-    );
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw, network);
+    const allowance = await erc20.allowance(fromAddress, this.config.routerAddress);
+    const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
     if (allowance.gte(inputAmount)) {
       return false;
     }
@@ -183,32 +126,15 @@ class UniswapSwapProvider extends SwapProvider {
 
   async buildApprovalTx({ network, walletId, quote }) {
     const api = this.getApi(network, quote.from);
-    const erc20 = new ethers.Contract(
-      cryptoassets[quote.from].contractAddress!,
-      ERC20.abi,
-      api
-    );
+    const erc20 = new ethers.Contract(cryptoassets[quote.from].contractAddress!, ERC20.abi, api);
 
-    const inputAmount = ethers.BigNumber.from(
-      new BN(quote.fromAmount).toFixed()
-    );
+    const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
     const inputAmountHex = inputAmount.toHexString();
-    const encodedData = erc20.interface.encodeFunctionData('approve', [
-      this.config.routerAddress,
-      inputAmountHex,
-    ]);
+    const encodedData = erc20.interface.encodeFunctionData('approve', [this.config.routerAddress, inputAmountHex]);
 
     const fromChain = cryptoassets[quote.from].chain;
-    const fromAddressRaw = await this.getSwapAddress(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
-    const fromAddress = chains[fromChain].formatAddress(
-      fromAddressRaw,
-      network
-    );
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw, network);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
@@ -233,12 +159,7 @@ class UniswapSwapProvider extends SwapProvider {
 
     const txData = await this.buildApprovalTx({ network, walletId, quote });
 
-    const client = this.getClient(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
+    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const approveTx = await client.chain.sendTransaction(txData);
 
     return {
@@ -255,54 +176,28 @@ class UniswapSwapProvider extends SwapProvider {
     const fromToken = this.getUniswapToken(chainId, quote.from);
     const toToken = this.getUniswapToken(chainId, quote.to);
 
-    const outputAmount = CurrencyAmount.fromRawAmount(
-      toToken,
-      new BN(quote.toAmount).toFixed()
-    );
+    const outputAmount = CurrencyAmount.fromRawAmount(toToken, new BN(quote.toAmount).toFixed());
     const minimumOutput = this.getMinimumOutput(outputAmount);
 
-    const client = this.getClient(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
+    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const blockHeight = await client.chain.getBlockHeight();
     const currentBlock = await client.chain.getBlockByNumber(blockHeight);
 
     const path = [fromToken.address, toToken.address];
     const deadline = currentBlock.timestamp + SWAP_DEADLINE;
-    const minimumOutputInUnit = currencyToUnit(
-      cryptoassets[quote.to],
-      new BN(minimumOutput.toExact())
-    );
-    const inputAmountHex = ethers.BigNumber.from(
-      new BN(quote.fromAmount).toFixed()
-    ).toHexString();
-    const outputAmountHex = ethers.BigNumber.from(
-      minimumOutputInUnit.toFixed()
-    ).toHexString();
+    const minimumOutputInUnit = currencyToUnit(cryptoassets[quote.to], new BN(minimumOutput.toExact()));
+    const inputAmountHex = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed()).toHexString();
+    const outputAmountHex = ethers.BigNumber.from(minimumOutputInUnit.toFixed()).toHexString();
 
-    const toAddressRaw = await this.getSwapAddress(
-      network,
-      walletId,
-      quote.to,
-      quote.toAccountId
-    );
+    const toAddressRaw = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
     const toAddress = chains[toChain].formatAddress(toAddressRaw, network);
 
     const api = this.getApi(network, quote.to);
-    const uniswap = new ethers.Contract(
-      this.config.routerAddress,
-      UniswapV2Router.abi,
-      api
-    );
+    const uniswap = new ethers.Contract(this.config.routerAddress, UniswapV2Router.abi, api);
 
     let encodedData;
     if (isERC20(quote.from)) {
-      const swapTokensMethod = isERC20(quote.to)
-        ? 'swapExactTokensForTokens'
-        : 'swapExactTokensForETH';
+      const swapTokensMethod = isERC20(quote.to) ? 'swapExactTokensForTokens' : 'swapExactTokensForETH';
       encodedData = uniswap.interface.encodeFunctionData(swapTokensMethod, [
         inputAmountHex,
         outputAmountHex,
@@ -311,27 +206,19 @@ class UniswapSwapProvider extends SwapProvider {
         deadline,
       ]);
     } else {
-      encodedData = uniswap.interface.encodeFunctionData(
-        'swapExactETHForTokens',
-        [outputAmountHex, path, toAddress, deadline]
-      );
+      encodedData = uniswap.interface.encodeFunctionData('swapExactETHForTokens', [
+        outputAmountHex,
+        path,
+        toAddress,
+        deadline,
+      ]);
     }
 
-    const value = isERC20(quote.from)
-      ? new BigNumber(0)
-      : new BN(quote.fromAmount);
+    const value = isERC20(quote.from) ? new BigNumber(0) : new BN(quote.fromAmount);
 
     const fromChain = cryptoassets[quote.from].chain;
-    const fromAddressRaw = await this.getSwapAddress(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
-    const fromAddress = chains[fromChain].formatAddress(
-      fromAddressRaw,
-      network
-    );
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw, network);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
@@ -344,17 +231,9 @@ class UniswapSwapProvider extends SwapProvider {
 
   async sendSwap({ network, walletId, quote }) {
     const txData = await this.buildSwapTx({ network, walletId, quote });
-    const client = this.getClient(
-      network,
-      walletId,
-      quote.from,
-      quote.fromAccountId
-    );
+    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 
-    await this.sendLedgerNotification(
-      quote.fromAccountId,
-      'Signing required to complete the swap.'
-    );
+    await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
     const swapTx = await client.chain.sendTransaction(txData);
 
     return {
@@ -379,8 +258,7 @@ class UniswapSwapProvider extends SwapProvider {
   }
 
   async estimateFees({ network, walletId, asset, txType, quote, feePrices }) {
-    if (txType !== UniswapSwapProvider.fromTxType)
-      throw new Error(`Invalid tx type ${txType}`);
+    if (txType !== UniswapSwapProvider.fromTxType) throw new Error(`Invalid tx type ${txType}`);
 
     const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
     const account = this.getAccount(quote.fromAccountId);
@@ -422,12 +300,7 @@ class UniswapSwapProvider extends SwapProvider {
   }
 
   async waitForApproveConfirmations({ swap, network, walletId }) {
-    const client = this.getClient(
-      network,
-      walletId,
-      swap.from,
-      swap.fromAccountId
-    );
+    const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
@@ -444,20 +317,13 @@ class UniswapSwapProvider extends SwapProvider {
   }
 
   async waitForSwapConfirmations({ swap, network, walletId }) {
-    const client = this.getClient(
-      network,
-      walletId,
-      swap.from,
-      swap.fromAccountId
-    );
+    const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
-        const { status } = await client.getMethod('getTransactionReceipt')(
-          swap.swapTxHash
-        );
+        const { status } = await client.getMethod('getTransactionReceipt')(swap.swapTxHash);
         this.updateBalances(network, walletId, [swap.from]);
         return {
           endTime: Date.now(),
@@ -475,21 +341,15 @@ class UniswapSwapProvider extends SwapProvider {
 
     switch (swap.status) {
       case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
-        updates = await withInterval(async () =>
-          this.waitForApproveConfirmations({ swap, network, walletId })
-        );
+        updates = await withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
         break;
       case 'APPROVE_CONFIRMED':
-        updates = await withLock(
-          store,
-          { item: swap, network, walletId, asset: swap.from },
-          async () => this.sendSwap({ quote: swap, network, walletId })
+        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+          this.sendSwap({ quote: swap, network, walletId })
         );
         break;
       case 'WAITING_FOR_SWAP_CONFIRMATIONS':
-        updates = await withInterval(async () =>
-          this.waitForSwapConfirmations({ swap, network, walletId })
-        );
+        updates = await withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
         break;
     }
 
@@ -532,9 +392,7 @@ class UniswapSwapProvider extends SwapProvider {
       filterStatus: 'COMPLETED',
       notification(swap) {
         return {
-          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${
-            swap.to
-          } ready to use`,
+          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
         };
       },
     },

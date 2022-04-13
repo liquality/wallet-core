@@ -4,9 +4,7 @@ export const unlockWallet = async ({ commit, state }, { key }) => {
   const wallets = await decrypt(state.encryptedWallets, key, state.keySalt);
 
   if (!wallets) {
-    throw new Error(
-      'Try Again. Enter the right password (it has 8 or more characters).'
-    );
+    throw new Error('Try Again. Enter the right password (it has 8 or more characters).');
   }
 
   const parsedWallets = JSON.parse(wallets);

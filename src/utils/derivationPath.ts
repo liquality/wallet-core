@@ -14,23 +14,16 @@ const getBitcoinDerivationPath = (accountType, coinType, index) => {
     const { addressType } = option;
     return `${BTC_ADDRESS_TYPE_TO_PREFIX[addressType]}'/${coinType}'/${index}'`;
   } else {
-    return `${
-      BTC_ADDRESS_TYPE_TO_PREFIX[bitcoin.AddressType.BECH32]
-    }'/${coinType}'/${index}'`;
+    return `${BTC_ADDRESS_TYPE_TO_PREFIX[bitcoin.AddressType.BECH32]}'/${coinType}'/${index}'`;
   }
 };
 
-const getEthereumBasedDerivationPath = (coinType, index) =>
-  `m/44'/${coinType}'/${index}'/0/0`;
+const getEthereumBasedDerivationPath = (coinType, index) => `m/44'/${coinType}'/${index}'/0/0`;
 
 const derivationPaths = {
   [ChainId.Bitcoin]: (network, index, accountType = AccountType.Default) => {
     const bitcoinNetwork = ChainNetworks[ChainId.Bitcoin][network];
-    return getBitcoinDerivationPath(
-      accountType,
-      bitcoinNetwork.coinType,
-      index
-    );
+    return getBitcoinDerivationPath(accountType, bitcoinNetwork.coinType, index);
   },
   [ChainId.Ethereum]: (network, index) => {
     const ethNetwork = ChainNetworks[ChainId.Ethereum][network];
@@ -81,11 +74,6 @@ const derivationPaths = {
   },
 };
 
-export const getDerivationPath = (
-  chainId,
-  network,
-  index,
-  accountType: AccountType
-) => {
+export const getDerivationPath = (chainId, network, index, accountType: AccountType) => {
   return derivationPaths[chainId](network, index, accountType);
 };

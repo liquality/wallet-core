@@ -52,7 +52,7 @@ export default {
   },
   rskRpcUrls: {
     testnet: 'https://testnet.sovryn.app/rpc',
-    mainnet: 'https://mainnet.sovryn.app/rpc'
+    mainnet: 'https://mainnet.sovryn.app/rpc',
   },
   swapProviders: {
     testnet: {
@@ -60,9 +60,7 @@ export default {
         name: 'Liquality',
         icon: 'liquality.svg',
         type: SwapProviderType.LIQUALITY,
-        agent:
-          process.env.VUE_APP_AGENT_TESTNET_URL ||
-          'https://testnet-dev-agent.liq-chainhub.net',
+        agent: process.env.VUE_APP_AGENT_TESTNET_URL || 'https://testnet-dev-agent.liq-chainhub.net',
       },
       liqualityBoostNativeToERC20: {
         name: 'Liquality Boost',
@@ -104,9 +102,7 @@ export default {
         name: 'Liquality',
         icon: 'liquality.svg',
         type: SwapProviderType.LIQUALITY,
-        agent:
-          process.env.VUE_APP_AGENT_MAINNET_URL ||
-          'https://mainnet-dev-agent.liq-chainhub.net',
+        agent: process.env.VUE_APP_AGENT_MAINNET_URL || 'https://mainnet-dev-agent.liq-chainhub.net',
       },
       liqualityBoostNativeToERC20: {
         name: 'Liquality Boost',
@@ -173,17 +169,6 @@ export default {
   },
   discordUrl: 'https://discord.gg/Xsqw7PW8wk',
   networks: ['mainnet', 'testnet'],
-  chains: [
-    'bitcoin',
-    'ethereum',
-    'rsk',
-    'bsc',
-    'near',
-    'polygon',
-    'arbitrum',
-    'terra',
-    'fuse',
-    'avalanche',
-  ],
+  chains: ['bitcoin', 'ethereum', 'rsk', 'bsc', 'near', 'polygon', 'arbitrum', 'terra', 'fuse', 'avalanche'],
   supportedBridgeAssets: ['MATIC', 'RBTC', 'AVAX'],
 };

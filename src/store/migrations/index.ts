@@ -11,10 +11,7 @@ import { multiProviderSwaps } from './7_multi_provider_swaps';
 import { removeUseLedgerLive } from './8_remove_use_ledger_live';
 import { injectEthereumAssetChain } from './9_inject_ethereum_asset_chain';
 import { analitycsSettings } from './10_analytics_settings';
-import {
-  rskLegacyDerivationPath,
-  rskLegacyDerivationPathFix,
-} from './11_12_rsk_legacy_derivation_path';
+import { rskLegacyDerivationPath, rskLegacyDerivationPathFix } from './11_12_rsk_legacy_derivation_path';
 import { rskFishToken } from './13_rsk_fish_token';
 import { accountSetDerivationPath } from './14_account_set_derivation_path';
 import { accountsChainsSetEnabled } from './15_accounts_chains_set_enabled';

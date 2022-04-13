@@ -14,22 +14,14 @@ export const enableAvalancheChain = {
       enabledChains[walletId] = {};
 
       for (const network of Networks) {
-        const accountExistsAndProperlyInitialized = state.accounts[walletId][
-          network
-        ].find(
-          (account: any) =>
-            account.chain === ChainId.Avalanche && account.assets?.length > 0
+        const accountExistsAndProperlyInitialized = state.accounts[walletId][network].find(
+          (account: any) => account.chain === ChainId.Avalanche && account.assets?.length > 0
         );
         if (accountExistsAndProperlyInitialized) {
           accounts[walletId][network] = [...state.accounts[walletId][network]];
         } else {
           const chain = chains[ChainId.Avalanche];
-          const derivationPath = getDerivationPath(
-            ChainId.Avalanche,
-            network,
-            0,
-            AccountType.Default
-          );
+          const derivationPath = getDerivationPath(ChainId.Avalanche, network, 0, AccountType.Default);
           const avalancheAccount = accountCreator({
             walletId,
             network,
@@ -46,24 +38,14 @@ export const enableAvalancheChain = {
               color: getNextAccountColor(ChainId.Avalanche, 0),
             },
           });
-          accounts[walletId][network] = [
-            ...state.accounts[walletId][network],
-            avalancheAccount,
-          ];
+          accounts[walletId][network] = [...state.accounts[walletId][network], avalancheAccount];
         }
 
-        const chainEnabled = state.enabledChains[walletId][network].includes(
-          ChainId.Avalanche
-        );
+        const chainEnabled = state.enabledChains[walletId][network].includes(ChainId.Avalanche);
         if (chainEnabled) {
-          enabledChains[walletId][network] = [
-            ...state.enabledChains[walletId][network],
-          ];
+          enabledChains[walletId][network] = [...state.enabledChains[walletId][network]];
         } else {
-          enabledChains[walletId][network] = [
-            ...state.enabledChains[walletId][network],
-            ChainId.Avalanche,
-          ];
+          enabledChains[walletId][network] = [...state.enabledChains[walletId][network], ChainId.Avalanche];
         }
       }
     }
@@ -72,11 +54,8 @@ export const enableAvalancheChain = {
     for (const network of Networks) {
       enabledAssets[network] = {};
       for (const walletId in state.enabledAssets[network]) {
-        enabledAssets[network][walletId] = [
-          ...state.enabledAssets[network][walletId],
-        ];
-        if (!enabledAssets[network][walletId].includes('AVAX'))
-          enabledAssets[network][walletId].push('AVAX');
+        enabledAssets[network][walletId] = [...state.enabledAssets[network][walletId]];
+        if (!enabledAssets[network][walletId].includes('AVAX')) enabledAssets[network][walletId].push('AVAX');
       }
     }
 

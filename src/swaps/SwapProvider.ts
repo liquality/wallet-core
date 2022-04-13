@@ -22,9 +22,7 @@ abstract class SwapProvider {
   config: any;
   constructor(config) {
     if (this.constructor === SwapProvider) {
-      throw new TypeError(
-        'Abstract class "SwapProvider" cannot be instantiated directly.'
-      );
+      throw new TypeError('Abstract class "SwapProvider" cannot be instantiated directly.');
     }
     this.config = config;
   }
@@ -51,12 +49,7 @@ abstract class SwapProvider {
    * @param {{ network, from, to, amount }} options
    */
   // eslint-disable-next-line no-unused-vars
-  abstract getQuote({
-    network,
-    from,
-    to,
-    amount,
-  }: QuoteRequest): Promise<SwapQuote | null>;
+  abstract getQuote({ network, from, to, amount }: QuoteRequest): Promise<SwapQuote | null>;
 
   /**
    * Create a new swap for the given quote
@@ -106,11 +99,7 @@ abstract class SwapProvider {
   // eslint-disable-next-line no-unused-vars
   abstract performNextSwapAction(
     store: OriginalStore,
-    {
-      network,
-      walletId,
-      swap,
-    }: { network: Network; walletId: string; swap: SwapHistoryItem }
+    { network, walletId, swap }: { network: Network; walletId: string; swap: SwapHistoryItem }
   ): Promise<Partial<SwapHistoryItem>>;
 
   /**
@@ -184,16 +173,14 @@ abstract class SwapProvider {
   get fromTxType() {
     // @ts-ignore
     const fromTxType = this.constructor.fromTxType;
-    if (typeof fromTxType === 'undefined')
-      throw new Error('`fromTxType` is not defined. e.g. "INITIATE"');
+    if (typeof fromTxType === 'undefined') throw new Error('`fromTxType` is not defined. e.g. "INITIATE"');
     return fromTxType;
   }
 
   get toTxType() {
     // @ts-ignore
     const toTxType = this.constructor.toTxType;
-    if (typeof toTxType === 'undefined')
-      throw new Error('`toTxType` is not defined. e.g. "REDEEM"');
+    if (typeof toTxType === 'undefined') throw new Error('`toTxType` is not defined. e.g. "REDEEM"');
     return toTxType;
   }
 
@@ -201,17 +188,14 @@ abstract class SwapProvider {
     // @ts-ignore
     const timelineDiagramSteps = this.constructor.timelineDiagramSteps;
     if (typeof timelineDiagramSteps === 'undefined')
-      throw new Error(
-        '`timelineDiagramSteps` is not defined. e.g. ["APPROVE","SWAP"]'
-      );
+      throw new Error('`timelineDiagramSteps` is not defined. e.g. ["APPROVE","SWAP"]');
     return timelineDiagramSteps;
   }
 
   get totalSteps() {
     // @ts-ignore
     const totalSteps = this.constructor.totalSteps;
-    if (typeof totalSteps === 'undefined')
-      throw new Error('`totalSteps` is not defined. e.g. 2');
+    if (typeof totalSteps === 'undefined') throw new Error('`totalSteps` is not defined. e.g. 2');
     return totalSteps;
   }
 }

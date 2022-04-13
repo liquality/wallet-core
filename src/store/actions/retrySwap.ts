@@ -4,13 +4,13 @@ export const retrySwap = async ({ dispatch, commit }, { swap }) => {
     walletId: swap.walletId,
     id: swap.id,
     updates: {
-      error: false
-    }
-  })
+      error: false,
+    },
+  });
 
   return dispatch('performNextAction', {
     network: swap.network,
     walletId: swap.walletId,
-    id: swap.id
-  })
-}
+    id: swap.id,
+  });
+};

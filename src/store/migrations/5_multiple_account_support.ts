@@ -1,10 +1,6 @@
 import buildConfig from '../../build.config';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
-import {
-  chains,
-  assets as cryptoassets,
-  ChainId,
-} from '@liquality/cryptoassets';
+import { chains, assets as cryptoassets, ChainId } from '@liquality/cryptoassets';
 import { AccountType } from '../types';
 
 export const multipleAccountSupport = {
@@ -66,22 +62,18 @@ export const multipleAccountSupport = {
     // Move .network property to .chain
     const customTokens = {
       mainnet: {
-        [walletId]: state.customTokens.mainnet?.[walletId]?.map(
-          (token: any) => {
-            const newCustomToken = { ...token, chain: token.network };
-            delete newCustomToken.network;
-            return newCustomToken;
-          }
-        ),
+        [walletId]: state.customTokens.mainnet?.[walletId]?.map((token: any) => {
+          const newCustomToken = { ...token, chain: token.network };
+          delete newCustomToken.network;
+          return newCustomToken;
+        }),
       },
       testnet: {
-        [walletId]: state.customTokens.testnet?.[walletId]?.map(
-          (token: any) => {
-            const newCustomToken = { ...token, chain: token.network };
-            delete newCustomToken.network;
-            return newCustomToken;
-          }
-        ),
+        [walletId]: state.customTokens.testnet?.[walletId]?.map((token: any) => {
+          const newCustomToken = { ...token, chain: token.network };
+          delete newCustomToken.network;
+          return newCustomToken;
+        }),
       },
     };
 
@@ -89,16 +81,10 @@ export const multipleAccountSupport = {
       return (
         state.history[network]?.[walletId]
           // Remove defunct swap statuses
-          ?.filter(
-            (item: any) => !['QUOTE', 'SECRET_READY'].includes(item.status)
-          )
+          ?.filter((item: any) => !['QUOTE', 'SECRET_READY'].includes(item.status))
           // INITIATION statuses should be moved to FUNDED to prevent double funding
           .map((item: any) =>
-            ['INITIATION_REPORTED', 'INITIATION_CONFIRMED'].includes(
-              item.status
-            )
-              ? { ...item, status: 'FUNDED' }
-              : item
+            ['INITIATION_REPORTED', 'INITIATION_CONFIRMED'].includes(item.status) ? { ...item, status: 'FUNDED' } : item
           )
           // Account ids should be assigned to swaps
           .map((item: any) => {
@@ -106,12 +92,8 @@ export const multipleAccountSupport = {
 
             const fromChain = cryptoassets[item.from].chain;
             const toChain = cryptoassets[item.to].chain;
-            const fromAccountId = accounts[walletId][network].find(
-              (account: any) => account.chain === fromChain
-            ).id;
-            const toAccountId = accounts[walletId][network].find(
-              (account: any) => account.chain === toChain
-            ).id;
+            const fromAccountId = accounts[walletId][network].find((account: any) => account.chain === fromChain).id;
+            const toAccountId = accounts[walletId][network].find((account: any) => account.chain === toChain).id;
 
             return { ...item, fromAccountId, toAccountId };
           })

@@ -1,4 +1,3 @@
-
 // TODO: is this the same as store/types.ts ?
 export const SwapProviderType = {
   LIQUALITY: 'LIQUALITY',
@@ -9,5 +8,5 @@ export const SwapProviderType = {
   LIQUALITYBOOST_ERC20_TO_NATIVE: 'LIQUALITYBOOST_ERC20_TO_NATIVE',
   FASTBTC: 'FASTBTC',
   SOVRYN: 'SOVRYN',
-  ASTROPORT: 'ASTROPORT'
-}
+  ASTROPORT: 'ASTROPORT',
+};

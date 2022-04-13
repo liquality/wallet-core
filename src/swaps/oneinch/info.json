@@ -8,11 +8,6 @@
     "Many pairs",
     "Fast"
   ],
-  "cons": [
-    "Slippage"
-  ],
-  "fees": [
-    "Additional aggregator fees",
-    "Slippage (up to 0.5% in Liquality)"
-  ]
+  "cons": ["Slippage"],
+  "fees": ["Additional aggregator fees", "Slippage (up to 0.5% in Liquality)"]
 }

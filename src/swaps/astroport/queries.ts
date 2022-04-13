@@ -57,12 +57,7 @@ export const getRateNativeToAsset = (fromAmount, asset, pairAddress?) => {
     2. ERC20 <-> ERC20
     3. ERC20 -> UST
  */
-export const getRateERC20ToERC20 = (
-  fromAmount,
-  firstAsset,
-  secondAsset,
-  pairAddress?
-) => {
+export const getRateERC20ToERC20 = (fromAmount, firstAsset, secondAsset, pairAddress?) => {
   const isFirstAssetDenom = firstAsset === 'uluna' || firstAsset === 'uusd';
   const isSecondAssetDenom = secondAsset === 'uluna' || secondAsset === 'uusd';
 
@@ -140,12 +135,7 @@ export const getRateERC20ToERC20 = (
     1. UST <-> Luna
     1. UST -> ERC20
 */
-export const buildSwapFromNativeTokenMsg = (
-  quote,
-  denom,
-  address,
-  pairAddress?
-) => {
+export const buildSwapFromNativeTokenMsg = (quote, denom, address, pairAddress?) => {
   const to = pairAddress ? pairAddress : ADDRESSES.ASSETS_CONTRACT; // This address is for UST <-> Luna pair
 
   return {
@@ -182,12 +172,7 @@ export const buildSwapFromNativeTokenMsg = (
     2. ERC20 <-> LUNA
 */
 
-export const buildSwapFromContractTokenMsg = (
-  quote,
-  recipient,
-  fromTokenAddress,
-  toTokenAddress
-) => {
+export const buildSwapFromContractTokenMsg = (quote, recipient, fromTokenAddress, toTokenAddress) => {
   const isERC20ToLuna = quote.to === 'LUNA';
   const isLunaToERC20 = quote.from === 'LUNA';
   const isERC20ToERC20 = quote.to !== 'LUNA' && quote.from !== 'LUNA';
@@ -287,12 +272,7 @@ export const buildSwapFromContractTokenMsg = (
     1. ERC20 -> UST
 */
 
-export const buildSwapFromContractTokenToUSTMsg = (
-  quote,
-  address,
-  fromTokenAddress,
-  pairAddress
-) => {
+export const buildSwapFromContractTokenToUSTMsg = (quote, address, fromTokenAddress, pairAddress) => {
   const msgInBase64 = Buffer.from(
     JSON.stringify({
       swap: {},

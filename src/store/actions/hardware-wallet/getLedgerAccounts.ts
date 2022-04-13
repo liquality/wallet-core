@@ -17,9 +17,7 @@ export const getLedgerAccounts = async (
     return account.chain === chain;
   });
 
-  const pageIndexes = [...Array(numAccounts || 5).keys()].map(
-    (i) => i + startingIndex
-  );
+  const pageIndexes = [...Array(numAccounts || 5).keys()].map((i) => i + startingIndex);
   for (const index of pageIndexes) {
     const _client = client({
       network,

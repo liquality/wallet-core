@@ -1,8 +1,4 @@
-import {
-  Asset,
-  assets as cryptoassets,
-  unitToCurrency,
-} from '@liquality/cryptoassets';
+import { Asset, assets as cryptoassets, unitToCurrency } from '@liquality/cryptoassets';
 import { rootGetterContext } from '.';
 import { createClient } from './factory/client';
 import { createSwapProvider } from './factory/swapProvider';
@@ -78,23 +74,11 @@ export default {
       // when we ask for ledger accounts from the ledger device we don't have the derivation path
       // the !account doesn't exist in this case or if we call the getter with accountId equals to null
       if (_accountType.includes('ledger') || !account) {
-        derivationPath = getDerivationPath(
-          chain,
-          network,
-          _accountIndex,
-          _accountType
-        );
+        derivationPath = getDerivationPath(chain, network, _accountIndex, _accountType);
       } else {
         derivationPath = account.derivationPath;
       }
-      const cacheKey = [
-        asset,
-        chain,
-        network,
-        walletId,
-        derivationPath,
-        _accountType,
-      ].join('-');
+      const cacheKey = [asset, chain, network, walletId, derivationPath, _accountType].join('-');
 
       if (useCache) {
         const cachedClient = clientCache[cacheKey];
@@ -108,13 +92,7 @@ export default {
       }
 
       const { mnemonic } = wallet;
-      const client = createClient(
-        asset,
-        network,
-        mnemonic,
-        _accountType,
-        derivationPath
-      );
+      const client = createClient(asset, network, mnemonic, _accountType, derivationPath);
       clientCache[cacheKey] = client;
 
       return client;
@@ -138,19 +116,15 @@ export default {
   },
   historyItemById(...context: GetterContext) {
     const { state } = rootGetterContext(context);
-    return (network, walletId, id): HistoryItem =>
-      state.history[network][walletId].find((i) => i.id === id);
+    return (network, walletId, id): HistoryItem => state.history[network][walletId].find((i) => i.id === id);
   },
   cryptoassets(...context: GetterContext) {
     const { state } = rootGetterContext(context);
     const { activeNetwork, activeWalletId } = state;
 
-    const baseAssets =
-      state.activeNetwork === 'testnet' ? TESTNET_ASSETS : cryptoassets;
+    const baseAssets = state.activeNetwork === 'testnet' ? TESTNET_ASSETS : cryptoassets;
 
-    const customAssets = state.customTokens[activeNetwork]?.[
-      activeWalletId
-    ]?.reduce((assets, token) => {
+    const customAssets = state.customTokens[activeNetwork]?.[activeWalletId]?.reduce((assets, token) => {
       return Object.assign(assets, {
         [token.symbol]: {
           ...baseAssets.DAI, // Use DAI as template for custom tokens
@@ -165,9 +139,7 @@ export default {
   networkAccounts(...context: GetterContext) {
     const { state } = rootGetterContext(context);
     const { activeNetwork, activeWalletId, accounts } = state;
-    return (
-      accounts[activeWalletId]?.[activeNetwork]?.filter((a) => a.enabled) || []
-    );
+    return accounts[activeWalletId]?.[activeNetwork]?.filter((a) => a.enabled) || [];
   },
   networkAssets(...context: GetterContext) {
     const { state } = rootGetterContext(context);
@@ -177,9 +149,7 @@ export default {
   allNetworkAssets(...context: GetterContext) {
     const { state } = rootGetterContext(context);
     return Networks.reduce((result, network) => {
-      return uniq(
-        result.concat(state.enabledAssets[network][state.activeWalletId])
-      );
+      return uniq(result.concat(state.enabledAssets[network][state.activeWalletId]));
     }, []);
   },
   activity(...context: GetterContext) {
@@ -229,10 +199,7 @@ export default {
           balances,
         };
       })
-      .filter(
-        (account) =>
-          account.balances && Object.keys(account.balances).length > 0
-      );
+      .filter((account) => account.balances && Object.keys(account.balances).length > 0);
   },
   accountsData(...context: GetterContext) {
     const { state, getters } = rootGetterContext(context);
@@ -244,26 +211,17 @@ export default {
           account.assets &&
           account.enabled &&
           account.assets.length > 0 &&
-          enabledChains[activeWalletId]?.[activeNetwork]?.includes(
-            account.chain
-          )
+          enabledChains[activeWalletId]?.[activeNetwork]?.includes(account.chain)
       )
       .map((account) => {
-        const totalFiatBalance = accountFiatBalance(
-          activeWalletId,
-          activeNetwork,
-          account.id
-        );
-        const fiatBalances = Object.entries(account.balances).reduce(
-          (accum, [asset, balance]) => {
-            const fiat = assetFiatBalance(asset, balance);
-            return {
-              ...accum,
-              [asset]: fiat,
-            };
-          },
-          {}
-        );
+        const totalFiatBalance = accountFiatBalance(activeWalletId, activeNetwork, account.id);
+        const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
+          const fiat = assetFiatBalance(asset, balance);
+          return {
+            ...accum,
+            [asset]: fiat,
+          };
+        }, {});
         return {
           ...account,
           fiatBalances,
@@ -283,17 +241,12 @@ export default {
     const { accounts } = state;
     const { assetFiatBalance } = getters;
     return (walletId, network, accountId) => {
-      const account = accounts[walletId]?.[network].find(
-        (a) => a.id === accountId
-      );
+      const account = accounts[walletId]?.[network].find((a) => a.id === accountId);
       if (account) {
-        return Object.entries(account.balances).reduce(
-          (accum, [asset, balance]) => {
-            const fiat = assetFiatBalance(asset, balance);
-            return accum.plus(fiat || 0);
-          },
-          new BN(0)
-        );
+        return Object.entries(account.balances).reduce((accum, [asset, balance]) => {
+          const fiat = assetFiatBalance(asset, balance);
+          return accum.plus(fiat || 0);
+        }, new BN(0));
       }
       return new BN(0);
     };
@@ -313,17 +266,14 @@ export default {
     const { getters } = rootGetterContext(context);
     const { cryptoassets } = getters;
 
-    const chainAssets = Object.entries(cryptoassets).reduce(
-      (chains, [asset, assetData]) => {
+    const chainAssets = Object.entries(cryptoassets).reduce((chains, [asset, assetData]) => {
+      // @ts-ignore TODO: typed getters
+      const assets = assetData.chain in chains ? chains[assetData.chain] : [];
+      return Object.assign({}, chains, {
         // @ts-ignore TODO: typed getters
-        const assets = assetData.chain in chains ? chains[assetData.chain] : [];
-        return Object.assign({}, chains, {
-          // @ts-ignore TODO: typed getters
-          [assetData.chain]: [...assets, asset],
-        });
-      },
-      {}
-    );
+        [assetData.chain]: [...assets, asset],
+      });
+    }, {});
     return chainAssets;
   },
   analyticsEnabled(...context: GetterContext) {

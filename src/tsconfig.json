@@ -1,4 +1,5 @@
-{/*TODO: switch more rules to true*/
+{
+  /*TODO: switch more rules to true*/
   "compilerOptions": {
     "target": "es6",
     "declaration": true,
@@ -23,10 +24,8 @@
     "resolveJsonModule": true,
     "skipLibCheck": true // TODO: remove this if possible
   },
-  "include": [
-    "**/*"
-  ],
+  "include": ["**/*"],
   "references": [
-    { "path": "../" }  // this project to the one at the root dir`
+    { "path": "../" } // this project to the one at the root dir`
   ]
 }

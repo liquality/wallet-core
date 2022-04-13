@@ -15,11 +15,7 @@ const cryptoassets: { [asset: string]: Asset } = new Proxy(
   {},
   {
     get(_target, name, receiver) {
-      return Reflect.get(
-        { ...getStore().getters.cryptoassets },
-        name,
-        receiver
-      );
+      return Reflect.get({ ...getStore().getters.cryptoassets }, name, receiver);
     },
     ownKeys() {
       return Reflect.ownKeys(getStore().getters.cryptoassets);

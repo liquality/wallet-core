@@ -4,19 +4,7 @@ import BN from 'bignumber.js';
 
 export const sendTransaction = async (
   { dispatch, commit, getters },
-  {
-    network,
-    walletId,
-    accountId,
-    asset,
-    to,
-    amount,
-    data,
-    fee,
-    gas,
-    feeLabel,
-    fiatRate,
-  }
+  { network, walletId, accountId, asset, to, amount, data, fee, gas, feeLabel, fiatRate }
 ) => {
   const client = getters.client({
     network,

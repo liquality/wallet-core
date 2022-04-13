@@ -23,10 +23,7 @@ export const LEDGER_OPTIONS = [
   {
     name: 'BTC',
     label: 'BTC',
-    types: [
-      AccountType.BitcoinLedgerNativeSegwit,
-      AccountType.BitcoinLedgerLegacy,
-    ],
+    types: [AccountType.BitcoinLedgerNativeSegwit, AccountType.BitcoinLedgerLegacy],
     chain: 'bitcoin',
   },
   {

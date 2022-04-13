@@ -22,21 +22,12 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
 
   constructor(config) {
     super(config);
-    this.liqualitySwapProvider = createSwapProvider(
-      this.config.network,
-      'liquality'
-    ) as LiqualitySwapProvider;
-    this.sovrynSwapProvider = createSwapProvider(
-      this.config.network,
-      'sovryn'
-    ) as SovrynSwapProvider;
+    this.liqualitySwapProvider = createSwapProvider(this.config.network, 'liquality') as LiqualitySwapProvider;
+    this.sovrynSwapProvider = createSwapProvider(this.config.network, 'sovryn') as SovrynSwapProvider;
     this.supportedBridgeAssets = this.config.supportedBridgeAssets;
 
     if (this.config.network === 'mainnet') {
-      this.oneinchSwapProvider = createSwapProvider(
-        this.config.network,
-        'oneinchV4'
-      ) as OneinchSwapProvider;
+      this.oneinchSwapProvider = createSwapProvider(this.config.network, 'oneinchV4') as OneinchSwapProvider;
       this.bridgeAssetToAutomatedMarketMaker = {
         MATIC: this.oneinchSwapProvider,
         ETH: this.oneinchSwapProvider,
@@ -66,13 +57,8 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       amount,
     });
     if (!quote) return null;
-    const bridgeAssetQuantity = unitToCurrency(
-      assets[bridgeAsset],
-      quote.toAmount
-    );
-    const finalQuote = await this.bridgeAssetToAutomatedMarketMaker[
-      bridgeAsset
-    ].getQuote({
+    const bridgeAssetQuantity = unitToCurrency(assets[bridgeAsset], quote.toAmount);
+    const finalQuote = await this.bridgeAssetToAutomatedMarketMaker[bridgeAsset].getQuote({
       network,
       from: bridgeAsset,
       to,
@@ -112,23 +98,13 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
     return await this.liqualitySwapProvider.updateOrder(order);
   }
 
-  async estimateFees({
-    network,
-    walletId,
-    asset,
-    txType,
-    quote,
-    feePrices,
-    max,
-  }) {
+  async estimateFees({ network, walletId, asset, txType, quote, feePrices, max }) {
     const liqualityFees = await this.liqualitySwapProvider.estimateFees({
       network,
       walletId,
       asset,
       txType:
-        txType === LiqualityBoostNativeToERC20.txTypes.SWAP
-          ? LiqualityBoostNativeToERC20.txTypes.SWAP_CLAIM
-          : txType,
+        txType === LiqualityBoostNativeToERC20.txTypes.SWAP ? LiqualityBoostNativeToERC20.txTypes.SWAP_CLAIM : txType,
       quote: {
         ...quote,
         to: quote.bridgeAsset,
@@ -138,47 +114,37 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       max,
     });
     if (isERC20(asset) && txType === LiqualityBoostNativeToERC20.txTypes.SWAP) {
-      const automatedMarketMakerFees =
-        await this.bridgeAssetToAutomatedMarketMaker[
-          quote.bridgeAsset
-        ].estimateFees({
-          network,
-          walletId,
-          asset,
-          txType: LiqualityBoostNativeToERC20.txTypes.SWAP,
-          quote: {
-            ...quote,
-            from: quote.bridgeAsset,
-            fromAmount: quote.bridgeAssetAmount,
-            fromAccountId: quote.toAccountId,
-            slippagePercentage,
-          },
-          feePrices,
-          max,
-        });
+      const automatedMarketMakerFees = await this.bridgeAssetToAutomatedMarketMaker[quote.bridgeAsset].estimateFees({
+        network,
+        walletId,
+        asset,
+        txType: LiqualityBoostNativeToERC20.txTypes.SWAP,
+        quote: {
+          ...quote,
+          from: quote.bridgeAsset,
+          fromAmount: quote.bridgeAssetAmount,
+          fromAccountId: quote.toAccountId,
+          slippagePercentage,
+        },
+        feePrices,
+        max,
+      });
       const totalFees = {};
       for (const key in automatedMarketMakerFees) {
-        totalFees[key] = new BN(automatedMarketMakerFees[key]).plus(
-          liqualityFees[key]
-        );
+        totalFees[key] = new BN(automatedMarketMakerFees[key]).plus(liqualityFees[key]);
       }
       return totalFees;
     }
     return liqualityFees;
   }
 
-  async finalizeLiqualitySwapAndStartAutomatedMarketMaker({
-    swap,
-    network,
-    walletId,
-  }) {
+  async finalizeLiqualitySwapAndStartAutomatedMarketMaker({ swap, network, walletId }) {
     const result = await this.liqualitySwapProvider.waitForClaimConfirmations({
       swap,
       network,
       walletId,
     });
-    if (result?.status === 'SUCCESS')
-      return { endTime: Date.now(), status: 'APPROVE_CONFIRMED' };
+    if (result?.status === 'SUCCESS') return { endTime: Date.now(), status: 'APPROVE_CONFIRMED' };
   }
 
   async performNextSwapAction(store, { network, walletId, swap }) {
@@ -214,9 +180,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
     }
 
     if (!updates) {
-      updates = await this.bridgeAssetToAutomatedMarketMaker[
-        swap.bridgeAsset
-      ].performNextSwapAction(store, {
+      updates = await this.bridgeAssetToAutomatedMarketMaker[swap.bridgeAsset].performNextSwapAction(store, {
         network,
         walletId,
         swap: swapAutomatedMarketMakerFormat,
@@ -242,10 +206,9 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       label: 'Locking {bridgeAsset}',
       notification(swap) {
         return {
-          message: `Counterparty sent ${prettyBalance(
-            swap.bridgeAssetAmount,
+          message: `Counterparty sent ${prettyBalance(swap.bridgeAssetAmount, swap.bridgeAsset)} ${
             swap.bridgeAsset
-          )} ${swap.bridgeAsset} to escrow`,
+          } to escrow`,
         };
       },
     },
@@ -284,12 +247,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
   static fromTxType = LiqualityBoostNativeToERC20.txTypes.SWAP_INITIATION;
   static toTxType = LiqualityBoostNativeToERC20.txTypes.SWAP;
 
-  static timelineDiagramSteps = [
-    'INITIATION',
-    'AGENT_INITIATION',
-    'CLAIM_OR_REFUND',
-    'SWAP',
-  ];
+  static timelineDiagramSteps = ['INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND', 'SWAP'];
 
   static totalSteps = 5;
 }

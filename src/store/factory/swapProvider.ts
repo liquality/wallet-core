@@ -15,10 +15,8 @@ const providers = {
   [SwapProviderType.UNISWAPV2]: UniswapSwapProvider,
   [SwapProviderType.ONEINCHV4]: OneinchSwapProvider,
   [SwapProviderType.THORCHAIN]: ThorchainSwapProvider,
-  [SwapProviderType.LIQUALITYBOOST_NATIVE_TO_ERC20]:
-    LiqualityBoostNativeToERC20,
-  [SwapProviderType.LIQUALITYBOOST_ERC20_TO_NATIVE]:
-    LiqualityBoostERC20toNative,
+  [SwapProviderType.LIQUALITYBOOST_NATIVE_TO_ERC20]: LiqualityBoostNativeToERC20,
+  [SwapProviderType.LIQUALITYBOOST_ERC20_TO_NATIVE]: LiqualityBoostERC20toNative,
   [SwapProviderType.FASTBTC]: FastbtcSwapProvider,
   [SwapProviderType.SOVRYN]: SovrynSwapProvider,
   [SwapProviderType.ASTROPORT]: AstroportSwapProvider,
