@@ -11,6 +11,7 @@ import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
+import { SwapStatus } from '../types';
 
 const nativeAssetAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 const slippagePercentage = 0.5;
@@ -175,7 +176,7 @@ class OneinchSwapProvider extends SwapProvider {
     const chainId = ChainNetworks[chain][network].chainId;
     const nativeAsset = chains[chain].nativeAsset;
 
-    if (txType in OneinchSwapProvider.txTypes) {
+    if (txType in this._txTypes()) {
       const fees = {};
       const tradeData = await this._getQuote(chainId, quote.from, quote.to, quote.fromAmount);
       for (const feePrice of feePrices) {
@@ -246,64 +247,77 @@ class OneinchSwapProvider extends SwapProvider {
     return updates;
   }
 
-  static txTypes = {
-    SWAP: 'SWAP',
-  };
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
+    };
+  }
 
-  static statuses = {
-    WAITING_FOR_APPROVE_CONFIRMATIONS: {
-      step: 0,
-      label: 'Approving {from}',
-      filterStatus: 'PENDING',
-      notification(swap) {
-        return {
-          message: `Approving ${swap.from}`,
-        };
+  protected _getStatuses(): Record<string, SwapStatus> {
+    return {
+      WAITING_FOR_APPROVE_CONFIRMATIONS: {
+        step: 0,
+        label: 'Approving {from}',
+        filterStatus: 'PENDING',
+        notification(swap: any) {
+          return {
+            message: `Approving ${swap.from}`,
+          };
+        },
       },
-    },
-    APPROVE_CONFIRMED: {
-      step: 1,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-    },
-    WAITING_FOR_SWAP_CONFIRMATIONS: {
-      step: 1,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-      notification() {
-        return {
-          message: 'Engaging oneinch',
-        };
+      APPROVE_CONFIRMED: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
       },
-    },
-    SUCCESS: {
-      step: 2,
-      label: 'Completed',
-      filterStatus: 'COMPLETED',
-      notification(swap) {
-        return {
-          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
-        };
+      WAITING_FOR_SWAP_CONFIRMATIONS: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
+        notification() {
+          return {
+            message: 'Engaging oneinch',
+          };
+        },
       },
-    },
-    FAILED: {
-      step: 2,
-      label: 'Swap Failed',
-      filterStatus: 'REFUNDED',
-      notification() {
-        return {
-          message: 'Swap failed',
-        };
+      SUCCESS: {
+        step: 2,
+        label: 'Completed',
+        filterStatus: 'COMPLETED',
+        notification(swap: any) {
+          return {
+            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
+          };
+        },
       },
-    },
-  };
+      FAILED: {
+        step: 2,
+        label: 'Swap Failed',
+        filterStatus: 'REFUNDED',
+        notification() {
+          return {
+            message: 'Swap failed',
+          };
+        },
+      },
+    };
+  }
 
-  static fromTxType = OneinchSwapProvider.txTypes.SWAP;
-  static toTxType = null;
+  protected _fromTxType(): string | null {
+    return this._txTypes().SWAP;
+  }
 
-  static timelineDiagramSteps = ['APPROVE', 'SWAP'];
+  protected _toTxType(): string | null {
+    return null;
+  }
 
-  static totalSteps = 3;
+  protected _timelineDiagramSteps(): string[] {
+    return ['APPROVE', 'SWAP'];
+  }
+
+  protected _totalSteps(): number {
+    return 3;
+  }
 }
 
 export { OneinchSwapProvider };

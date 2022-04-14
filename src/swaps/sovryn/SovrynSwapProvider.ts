@@ -13,6 +13,7 @@ import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
+import { SwapStatus } from '../types';
 
 // use WRBTC address for RBTC native token
 const wrappedRbtcAddress = {
@@ -225,7 +226,9 @@ class SovrynSwapProvider extends SwapProvider {
   //  ======== FEES ========
 
   async estimateFees({ network, walletId, asset, txType, quote, feePrices }) {
-    if (txType !== SovrynSwapProvider.fromTxType) throw new Error(`Invalid tx type ${txType}`);
+    if (txType !== this.fromTxType) {
+      throw new Error(`Invalid tx type ${txType}`);
+    }
 
     const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
     const account = this.getAccount(quote.fromAccountId);
@@ -341,64 +344,77 @@ class SovrynSwapProvider extends SwapProvider {
     return new BN(amount).times(new BN(0.995)).toFixed(0);
   }
 
-  // ======== STATIC ========
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
+    };
+  }
 
-  static txTypes = {
-    SWAP: 'SWAP',
-  };
+  protected _getStatuses(): Record<string, SwapStatus> {
+    return {
+      WAITING_FOR_APPROVE_CONFIRMATIONS: {
+        step: 0,
+        label: 'Approving {from}',
+        filterStatus: 'PENDING',
+        notification(swap: any) {
+          return {
+            message: `Approving ${swap.from}`,
+          };
+        },
+      },
+      APPROVE_CONFIRMED: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
+      },
+      WAITING_FOR_SWAP_CONFIRMATIONS: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
+        notification() {
+          return {
+            message: 'Engaging Sovryn',
+          };
+        },
+      },
+      SUCCESS: {
+        step: 2,
+        label: 'Completed',
+        filterStatus: 'COMPLETED',
+        notification(swap: any) {
+          return {
+            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
+          };
+        },
+      },
+      FAILED: {
+        step: 2,
+        label: 'Swap Failed',
+        filterStatus: 'REFUNDED',
+        notification() {
+          return {
+            message: 'Swap failed',
+          };
+        },
+      },
+    };
+  }
 
-  static statuses = {
-    WAITING_FOR_APPROVE_CONFIRMATIONS: {
-      step: 0,
-      label: 'Approving {from}',
-      filterStatus: 'PENDING',
-      notification(swap) {
-        return {
-          message: `Approving ${swap.from}`,
-        };
-      },
-    },
-    APPROVE_CONFIRMED: {
-      step: 1,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-    },
-    WAITING_FOR_SWAP_CONFIRMATIONS: {
-      step: 1,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-      notification() {
-        return {
-          message: 'Engaging Sovryn',
-        };
-      },
-    },
-    SUCCESS: {
-      step: 2,
-      label: 'Completed',
-      filterStatus: 'COMPLETED',
-      notification(swap) {
-        return {
-          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
-        };
-      },
-    },
-    FAILED: {
-      step: 2,
-      label: 'Swap Failed',
-      filterStatus: 'REFUNDED',
-      notification() {
-        return {
-          message: 'Swap failed',
-        };
-      },
-    },
-  };
+  protected _fromTxType(): string | null {
+    return this._txTypes().SWAP;
+  }
 
-  static fromTxType = SovrynSwapProvider.txTypes.SWAP;
-  static toTxType = null;
-  static timelineDiagramSteps = ['APPROVE', 'SWAP'];
-  static totalSteps = 3;
+  protected _toTxType(): string | null {
+    return null;
+  }
+
+  protected _timelineDiagramSteps(): string[] {
+    return ['APPROVE', 'SWAP'];
+  }
+
+  protected _totalSteps(): number {
+    return 3;
+  }
 }
 
 export { SovrynSwapProvider };

@@ -25,7 +25,8 @@ const SEND_STATUS_MAP = {
   },
 };
 
-export const createNotification = (config: Notification) => walletOptionsStore.walletOptions.createNotification(config);
+export const createNotification = async (config: Notification) =>
+  walletOptionsStore.walletOptions.createNotification(config);
 
 const createSwapNotification = (item: SwapHistoryItem) => {
   const swapProvider = store.getters.swapProvider(item.network, item.provider);

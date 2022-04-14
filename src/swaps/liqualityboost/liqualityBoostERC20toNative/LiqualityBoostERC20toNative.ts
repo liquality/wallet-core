@@ -8,13 +8,16 @@ import { LiqualitySwapProvider } from '../../liquality/LiqualitySwapProvider';
 import { OneinchSwapProvider } from '../../oneinch/OneinchSwapProvider';
 import { SovrynSwapProvider } from '../../sovryn/SovrynSwapProvider';
 import { SwapProvider } from '../../SwapProvider';
+import { SwapStatus } from '../../types';
 
 const slippagePercentage = 3;
 
 class LiqualityBoostERC20toNative extends SwapProvider {
-  liqualitySwapProvider: LiqualitySwapProvider;
-  sovrynSwapProvider: SovrynSwapProvider;
-  oneinchSwapProvider: OneinchSwapProvider;
+  private liqualitySwapProvider: LiqualitySwapProvider;
+  private sovrynSwapProvider: SovrynSwapProvider;
+  private oneinchSwapProvider: OneinchSwapProvider;
+
+  private lspEndStates = ['REFUNDED', 'SUCCESS', 'QUOTE_EXPIRED'];
 
   // TODO: types
   bridgeAssetToAutomatedMarketMaker: any;
@@ -112,8 +115,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       network,
       walletId,
       asset,
-      txType:
-        txType === LiqualityBoostERC20toNative.txTypes.SWAP ? LiqualityBoostERC20toNative.txTypes.SWAP_CLAIM : txType,
+      txType: txType === this._txTypes().SWAP ? this._txTypes().SWAP_CLAIM : txType,
       quote: {
         ...quote,
         from: quote.bridgeAsset,
@@ -125,12 +127,12 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     });
 
     // 'from' asset -> bridge asset
-    if (!isERC20(asset) && txType === LiqualityBoostERC20toNative.txTypes.SWAP) {
+    if (!isERC20(asset) && txType === this._txTypes().SWAP) {
       const automatedMarketMakerFees = await this.bridgeAssetToAutomatedMarketMaker[quote.bridgeAsset].estimateFees({
         network,
         walletId,
         asset,
-        txType: LiqualityBoostERC20toNative.txTypes.SWAP,
+        txType: this._txTypes().SWAP,
         quote: {
           ...quote,
           to: quote.bridgeAsset,
@@ -208,7 +210,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       });
     }
 
-    if (!updates && !LiqualityBoostERC20toNative.lspEndStates.includes(swap.status)) {
+    if (!updates && !this.lspEndStates.includes(swap.status)) {
       updates = await this.bridgeAssetToAutomatedMarketMaker[swap.bridgeAsset].performNextSwapAction(store, {
         network,
         walletId,
@@ -229,110 +231,121 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     };
   }
 
-  static txTypes = {
-    ...LiqualitySwapProvider.txTypes,
-    ...OneinchSwapProvider.txTypes,
-  };
+  protected _txTypes(): Record<string, string | null> {
+    return {
+      ...this.liqualitySwapProvider.txTypes,
+      ...this.oneinchSwapProvider.txTypes,
+    };
+  }
 
-  static statuses = {
-    ...LiqualitySwapProvider.statuses,
-    ...OneinchSwapProvider.statuses,
-    // AAM states
-    APPROVE_CONFIRMED: {
-      ...OneinchSwapProvider.statuses.APPROVE_CONFIRMED,
-      label: 'Swapping {from} for {bridgeAsset}',
-    },
-    WAITING_FOR_SWAP_CONFIRMATIONS: {
-      ...OneinchSwapProvider.statuses.WAITING_FOR_SWAP_CONFIRMATIONS,
-      label: 'Swapping {from} for {bridgeAsset}',
-      notification() {
-        return {
-          message: 'Engaging Automated Market Maker',
-        };
+  protected _getStatuses(): Record<string, SwapStatus> {
+    return {
+      ...this.liqualitySwapProvider.statuses,
+      ...this.oneinchSwapProvider.statuses,
+      // AAM states
+      APPROVE_CONFIRMED: {
+        ...this.oneinchSwapProvider.statuses.APPROVE_CONFIRMED,
+        label: 'Swapping {from} for {bridgeAsset}',
       },
-    },
-    // Liquality swap states
-    INITIATED: {
-      ...LiqualitySwapProvider.statuses.INITIATED,
-      step: 2,
-      label: 'Locking {bridgeAsset}',
-    },
-    INITIATION_REPORTED: {
-      ...LiqualitySwapProvider.statuses.INITIATION_REPORTED,
-      step: 2,
-      label: 'Locking {bridgeAsset}',
-    },
-    INITIATION_CONFIRMED: {
-      ...LiqualitySwapProvider.statuses.INITIATION_CONFIRMED,
-      step: 2,
-      label: 'Locking {bridgeAsset}',
-    },
-    FUNDED: {
-      ...LiqualitySwapProvider.statuses.FUNDED,
-      step: 3,
-      label: 'Locking {bridgeAsset}',
-    },
-    CONFIRM_COUNTER_PARTY_INITIATION: {
-      ...LiqualitySwapProvider.statuses.CONFIRM_COUNTER_PARTY_INITIATION,
-      label: 'Locking {bridgeAsset}',
-      notification(swap) {
-        return {
-          message: `Counterparty sent ${prettyBalance(swap.bridgeAssetAmount, swap.bridgeAsset)} ${
-            swap.bridgeAsset
-          } to escrow`,
-        };
+      WAITING_FOR_SWAP_CONFIRMATIONS: {
+        ...this.oneinchSwapProvider.statuses.WAITING_FOR_SWAP_CONFIRMATIONS,
+        label: 'Swapping {from} for {bridgeAsset}',
+        notification() {
+          return {
+            message: 'Engaging Automated Market Maker',
+          };
+        },
       },
-      step: 3,
-    },
-    READY_TO_CLAIM: {
-      ...LiqualitySwapProvider.statuses.READY_TO_CLAIM,
-      step: 4,
-    },
-    WAITING_FOR_CLAIM_CONFIRMATIONS: {
-      ...LiqualitySwapProvider.statuses.WAITING_FOR_CLAIM_CONFIRMATIONS,
-      step: 4,
-    },
-    WAITING_FOR_REFUND: {
-      ...LiqualitySwapProvider.statuses.WAITING_FOR_REFUND,
-      step: 4,
-    },
-    GET_REFUND: {
-      ...LiqualitySwapProvider.statuses.GET_REFUND,
-      label: 'Refunding {bridgeAsset}',
-      step: 4,
-    },
-    WAITING_FOR_REFUND_CONFIRMATIONS: {
-      ...LiqualitySwapProvider.statuses.WAITING_FOR_REFUND_CONFIRMATIONS,
-      label: 'Refunding {bridgeAsset}',
-      step: 4,
-    },
-    // final states
-    REFUNDED: {
-      ...LiqualitySwapProvider.statuses.REFUNDED,
-      step: 5,
-    },
-    SUCCESS: {
-      ...LiqualitySwapProvider.statuses.SUCCESS,
-      step: 5,
-    },
-    QUOTE_EXPIRED: {
-      ...LiqualitySwapProvider.statuses.QUOTE_EXPIRED,
-      step: 5,
-    },
-    FAILED: {
-      ...OneinchSwapProvider.statuses.FAILED,
-      step: 5,
-    },
-  };
+      // Liquality swap states
+      INITIATED: {
+        ...this.liqualitySwapProvider.statuses.INITIATED,
+        step: 2,
+        label: 'Locking {bridgeAsset}',
+      },
+      INITIATION_REPORTED: {
+        ...this.liqualitySwapProvider.statuses.INITIATION_REPORTED,
+        step: 2,
+        label: 'Locking {bridgeAsset}',
+      },
+      INITIATION_CONFIRMED: {
+        ...this.liqualitySwapProvider.statuses.INITIATION_CONFIRMED,
+        step: 2,
+        label: 'Locking {bridgeAsset}',
+      },
+      FUNDED: {
+        ...this.liqualitySwapProvider.statuses.FUNDED,
+        step: 3,
+        label: 'Locking {bridgeAsset}',
+      },
+      CONFIRM_COUNTER_PARTY_INITIATION: {
+        ...this.liqualitySwapProvider.statuses.CONFIRM_COUNTER_PARTY_INITIATION,
+        label: 'Locking {bridgeAsset}',
+        notification(swap: any) {
+          return {
+            message: `Counterparty sent ${prettyBalance(swap.bridgeAssetAmount, swap.bridgeAsset)} ${
+              swap.bridgeAsset
+            } to escrow`,
+          };
+        },
+        step: 3,
+      },
+      READY_TO_CLAIM: {
+        ...this.liqualitySwapProvider.statuses.READY_TO_CLAIM,
+        step: 4,
+      },
+      WAITING_FOR_CLAIM_CONFIRMATIONS: {
+        ...this.liqualitySwapProvider.statuses.WAITING_FOR_CLAIM_CONFIRMATIONS,
+        step: 4,
+      },
+      WAITING_FOR_REFUND: {
+        ...this.liqualitySwapProvider.statuses.WAITING_FOR_REFUND,
+        step: 4,
+      },
+      GET_REFUND: {
+        ...this.liqualitySwapProvider.statuses.GET_REFUND,
+        label: 'Refunding {bridgeAsset}',
+        step: 4,
+      },
+      WAITING_FOR_REFUND_CONFIRMATIONS: {
+        ...this.liqualitySwapProvider.statuses.WAITING_FOR_REFUND_CONFIRMATIONS,
+        label: 'Refunding {bridgeAsset}',
+        step: 4,
+      },
+      // final states
+      REFUNDED: {
+        ...this.liqualitySwapProvider.statuses.REFUNDED,
+        step: 5,
+      },
+      SUCCESS: {
+        ...this.liqualitySwapProvider.statuses.SUCCESS,
+        step: 5,
+      },
+      QUOTE_EXPIRED: {
+        ...this.liqualitySwapProvider.statuses.QUOTE_EXPIRED,
+        step: 5,
+      },
+      FAILED: {
+        ...this.oneinchSwapProvider.statuses.FAILED,
+        step: 5,
+      },
+    };
+  }
 
-  static lspEndStates = ['REFUNDED', 'SUCCESS', 'QUOTE_EXPIRED'];
+  protected _fromTxType(): string | null {
+    return this._txTypes().SWAP;
+  }
 
-  static fromTxType = LiqualityBoostERC20toNative.txTypes.SWAP;
-  static toTxType = LiqualityBoostERC20toNative.txTypes.SWAP_CLAIM;
+  protected _toTxType(): string | null {
+    return this._txTypes().SWAP_CLAIM;
+  }
 
-  static timelineDiagramSteps = ['APPROVE', 'SWAP', 'INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
+  protected _timelineDiagramSteps(): string[] {
+    return ['APPROVE', 'SWAP', 'INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
+  }
 
-  static totalSteps = 6;
+  protected _totalSteps(): number {
+    return 6;
+  }
 }
 
 export { LiqualityBoostERC20toNative };

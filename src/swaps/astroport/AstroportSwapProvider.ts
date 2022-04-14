@@ -6,7 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { withInterval } from '../../store/actions/performNextAction/utils';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
-import { QuoteRequest, SwapProvider } from '../SwapProvider';
+import { SwapProvider } from '../SwapProvider';
+import { QuoteRequest, SwapStatus } from '../types';
 import {
   buildSwapFromContractTokenMsg,
   buildSwapFromContractTokenToUSTMsg,
@@ -22,7 +23,8 @@ class AstroportSwapProvider extends SwapProvider {
   }
 
   // @ts-ignore TODO: check return type
-  async getQuote({ from, to, amount }: QuoteRequest) {
+  async getQuote(quoteRequest: QuoteRequest) {
+    const { from, to, amount } = quoteRequest;
     const fromInfo = cryptoassets[from];
     const toInfo = cryptoassets[to];
 
@@ -128,7 +130,9 @@ class AstroportSwapProvider extends SwapProvider {
   // ========= FEES ========
 
   async estimateFees({ asset, txType, quote, feePrices }) {
-    if (txType !== AstroportSwapProvider.fromTxType) throw new Error(`Invalid tx type ${txType}`);
+    if (txType !== this.fromTxType) {
+      throw new Error(`Invalid tx type ${txType}`);
+    }
 
     const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
 
@@ -235,49 +239,56 @@ class AstroportSwapProvider extends SwapProvider {
     return resp.contract_addr;
   }
 
-  // ======== STATIC ========
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
+    };
+  }
 
-  static txTypes = {
-    SWAP: 'SWAP',
-  };
+  protected _getStatuses(): Record<string, SwapStatus> {
+    return {
+      WAITING_FOR_SWAP_CONFIRMATIONS: {
+        step: 0,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
+        notification() {
+          return { message: 'Engaging Astroport' };
+        },
+      },
+      SUCCESS: {
+        step: 1,
+        label: 'Completed',
+        filterStatus: 'COMPLETED',
+        notification(swap: any) {
+          return { message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use` };
+        },
+      },
+      FAILED: {
+        step: 1,
+        label: 'Swap Failed',
+        filterStatus: 'REFUNDED',
+        notification() {
+          return { message: 'Swap failed' };
+        },
+      },
+    };
+  }
 
-  static statuses = {
-    WAITING_FOR_SWAP_CONFIRMATIONS: {
-      step: 0,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-      notification() {
-        return {
-          message: 'Engaging Astroport',
-        };
-      },
-    },
-    SUCCESS: {
-      step: 1,
-      label: 'Completed',
-      filterStatus: 'COMPLETED',
-      notification(swap) {
-        return {
-          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
-        };
-      },
-    },
-    FAILED: {
-      step: 1,
-      label: 'Swap Failed',
-      filterStatus: 'REFUNDED',
-      notification() {
-        return {
-          message: 'Swap failed',
-        };
-      },
-    },
-  };
+  protected _fromTxType() {
+    return this._txTypes().SWAP;
+  }
 
-  static fromTxType = AstroportSwapProvider.txTypes.SWAP;
-  static toTxType = null;
-  static timelineDiagramSteps = ['SWAP'];
-  static totalSteps = 2;
+  protected _toTxType() {
+    return null;
+  }
+
+  protected _timelineDiagramSteps() {
+    return ['SWAP'];
+  }
+
+  protected _totalSteps() {
+    return 2;
+  }
 }
 
 export { AstroportSwapProvider };

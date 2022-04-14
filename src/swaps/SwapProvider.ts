@@ -1,45 +1,35 @@
-import BigNumber from 'bignumber.js';
 import store, { OriginalStore } from '../store';
 import { createNotification } from '../store/broker/notification';
-import { AccountId, Asset, MarketData, Network, SwapHistoryItem } from '../store/types';
+import { MarketData, Network, SwapHistoryItem } from '../store/types';
+import {
+  EstimateFeeRequest,
+  EstimateFeeResponse,
+  GetQuoteResult,
+  NextSwapActionRequest,
+  QuoteRequest,
+  SwapRequest,
+  SwapStatus,
+} from './types';
 
-export interface GetQuoteResult {
-  from: Asset;
-  to: Asset;
-  fromAmount: BigNumber;
-  toAmount: BigNumber;
-}
-
-export interface SwapQuote extends GetQuoteResult {
-  provider: string;
-  fromAccountId: AccountId;
-  toAccountId: AccountId;
-}
-
-export type QuoteRequest = {
-  network: Network;
-  from: string;
-  to: string;
-  amount: BigNumber;
-};
-
-abstract class SwapProvider {
+export abstract class SwapProvider {
   // TODO: types
   config: any;
+
   constructor(config) {
-    if (this.constructor === SwapProvider) {
-      throw new TypeError('Abstract class "SwapProvider" cannot be instantiated directly.');
-    }
     this.config = config;
   }
 
-  async sendLedgerNotification(accountId, message) {
+  protected abstract _getStatuses(): Record<string, SwapStatus>;
+  protected abstract _txTypes(): Record<string, string | null>;
+  protected abstract _fromTxType(): string | null;
+  protected abstract _toTxType(): string | null; // replace with Enum
+  protected abstract _totalSteps(): number;
+  protected abstract _timelineDiagramSteps(): string[];
+
+  public async sendLedgerNotification(accountId: string, message: string) {
     const account = store.getters.accountItem(accountId);
     if (account?.type.includes('ledger')) {
-      await createNotification({
-        title: 'Sign with Ledger',
-        message,
-      });
+      await createNotification({ title: 'Sign with Ledger', message });
     }
   }
 
@@ -47,128 +37,73 @@ abstract class SwapProvider {
    * Get the supported pairs of this provider for this network
    * @param {{ network }} network
    */
-  // eslint-disable-next-line no-unused-vars
-  abstract getSupportedPairs({ network }: { network: Network });
+  public abstract getSupportedPairs({ network }: { network: Network });
 
   /**
    * Get a quote for the specified parameters
-   * @param {{ network, from, to, amount }} options
    */
-  // eslint-disable-next-line no-unused-vars
-  abstract getQuote({ network, from, to, amount }: QuoteRequest): Promise<GetQuoteResult | null>;
+  public abstract getQuote(quoteRequest: QuoteRequest): Promise<GetQuoteResult | null>;
 
   /**
    * Create a new swap for the given quote
-   * @param {{ network, walletId, quote }} options
    */
-  // eslint-disable-next-line no-unused-vars
-  abstract newSwap({
-    network,
-    walletId,
-    quote,
-  }: {
-    network: Network;
-    walletId: string;
-    quote: SwapQuote;
-  }): Promise<Partial<SwapHistoryItem>>;
+  public abstract newSwap(swapRequest: SwapRequest): Promise<Partial<SwapHistoryItem>>;
 
   /**
    * Estimate the fees for the given parameters
-   * @param {{ network, walletId, asset, fromAccountId, toAccountId, txType, amount, feePrices[], max }} options
    * @return Object of key feePrice and value fee
    */
-  // eslint-disable-next-line no-unused-vars
-  abstract estimateFees({
-    network,
-    walletId,
-    asset,
-    txType,
-    quote,
-    feePrices,
-    max,
-  }: {
-    network: Network;
-    walletId: string;
-    asset: Asset;
-    txType: string;
-    quote: SwapQuote;
-    feePrices: number[];
-    max: boolean;
-  }): Promise<{ [price: number]: BigNumber } | null>;
+  public abstract estimateFees(estimateFeeRequest: EstimateFeeRequest): Promise<EstimateFeeResponse | null>;
 
   /**
    * This hook is called when state updates are required
-   * @param {object} store
-   * @param {{ network, walletId, swap }}
    * @return updates An object representing updates to the current swap in the history
    */
-  // eslint-disable-next-line no-unused-vars
-  abstract performNextSwapAction(
+  public abstract performNextSwapAction(
     store: OriginalStore,
-    { network, walletId, swap }: { network: Network; walletId: string; swap: SwapHistoryItem }
+    nextSwapAction: NextSwapActionRequest
   ): Promise<Partial<SwapHistoryItem>>;
 
   /**
-   * Get market data
-   * @param {string} network
-   * @return account
+   * Gets the market data
    */
-  getMarketData(network: Network): MarketData[] {
+  public getMarketData(network: Network): MarketData[] {
     return store.state.marketData[network] as MarketData[];
   }
 
   /**
-   * Get blockchain client
+   * Gets the blockchain client
    */
-  getClient(network, walletId, asset, accountId) {
-    return store.getters.client({
-      network,
-      walletId,
-      asset,
-      accountId,
-    });
+  public getClient(network: Network, walletId: string, asset: string, accountId: string) {
+    return store.getters.client({ network, walletId, asset, accountId });
   }
 
   /**
    * Get account by id
-   * @param {string} accountId
    * @return account
    */
-  getAccount(accountId) {
+  public getAccount(accountId: string) {
     return store.getters.accountItem(accountId);
   }
 
   /**
    * Update balances for given assets
-   * @param {string} network
-   * @param {string} walletId
-   * @param {string[]} assets
    */
-  async updateBalances(network, walletId, assets) {
+  public async updateBalances(network: Network, walletId: string, assets: string[]) {
     return store.dispatch.updateBalances({ network, walletId, assets });
   }
 
   /**
    * Get an address to use for the swap
-   * @param {string} network
-   * @param {string} walletId
-   * @param {string} asset
-   * @param {string} accountId
    * @returns string address
    */
-  async getSwapAddress(network, walletId, asset, accountId) {
-    const [address] = await store.dispatch.getUnusedAddresses({
-      network,
-      walletId,
-      assets: [asset],
-      accountId,
-    });
+  public async getSwapAddress(network: Network, walletId: string, asset: string, accountId: string): Promise<string> {
+    const [address] = await store.dispatch.getUnusedAddresses({ network, walletId, assets: [asset], accountId });
     return address;
   }
 
-  get statuses() {
-    // @ts-ignore
-    const statuses = this.constructor.statuses;
+  public get statuses() {
+    const statuses = this._getStatuses();
     if (typeof statuses === 'undefined')
       throw new Error(
         '`statuses` is not defined. Shape: { STATUS: { step: number, label: string, filterStatus: string, notification () : ({ message }) } }'
@@ -176,34 +111,43 @@ abstract class SwapProvider {
     return statuses;
   }
 
-  get fromTxType() {
-    // @ts-ignore
-    const fromTxType = this.constructor.fromTxType;
-    if (typeof fromTxType === 'undefined') throw new Error('`fromTxType` is not defined. e.g. "INITIATE"');
+  public get fromTxType() {
+    const fromTxType = this._fromTxType();
+    if (typeof fromTxType === 'undefined') {
+      throw new Error('`fromTxType` is not defined. e.g. "INITIATE"');
+    }
     return fromTxType;
   }
 
-  get toTxType() {
-    // @ts-ignore
-    const toTxType = this.constructor.toTxType;
-    if (typeof toTxType === 'undefined') throw new Error('`toTxType` is not defined. e.g. "REDEEM"');
+  public get toTxType() {
+    const toTxType = this._toTxType();
+    if (typeof toTxType === 'undefined') {
+      throw new Error('`toTxType` is not defined. e.g. "REDEEM"');
+    }
     return toTxType;
   }
 
-  get timelineDiagramSteps() {
-    // @ts-ignore
-    const timelineDiagramSteps = this.constructor.timelineDiagramSteps;
-    if (typeof timelineDiagramSteps === 'undefined')
+  public get timelineDiagramSteps() {
+    const timelineDiagramSteps = this._timelineDiagramSteps();
+    if (typeof timelineDiagramSteps === 'undefined') {
       throw new Error('`timelineDiagramSteps` is not defined. e.g. ["APPROVE","SWAP"]');
+    }
     return timelineDiagramSteps;
   }
 
-  get totalSteps() {
-    // @ts-ignore
-    const totalSteps = this.constructor.totalSteps;
-    if (typeof totalSteps === 'undefined') throw new Error('`totalSteps` is not defined. e.g. 2');
+  public get totalSteps() {
+    const totalSteps = this._totalSteps();
+    if (typeof totalSteps === 'undefined') {
+      throw new Error('`totalSteps` is not defined. e.g. 2');
+    }
+    return totalSteps;
+  }
+
+  public get txTypes() {
+    const totalSteps = this._txTypes();
+    if (typeof totalSteps === 'undefined') {
+      throw new Error('`_txTypes` is not defined. e.g. {SWAP: "SWAP"}');
+    }
     return totalSteps;
   }
 }
-
-export { SwapProvider };

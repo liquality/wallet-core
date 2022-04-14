@@ -15,6 +15,7 @@ import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
+import { SwapStatus } from '../types';
 
 const SWAP_DEADLINE = 30 * 60; // 30 minutes
 
@@ -256,7 +257,9 @@ class UniswapSwapProvider extends SwapProvider {
   }
 
   async estimateFees({ network, walletId, asset, txType, quote, feePrices }) {
-    if (txType !== UniswapSwapProvider.fromTxType) throw new Error(`Invalid tx type ${txType}`);
+    if (txType !== this.fromTxType) {
+      throw new Error(`Invalid tx type ${txType}`);
+    }
 
     const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
     const account = this.getAccount(quote.fromAccountId);
@@ -354,64 +357,77 @@ class UniswapSwapProvider extends SwapProvider {
     return updates;
   }
 
-  static txTypes = {
-    SWAP: 'SWAP',
-  };
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
+    };
+  }
 
-  static statuses = {
-    WAITING_FOR_APPROVE_CONFIRMATIONS: {
-      step: 0,
-      label: 'Approving {from}',
-      filterStatus: 'PENDING',
-      notification(swap) {
-        return {
-          message: `Approving ${swap.from}`,
-        };
+  protected _getStatuses(): Record<string, SwapStatus> {
+    return {
+      WAITING_FOR_APPROVE_CONFIRMATIONS: {
+        step: 0,
+        label: 'Approving {from}',
+        filterStatus: 'PENDING',
+        notification(swap: any) {
+          return {
+            message: `Approving ${swap.from}`,
+          };
+        },
       },
-    },
-    APPROVE_CONFIRMED: {
-      step: 1,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-    },
-    WAITING_FOR_SWAP_CONFIRMATIONS: {
-      step: 1,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-      notification() {
-        return {
-          message: 'Engaging the unicorn',
-        };
+      APPROVE_CONFIRMED: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
       },
-    },
-    SUCCESS: {
-      step: 2,
-      label: 'Completed',
-      filterStatus: 'COMPLETED',
-      notification(swap) {
-        return {
-          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
-        };
+      WAITING_FOR_SWAP_CONFIRMATIONS: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
+        notification() {
+          return {
+            message: 'Engaging the unicorn',
+          };
+        },
       },
-    },
-    FAILED: {
-      step: 2,
-      label: 'Swap Failed',
-      filterStatus: 'REFUNDED',
-      notification() {
-        return {
-          message: 'Swap failed',
-        };
+      SUCCESS: {
+        step: 2,
+        label: 'Completed',
+        filterStatus: 'COMPLETED',
+        notification(swap: any) {
+          return {
+            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
+          };
+        },
       },
-    },
-  };
+      FAILED: {
+        step: 2,
+        label: 'Swap Failed',
+        filterStatus: 'REFUNDED',
+        notification() {
+          return {
+            message: 'Swap failed',
+          };
+        },
+      },
+    };
+  }
 
-  static fromTxType = UniswapSwapProvider.txTypes.SWAP;
-  static toTxType = null;
+  protected _fromTxType(): string | null {
+    return this._txTypes().SWAP;
+  }
 
-  static timelineDiagramSteps = ['APPROVE', 'SWAP'];
+  protected _toTxType(): string | null {
+    return null;
+  }
 
-  static totalSteps = 3;
+  protected _timelineDiagramSteps(): string[] {
+    return ['APPROVE', 'SWAP'];
+  }
+
+  protected _totalSteps(): number {
+    return 3;
+  }
 }
 
 export { UniswapSwapProvider };

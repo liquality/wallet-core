@@ -6,7 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { withInterval } from '../../store/actions/performNextAction/utils';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
-import { QuoteRequest, SwapProvider } from '../SwapProvider';
+import { SwapProvider } from '../SwapProvider';
+import { QuoteRequest, SwapStatus } from '../types';
 
 const fastBtcSatoshiFee = 5000;
 const fastBtcPercentageFee = 0.2;
@@ -75,8 +76,11 @@ class FastbtcSwapProvider extends SwapProvider {
   }
 
   // @ts-ignore
-  async getQuote({ from, to, amount }: QuoteRequest) {
-    if (from !== 'BTC' || to !== 'RBTC') return null;
+  async getQuote(quoteRequest: QuoteRequest) {
+    const { from, to, amount } = quoteRequest;
+    if (from !== 'BTC' || to !== 'RBTC') {
+      return null;
+    }
     const fromAmountInUnit = new BN(currencyToUnit(cryptoassets[from], new BN(amount)));
     const validAmountRange = await this._getTxAmount();
     const isQuoteAmountInTheRange = amount <= validAmountRange.max && amount >= validAmountRange.min;
@@ -127,7 +131,7 @@ class FastbtcSwapProvider extends SwapProvider {
   }
 
   async estimateFees({ network, walletId, asset, txType, quote, feePrices, max }) {
-    if (txType === FastbtcSwapProvider.txTypes.SWAP && asset === 'BTC') {
+    if (txType === this._txTypes().SWAP && asset === 'BTC') {
       const client = this.getClient(network, walletId, asset, quote.fromAccountId);
       const value = max ? undefined : new BN(quote.fromAmount);
       const txs = feePrices.map((fee) => ({ to: '', value, fee }));
@@ -212,54 +216,67 @@ class FastbtcSwapProvider extends SwapProvider {
     return updates;
   }
 
-  static txTypes = {
-    SWAP: 'SWAP',
-  };
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
+    };
+  }
 
-  static statuses = {
-    WAITING_FOR_SEND_CONFIRMATIONS: {
-      step: 0,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-      notification() {
-        return {
-          message: 'Swap initiated',
-        };
+  protected _getStatuses(): Record<string, SwapStatus> {
+    return {
+      WAITING_FOR_SEND_CONFIRMATIONS: {
+        step: 0,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
+        notification() {
+          return {
+            message: 'Swap initiated',
+          };
+        },
       },
-    },
-    WAITING_FOR_RECEIVE: {
-      step: 1,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-    },
-    SUCCESS: {
-      step: 2,
-      label: 'Completed',
-      filterStatus: 'COMPLETED',
-      notification(swap) {
-        return {
-          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
-        };
+      WAITING_FOR_RECEIVE: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
       },
-    },
-    FAILED: {
-      step: 2,
-      label: 'Swap Failed',
-      filterStatus: 'REFUNDED',
-      notification() {
-        return {
-          message: 'Swap failed',
-        };
+      SUCCESS: {
+        step: 2,
+        label: 'Completed',
+        filterStatus: 'COMPLETED',
+        notification(swap: any) {
+          return {
+            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
+          };
+        },
       },
-    },
-  };
+      FAILED: {
+        step: 2,
+        label: 'Swap Failed',
+        filterStatus: 'REFUNDED',
+        notification() {
+          return {
+            message: 'Swap failed',
+          };
+        },
+      },
+    };
+  }
 
-  static fromTxType = FastbtcSwapProvider.txTypes.SWAP;
-  static toTxType = null;
+  protected _fromTxType(): string | null {
+    return this._txTypes().SWAP;
+  }
 
-  static timelineDiagramSteps = ['SWAP'];
+  protected _toTxType(): string | null {
+    return null;
+  }
 
-  static totalSteps = 3;
+  protected _timelineDiagramSteps(): string[] {
+    return ['SWAP'];
+  }
+
+  protected _totalSteps(): number {
+    return 3;
+  }
 }
 
 export { FastbtcSwapProvider };

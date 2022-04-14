@@ -1,7 +1,7 @@
 import { unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { Network } from '../store/types';
-import { SwapQuote } from '../swaps/SwapProvider';
+import { SwapQuote } from '../swaps/types';
 import cryptoassets from './cryptoassets';
 import { SwapProviderType } from './swapProviderType';
 import { getSwapProviderConfig } from './swaps';

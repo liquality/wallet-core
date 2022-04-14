@@ -20,6 +20,7 @@ import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
 import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
+import { SwapStatus } from '../types';
 
 // Pool balances are denominated with 8 decimals
 const THORCHAIN_DECIMAL = 8;
@@ -326,7 +327,7 @@ class ThorchainSwapProvider extends SwapProvider {
   }
 
   async estimateFees({ network, walletId, asset, txType, quote, feePrices, max }) {
-    if (txType === ThorchainSwapProvider.txTypes.SWAP && asset === 'BTC') {
+    if (txType === this._txTypes().SWAP && asset === 'BTC') {
       const client = this.getClient(network, walletId, asset, quote.fromAccountId);
       const value = max ? undefined : new BN(quote.fromAmount);
       const memo = await this.makeMemo({ network, walletId, quote });
@@ -341,10 +342,10 @@ class ThorchainSwapProvider extends SwapProvider {
       return mapValues(totalFees, (f) => unitToCurrency(cryptoassets[asset], f));
     }
 
-    if (txType in ThorchainSwapProvider.feeUnits) {
+    if (txType in this.feeUnits) {
       const fees = {};
       for (const feePrice of feePrices) {
-        fees[feePrice] = getTxFee(ThorchainSwapProvider.feeUnits[txType], asset, feePrice);
+        fees[feePrice] = getTxFee(this.feeUnits[txType], asset, feePrice);
       }
       return fees;
     }
@@ -455,11 +456,13 @@ class ThorchainSwapProvider extends SwapProvider {
     return updates;
   }
 
-  static txTypes = {
-    SWAP: 'SWAP',
-  };
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
+    };
+  }
 
-  static feeUnits = {
+  private feeUnits = {
     SWAP: {
       ETH: 200000,
       BNB: 200000,
@@ -468,65 +471,76 @@ class ThorchainSwapProvider extends SwapProvider {
     },
   };
 
-  static statuses = {
-    WAITING_FOR_APPROVE_CONFIRMATIONS: {
-      step: 0,
-      label: 'Approving {from}',
-      filterStatus: 'PENDING',
-      notification(swap) {
-        return {
-          message: `Approving ${swap.from}`,
-        };
+  protected _getStatuses(): Record<string, SwapStatus> {
+    return {
+      WAITING_FOR_APPROVE_CONFIRMATIONS: {
+        step: 0,
+        label: 'Approving {from}',
+        filterStatus: 'PENDING',
+        notification(swap: any) {
+          return {
+            message: `Approving ${swap.from}`,
+          };
+        },
       },
-    },
-    APPROVE_CONFIRMED: {
-      step: 1,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-    },
-    WAITING_FOR_SEND_CONFIRMATIONS: {
-      step: 1,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-      notification() {
-        return {
-          message: 'Swap initiated',
-        };
+      APPROVE_CONFIRMED: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
       },
-    },
-    WAITING_FOR_RECEIVE: {
-      step: 2,
-      label: 'Swapping {from}',
-      filterStatus: 'PENDING',
-    },
-    SUCCESS: {
-      step: 3,
-      label: 'Completed',
-      filterStatus: 'COMPLETED',
-      notification(swap) {
-        return {
-          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
-        };
+      WAITING_FOR_SEND_CONFIRMATIONS: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
+        notification() {
+          return {
+            message: 'Swap initiated',
+          };
+        },
       },
-    },
-    REFUNDED: {
-      step: 3,
-      label: 'Refunded',
-      filterStatus: 'REFUNDED',
-      notification() {
-        return {
-          message: 'Swap refunded',
-        };
+      WAITING_FOR_RECEIVE: {
+        step: 2,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
       },
-    },
-  };
+      SUCCESS: {
+        step: 3,
+        label: 'Completed',
+        filterStatus: 'COMPLETED',
+        notification(swap: any) {
+          return {
+            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
+          };
+        },
+      },
+      REFUNDED: {
+        step: 3,
+        label: 'Refunded',
+        filterStatus: 'REFUNDED',
+        notification() {
+          return {
+            message: 'Swap refunded',
+          };
+        },
+      },
+    };
+  }
 
-  static fromTxType = ThorchainSwapProvider.txTypes.SWAP;
-  static toTxType = null;
+  protected _fromTxType(): string | null {
+    return this._txTypes().SWAP;
+  }
 
-  static timelineDiagramSteps = ['APPROVE', 'INITIATION', 'RECEIVE'];
+  protected _toTxType(): string | null {
+    return null;
+  }
 
-  static totalSteps = 4;
+  protected _timelineDiagramSteps(): string[] {
+    return ['APPROVE', 'INITIATION', 'RECEIVE'];
+  }
+
+  protected _totalSteps(): number {
+    return 4;
+  }
 }
 
 export { ThorchainSwapProvider };

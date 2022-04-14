@@ -11,43 +11,24 @@ import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
 import { SwapProvider } from '../SwapProvider';
+import { SwapStatus } from '../types';
 
-export const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies['@liquality/client']
+const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies['@liquality/client']
   .replace('^', '')
   .replace('~', '')})`;
 
-class LiqualitySwapProvider extends SwapProvider {
-  async _getQuote({ from, to, amount }) {
-    try {
-      return (
-        await axios({
-          url: this.config.agent + '/api/swap/order',
-          method: 'post',
-          data: { from, to, fromAmount: amount },
-          headers: {
-            'x-requested-with': VERSION_STRING,
-            'x-liquality-user-agent': VERSION_STRING,
-          },
-        })
-      ).data;
-    } catch (e) {
-      if (e?.response?.data?.error) {
-        throw new Error(e.response.data.error);
-      } else {
-        throw e;
-      }
-    }
-  }
+const headers = {
+  'x-requested-with': VERSION_STRING,
+  'x-liquality-user-agent': VERSION_STRING,
+};
 
-  async getSupportedPairs() {
+export class LiqualitySwapProvider extends SwapProvider {
+  public async getSupportedPairs() {
     const markets = (
       await axios({
         url: this.config.agent + '/api/swap/marketinfo',
         method: 'get',
-        headers: {
-          'x-requested-with': VERSION_STRING,
-          'x-liquality-user-agent': VERSION_STRING,
-        },
+        headers,
       })
     ).data;
 
@@ -65,7 +46,7 @@ class LiqualitySwapProvider extends SwapProvider {
     return pairs;
   }
 
-  async getQuote({ network, from, to, amount }) {
+  public async getQuote({ network, from, to, amount }) {
     const marketData = this.getMarketData(network);
     // Quotes are retrieved using market data because direct quotes take a long time for BTC swaps (agent takes long to generate new address)
     const market = marketData.find(
@@ -90,7 +71,7 @@ class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  async newSwap({ network, walletId, quote: _quote }) {
+  public async newSwap({ network, walletId, quote: _quote }) {
     const lockedQuote = await this._getQuote({
       from: _quote.from,
       to: _quote.to,
@@ -150,8 +131,8 @@ class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  async estimateFees({ network, walletId, asset, txType, quote, feePrices, max }) {
-    if (txType === LiqualitySwapProvider.txTypes.SWAP_INITIATION && asset === 'BTC') {
+  public async estimateFees({ network, walletId, asset, txType, quote, feePrices, max }) {
+    if (txType === this._txTypes().SWAP_INITIATION && asset === 'BTC') {
       const client = this.getClient(network, walletId, asset, quote.fromAccountId);
       const value = max ? undefined : new BN(quote.fromAmount);
       const txs = feePrices.map((fee) => ({ to: '', value, fee }));
@@ -159,21 +140,21 @@ class LiqualitySwapProvider extends SwapProvider {
       return mapValues(totalFees, (f) => unitToCurrency(cryptoassets[asset], f));
     }
 
-    if (txType === LiqualitySwapProvider.txTypes.SWAP_INITIATION && asset === 'NEAR') {
+    if (txType === this._txTypes().SWAP_INITIATION && asset === 'NEAR') {
       const fees = {};
       // default storage fee recommended by NEAR dev team
       // It leaves 0.02$ dust in the wallet on max value
       const storageFee = new BN(0.00125);
       for (const feePrice of feePrices) {
-        fees[feePrice] = getTxFee(LiqualitySwapProvider.feeUnits[txType], asset, feePrice).plus(storageFee);
+        fees[feePrice] = getTxFee(this.feeUnits[txType], asset, feePrice).plus(storageFee);
       }
       return fees;
     }
 
-    if (txType in LiqualitySwapProvider.feeUnits) {
+    if (txType in this.feeUnits) {
       const fees = {};
       for (const feePrice of feePrices) {
-        fees[feePrice] = getTxFee(LiqualitySwapProvider.feeUnits[txType], asset, feePrice);
+        fees[feePrice] = getTxFee(this.feeUnits[txType], asset, feePrice);
       }
 
       return fees;
@@ -187,8 +168,8 @@ class LiqualitySwapProvider extends SwapProvider {
     return fees;
   }
 
-  updateOrder(order) {
-    return axios({
+  public async updateOrder(order) {
+    const res = await axios({
       url: this.config.agent + '/api/swap/order/' + order.orderId,
       method: 'post',
       data: {
@@ -197,67 +178,280 @@ class LiqualitySwapProvider extends SwapProvider {
         fromFundHash: order.fromFundHash,
         secretHash: order.secretHash,
       },
-      headers: {
-        'x-requested-with': VERSION_STRING,
-        'x-liquality-user-agent': VERSION_STRING,
+      headers,
+    });
+    return res.data;
+  }
+
+  public async waitForClaimConfirmations({ swap, network, walletId }) {
+    const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
+
+    try {
+      const tx = await toClient.chain.getTransactionByHash(swap.toClaimHash);
+
+      if (tx && tx.confirmations && tx.confirmations > 0) {
+        this.updateBalances(network, walletId, [swap.to, swap.from]);
+
+        return {
+          endTime: Date.now(),
+          status: 'SUCCESS',
+        };
+      }
+    } catch (e) {
+      if (e.name === 'TxNotFoundError') console.warn(e);
+      else throw e;
+    }
+
+    // Expiration check should only happen if tx not found
+    const expirationUpdates = await this.handleExpirations({
+      swap,
+      network,
+      walletId,
+    });
+    if (expirationUpdates) {
+      return expirationUpdates;
+    }
+  }
+
+  public async performNextSwapAction(store, { network, walletId, swap }) {
+    let updates;
+    switch (swap.status) {
+      case 'INITIATED':
+        updates = await this.reportInitiation({ swap });
+        break;
+
+      case 'INITIATION_REPORTED':
+        updates = await withInterval(async () => this.confirmInitiation({ swap, network, walletId }));
+        break;
+
+      case 'INITIATION_CONFIRMED':
+        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+          this.fundSwap({ swap, network, walletId })
+        );
+        break;
+
+      case 'FUNDED':
+        updates = await withInterval(async () => this.findCounterPartyInitiation({ swap, network, walletId }));
+        break;
+
+      case 'CONFIRM_COUNTER_PARTY_INITIATION':
+        updates = await withInterval(async () => this.confirmCounterPartyInitiation({ swap, network, walletId }));
+        break;
+
+      case 'READY_TO_CLAIM':
+        updates = await withLock(store, { item: swap, network, walletId, asset: swap.to }, async () =>
+          this.claimSwap({ swap, network, walletId })
+        );
+        break;
+
+      case 'WAITING_FOR_CLAIM_CONFIRMATIONS':
+        updates = await withInterval(async () => this.waitForClaimConfirmations({ swap, network, walletId }));
+        break;
+
+      case 'WAITING_FOR_REFUND':
+        updates = await withInterval(async () => this.waitForRefund({ swap, network, walletId }));
+        break;
+
+      case 'GET_REFUND':
+        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+          this.refundSwap({ swap, network, walletId })
+        );
+        break;
+
+      case 'WAITING_FOR_REFUND_CONFIRMATIONS':
+        updates = await withInterval(async () => this.waitForRefundConfirmations({ swap, network, walletId }));
+        break;
+    }
+
+    return updates;
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP_INITIATION: 'SWAP_INITIATION',
+      SWAP_CLAIM: 'SWAP_CLAIM',
+    };
+  }
+
+  protected _getStatuses(): Record<string, SwapStatus> {
+    return {
+      INITIATED: {
+        step: 0,
+        label: 'Locking {from}',
+        filterStatus: 'PENDING',
       },
-    }).then((res) => res.data);
+      INITIATION_REPORTED: {
+        step: 0,
+        label: 'Locking {from}',
+        filterStatus: 'PENDING',
+        notification() {
+          return {
+            message: 'Swap initiated',
+          };
+        },
+      },
+      INITIATION_CONFIRMED: {
+        step: 0,
+        label: 'Locking {from}',
+        filterStatus: 'PENDING',
+      },
+
+      FUNDED: {
+        step: 1,
+        label: 'Locking {to}',
+        filterStatus: 'PENDING',
+      },
+      CONFIRM_COUNTER_PARTY_INITIATION: {
+        step: 1,
+        label: 'Locking {to}',
+        filterStatus: 'PENDING',
+        notification(swap: any) {
+          return {
+            message: `Counterparty sent ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} to escrow`,
+          };
+        },
+      },
+
+      READY_TO_CLAIM: {
+        step: 2,
+        label: 'Claiming {to}',
+        filterStatus: 'PENDING',
+        notification() {
+          return {
+            message: 'Claiming funds',
+          };
+        },
+      },
+      WAITING_FOR_CLAIM_CONFIRMATIONS: {
+        step: 2,
+        label: 'Claiming {to}',
+        filterStatus: 'PENDING',
+      },
+      WAITING_FOR_REFUND: {
+        step: 2,
+        label: 'Pending Refund',
+        filterStatus: 'PENDING',
+      },
+      GET_REFUND: {
+        step: 2,
+        label: 'Refunding {from}',
+        filterStatus: 'PENDING',
+      },
+      WAITING_FOR_REFUND_CONFIRMATIONS: {
+        step: 2,
+        label: 'Refunding {from}',
+        filterStatus: 'PENDING',
+      },
+
+      REFUNDED: {
+        step: 3,
+        label: 'Refunded',
+        filterStatus: 'REFUNDED',
+        notification(swap: any) {
+          return {
+            message: `Swap refunded, ${prettyBalance(swap.fromAmount, swap.from)} ${swap.from} returned`,
+          };
+        },
+      },
+      SUCCESS: {
+        step: 3,
+        label: 'Completed',
+        filterStatus: 'COMPLETED',
+        notification(swap: any) {
+          return {
+            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
+          };
+        },
+      },
+      QUOTE_EXPIRED: {
+        step: 3,
+        label: 'Quote Expired',
+        filterStatus: 'REFUNDED',
+      },
+    };
   }
 
-  async hasQuoteExpired({ swap }) {
-    return timestamp() >= swap.expiresAt;
+  protected _fromTxType(): string | null {
+    return this._txTypes().SWAP_INITIATION;
   }
 
-  async hasChainTimePassed({ network, walletId, asset, timestamp, accountId }) {
-    const client = this.getClient(network, walletId, asset, accountId);
-    const maxTries = 3;
-    let tries = 0;
-    while (tries < maxTries) {
-      try {
-        const blockNumber = await client.chain.getBlockHeight();
-        const latestBlock = await client.chain.getBlockByNumber(blockNumber);
-        return latestBlock.timestamp > timestamp;
-      } catch (e) {
-        tries++;
-        if (tries >= maxTries) throw e;
-        else {
-          console.warn(e);
-          await wait(2000);
-        }
+  protected _toTxType(): string | null {
+    return this._txTypes().SWAP_CLAIM;
+  }
+
+  protected _timelineDiagramSteps(): string[] {
+    return ['INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
+  }
+
+  protected _totalSteps(): number {
+    return 4;
+  }
+
+  private async _getQuote({ from, to, amount }) {
+    try {
+      return (
+        await axios({
+          url: this.config.agent + '/api/swap/order',
+          method: 'post',
+          data: { from, to, fromAmount: amount },
+          headers,
+        })
+      ).data;
+    } catch (e) {
+      if (e?.response?.data?.error) {
+        throw new Error(e.response.data.error);
+      } else {
+        throw e;
       }
     }
   }
 
-  async canRefund({ network, walletId, swap }) {
-    return this.hasChainTimePassed({
-      network,
-      walletId,
-      asset: swap.from,
-      timestamp: swap.swapExpiration,
-      accountId: swap.fromAccountId,
-    });
-  }
-
-  async hasSwapExpired({ network, walletId, swap }) {
-    return this.hasChainTimePassed({
-      network,
-      walletId,
-      asset: swap.to,
-      timestamp: swap.nodeSwapExpiration,
-      accountId: swap.toAccountId,
-    });
-  }
-
-  async handleExpirations({ network, walletId, swap }) {
+  private async waitForRefund({ swap, network, walletId }) {
     if (await this.canRefund({ swap, network, walletId })) {
       return { status: 'GET_REFUND' };
     }
-    if (await this.hasSwapExpired({ swap, network, walletId })) {
-      return { status: 'WAITING_FOR_REFUND' };
+  }
+
+  private async waitForRefundConfirmations({ swap, network, walletId }) {
+    const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
+    try {
+      const tx = await fromClient.chain.getTransactionByHash(swap.refundHash);
+
+      if (tx && tx.confirmations && tx.confirmations > 0) {
+        return {
+          endTime: Date.now(),
+          status: 'REFUNDED',
+        };
+      }
+    } catch (e) {
+      if (e.name === 'TxNotFoundError') console.warn(e);
+      else throw e;
     }
   }
 
-  async fundSwap({ swap, network, walletId }) {
+  private async refundSwap({ swap, network, walletId }) {
+    const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
+    await this.sendLedgerNotification(swap.fromAccountId, 'Signing required to refund the swap.');
+    const refundTx = await fromClient.swap.refundSwap(
+      {
+        value: new BN(swap.fromAmount),
+        recipientAddress: swap.fromCounterPartyAddress,
+        refundAddress: swap.fromAddress,
+        secretHash: swap.secretHash,
+        expiration: swap.swapExpiration,
+      },
+      swap.fromFundHash,
+      swap.fee
+    );
+
+    return {
+      refundHash: refundTx.hash,
+      refundTx,
+      status: 'WAITING_FOR_REFUND_CONFIRMATIONS',
+    };
+  }
+
+  private async fundSwap({ swap, network, walletId }) {
     if (await this.hasQuoteExpired({ swap })) {
       return { status: 'QUOTE_EXPIRED' };
     }
@@ -290,7 +484,7 @@ class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  async reportInitiation({ swap }) {
+  private async reportInitiation({ swap }) {
     if (await this.hasQuoteExpired({ swap })) {
       return { status: 'WAITING_FOR_REFUND' };
     }
@@ -302,7 +496,7 @@ class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  async confirmInitiation({ swap, network, walletId }) {
+  private async confirmInitiation({ swap, network, walletId }) {
     // Jump the step if counter party has already accepted the initiation
     const counterPartyInitiation = await this.findCounterPartyInitiation({
       swap,
@@ -327,7 +521,7 @@ class LiqualitySwapProvider extends SwapProvider {
     }
   }
 
-  async findCounterPartyInitiation({ swap, network, walletId }) {
+  private async findCounterPartyInitiation({ swap, network, walletId }) {
     const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
 
     try {
@@ -393,7 +587,7 @@ class LiqualitySwapProvider extends SwapProvider {
     }
   }
 
-  async confirmCounterPartyInitiation({ swap, network, walletId }) {
+  private async confirmCounterPartyInitiation({ swap, network, walletId }) {
     const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
 
     const tx = await toClient.chain.getTransactionByHash(swap.toFundHash);
@@ -415,7 +609,7 @@ class LiqualitySwapProvider extends SwapProvider {
     }
   }
 
-  async claimSwap({ swap, network, walletId }) {
+  private async claimSwap({ swap, network, walletId }) {
     const expirationUpdates = await this.handleExpirations({
       swap,
       network,
@@ -449,140 +643,60 @@ class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  async waitForClaimConfirmations({ swap, network, walletId }) {
-    const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
+  private async hasQuoteExpired({ swap }) {
+    return timestamp() >= swap.expiresAt;
+  }
 
-    try {
-      const tx = await toClient.chain.getTransactionByHash(swap.toClaimHash);
-
-      if (tx && tx.confirmations && tx.confirmations > 0) {
-        this.updateBalances(network, walletId, [swap.to, swap.from]);
-
-        return {
-          endTime: Date.now(),
-          status: 'SUCCESS',
-        };
+  private async hasChainTimePassed({ network, walletId, asset, timestamp, accountId }) {
+    const client = this.getClient(network, walletId, asset, accountId);
+    const maxTries = 3;
+    let tries = 0;
+    while (tries < maxTries) {
+      try {
+        const blockNumber = await client.chain.getBlockHeight();
+        const latestBlock = await client.chain.getBlockByNumber(blockNumber);
+        return latestBlock.timestamp > timestamp;
+      } catch (e) {
+        tries++;
+        if (tries >= maxTries) throw e;
+        else {
+          console.warn(e);
+          await wait(2000);
+        }
       }
-    } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
-      else throw e;
-    }
-
-    // Expiration check should only happen if tx not found
-    const expirationUpdates = await this.handleExpirations({
-      swap,
-      network,
-      walletId,
-    });
-    if (expirationUpdates) {
-      return expirationUpdates;
     }
   }
 
-  async waitForRefund({ swap, network, walletId }) {
+  private async canRefund({ network, walletId, swap }) {
+    return this.hasChainTimePassed({
+      network,
+      walletId,
+      asset: swap.from,
+      timestamp: swap.swapExpiration,
+      accountId: swap.fromAccountId,
+    });
+  }
+
+  private async hasSwapExpired({ network, walletId, swap }) {
+    return this.hasChainTimePassed({
+      network,
+      walletId,
+      asset: swap.to,
+      timestamp: swap.nodeSwapExpiration,
+      accountId: swap.toAccountId,
+    });
+  }
+
+  private async handleExpirations({ network, walletId, swap }) {
     if (await this.canRefund({ swap, network, walletId })) {
       return { status: 'GET_REFUND' };
     }
-  }
-
-  async waitForRefundConfirmations({ swap, network, walletId }) {
-    const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
-    try {
-      const tx = await fromClient.chain.getTransactionByHash(swap.refundHash);
-
-      if (tx && tx.confirmations && tx.confirmations > 0) {
-        return {
-          endTime: Date.now(),
-          status: 'REFUNDED',
-        };
-      }
-    } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
-      else throw e;
+    if (await this.hasSwapExpired({ swap, network, walletId })) {
+      return { status: 'WAITING_FOR_REFUND' };
     }
   }
 
-  async refundSwap({ swap, network, walletId }) {
-    const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
-    await this.sendLedgerNotification(swap.fromAccountId, 'Signing required to refund the swap.');
-    const refundTx = await fromClient.swap.refundSwap(
-      {
-        value: new BN(swap.fromAmount),
-        recipientAddress: swap.fromCounterPartyAddress,
-        refundAddress: swap.fromAddress,
-        secretHash: swap.secretHash,
-        expiration: swap.swapExpiration,
-      },
-      swap.fromFundHash,
-      swap.fee
-    );
-
-    return {
-      refundHash: refundTx.hash,
-      refundTx,
-      status: 'WAITING_FOR_REFUND_CONFIRMATIONS',
-    };
-  }
-
-  async performNextSwapAction(store, { network, walletId, swap }) {
-    let updates;
-    switch (swap.status) {
-      case 'INITIATED':
-        updates = await this.reportInitiation({ swap });
-        break;
-
-      case 'INITIATION_REPORTED':
-        updates = await withInterval(async () => this.confirmInitiation({ swap, network, walletId }));
-        break;
-
-      case 'INITIATION_CONFIRMED':
-        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
-          this.fundSwap({ swap, network, walletId })
-        );
-        break;
-
-      case 'FUNDED':
-        updates = await withInterval(async () => this.findCounterPartyInitiation({ swap, network, walletId }));
-        break;
-
-      case 'CONFIRM_COUNTER_PARTY_INITIATION':
-        updates = await withInterval(async () => this.confirmCounterPartyInitiation({ swap, network, walletId }));
-        break;
-
-      case 'READY_TO_CLAIM':
-        updates = await withLock(store, { item: swap, network, walletId, asset: swap.to }, async () =>
-          this.claimSwap({ swap, network, walletId })
-        );
-        break;
-
-      case 'WAITING_FOR_CLAIM_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForClaimConfirmations({ swap, network, walletId }));
-        break;
-
-      case 'WAITING_FOR_REFUND':
-        updates = await withInterval(async () => this.waitForRefund({ swap, network, walletId }));
-        break;
-
-      case 'GET_REFUND':
-        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
-          this.refundSwap({ swap, network, walletId })
-        );
-        break;
-
-      case 'WAITING_FOR_REFUND_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForRefundConfirmations({ swap, network, walletId }));
-        break;
-    }
-
-    return updates;
-  }
-
-  static txTypes = {
-    SWAP_INITIATION: 'SWAP_INITIATION',
-    SWAP_CLAIM: 'SWAP_CLAIM',
-  };
-
-  static feeUnits = {
+  private feeUnits = {
     SWAP_INITIATION: {
       ETH: 165000,
       RBTC: 165000,
@@ -611,109 +725,4 @@ class LiqualitySwapProvider extends SwapProvider {
       AVAX: 45000,
     },
   };
-
-  static statuses = {
-    INITIATED: {
-      step: 0,
-      label: 'Locking {from}',
-      filterStatus: 'PENDING',
-    },
-    INITIATION_REPORTED: {
-      step: 0,
-      label: 'Locking {from}',
-      filterStatus: 'PENDING',
-      notification() {
-        return {
-          message: 'Swap initiated',
-        };
-      },
-    },
-    INITIATION_CONFIRMED: {
-      step: 0,
-      label: 'Locking {from}',
-      filterStatus: 'PENDING',
-    },
-
-    FUNDED: {
-      step: 1,
-      label: 'Locking {to}',
-      filterStatus: 'PENDING',
-    },
-    CONFIRM_COUNTER_PARTY_INITIATION: {
-      step: 1,
-      label: 'Locking {to}',
-      filterStatus: 'PENDING',
-      notification(swap) {
-        return {
-          message: `Counterparty sent ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} to escrow`,
-        };
-      },
-    },
-
-    READY_TO_CLAIM: {
-      step: 2,
-      label: 'Claiming {to}',
-      filterStatus: 'PENDING',
-      notification() {
-        return {
-          message: 'Claiming funds',
-        };
-      },
-    },
-    WAITING_FOR_CLAIM_CONFIRMATIONS: {
-      step: 2,
-      label: 'Claiming {to}',
-      filterStatus: 'PENDING',
-    },
-    WAITING_FOR_REFUND: {
-      step: 2,
-      label: 'Pending Refund',
-      filterStatus: 'PENDING',
-    },
-    GET_REFUND: {
-      step: 2,
-      label: 'Refunding {from}',
-      filterStatus: 'PENDING',
-    },
-    WAITING_FOR_REFUND_CONFIRMATIONS: {
-      step: 2,
-      label: 'Refunding {from}',
-      filterStatus: 'PENDING',
-    },
-
-    REFUNDED: {
-      step: 3,
-      label: 'Refunded',
-      filterStatus: 'REFUNDED',
-      notification(swap) {
-        return {
-          message: `Swap refunded, ${prettyBalance(swap.fromAmount, swap.from)} ${swap.from} returned`,
-        };
-      },
-    },
-    SUCCESS: {
-      step: 3,
-      label: 'Completed',
-      filterStatus: 'COMPLETED',
-      notification(swap) {
-        return {
-          message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
-        };
-      },
-    },
-    QUOTE_EXPIRED: {
-      step: 3,
-      label: 'Quote Expired',
-      filterStatus: 'REFUNDED',
-    },
-  };
-
-  static fromTxType = LiqualitySwapProvider.txTypes.SWAP_INITIATION;
-  static toTxType = LiqualitySwapProvider.txTypes.SWAP_CLAIM;
-
-  static timelineDiagramSteps = ['INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
-
-  static totalSteps = 4;
 }
-
-export { LiqualitySwapProvider };
