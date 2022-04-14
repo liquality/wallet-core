@@ -1,4 +1,5 @@
 import buildConfig from '../build.config';
+import { Network } from '../store/types';
 import astroportInfo from '../swaps/astroport/info.json';
 import fastbtcInfo from '../swaps/fastbtc/info.json';
 import liqualityInfo from '../swaps/liquality/info.json';
@@ -22,11 +23,11 @@ const swapProviderInfo = {
   [SwapProviderType.ASTROPORT]: astroportInfo,
 };
 
-export function getSwapProviderConfig(network, providerId) {
+export function getSwapProviderConfig(network: Network, providerId: string) {
   return buildConfig.swapProviders[network][providerId];
 }
 
-export function getSwapProviderInfo(network, providerId) {
+export function getSwapProviderInfo(network: Network, providerId: string) {
   const config = getSwapProviderConfig(network, providerId);
   return swapProviderInfo[config.type];
 }

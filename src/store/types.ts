@@ -93,7 +93,7 @@ export enum SwapProviderType {
   Astroport = 'astroport',
 }
 
-export interface HistoryItem {
+export interface BaseHistoryItem {
   fee: number;
   feeLabel: FeeLabel;
   from: Asset;
@@ -107,16 +107,25 @@ export interface HistoryItem {
   walletId: WalletId;
 }
 
-export interface SendHistoryItem extends HistoryItem {
+export enum SendStatus {
+  WAITING_FOR_CONFIRMATIONS = 'WAITING_FOR_CONFIRMATIONS',
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+}
+
+export interface SendHistoryItem extends BaseHistoryItem {
+  type: TransactionType.Send;
   toAddress: string;
   amount: string;
   tx: Transaction;
   txHash: string;
   accountId: AccountId;
   fiatRate: number;
+  status: SendStatus;
 }
 
-export interface SwapHistoryItem extends HistoryItem {
+export interface SwapHistoryItem extends BaseHistoryItem {
+  type: TransactionType.Swap;
   claimFeeLabel: FeeLabel;
   fromAmount: string;
   fromAccountId: AccountId;
@@ -127,7 +136,10 @@ export interface SwapHistoryItem extends HistoryItem {
   slippage: number;
   toAccountId: AccountId;
   toAmount: string;
+  bridgeAsset?: Asset;
 }
+
+export type HistoryItem = SendHistoryItem | SwapHistoryItem;
 
 export enum ExperimentType {
   ManageAccounts = 'manageAccounts',
@@ -163,7 +175,7 @@ export interface RootState {
 
   fiatRates: FiatRates;
   fees: NetworkWalletIdMap<Record<Asset, FeeDetails>>;
-  history: NetworkWalletIdMap<HistoryItem[]>;
+  history: NetworkWalletIdMap<BaseHistoryItem[]>;
   marketData: Partial<Record<Network, MarketData[]>>;
 
   activeNetwork: Network;

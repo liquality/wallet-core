@@ -1,16 +1,18 @@
 import { unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
+import { Network } from '../store/types';
+import { SwapQuote } from '../swaps/SwapProvider';
 import cryptoassets from './cryptoassets';
 import { SwapProviderType } from './swapProviderType';
 import { getSwapProviderConfig } from './swaps';
 
-export function calculateQuoteRate(quote) {
+export function calculateQuoteRate(quote: SwapQuote) {
   const fromAmount = unitToCurrency(cryptoassets[quote.from], quote.fromAmount);
   const toAmount = unitToCurrency(cryptoassets[quote.to], quote.toAmount);
   return toAmount.div(fromAmount);
 }
 
-export function sortQuotes(quotes, network) {
+export function sortQuotes(quotes: SwapQuote[], network: Network) {
   return quotes.slice(0).sort((a, b) => {
     const isCrossChain = cryptoassets[a.from].chain !== cryptoassets[a.to].chain;
     if (isCrossChain) {

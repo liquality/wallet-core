@@ -1,14 +1,20 @@
 import BigNumber from 'bignumber.js';
 import store, { OriginalStore } from '../store';
 import { createNotification } from '../store/broker/notification';
-import { Asset, MarketData, Network, SwapHistoryItem } from '../store/types';
+import { AccountId, Asset, MarketData, Network, SwapHistoryItem } from '../store/types';
 
-export type SwapQuote = {
+export interface GetQuoteResult {
   from: Asset;
   to: Asset;
   fromAmount: BigNumber;
   toAmount: BigNumber;
-};
+}
+
+export interface SwapQuote extends GetQuoteResult {
+  provider: string;
+  fromAccountId: AccountId;
+  toAccountId: AccountId;
+}
 
 export type QuoteRequest = {
   network: Network;
@@ -49,7 +55,7 @@ abstract class SwapProvider {
    * @param {{ network, from, to, amount }} options
    */
   // eslint-disable-next-line no-unused-vars
-  abstract getQuote({ network, from, to, amount }: QuoteRequest): Promise<SwapQuote | null>;
+  abstract getQuote({ network, from, to, amount }: QuoteRequest): Promise<GetQuoteResult | null>;
 
   /**
    * Create a new swap for the given quote

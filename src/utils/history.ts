@@ -1,23 +1,24 @@
+import moment from 'moment';
 import store from '../store';
-import moment from '../utils/moment';
+import { HistoryItem, SendStatus, TransactionType } from '../store/types';
 
 export const SEND_STATUS_STEP_MAP = {
-  WAITING_FOR_CONFIRMATIONS: 0,
-  SUCCESS: 1,
-  FAILED: 2,
+  [SendStatus.WAITING_FOR_CONFIRMATIONS]: 0,
+  [SendStatus.SUCCESS]: 1,
+  [SendStatus.FAILED]: 2,
 };
 
 export const SEND_STATUS_LABEL_MAP = {
-  WAITING_FOR_CONFIRMATIONS: 'Pending',
-  SUCCESS: 'Completed',
-  FAILED: 'Failed',
+  [SendStatus.WAITING_FOR_CONFIRMATIONS]: 'Pending',
+  [SendStatus.SUCCESS]: 'Completed',
+  [SendStatus.FAILED]: 'Failed',
 };
 
-export function getStatusLabel(item) {
-  if (item.type === 'SEND') {
+export function getStatusLabel(item: HistoryItem) {
+  if (item.type === TransactionType.Send) {
     return SEND_STATUS_LABEL_MAP[item.status] || '';
   }
-  if (item.type === 'SWAP') {
+  if (item.type === TransactionType.Swap) {
     const swapProvider = store.getters.swapProvider(item.network, item.provider);
     return (
       swapProvider.statuses[item.status].label
@@ -28,8 +29,8 @@ export function getStatusLabel(item) {
   }
 }
 
-export function getStep(item) {
-  if (item.type === 'SEND') {
+export function getStep(item: HistoryItem) {
+  if (item.type === TransactionType.Send) {
     return SEND_STATUS_STEP_MAP[item.status];
   }
   if (item.type === 'SWAP') {
@@ -82,7 +83,10 @@ export const SEND_STATUS_FILTER_MAP = {
   FAILED: 'FAILED',
 };
 
-export const applyActivityFilters = (activity, filters) => {
+export const applyActivityFilters = (
+  activity: HistoryItem[],
+  filters: { types: TransactionType[]; statuses: string[]; dates: { start: string; end: string } }
+) => {
   const { types, statuses, dates } = filters;
   let data = [...activity];
   if (types.length > 0) {
