@@ -1,5 +1,5 @@
-import { Networks } from '../../utils/networks';
 import buildConfig from '../../build.config';
+import { Networks } from '../../utils/networks';
 
 export const accountsChainsSetEnabled = {
   version: 15,

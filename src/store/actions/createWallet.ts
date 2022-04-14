@@ -1,8 +1,8 @@
+import { assets as cryptoassets, ChainId, chains } from '@liquality/cryptoassets';
 import { v4 as uuidv4 } from 'uuid';
-import { encrypt } from '../../utils/crypto';
 import buildConfig from '../../build.config';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
-import { ChainId, chains, assets as cryptoassets } from '@liquality/cryptoassets';
+import { encrypt } from '../../utils/crypto';
 import { AccountType } from '../types';
 
 export const createWallet = async ({ commit }, { key, mnemonic, imported = false }) => {

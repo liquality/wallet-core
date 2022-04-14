@@ -1,26 +1,25 @@
-import BN, { BigNumber } from 'bignumber.js';
-import axios from 'axios';
-import * as ethers from 'ethers';
-import { v4 as uuidv4 } from 'uuid';
-import ERC20 from '@uniswap/v2-core/build/ERC20.json';
-
-import buildConfig from '../../build.config';
-import { chains, currencyToUnit, unitToCurrency, isEthereumChain } from '@liquality/cryptoassets';
-import cryptoassets from '../../utils/cryptoassets';
-import { isERC20 } from '../../utils/asset';
-import { prettyBalance } from '../../utils/coinFormatter';
-import { ChainNetworks } from '../../utils/networks';
-import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
+import { chains, currencyToUnit, isEthereumChain, unitToCurrency } from '@liquality/cryptoassets';
 import {
   getDoubleSwapOutput,
+  getDoubleSwapSlip,
   getSwapMemo,
   getValueOfAsset1InAsset2,
-  getDoubleSwapSlip,
 } from '@thorchain/asgardex-util';
-import { baseAmount, baseToAsset, assetFromString } from '@xchainjs/xchain-util';
-import { SwapProvider } from '../SwapProvider';
-import { getTxFee } from '../../utils/fees';
+import ERC20 from '@uniswap/v2-core/build/ERC20.json';
+import { assetFromString, baseAmount, baseToAsset } from '@xchainjs/xchain-util';
+import axios from 'axios';
+import BN, { BigNumber } from 'bignumber.js';
+import * as ethers from 'ethers';
 import { mapValues } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+import buildConfig from '../../build.config';
+import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
+import { isERC20 } from '../../utils/asset';
+import { prettyBalance } from '../../utils/coinFormatter';
+import cryptoassets from '../../utils/cryptoassets';
+import { getTxFee } from '../../utils/fees';
+import { ChainNetworks } from '../../utils/networks';
+import { SwapProvider } from '../SwapProvider';
 
 // Pool balances are denominated with 8 decimals
 const THORCHAIN_DECIMAL = 8;

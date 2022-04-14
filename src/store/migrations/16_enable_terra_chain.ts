@@ -1,7 +1,7 @@
+import { ChainId, chains } from '@liquality/cryptoassets';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
-import { Networks } from '../../utils/networks';
 import { getDerivationPath } from '../../utils/derivationPath';
-import { chains, ChainId } from '@liquality/cryptoassets';
+import { Networks } from '../../utils/networks';
 import { AccountType } from '../types';
 
 export const enableTerraChain = {

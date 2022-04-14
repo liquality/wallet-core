@@ -1,7 +1,7 @@
 import { isObject } from 'lodash';
-import { unlockAsset } from '../utils';
 import { rootActionContext } from '..';
 import { SwapHistoryItem } from '../types';
+import { unlockAsset } from '../utils';
 
 export const updateTransactionFee = async (context, { network, walletId, asset, id, hash, newFee }) => {
   const { dispatch, commit, getters } = rootActionContext(context);

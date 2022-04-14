@@ -1,16 +1,16 @@
+import { sha256 } from '@liquality/crypto';
+import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
-import { SwapProvider } from '../SwapProvider';
-import { chains, unitToCurrency, currencyToUnit } from '@liquality/cryptoassets';
-import { sha256 } from '@liquality/crypto';
 import pkg from '../../../package.json';
-import { withLock, withInterval } from '../../store/actions/performNextAction/utils';
+import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { timestamp, wait } from '../../store/utils';
-import { prettyBalance } from '../../utils/coinFormatter';
 import { isERC20 } from '../../utils/asset';
+import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
+import { SwapProvider } from '../SwapProvider';
 
 export const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies['@liquality/client']
   .replace('^', '')

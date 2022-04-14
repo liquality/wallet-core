@@ -1,49 +1,41 @@
-import { Client } from '@liquality/client';
-
-import { BitcoinSwapProvider } from '@liquality/bitcoin-swap-provider';
-import { BitcoinJsWalletProvider } from '@liquality/bitcoin-js-wallet-provider';
 import { BitcoinEsploraBatchApiProvider } from '@liquality/bitcoin-esplora-batch-api-provider';
 import { BitcoinEsploraSwapFindProvider } from '@liquality/bitcoin-esplora-swap-find-provider';
 import { BitcoinFeeApiProvider } from '@liquality/bitcoin-fee-api-provider';
+import { BitcoinJsWalletProvider } from '@liquality/bitcoin-js-wallet-provider';
 import { BitcoinRpcFeeProvider } from '@liquality/bitcoin-rpc-fee-provider';
-
-import { EthereumRpcProvider } from '@liquality/ethereum-rpc-provider';
-import { EthereumJsWalletProvider } from '@liquality/ethereum-js-wallet-provider';
-import { EthereumSwapProvider } from '@liquality/ethereum-swap-provider';
-import { EthereumScraperSwapFindProvider } from '@liquality/ethereum-scraper-swap-find-provider';
-import { EthereumRpcFeeProvider } from '@liquality/ethereum-rpc-fee-provider';
+import { BitcoinSwapProvider } from '@liquality/bitcoin-swap-provider';
+import { Client } from '@liquality/client';
+import { ChainId } from '@liquality/cryptoassets';
 import { EthereumEIP1559FeeProvider } from '@liquality/ethereum-eip1559-fee-provider';
-
 import { EthereumErc20Provider } from '@liquality/ethereum-erc20-provider';
-import { EthereumErc20SwapProvider } from '@liquality/ethereum-erc20-swap-provider';
 import { EthereumErc20ScraperSwapFindProvider } from '@liquality/ethereum-erc20-scraper-swap-find-provider';
-
-import { NearSwapProvider } from '@liquality/near-swap-provider';
+import { EthereumErc20SwapProvider } from '@liquality/ethereum-erc20-swap-provider';
+import { EthereumJsWalletProvider } from '@liquality/ethereum-js-wallet-provider';
+import { EthereumNetwork } from '@liquality/ethereum-networks';
+import { EthereumRpcFeeProvider } from '@liquality/ethereum-rpc-fee-provider';
+import { EthereumRpcProvider } from '@liquality/ethereum-rpc-provider';
+import { EthereumScraperSwapFindProvider } from '@liquality/ethereum-scraper-swap-find-provider';
+import { EthereumSwapProvider } from '@liquality/ethereum-swap-provider';
 import { NearJsWalletProvider } from '@liquality/near-js-wallet-provider';
 import { NearRpcProvider } from '@liquality/near-rpc-provider';
 import { NearSwapFindProvider } from '@liquality/near-swap-find-provider';
-
+import { NearSwapProvider } from '@liquality/near-swap-provider';
+import { Provider } from '@liquality/provider';
 import { SolanaRpcProvider } from '@liquality/solana-rpc-provider';
-import { SolanaWalletProvider } from '@liquality/solana-wallet-provider';
-import { SolanaSwapProvider } from '@liquality/solana-swap-provider';
 import { SolanaSwapFindProvider } from '@liquality/solana-swap-find-provider';
-
-import { TerraSwapProvider } from '@liquality/terra-swap-provider';
-import { TerraWalletProvider } from '@liquality/terra-wallet-provider';
+import { SolanaSwapProvider } from '@liquality/solana-swap-provider';
+import { SolanaWalletProvider } from '@liquality/solana-wallet-provider';
 import { TerraRpcProvider } from '@liquality/terra-rpc-provider';
 import { TerraSwapFindProvider } from '@liquality/terra-swap-find-provider';
-
-import { ChainId } from '@liquality/cryptoassets';
-
+import { TerraSwapProvider } from '@liquality/terra-swap-provider';
+import { TerraWalletProvider } from '@liquality/terra-wallet-provider';
+import buildConfig from '../../build.config';
 import { isERC20 } from '../../utils/asset';
 import cryptoassets from '../../utils/cryptoassets';
-import buildConfig from '../../build.config';
-import { ChainNetworks } from '../../utils/networks';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
+import { ChainNetworks } from '../../utils/networks';
 import { walletOptionsStore } from '../../walletOptions';
 import { AccountType, Asset, Network } from '../types';
-import { EthereumNetwork } from '@liquality/ethereum-networks';
-import { Provider } from '@liquality/provider';
 
 function createBtcClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
   const isTestnet = network === 'testnet';

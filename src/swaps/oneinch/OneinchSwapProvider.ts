@@ -1,16 +1,16 @@
+import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import axios from 'axios';
 import BN from 'bignumber.js';
-import { SwapProvider } from '../SwapProvider';
-import { v4 as uuidv4 } from 'uuid';
-import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { ChainNetworks } from '../../utils/networks';
-import { withLock, withInterval } from '../../store/actions/performNextAction/utils';
-import { prettyBalance } from '../../utils/coinFormatter';
-import { isEthereumChain, isERC20 } from '../../utils/asset';
-import cryptoassets from '../../utils/cryptoassets';
 import * as ethers from 'ethers';
+import { v4 as uuidv4 } from 'uuid';
 import buildConfig from '../../build.config';
-import ERC20 from '@uniswap/v2-core/build/ERC20.json';
+import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
+import { isERC20, isEthereumChain } from '../../utils/asset';
+import { prettyBalance } from '../../utils/coinFormatter';
+import cryptoassets from '../../utils/cryptoassets';
+import { ChainNetworks } from '../../utils/networks';
+import { SwapProvider } from '../SwapProvider';
 
 const nativeAssetAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 const slippagePercentage = 0.5;

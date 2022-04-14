@@ -1,5 +1,5 @@
-import { performNextTransactionAction } from './send';
 import { createHistoryNotification } from '../../broker/notification';
+import { performNextTransactionAction } from './send';
 
 export const performNextAction = async (store, { network, walletId, id }) => {
   const { dispatch, commit, getters } = store;

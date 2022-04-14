@@ -1,5 +1,5 @@
-import { prettyBalance } from '../../utils/coinFormatter';
 import store from '../../store';
+import { prettyBalance } from '../../utils/coinFormatter';
 import { walletOptionsStore } from '../../walletOptions';
 
 const SEND_STATUS_MAP = {

@@ -1,13 +1,13 @@
+import { Client } from '@liquality/client';
 import { Asset, assets as cryptoassets, unitToCurrency } from '@liquality/cryptoassets';
+import BN from 'bignumber.js';
+import { uniq } from 'lodash';
 import { rootGetterContext } from '.';
+import { cryptoToFiat } from '../utils/coinFormatter';
+import { getDerivationPath } from '../utils/derivationPath';
+import { Networks } from '../utils/networks';
 import { createClient } from './factory/client';
 import { createSwapProvider } from './factory/swapProvider';
-import BN from 'bignumber.js';
-import { cryptoToFiat } from '../utils/coinFormatter';
-import { Networks } from '../utils/networks';
-import { uniq } from 'lodash';
-import { getDerivationPath } from '../utils/derivationPath';
-import { Client } from '@liquality/client';
 import { AccountType, HistoryItem } from './types';
 
 const clientCache = {};

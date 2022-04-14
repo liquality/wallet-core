@@ -1,21 +1,19 @@
-import BN, { BigNumber } from 'bignumber.js';
-import JSBI from 'jsbi';
-import { v4 as uuidv4 } from 'uuid';
-
-import { Token, WETH9, CurrencyAmount, TradeType, Fraction, Percent } from '@uniswap/sdk-core';
-import { Route, Trade, Pair } from '@uniswap/v2-sdk';
+import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { CurrencyAmount, Fraction, Percent, Token, TradeType, WETH9 } from '@uniswap/sdk-core';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import UniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json';
 import UniswapV2Router from '@uniswap/v2-periphery/build/IUniswapV2Router02.json';
+import { Pair, Route, Trade } from '@uniswap/v2-sdk';
+import BN, { BigNumber } from 'bignumber.js';
 import * as ethers from 'ethers';
-
+import JSBI from 'jsbi';
+import { v4 as uuidv4 } from 'uuid';
 import buildConfig from '../../build.config';
-import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import cryptoassets from '../../utils/cryptoassets';
-import { isEthereumChain, isERC20 } from '../../utils/asset';
-import { prettyBalance } from '../../utils/coinFormatter';
-import { ChainNetworks } from '../../utils/networks';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
+import { isERC20, isEthereumChain } from '../../utils/asset';
+import { prettyBalance } from '../../utils/coinFormatter';
+import cryptoassets from '../../utils/cryptoassets';
+import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
 
 const SWAP_DEADLINE = 30 * 60; // 30 minutes

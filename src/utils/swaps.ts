@@ -1,15 +1,14 @@
 import buildConfig from '../build.config';
-import { SwapProviderType } from './swapProviderType';
-
-import liqualityInfo from '../swaps/liquality/info.json';
-import uniswapInfo from '../swaps/uniswap/info.json';
-import oneinchInfo from '../swaps/oneinch/info.json';
-import thorchainInfo from '../swaps/thorchain/info.json';
-import fastbtcInfo from '../swaps/fastbtc/info.json';
-import liqualityBoostNativeToERC20Info from '../swaps/liqualityboost/liqualityBoostNativeToERC20/info.json';
-import liqualityBoostERC20toNativeInfo from '../swaps/liqualityboost/liqualityBoostERC20toNative/info.json';
-import sovrynInfo from '../swaps/sovryn/info.json';
 import astroportInfo from '../swaps/astroport/info.json';
+import fastbtcInfo from '../swaps/fastbtc/info.json';
+import liqualityInfo from '../swaps/liquality/info.json';
+import liqualityBoostERC20toNativeInfo from '../swaps/liqualityboost/liqualityBoostERC20toNative/info.json';
+import liqualityBoostNativeToERC20Info from '../swaps/liqualityboost/liqualityBoostNativeToERC20/info.json';
+import oneinchInfo from '../swaps/oneinch/info.json';
+import sovrynInfo from '../swaps/sovryn/info.json';
+import thorchainInfo from '../swaps/thorchain/info.json';
+import uniswapInfo from '../swaps/uniswap/info.json';
+import { SwapProviderType } from './swapProviderType';
 
 const swapProviderInfo = {
   [SwapProviderType.LIQUALITY]: liqualityInfo,

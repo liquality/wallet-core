@@ -1,14 +1,14 @@
 // @ts-nocheck
-import EventEmitter from 'events';
-import { random, findKey, mapKeys, mapValues } from 'lodash';
-import axios from 'axios';
-import cryptoassets from '../utils/cryptoassets';
 import { Client } from '@liquality/client';
-import { EthereumRpcProvider } from '@liquality/ethereum-rpc-provider';
-import { EthereumJsWalletProvider } from '@liquality/ethereum-js-wallet-provider';
 import { EthereumErc20Provider } from '@liquality/ethereum-erc20-provider';
-import { ChainNetworks } from '../utils/networks';
+import { EthereumJsWalletProvider } from '@liquality/ethereum-js-wallet-provider';
+import { EthereumRpcProvider } from '@liquality/ethereum-rpc-provider';
+import axios from 'axios';
+import EventEmitter from 'events';
+import { findKey, mapKeys, mapValues, random } from 'lodash';
 import buildConfig from '../build.config';
+import cryptoassets from '../utils/cryptoassets';
+import { ChainNetworks } from '../utils/networks';
 
 export const CHAIN_LOCK = {};
 

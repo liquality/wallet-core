@@ -1,4 +1,4 @@
-import { attemptToLockAsset, waitForRandom, emitter } from '../utils';
+import { attemptToLockAsset, emitter, waitForRandom } from '../utils';
 
 export const getLockForAsset = async ({ dispatch, commit }, { network, walletId, asset, item }) => {
   const { key, success } = attemptToLockAsset(network, walletId, asset);

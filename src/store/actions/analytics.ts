@@ -1,6 +1,6 @@
+import amplitude from 'amplitude-js';
 import { v4 as uuidv4 } from 'uuid';
 import { version as walletVersion } from '../../../package.json';
-import amplitude from 'amplitude-js';
 
 const useAnalytics = !!process.env.VUE_APP_AMPLITUDE_API_KEY;
 console.log('ANALITYCS_ENABLED', useAnalytics);

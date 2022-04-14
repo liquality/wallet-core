@@ -1,6 +1,6 @@
+import BN from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import { createHistoryNotification } from '../broker/notification';
-import BN from 'bignumber.js';
 
 export const sendTransaction = async (
   { dispatch, commit, getters },

@@ -1,7 +1,7 @@
-import BN from 'bignumber.js';
-import cryptoassets from './cryptoassets';
 import { chains, unitToCurrency } from '@liquality/cryptoassets';
+import BN from 'bignumber.js';
 import { isERC20, isEthereumChain } from './asset';
+import cryptoassets from './cryptoassets';
 
 const SEND_FEE_UNITS = {
   BTC: 290,

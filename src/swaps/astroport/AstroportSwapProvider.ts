@@ -1,22 +1,20 @@
-import BN from 'bignumber.js';
-import { v4 as uuidv4 } from 'uuid';
-import { LCDClient } from '@terra-money/terra.js';
-
-import cryptoassets from '../../utils/cryptoassets';
 import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import { TerraNetworks } from '@liquality/terra-networks';
+import { LCDClient } from '@terra-money/terra.js';
+import BN from 'bignumber.js';
+import { v4 as uuidv4 } from 'uuid';
 import { withInterval } from '../../store/actions/performNextAction/utils';
 import { prettyBalance } from '../../utils/coinFormatter';
-
+import cryptoassets from '../../utils/cryptoassets';
+import { QuoteRequest, SwapProvider } from '../SwapProvider';
 import {
-  getRateNativeToAsset,
-  getRateERC20ToERC20,
-  buildSwapFromNativeTokenMsg,
   buildSwapFromContractTokenMsg,
   buildSwapFromContractTokenToUSTMsg,
+  buildSwapFromNativeTokenMsg,
   getPairAddressQuery,
+  getRateERC20ToERC20,
+  getRateNativeToAsset,
 } from './queries';
-import { QuoteRequest, SwapProvider } from '../SwapProvider';
 
 class AstroportSwapProvider extends SwapProvider {
   async getSupportedPairs() {

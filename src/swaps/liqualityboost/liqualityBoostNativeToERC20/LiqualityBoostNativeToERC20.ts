@@ -1,13 +1,13 @@
+import { assets, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
-import { SwapProvider } from '../../SwapProvider';
-import { unitToCurrency, assets } from '@liquality/cryptoassets';
 import { withInterval } from '../../../store/actions/performNextAction/utils';
+import { createSwapProvider } from '../../../store/factory/swapProvider';
+import { getNativeAsset, isERC20 } from '../../../utils/asset';
 import { prettyBalance } from '../../../utils/coinFormatter';
-import { isERC20, getNativeAsset } from '../../../utils/asset';
 import { LiqualitySwapProvider } from '../../liquality/LiqualitySwapProvider';
 import { OneinchSwapProvider } from '../../oneinch/OneinchSwapProvider';
-import { createSwapProvider } from '../../../store/factory/swapProvider';
 import { SovrynSwapProvider } from '../../sovryn/SovrynSwapProvider';
+import { SwapProvider } from '../../SwapProvider';
 
 const slippagePercentage = 3;
 

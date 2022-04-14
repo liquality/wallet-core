@@ -1,6 +1,6 @@
+import { assets as cryptoassets, ChainId, chains } from '@liquality/cryptoassets';
 import buildConfig from '../../build.config';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
-import { chains, assets as cryptoassets, ChainId } from '@liquality/cryptoassets';
 import { AccountType } from '../types';
 
 export const multipleAccountSupport = {

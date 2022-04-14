@@ -1,14 +1,14 @@
-import { SwapProviderType } from '../../utils/swapProviderType';
+import buildConfig from '../../build.config';
+import { AstroportSwapProvider } from '../../swaps/astroport/AstroportSwapProvider';
+import { FastbtcSwapProvider } from '../../swaps/fastbtc/FastbtcSwapProvider';
 import { LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
 import { LiqualityBoostERC20toNative } from '../../swaps/liqualityboost/liqualityBoostERC20toNative/LiqualityBoostERC20toNative';
 import { LiqualityBoostNativeToERC20 } from '../../swaps/liqualityboost/liqualityBoostNativeToERC20/LiqualityBoostNativeToERC20';
-import { UniswapSwapProvider } from '../../swaps/uniswap/UniswapSwapProvider';
 import { OneinchSwapProvider } from '../../swaps/oneinch/OneinchSwapProvider';
-import { ThorchainSwapProvider } from '../../swaps/thorchain/ThorchainSwapProvider';
-import { FastbtcSwapProvider } from '../../swaps/fastbtc/FastbtcSwapProvider';
 import { SovrynSwapProvider } from '../../swaps/sovryn/SovrynSwapProvider';
-import { AstroportSwapProvider } from '../../swaps/astroport/AstroportSwapProvider';
-import buildConfig from '../../build.config';
+import { ThorchainSwapProvider } from '../../swaps/thorchain/ThorchainSwapProvider';
+import { UniswapSwapProvider } from '../../swaps/uniswap/UniswapSwapProvider';
+import { SwapProviderType } from '../../utils/swapProviderType';
 
 const providers = {
   [SwapProviderType.LIQUALITY]: LiqualitySwapProvider,

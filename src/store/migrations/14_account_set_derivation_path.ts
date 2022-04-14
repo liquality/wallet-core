@@ -1,7 +1,7 @@
+import { ChainId, chains } from '@liquality/cryptoassets';
+import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { getDerivationPath } from '../../utils/derivationPath';
 import { Networks } from '../../utils/networks';
-import { accountCreator, getNextAccountColor } from '../../utils/accounts';
-import { ChainId, chains } from '@liquality/cryptoassets';
 import { Account, AccountType } from '../types';
 
 export const accountSetDerivationPath = {

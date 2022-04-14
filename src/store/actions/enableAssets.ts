@@ -1,5 +1,5 @@
-import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { chains } from '@liquality/cryptoassets';
+import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { AccountType } from '../types';
 
 export const enableAssets = async ({ state, commit, dispatch, getters }, { network, walletId, assets }) => {

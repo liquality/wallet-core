@@ -1,20 +1,18 @@
-import BN from 'bignumber.js';
-import { v4 as uuidv4 } from 'uuid';
-import * as ethers from 'ethers';
-
-import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import cryptoassets from '../../utils/cryptoassets';
-import { isERC20 } from '../../utils/asset';
-import { prettyBalance } from '../../utils/coinFormatter';
-import { ChainNetworks } from '../../utils/networks';
-import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
-import { SwapProvider } from '../SwapProvider';
-import ERC20 from '@uniswap/v2-core/build/ERC20.json';
-
 import SovrynSwapNetworkABI from '@blobfishkate/sovryncontracts/abi/abiSovrynSwapNetwork.json';
 import RBTCWrapperProxyABI from '@blobfishkate/sovryncontracts/abi/abiWrapperProxy_new.json';
 import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-mainnet.json';
 import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
+import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import ERC20 from '@uniswap/v2-core/build/ERC20.json';
+import BN from 'bignumber.js';
+import * as ethers from 'ethers';
+import { v4 as uuidv4 } from 'uuid';
+import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
+import { isERC20 } from '../../utils/asset';
+import { prettyBalance } from '../../utils/coinFormatter';
+import cryptoassets from '../../utils/cryptoassets';
+import { ChainNetworks } from '../../utils/networks';
+import { SwapProvider } from '../SwapProvider';
 
 // use WRBTC address for RBTC native token
 const wrappedRbtcAddress = {

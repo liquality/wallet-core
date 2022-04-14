@@ -1,9 +1,8 @@
-import Bluebird from 'bluebird';
-import { Address } from '@liquality/types';
 import { ChainId } from '@liquality/cryptoassets';
-import { Network } from '../types';
+import { Address } from '@liquality/types';
+import Bluebird from 'bluebird';
 import { rootActionContext } from '..';
-import { Asset } from '../types';
+import { Asset, Network } from '../types';
 
 export const updateBalances = async (
   context,

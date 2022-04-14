@@ -1,6 +1,6 @@
+import { ChainId } from '@liquality/cryptoassets';
 import Bluebird from 'bluebird';
 import { isEthereumChain } from '../../utils/asset';
-import { ChainId } from '@liquality/cryptoassets';
 
 export const getUnusedAddresses = async ({ state, commit, getters }, { network, walletId, assets, accountId }) => {
   return Bluebird.map(

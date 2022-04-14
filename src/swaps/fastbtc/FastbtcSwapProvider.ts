@@ -1,12 +1,12 @@
-import { io } from 'socket.io-client';
+import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { mapValues } from 'lodash';
-import { QuoteRequest, SwapProvider } from '../SwapProvider';
+import { io } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
-import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import { withInterval } from '../../store/actions/performNextAction/utils';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
+import { QuoteRequest, SwapProvider } from '../SwapProvider';
 
 const fastBtcSatoshiFee = 5000;
 const fastBtcPercentageFee = 0.2;

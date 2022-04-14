@@ -1,9 +1,9 @@
 import { chains, isEthereumChain as _isEthereumChain } from '@liquality/cryptoassets';
-import cryptoassets from '../utils/cryptoassets';
-import * as ethers from 'ethers';
 import axios from 'axios';
-import tokenABI from './tokenABI.json';
+import * as ethers from 'ethers';
 import buildConfig from '../build.config';
+import cryptoassets from '../utils/cryptoassets';
+import tokenABI from './tokenABI.json';
 
 const EXPLORERS = {
   ethereum: {

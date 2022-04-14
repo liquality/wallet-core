@@ -1,5 +1,5 @@
-import moment from '../utils/moment';
 import store from '../store';
+import moment from '../utils/moment';
 
 export const SEND_STATUS_STEP_MAP = {
   WAITING_FOR_CONFIRMATIONS: 0,

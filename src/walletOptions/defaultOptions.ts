@@ -1,6 +1,6 @@
-import { WalletOptions } from '../types';
-import _pbkdf2 from 'pbkdf2';
 import { AES } from 'crypto-js';
+import _pbkdf2 from 'pbkdf2';
+import { WalletOptions } from '../types';
 
 const defaultWalletOptions: WalletOptions = {
   crypto: {
