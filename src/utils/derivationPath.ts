@@ -1,11 +1,11 @@
 import { ChainId } from '@liquality/cryptoassets';
 import { bitcoin } from '@liquality/types';
-import { AccountType } from '../store/types';
+import { AccountType, Network } from '../store/types';
 import { BTC_ADDRESS_TYPE_TO_PREFIX } from '../utils/address';
 import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
 import { ChainNetworks } from '../utils/networks';
 
-const getBitcoinDerivationPath = (accountType, coinType, index) => {
+const getBitcoinDerivationPath = (accountType: AccountType, coinType: string, index: number) => {
   if (accountType.includes('ledger')) {
     const option = LEDGER_BITCOIN_OPTIONS.find((o) => o.name === accountType);
     if (!option) {
@@ -18,18 +18,22 @@ const getBitcoinDerivationPath = (accountType, coinType, index) => {
   }
 };
 
-const getEthereumBasedDerivationPath = (coinType, index) => `m/44'/${coinType}'/${index}'/0/0`;
+const getEthereumBasedDerivationPath = (coinType: string, index: number) => `m/44'/${coinType}'/${index}'/0/0`;
 
-const derivationPaths = {
-  [ChainId.Bitcoin]: (network, index, accountType = AccountType.Default) => {
+export type DerivationPathCreator = {
+  [key in ChainId]?: (network: Network, index: number, accountType?: AccountType) => string;
+};
+
+const derivationPaths: DerivationPathCreator = {
+  [ChainId.Bitcoin]: (network: Network, index: number, accountType = AccountType.Default) => {
     const bitcoinNetwork = ChainNetworks[ChainId.Bitcoin][network];
     return getBitcoinDerivationPath(accountType, bitcoinNetwork.coinType, index);
   },
-  [ChainId.Ethereum]: (network, index) => {
+  [ChainId.Ethereum]: (network: Network, index: number) => {
     const ethNetwork = ChainNetworks[ChainId.Ethereum][network];
     return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
   },
-  [ChainId.Rootstock]: (network, index, accountType = AccountType.Default) => {
+  [ChainId.Rootstock]: (network: Network, index: number, accountType = AccountType.Default) => {
     let coinType;
     if (accountType === AccountType.RskLedger) {
       coinType = network === 'mainnet' ? '137' : '37310';
@@ -40,40 +44,42 @@ const derivationPaths = {
 
     return getEthereumBasedDerivationPath(coinType, index);
   },
-  [ChainId.BinanceSmartChain]: (network, index) => {
+  [ChainId.BinanceSmartChain]: (network: Network, index: number) => {
     const ethNetwork = ChainNetworks[ChainId.BinanceSmartChain][network];
     return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
   },
-  [ChainId.Near]: (network, index) => {
+  [ChainId.Near]: (network: Network, index: number) => {
     const nearNetwork = ChainNetworks[ChainId.Near][network];
     return `m/44'/${nearNetwork.coinType}'/${index}'`;
   },
-  [ChainId.Polygon]: (network, index) => {
+  [ChainId.Polygon]: (network: Network, index: number) => {
     const ethNetwork = ChainNetworks[ChainId.Polygon][network];
     return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
   },
-  [ChainId.Arbitrum]: (network, index) => {
+  [ChainId.Arbitrum]: (network: Network, index: number) => {
     const ethNetwork = ChainNetworks[ChainId.Arbitrum][network];
     return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
   },
-  [ChainId.Avalanche]: (network, index) => {
+  [ChainId.Avalanche]: (network: Network, index: number) => {
     const ethNetwork = ChainNetworks[ChainId.Avalanche][network];
     return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
   },
-  [ChainId.Solana]: (network, index) => {
+  [ChainId.Solana]: (network: Network, index: number) => {
     const solanaNetwork = ChainNetworks[ChainId.Solana][network];
     return `m/44'/501'/${solanaNetwork.walletIndex}'/${index}'`;
   },
-  [ChainId.Terra]: (network, index) => {
+  [ChainId.Terra]: (network: Network, index: number) => {
     const terraNetwork = ChainNetworks[ChainId.Terra][network];
     return `'m/44'/${terraNetwork.coinType}'/${index}'`;
   },
-  [ChainId.Fuse]: (network, index) => {
+  [ChainId.Fuse]: (network: Network, index: number) => {
     const ethNetwork = ChainNetworks[ChainId.Fuse][network];
     return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
   },
 };
 
-export const getDerivationPath = (chainId, network, index, accountType: AccountType) => {
-  return derivationPaths[chainId](network, index, accountType);
+export const getDerivationPath = (chainId: ChainId, network: Network, index: number, accountType: AccountType) => {
+  const pathFunction = derivationPaths[chainId];
+  if (!pathFunction) throw new Error(`Derivation path creator for chain ${chainId} not implemented`);
+  return pathFunction(network, index, accountType);
 };

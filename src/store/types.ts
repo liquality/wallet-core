@@ -44,9 +44,7 @@ export enum AccountType {
   RskLedger = 'rsk_ledger',
 }
 
-export interface Account {
-  id: AccountId;
-  walletId: WalletId;
+export interface AccountDefinition {
   type: AccountType;
   name: string;
   alias: string;
@@ -56,9 +54,15 @@ export interface Account {
   addresses: string[];
   assets: Asset[];
   balances: Record<Asset, string>;
-  createdAt: number;
   updatedAt?: number;
   color: string;
+  enabled?: boolean;
+}
+
+export interface Account extends AccountDefinition {
+  id: AccountId;
+  walletId: WalletId;
+  createdAt: number;
   enabled: boolean;
 }
 
@@ -116,7 +120,7 @@ export enum SendStatus {
 export interface SendHistoryItem extends BaseHistoryItem {
   type: TransactionType.Send;
   toAddress: string;
-  amount: string;
+  amount: number;
   tx: Transaction;
   txHash: string;
   accountId: AccountId;

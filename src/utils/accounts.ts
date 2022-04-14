@@ -1,9 +1,13 @@
-import { chains } from '@liquality/cryptoassets';
+import { ChainId, chains } from '@liquality/cryptoassets';
 import { v4 as uuidv4 } from 'uuid';
-import { Account } from '../store/types';
+import { Account, AccountDefinition, Network, WalletId } from '../store/types';
 import { getDerivationPath } from '../utils/derivationPath';
 
-export const accountCreator = (payload): Account => {
+export const accountCreator = (payload: {
+  network: Network;
+  walletId: WalletId;
+  account: AccountDefinition;
+}): Account => {
   const { network, walletId, account } = payload;
   const { name, alias, chain, index, addresses, assets, balances, type, color } = account;
 
@@ -54,7 +58,7 @@ export const accountColors = [
   '#8247E5',
 ];
 
-export const chainDefaultColors = {
+export const chainDefaultColors: { [key in ChainId]?: string } = {
   bitcoin: '#EAB300',
   ethereum: '#4F67E4',
   rsk: '#3AB24D',
@@ -68,8 +72,11 @@ export const chainDefaultColors = {
   avalanche: '#E84141',
 };
 
-export const getNextAccountColor = (chain, index) => {
+export const getNextAccountColor = (chain: ChainId, index: number) => {
   const defaultColor = chainDefaultColors[chain];
+  if (!defaultColor) {
+    throw new Error(`Default color for chain ${chain} not defined`);
+  }
   const defaultIndex = accountColors.findIndex((c) => c === defaultColor);
   if (defaultIndex === -1) {
     return defaultColor;
@@ -86,14 +93,14 @@ export const ACCOUNT_TYPE_OPTIONS = [
     name: 'ETH',
     label: 'ETH',
     type: 'ethereum_imported',
-    chain: 'ethereum',
+    chain: ChainId.Ethereum,
     blockchain: 'Ethereum Blockchain',
   },
   {
     name: 'BTC',
     label: 'BTC',
     type: 'bitcoin_imported',
-    chain: 'bitcoin',
+    chain: ChainId.Bitcoin,
     blockchain: 'Bitcoin Blockchain',
   },
 ];

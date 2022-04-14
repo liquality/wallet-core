@@ -1,34 +1,6 @@
-import { version } from '../../package.json';
+import { HistoryItem } from '../store/types';
 
-export const downloadFile = ({ filename, type, content }) => {
-  const blob = new Blob([content], { type });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', filename);
-  link.click();
-  link.remove();
-};
-
-export const getWalletStateLogs = async () => {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(['liquality-wallet'], (storage) => {
-      const state = storage['liquality-wallet'];
-
-      // Remove key related properties
-      delete state.encryptedWallets;
-      delete state.keySalt;
-
-      // TODO: Add more data such as recent errors
-      const metadata = { version };
-
-      const logs = { state, metadata };
-      resolve(JSON.stringify(logs, null, 2));
-    });
-  });
-};
-
-export const getCSVContent = (data, headers) => {
+export const getCSVContent = (data: HistoryItem[], headers: { label: string; key: string }[]) => {
   if (!data == null || !data.length) {
     return null;
   }
@@ -43,7 +15,7 @@ export const getCSVContent = (data, headers) => {
     headers.forEach((header) => {
       if (ctr > 0) result += columnDelimiter;
 
-      result += item[header.key];
+      result += item[header.key as keyof HistoryItem];
       ctr++;
     });
     result += lineDelimiter;

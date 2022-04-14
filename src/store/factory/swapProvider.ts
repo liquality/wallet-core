@@ -9,6 +9,7 @@ import { SovrynSwapProvider } from '../../swaps/sovryn/SovrynSwapProvider';
 import { ThorchainSwapProvider } from '../../swaps/thorchain/ThorchainSwapProvider';
 import { UniswapSwapProvider } from '../../swaps/uniswap/UniswapSwapProvider';
 import { SwapProviderType } from '../../utils/swapProviderType';
+import { Network } from '../types';
 
 const providers = {
   [SwapProviderType.LIQUALITY]: LiqualitySwapProvider,
@@ -22,7 +23,7 @@ const providers = {
   [SwapProviderType.ASTROPORT]: AstroportSwapProvider,
 };
 
-export const createSwapProvider = (network, providerId) => {
+export const createSwapProvider = (network: Network, providerId: string) => {
   const swapProviderConfig = buildConfig.swapProviders[network][providerId];
   const SwapProvider = providers[swapProviderConfig.type];
   return new SwapProvider({ ...swapProviderConfig, providerId });

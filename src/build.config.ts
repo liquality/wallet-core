@@ -1,5 +1,6 @@
 import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-mainnet.json';
 import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
+import { Network } from './store/types';
 import { SwapProviderType } from './utils/swapProviderType';
 
 export default {
@@ -168,7 +169,7 @@ export default {
     },
   },
   discordUrl: 'https://discord.gg/Xsqw7PW8wk',
-  networks: ['mainnet', 'testnet'],
+  networks: [Network.Mainnet, Network.Testnet],
   chains: ['bitcoin', 'ethereum', 'rsk', 'bsc', 'near', 'polygon', 'arbitrum', 'terra', 'fuse', 'avalanche'],
   supportedBridgeAssets: ['MATIC', 'RBTC', 'AVAX'],
 };

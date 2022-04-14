@@ -1,7 +1,8 @@
 import { Asset } from '@liquality/cryptoassets';
+import type { OriginalStore } from '../store';
 
 // Redefine the `cryptoassets` lib to pull from the getter - to include custom tokens
-let store;
+let store: OriginalStore;
 
 // Lazy load the store to prevent cyclic dependencies
 function getStore() {

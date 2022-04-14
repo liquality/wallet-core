@@ -1,4 +1,6 @@
-export function shortenAddress(address) {
+import { bitcoin } from '@liquality/types';
+
+export function shortenAddress(address: string) {
   const prefix = address.startsWith('0x') ? '0x' : '';
   const isTerra = address.startsWith('terra');
   return `${prefix}${address.replace('0x', '').substring(0, prefix ? 4 : 6)}...${address.substring(
@@ -6,8 +8,10 @@ export function shortenAddress(address) {
   )}`;
 }
 
+export const BitcoinAddressType = bitcoin.AddressType;
+
 export const BTC_ADDRESS_TYPE_TO_PREFIX = {
-  legacy: 44,
-  'p2sh-segwit': 49,
-  bech32: 84,
+  [BitcoinAddressType.LEGACY]: 44,
+  [BitcoinAddressType.P2SH_SEGWIT]: 49,
+  [BitcoinAddressType.BECH32]: 84,
 };

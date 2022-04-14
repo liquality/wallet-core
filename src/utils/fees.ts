@@ -1,5 +1,6 @@
 import { chains, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
+import { Asset } from '../store/types';
 import { isERC20, isEthereumChain } from './asset';
 import cryptoassets from './cryptoassets';
 
@@ -19,6 +20,8 @@ const SEND_FEE_UNITS = {
   FUSE: 21000,
 };
 
+type FeeUnits = { [asset: Asset]: number };
+
 const FEE_OPTIONS = {
   SLOW: { name: 'Slow', label: 'Slow' },
   AVERAGE: { name: 'Average', label: 'Avg' },
@@ -26,11 +29,11 @@ const FEE_OPTIONS = {
   CUSTOM: { name: 'Custom', label: 'Custom' },
 };
 
-function getSendFee(asset, feePrice) {
+function getSendFee(asset: Asset, feePrice: number) {
   return getTxFee(SEND_FEE_UNITS, asset, feePrice);
 }
 
-function getTxFee(units, _asset, _feePrice) {
+function getTxFee(units: FeeUnits, _asset: Asset, _feePrice: number) {
   const chainId = cryptoassets[_asset].chain;
   const nativeAsset = chains[chainId].nativeAsset;
   const feePrice = isEthereumChain(_asset) ? new BN(_feePrice).times(1e9) : _feePrice; // ETH fee price is in gwei
@@ -40,9 +43,9 @@ function getTxFee(units, _asset, _feePrice) {
   return unitToCurrency(cryptoassets[nativeAsset], fee);
 }
 
-function getFeeLabel(fee) {
-  const name = fee?.toUpperCase() || '';
-  return FEE_OPTIONS?.[name]?.label || '';
+function getFeeLabel(fee: string) {
+  const name = (fee?.toUpperCase() || '') as keyof typeof FEE_OPTIONS;
+  return FEE_OPTIONS[name]?.label || '';
 }
 
 export { FEE_OPTIONS, getSendFee, getTxFee, getFeeLabel };

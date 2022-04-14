@@ -1,11 +1,14 @@
-import { chains, isEthereumChain as _isEthereumChain } from '@liquality/cryptoassets';
+import { ChainId, chains, isEthereumChain as _isEthereumChain } from '@liquality/cryptoassets';
 import axios from 'axios';
 import * as ethers from 'ethers';
 import buildConfig from '../build.config';
+import { Asset, Network } from '../store/types';
 import cryptoassets from '../utils/cryptoassets';
 import tokenABI from './tokenABI.json';
 
-const EXPLORERS = {
+type ExplorerMap = { [key in ChainId]?: { [key in Network]: { tx: string; address: string } } };
+
+const EXPLORERS: ExplorerMap = {
   ethereum: {
     testnet: {
       tx: 'https://ropsten.etherscan.io/tx/0x{hash}',
@@ -118,16 +121,24 @@ const EXPLORERS = {
   },
 };
 
-export const isERC20 = (asset) => {
+function getChainExplorer(chain: ChainId) {
+  const chainExplorer = EXPLORERS[chain];
+  if (!chainExplorer) {
+    throw new Error(`Explorer definition not found for chain ${chain}`);
+  }
+  return chainExplorer;
+}
+
+export const isERC20 = (asset: Asset) => {
   return cryptoassets[asset]?.type === 'erc20';
 };
 
-export const isEthereumChain = (asset) => {
+export const isEthereumChain = (asset: Asset) => {
   const chain = cryptoassets[asset]?.chain;
   return _isEthereumChain(chain);
 };
 
-export const isEthereumNativeAsset = (asset) => {
+export const isEthereumNativeAsset = (asset: Asset) => {
   const chainId = cryptoassets[asset]?.chain;
   if (chainId && _isEthereumChain(chainId) && chains[chainId].nativeAsset === asset) {
     return true;
@@ -136,18 +147,18 @@ export const isEthereumNativeAsset = (asset) => {
   return false;
 };
 
-export const getNativeAsset = (asset) => {
+export const getNativeAsset = (asset: Asset) => {
   if (cryptoassets[asset]?.type === 'native') return asset;
 
   const chainId = cryptoassets[asset]?.chain;
   return chainId ? chains[chainId].nativeAsset : asset;
 };
 
-export const getFeeAsset = (asset) => {
+export const getFeeAsset = (asset: Asset) => {
   return cryptoassets[asset]?.feeAsset;
 };
 
-export const getAssetColorStyle = (asset) => {
+export const getAssetColorStyle = (asset: Asset) => {
   const assetData = cryptoassets[asset];
   if (assetData && assetData.color) {
     return { color: assetData.color };
@@ -156,22 +167,22 @@ export const getAssetColorStyle = (asset) => {
   return { color: '#000000' };
 };
 
-export const getTransactionExplorerLink = (hash, asset, network) => {
+export const getTransactionExplorerLink = (hash: string, asset: Asset, network: Network) => {
   const transactionHash = getExplorerTransactionHash(asset, hash);
   const chain = cryptoassets[asset].chain;
-  const link = `${EXPLORERS[chain][network].tx}`;
+  const link = `${getChainExplorer(chain)[network].tx}`;
 
   return link.replace('{hash}', transactionHash);
 };
 
-export const getAddressExplorerLink = (address, asset, network) => {
+export const getAddressExplorerLink = (address: string, asset: Asset, network: Network) => {
   const chain = cryptoassets[asset].chain;
-  const link = `${EXPLORERS[chain][network].address}`;
+  const link = `${getChainExplorer(chain)[network].address}`;
 
   return link.replace('{hash}', address);
 };
 
-export const getExplorerTransactionHash = (asset, hash) => {
+export const getExplorerTransactionHash = (asset: Asset, hash: string) => {
   switch (asset) {
     case 'NEAR':
       return hash.split('_')[0];
@@ -180,7 +191,17 @@ export const getExplorerTransactionHash = (asset, hash) => {
   }
 };
 
-export const tokenDetailProviders = {
+export interface TokenDetails {
+  name: string;
+  decimals: number;
+  symbol: string;
+}
+
+export const tokenDetailProviders: {
+  [key in ChainId]?: {
+    getDetails(contractAddress: string): Promise<TokenDetails>;
+  };
+} = {
   ethereum: {
     async getDetails(contractAddress) {
       return await fetchTokenDetails(contractAddress, `https://mainnet.infura.io/v3/${buildConfig.infuraApiKey}`);
@@ -223,7 +244,7 @@ export const tokenDetailProviders = {
   },
 };
 
-const fetchTokenDetails = async (contractAddress, rpcUrl) => {
+const fetchTokenDetails = async (contractAddress: string, rpcUrl: string) => {
   const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl);
   const contract = new ethers.Contract(contractAddress.toLowerCase(), tokenABI, provider);
 
@@ -232,7 +253,7 @@ const fetchTokenDetails = async (contractAddress, rpcUrl) => {
   return { decimals, name, symbol };
 };
 
-export const estimateGas = async ({ data, to, value }) => {
+export const estimateGas = async ({ data, to, value }: { data: string; to: string; value: ethers.BigNumber }) => {
   const paramsForGasEstimate = {
     data,
     to,
@@ -244,7 +265,7 @@ export const estimateGas = async ({ data, to, value }) => {
   return await provider.estimateGas(paramsForGasEstimate);
 };
 
-export const fetchTerraToken = async (address) => {
+export const fetchTerraToken = async (address: string) => {
   const {
     data: { mainnet: tokens },
   } = await axios.get('https://assets.terra.money/cw20/tokens.json');

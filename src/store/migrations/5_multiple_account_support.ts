@@ -40,6 +40,7 @@ export const multipleAccountSupport = {
         const _account = accountCreator({
           walletId,
           network,
+          // @ts-ignore Old migration has broken after changes
           account: {
             name: `${chain.name} 1`,
             chain: chainId,

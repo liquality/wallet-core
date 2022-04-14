@@ -1,15 +1,16 @@
 import { AccountType } from '../store/types';
+import { BitcoinAddressType } from './address';
 
 export const LEDGER_BITCOIN_OPTIONS = [
   {
     name: AccountType.BitcoinLedgerNativeSegwit,
     label: 'Segwit',
-    addressType: 'bech32',
+    addressType: BitcoinAddressType.BECH32,
   },
   {
     name: AccountType.BitcoinLedgerLegacy,
     label: 'Legacy',
-    addressType: 'legacy',
+    addressType: BitcoinAddressType.LEGACY,
   },
 ];
 
