@@ -47,10 +47,10 @@ export enum AccountType {
 export interface AccountDefinition {
   type: AccountType;
   name: string;
-  alias: string;
+  alias?: string;
   chain: ChainId;
   index: number;
-  derivationPath: string;
+  derivationPath?: string;
   addresses: string[];
   assets: Asset[];
   balances: Record<Asset, string>;
@@ -103,12 +103,14 @@ export interface BaseHistoryItem {
   from: Asset;
   id: string;
   network: Network;
-  receiveFee: string;
   startTime: number;
+  endTime: number;
   status: string; // TODO: actual types?
   to: Asset;
   type: TransactionType; // swpa send?
   walletId: WalletId;
+  error?: string;
+  waitingForLock?: boolean;
 }
 
 export enum SendStatus {
@@ -131,6 +133,7 @@ export interface SendHistoryItem extends BaseHistoryItem {
 export interface SwapHistoryItem extends BaseHistoryItem {
   type: TransactionType.Swap;
   claimFeeLabel: FeeLabel;
+  claimFee: number;
   fromAmount: string;
   fromAccountId: AccountId;
   fromFundHash: string;
@@ -141,6 +144,7 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   toAccountId: AccountId;
   toAmount: string;
   bridgeAsset?: Asset;
+  receiveFee?: string;
 }
 
 export type HistoryItem = SendHistoryItem | SwapHistoryItem;

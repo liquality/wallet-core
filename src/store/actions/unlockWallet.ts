@@ -1,6 +1,8 @@
+import { ActionContext, rootActionContext } from '..';
 import { decrypt } from '../../utils/crypto';
 
-export const unlockWallet = async ({ commit, state }, { key }) => {
+export const unlockWallet = async (context: ActionContext, { key }: { key: string }) => {
+  const { commit, state } = rootActionContext(context);
   const wallets = await decrypt(state.encryptedWallets, key, state.keySalt);
 
   if (!wallets) {
@@ -8,7 +10,7 @@ export const unlockWallet = async ({ commit, state }, { key }) => {
   }
 
   const parsedWallets = JSON.parse(wallets);
-  commit('UNLOCK_WALLET', {
+  commit.UNLOCK_WALLET({
     key,
     wallets: parsedWallets,
     unlockedAt: Date.now(),

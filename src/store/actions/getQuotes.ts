@@ -1,7 +1,22 @@
+import BigNumber from 'bignumber.js';
 import Bluebird from 'bluebird';
+import { ActionContext, rootActionContext } from '..';
 import buildConfig from '../../build.config';
+import { SwapQuote } from '../../swaps/types';
+import { AccountId, Asset, Network } from '../types';
 
-export const getQuotes = async ({ getters }, { network, from, to, fromAccountId, toAccountId, amount }) => {
+export const getQuotes = async (
+  context: ActionContext,
+  {
+    network,
+    from,
+    to,
+    fromAccountId,
+    toAccountId,
+    amount,
+  }: { network: Network; from: Asset; to: Asset; fromAccountId: AccountId; toAccountId: AccountId; amount: BigNumber }
+): Promise<SwapQuote[]> => {
+  const { getters } = rootActionContext(context);
   const quotes = await Bluebird.map(
     Object.keys(buildConfig.swapProviders[network]),
     async (provider) => {

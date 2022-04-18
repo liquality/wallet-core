@@ -8,7 +8,7 @@ import { getDerivationPath } from '../utils/derivationPath';
 import { Networks } from '../utils/networks';
 import { createClient } from './factory/client';
 import { createSwapProvider } from './factory/swapProvider';
-import { AccountType, HistoryItem } from './types';
+import { Account, AccountId, AccountType, Asset as AssetType, HistoryItem, Network, WalletId } from './types';
 
 const clientCache = {};
 const swapProviderCache = {};
@@ -54,6 +54,12 @@ const mapLegacyProvidersToSupported = {
 
 type GetterContext = [any, any];
 
+type Cryptoassets = {
+  [asset: string]: Asset;
+};
+
+// TODO: specify return types so direct-vuex works
+
 export default {
   client(...context: GetterContext) {
     const { state, getters } = rootGetterContext(context);
@@ -65,6 +71,14 @@ export default {
       useCache = true,
       accountType = AccountType.Default,
       accountIndex = 0,
+    }: {
+      network: Network;
+      walletId: WalletId;
+      asset: AssetType;
+      accountId?: AccountId;
+      useCache?: boolean;
+      accountType?: AccountType;
+      accountIndex?: number;
     }): Client => {
       const account = accountId ? getters.accountItem(accountId) : null;
       const _accountType = account?.type || accountType;
@@ -118,7 +132,7 @@ export default {
     const { state } = rootGetterContext(context);
     return (network, walletId, id): HistoryItem => state.history[network][walletId].find((i) => i.id === id);
   },
-  cryptoassets(...context: GetterContext) {
+  cryptoassets(...context: GetterContext): Cryptoassets {
     const { state } = rootGetterContext(context);
     const { activeNetwork, activeWalletId } = state;
 
@@ -136,7 +150,7 @@ export default {
 
     return Object.assign({}, baseAssets, customAssets);
   },
-  networkAccounts(...context: GetterContext) {
+  networkAccounts(...context: GetterContext): Account[] {
     const { state } = rootGetterContext(context);
     const { activeNetwork, activeWalletId, accounts } = state;
     return accounts[activeWalletId]?.[activeNetwork]?.filter((a) => a.enabled) || [];

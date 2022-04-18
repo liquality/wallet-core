@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Client } from '@liquality/client';
 import { EthereumErc20Provider } from '@liquality/ethereum-erc20-provider';
 import { EthereumJsWalletProvider } from '@liquality/ethereum-js-wallet-provider';
@@ -102,6 +101,7 @@ export const shouldApplyRskLegacyDerivation = async (accounts, mnemonic?, indexP
   return balances.some((amount) => amount.isGreaterThan(0));
 };
 
+// TODO: Hello? Typescript?
 export async function getPrices(baseCurrencies, toCurrency) {
   const coindIds = baseCurrencies
     .filter((currency) => cryptoassets[currency]?.coinGeckoId)

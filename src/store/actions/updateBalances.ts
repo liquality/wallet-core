@@ -1,11 +1,11 @@
 import { ChainId } from '@liquality/cryptoassets';
 import { Address } from '@liquality/types';
 import Bluebird from 'bluebird';
-import { rootActionContext } from '..';
+import { ActionContext, rootActionContext } from '..';
 import { Asset, Network } from '../types';
 
 export const updateBalances = async (
-  context,
+  context: ActionContext,
   { network, walletId, assets }: { network: Network; walletId: string; assets: Asset[] }
 ) => {
   const { state, commit, getters } = rootActionContext(context);

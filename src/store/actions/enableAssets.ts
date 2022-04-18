@@ -1,9 +1,14 @@
 import { chains } from '@liquality/cryptoassets';
+import { ActionContext, rootActionContext } from '..';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
-import { AccountType } from '../types';
+import { AccountType, Asset, Network, WalletId } from '../types';
 
-export const enableAssets = async ({ state, commit, dispatch, getters }, { network, walletId, assets }) => {
-  commit('ENABLE_ASSETS', { network, walletId, assets });
+export const enableAssets = async (
+  context: ActionContext,
+  { network, walletId, assets }: { network: Network; walletId: WalletId; assets: Asset[] }
+) => {
+  const { state, commit, dispatch, getters } = rootActionContext(context);
+  commit.ENABLE_ASSETS({ network, walletId, assets });
   const accounts = state.accounts[walletId]?.[network] || [];
 
   // try to find if we need to create a new account
@@ -29,8 +34,8 @@ export const enableAssets = async ({ state, commit, dispatch, getters }, { netwo
           color: getNextAccountColor(chainId, 0),
         },
       });
-      commit('CREATE_ACCOUNT', { network, walletId, account: _account });
-      await dispatch('getUnusedAddresses', {
+      commit.CREATE_ACCOUNT({ network, walletId, account: _account });
+      await dispatch.getUnusedAddresses({
         network,
         walletId,
         assets: _account.assets,
@@ -46,15 +51,15 @@ export const enableAssets = async ({ state, commit, dispatch, getters }, { netwo
     const accountId = account.id;
     const _assets = assets.filter((asset) => getters.cryptoassets[asset]?.chain === account.chain);
     if (_assets && _assets.length > 0) {
-      commit('ENABLE_ACCOUNT_ASSETS', {
+      commit.ENABLE_ACCOUNT_ASSETS({
         network,
         walletId,
         assets: _assets,
         accountId,
       });
-      await dispatch('updateAccountBalance', { network, walletId, accountId });
+      await dispatch.updateAccountBalance({ network, walletId, accountId });
     }
   });
-  dispatch('updateFiatRates', { assets: getters.allNetworkAssets });
-  dispatch('updateMarketData', { network });
+  dispatch.updateFiatRates({ assets: getters.allNetworkAssets });
+  dispatch.updateMarketData({ network });
 };
