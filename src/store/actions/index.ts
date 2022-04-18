@@ -32,7 +32,6 @@ export * from './setupWallet';
 export * from './setWatsNewModalVersion';
 export * from './showNotification';
 export * from './toggleExperiment';
-export * from './toggleInjection';
 export * from './unlockWallet';
 export * from './updateAccountBalance';
 export * from './updateBalances';

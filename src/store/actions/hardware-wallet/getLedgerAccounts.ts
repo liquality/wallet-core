@@ -1,4 +1,6 @@
 import { assets } from '@liquality/cryptoassets';
+import { ActionContext, rootActionContext } from '../..';
+import { AccountType, Asset, Network, WalletId } from '../../types';
 
 type LedgerAccountEntry = {
   account: string;
@@ -7,9 +9,24 @@ type LedgerAccountEntry = {
 };
 
 export const getLedgerAccounts = async (
-  { getters },
-  { network, walletId, asset, accountType, startingIndex, numAccounts }
+  context: ActionContext,
+  {
+    network,
+    walletId,
+    asset,
+    accountType,
+    startingIndex,
+    numAccounts,
+  }: {
+    network: Network;
+    walletId: WalletId;
+    asset: Asset;
+    accountType: AccountType;
+    startingIndex: number;
+    numAccounts: number;
+  }
 ) => {
+  const { getters } = rootActionContext(context);
   const { client, networkAccounts } = getters;
   const { chain } = assets[asset];
   const results: LedgerAccountEntry[] = [];
@@ -43,6 +60,7 @@ export const getLedgerAccounts = async (
                 useCache: false,
               });
 
+              // @ts-ignore TODO: This is broken, it should await
               const [address] = accountClient.wallet.getAddresses(0, 1);
               return address === account.address;
             }
@@ -53,7 +71,7 @@ export const getLedgerAccounts = async (
         }) >= 0;
 
       results.push({
-        account,
+        account: account.address,
         index,
         exists,
       });

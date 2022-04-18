@@ -1,14 +1,39 @@
-export const newSwap = async (store, { network, walletId, quote, fee, claimFee, feeLabel, claimFeeLabel }) => {
-  const swap = { ...quote };
+import { ActionContext, rootActionContext } from '..';
+import { SwapQuote } from '../../swaps/types';
+import { Network, SwapHistoryItem, TransactionType, WalletId } from '../types';
 
-  swap.type = 'SWAP';
+export const newSwap = async (
+  context: ActionContext,
+  {
+    network,
+    walletId,
+    quote,
+    fee,
+    claimFee,
+    feeLabel,
+    claimFeeLabel,
+  }: {
+    network: Network;
+    walletId: WalletId;
+    quote: SwapQuote;
+    fee: number;
+    claimFee: number;
+    feeLabel: string;
+    claimFeeLabel: string;
+  }
+): Promise<SwapHistoryItem> => {
+  const { commit, dispatch, getters } = rootActionContext(context);
+  // @ts-ignore TODO: States should always be in string? Results are retuninrg BignNmber but storage is storing as string
+  const swap: Partial<SwapHistoryItem> = { ...quote };
+
+  swap.type = TransactionType.Swap;
   swap.network = network;
   swap.startTime = Date.now();
   swap.walletId = walletId;
   swap.fee = fee;
   swap.claimFee = claimFee;
 
-  const swapProvider = store.getters.swapProvider(network, swap.provider);
+  const swapProvider = getters.swapProvider(network, swap.provider!);
   const initiationParams = await swapProvider.newSwap({
     network,
     walletId,
@@ -22,13 +47,13 @@ export const newSwap = async (store, { network, walletId, quote, fee, claimFee, 
     claimFeeLabel,
   };
 
-  store.commit('NEW_SWAP', {
+  commit.NEW_SWAP({
     network,
     walletId,
     swap: createdSwap,
   });
 
-  store.dispatch('performNextAction', {
+  dispatch.performNextAction({
     network,
     walletId,
     id: createdSwap.id,

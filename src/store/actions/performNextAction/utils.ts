@@ -1,7 +1,15 @@
 import { random } from 'lodash';
+import { ActionContext } from '../..';
+import { Asset, HistoryItem, Network, WalletId } from '../../types';
 import { unlockAsset } from '../../utils';
 
-export async function withLock({ dispatch }, { item, network, walletId, asset }, func) {
+type HistoryUpdateFunction = () => Promise<Partial<HistoryItem> | undefined>;
+
+export async function withLock(
+  { dispatch }: ActionContext,
+  { item, network, walletId, asset }: { item: HistoryItem; network: Network; walletId: WalletId; asset: Asset },
+  func: () => Promise<Partial<HistoryItem>>
+) {
   const lock = await dispatch('getLockForAsset', {
     item,
     network,
@@ -15,7 +23,7 @@ export async function withLock({ dispatch }, { item, network, walletId, asset },
   }
 }
 
-export async function withInterval(func) {
+export async function withInterval(func: HistoryUpdateFunction) {
   const updates = await func();
   if (updates) {
     return updates;

@@ -1,11 +1,16 @@
 import { assets as cryptoassets, ChainId, chains } from '@liquality/cryptoassets';
 import { v4 as uuidv4 } from 'uuid';
+import { ActionContext, rootActionContext } from '..';
 import buildConfig from '../../build.config';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { encrypt } from '../../utils/crypto';
-import { AccountType } from '../types';
+import { AccountType, Network, Wallet } from '../types';
 
-export const createWallet = async ({ commit }, { key, mnemonic, imported = false }) => {
+export const createWallet = async (
+  context: ActionContext,
+  { key, mnemonic, imported = false }: { key: string; mnemonic: string; imported?: boolean }
+): Promise<Wallet> => {
+  const { commit } = rootActionContext(context);
   const id = uuidv4();
   const at = Date.now();
   const name = 'Account 1';
@@ -13,15 +18,15 @@ export const createWallet = async ({ commit }, { key, mnemonic, imported = false
   const { networks, defaultAssets } = buildConfig;
   const { encrypted: encryptedWallets, keySalt } = await encrypt(JSON.stringify([wallet]), key);
 
-  commit('CREATE_WALLET', { keySalt, encryptedWallets, wallet });
-  commit('CHANGE_ACTIVE_WALLETID', { walletId: id });
-  commit('ENABLE_ASSETS', {
-    network: 'mainnet',
+  commit.CREATE_WALLET({ keySalt, encryptedWallets, wallet });
+  commit.CHANGE_ACTIVE_WALLETID({ walletId: id });
+  commit.ENABLE_ASSETS({
+    network: Network.Mainnet,
     walletId: id,
     assets: defaultAssets.mainnet,
   });
-  commit('ENABLE_ASSETS', {
-    network: 'testnet',
+  commit.ENABLE_ASSETS({
+    network: Network.Testnet,
     walletId: id,
     assets: defaultAssets.testnet,
   });
@@ -29,7 +34,7 @@ export const createWallet = async ({ commit }, { key, mnemonic, imported = false
   networks.forEach((network) => {
     const assetKeys = defaultAssets[network];
     buildConfig.chains.forEach(async (chainId) => {
-      commit('TOGGLE_BLOCKCHAIN', {
+      commit.TOGGLE_BLOCKCHAIN({
         network,
         walletId: id,
         chainId,
@@ -57,7 +62,7 @@ export const createWallet = async ({ commit }, { key, mnemonic, imported = false
         },
       });
 
-      commit('CREATE_ACCOUNT', { network, walletId: id, account: _account });
+      commit.CREATE_ACCOUNT({ network, walletId: id, account: _account });
 
       // for RSK we add an extra account for legacy derivation path
       if (imported && chainId === ChainId.Rootstock) {
@@ -81,7 +86,7 @@ export const createWallet = async ({ commit }, { key, mnemonic, imported = false
             enabled: true,
           },
         });
-        commit('CREATE_ACCOUNT', { network, walletId: id, account: _account });
+        commit.CREATE_ACCOUNT({ network, walletId: id, account: _account });
       }
     });
   });
