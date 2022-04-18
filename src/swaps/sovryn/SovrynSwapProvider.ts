@@ -2,7 +2,7 @@ import SovrynSwapNetworkABI from '@blobfishkate/sovryncontracts/abi/abiSovrynSwa
 import RBTCWrapperProxyABI from '@blobfishkate/sovryncontracts/abi/abiWrapperProxy_new.json';
 import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-mainnet.json';
 import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
-import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import BN from 'bignumber.js';
 import * as ethers from 'ethers';
@@ -39,7 +39,9 @@ class SovrynSwapProvider extends SwapProvider {
     const toInfo = cryptoassets[to];
 
     // only RSK network swaps
-    if (fromInfo.chain !== 'rsk' || toInfo.chain !== 'rsk' || amount <= 0) return null;
+    if (fromInfo.chain !== ChainId.Rootstock || toInfo.chain !== ChainId.Rootstock || amount <= 0) {
+      return null;
+    }
 
     const fromTokenAddress = (fromInfo.contractAddress || wrappedRbtcAddress[network]).toLowerCase();
     const toTokenAddress = (toInfo.contractAddress || wrappedRbtcAddress[network]).toLowerCase();
@@ -95,7 +97,9 @@ class SovrynSwapProvider extends SwapProvider {
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw, network);
     const spender = (
-      fromInfo.type === 'native' || toInfo.type === 'native' ? this.config.routerAddressRBTC : this.config.routerAddress
+      fromInfo.type === AssetTypes.native || toInfo.type === AssetTypes.native
+        ? this.config.routerAddressRBTC
+        : this.config.routerAddress
     ).toLowerCase();
     const allowance = await erc20.allowance(fromAddress.toLowerCase(), spender);
     const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
@@ -119,7 +123,9 @@ class SovrynSwapProvider extends SwapProvider {
     const inputAmountHex = inputAmount.toHexString();
     // in case native token is involved -> give allowance to wrapper contract
     const spender = (
-      fromInfo.type === 'native' || toInfo.type === 'native' ? this.config.routerAddressRBTC : this.config.routerAddress
+      fromInfo.type === AssetTypes.native || toInfo.type === AssetTypes.native
+        ? this.config.routerAddressRBTC
+        : this.config.routerAddress
     ).toLowerCase();
     const encodedData = erc20.interface.encodeFunctionData('approve', [spender, inputAmountHex]);
 
@@ -171,7 +177,7 @@ class SovrynSwapProvider extends SwapProvider {
 
     let encodedData;
     let routerAddress: string;
-    if (fromInfo.type === 'native' || toInfo.type === 'native') {
+    if (fromInfo.type === AssetTypes.native || toInfo.type === AssetTypes.native) {
       // use routerAddressRBTC when native token is present in the swap
       routerAddress = this.config.routerAddressRBTC.toLowerCase();
       const wpContract = new ethers.Contract(routerAddress, RBTCWrapperProxyABI, api);

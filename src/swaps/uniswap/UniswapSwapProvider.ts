@@ -1,4 +1,4 @@
-import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import { CurrencyAmount, Fraction, Percent, Token, TradeType, WETH9 } from '@uniswap/sdk-core';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import UniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json';
@@ -63,9 +63,14 @@ class UniswapSwapProvider extends SwapProvider {
 
   async getQuote({ network, from, to, amount }) {
     // Uniswap only provides liquidity for ethereum tokens
-    if (!isEthereumChain(from) || !isEthereumChain(to)) return null;
+    if (!isEthereumChain(from) || !isEthereumChain(to)) {
+      return null;
+    }
+
     // Only uniswap on ethereum is supported atm
-    if (cryptoassets[from].chain !== 'ethereum' || cryptoassets[to].chain !== 'ethereum') return null;
+    if (cryptoassets[from].chain !== ChainId.Ethereum || cryptoassets[to].chain !== ChainId.Ethereum) {
+      return null;
+    }
 
     const chainId = ChainNetworks[cryptoassets[from].chain][network].chainId;
 
