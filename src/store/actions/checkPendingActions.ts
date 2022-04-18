@@ -4,7 +4,10 @@ import { WalletId } from '../types';
 
 const COMPLETED_STATES = ['SUCCESS', 'REFUNDED']; // TODO: Pull this out so it's being used everywhere else (Transaction icons etc.)
 
-export const checkPendingActions = async (context: ActionContext, { walletId }: { walletId: WalletId }) => {
+export const checkPendingActions = async (
+  context: ActionContext,
+  { walletId }: { walletId: WalletId }
+): Promise<void> => {
   const { state, dispatch } = rootActionContext(context);
   Networks.forEach((network) => {
     const history = state.history[network]?.[walletId];

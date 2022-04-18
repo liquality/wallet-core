@@ -1,3 +1,4 @@
+import { Transaction } from '@liquality/types';
 import { isObject } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
 import { Asset, Network, SwapHistoryItem, WalletId } from '../types';
@@ -13,7 +14,7 @@ export const updateTransactionFee = async (
     hash,
     newFee,
   }: { network: Network; walletId: WalletId; asset: Asset; id: string; hash: string; newFee: number }
-) => {
+): Promise<Transaction> => {
   const { dispatch, commit, getters } = rootActionContext(context);
   const item = getters.historyItemById(network, walletId, id);
 

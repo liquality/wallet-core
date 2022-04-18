@@ -33,7 +33,7 @@ export const newSwap = async (
   swap.fee = fee;
   swap.claimFee = claimFee;
 
-  const swapProvider = getters.swapProvider(network, swap.provider);
+  const swapProvider = getters.swapProvider(network, swap.provider!);
   const initiationParams = await swapProvider.newSwap({
     network,
     walletId,

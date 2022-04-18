@@ -4,12 +4,12 @@ import { ActionContext, rootActionContext } from '..';
 import buildConfig from '../../build.config';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { encrypt } from '../../utils/crypto';
-import { AccountType, Network } from '../types';
+import { AccountType, Network, Wallet } from '../types';
 
 export const createWallet = async (
   context: ActionContext,
   { key, mnemonic, imported = false }: { key: string; mnemonic: string; imported?: boolean }
-) => {
+): Promise<Wallet> => {
   const { commit } = rootActionContext(context);
   const id = uuidv4();
   const at = Date.now();

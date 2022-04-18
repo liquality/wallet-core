@@ -1,8 +1,8 @@
 import { ActionContext, rootActionContext } from '..';
-import { Asset } from '../types';
+import { Asset, FiatRates } from '../types';
 import { getPrices } from '../utils';
 
-export const updateFiatRates = async (context: ActionContext, { assets }: { assets: Asset[] }) => {
+export const updateFiatRates = async (context: ActionContext, { assets }: { assets: Asset[] }): Promise<FiatRates> => {
   const { commit } = rootActionContext(context);
   const fiatRates = await getPrices(assets, 'usd');
 

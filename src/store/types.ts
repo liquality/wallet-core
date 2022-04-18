@@ -64,6 +64,8 @@ export interface Account extends AccountDefinition {
   walletId: WalletId;
   createdAt: number;
   enabled: boolean;
+  derivationPath: string;
+  alias: string;
 }
 
 export interface MarketData {
@@ -104,7 +106,7 @@ export interface BaseHistoryItem {
   id: string;
   network: Network;
   startTime: number;
-  endTime: number;
+  endTime?: number;
   status: string; // TODO: actual types?
   to: Asset;
   type: TransactionType; // swpa send?
@@ -139,7 +141,7 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   fromFundHash: string;
   fromFundTx: Transaction;
   maxFeeSlippageMultiplier: number;
-  provider: SwapProviderType;
+  provider: string;
   slippage: number;
   toAccountId: AccountId;
   toAmount: string;
@@ -183,7 +185,7 @@ export interface RootState {
 
   fiatRates: FiatRates;
   fees: NetworkWalletIdMap<Record<Asset, FeeDetails>>;
-  history: NetworkWalletIdMap<BaseHistoryItem[]>;
+  history: NetworkWalletIdMap<HistoryItem[]>;
   marketData: Partial<Record<Network, MarketData[]>>;
 
   activeNetwork: Network;

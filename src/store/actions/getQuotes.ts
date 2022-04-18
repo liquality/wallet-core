@@ -27,5 +27,7 @@ export const getQuotes = async (
     },
     { concurrency: 5 }
   );
-  return quotes.filter((quote) => quote);
+
+  // Null quotes filtered
+  return quotes.filter((quote) => quote) as SwapQuote[];
 };

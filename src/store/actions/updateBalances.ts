@@ -7,7 +7,7 @@ import { Asset, Network } from '../types';
 export const updateBalances = async (
   context: ActionContext,
   { network, walletId, assets }: { network: Network; walletId: string; assets: Asset[] }
-) => {
+): Promise<void> => {
   const { state, commit, getters } = rootActionContext(context);
   let accounts = state.accounts[walletId]?.[network].filter((a) => a.assets && a.assets.length > 0 && a.enabled);
 
