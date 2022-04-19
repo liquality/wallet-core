@@ -24,7 +24,7 @@ export type QuoteRequest = {
 export type SwapRequest = {
   network: Network;
   walletId: string;
-  quote: SwapQuote;
+  quote: SwapHistoryItem;
 };
 
 export type NextSwapActionRequest = {

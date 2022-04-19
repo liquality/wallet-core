@@ -1,9 +1,8 @@
 import { unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
-import { Network } from '../store/types';
+import { Network, SwapProviderType } from '../store/types';
 import { SwapQuote } from '../swaps/types';
 import cryptoassets from './cryptoassets';
-import { SwapProviderType } from './swapProviderType';
 import { getSwapProviderConfig } from './swaps';
 
 export function calculateQuoteRate(quote: SwapQuote) {
@@ -17,8 +16,8 @@ export function sortQuotes(quotes: SwapQuote[], network: Network) {
     const isCrossChain = cryptoassets[a.from].chain !== cryptoassets[a.to].chain;
     if (isCrossChain) {
       // Prefer Liquality for crosschain swaps where liquidity is available
-      if (getSwapProviderConfig(network, a.provider).type === SwapProviderType.LIQUALITY) return -1;
-      else if (getSwapProviderConfig(network, b.provider).type === SwapProviderType.LIQUALITY) return 1;
+      if (getSwapProviderConfig(network, a.provider).type === SwapProviderType.Liquality) return -1;
+      else if (getSwapProviderConfig(network, b.provider).type === SwapProviderType.Liquality) return 1;
     }
 
     return new BN(b.toAmount).minus(a.toAmount).toNumber();

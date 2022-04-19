@@ -65,7 +65,6 @@ export interface Account extends AccountDefinition {
   createdAt: number;
   enabled: boolean;
   derivationPath: string;
-  alias: string;
 }
 
 export interface MarketData {
@@ -90,7 +89,8 @@ export enum TransactionType {
 
 export enum SwapProviderType {
   Liquality = 'liquality',
-  LiqualityBoost = 'liqualityBoost',
+  LiqualityBoostNativeToERC20 = 'liqualityBoostNativeToERC20',
+  LiqualityBoostERC20ToNative = 'liqualityBoostERC20toNative',
   UniswapV2 = 'uniswapV2',
   FastBTC = 'fastBTC',
   OneInch = 'oneinchV4',

@@ -6,7 +6,7 @@ import { MarketData, Network } from '../types';
 export const updateMarketData = async (
   context: ActionContext,
   { network }: { network: Network }
-): Promise<{ network: Network; marketData: MarketData }> => {
+): Promise<{ network: Network; marketData: MarketData[] }> => {
   const { commit, getters } = rootActionContext(context);
   const supportedPairResponses = await Promise.all(
     Object.keys(buildConfig.swapProviders[network]).map((provider) => {

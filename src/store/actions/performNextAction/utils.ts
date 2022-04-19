@@ -23,7 +23,7 @@ export async function withLock(
   }
 }
 
-export async function withInterval(func: HistoryUpdateFunction) {
+export async function withInterval(func: HistoryUpdateFunction): Promise<Partial<HistoryItem>> {
   const updates = await func();
   if (updates) {
     return updates;

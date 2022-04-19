@@ -1,7 +1,8 @@
 import { Transaction } from '@liquality/types';
 import { isObject } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
-import { Asset, Network, SwapHistoryItem, WalletId } from '../types';
+import { LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
+import { Asset, HistoryItem, Network, SwapHistoryItem, WalletId } from '../types';
 import { unlockAsset } from '../utils';
 
 export const updateTransactionFee = async (
@@ -18,9 +19,12 @@ export const updateTransactionFee = async (
   const { dispatch, commit, getters } = rootActionContext(context);
   const item = getters.historyItemById(network, walletId, id);
 
-  const hashKey = Object.keys(item).find((key) => item[key] === hash);
+  if (!item) throw new Error('updateTransactionFee: Item does not exist');
 
-  const txKey = Object.keys(item).find((key) => isObject(item[key]) && item[key].hash === hash);
+  const hashKey = Object.keys(item).find((key: keyof HistoryItem) => item[key] === hash);
+
+  // @ts-ignore TODO: this needs refactoring to be more typescripty
+  const txKey = Object.keys(item).find((key: keyof HistoryItem) => isObject(item[key]) && item[key].hash === hash);
 
   if (!hashKey || !txKey) {
     throw new Error('Updating fee: Transaction not found');
@@ -41,7 +45,7 @@ export const updateTransactionFee = async (
     accountId: item.fromAccountId, // TODO: confirm if the from account should be used here
   });
 
-  const oldTx = item[txKey];
+  const oldTx = (item as any)[txKey] as Transaction | string;
 
   let newTx;
   const lock = await dispatch.getLockForAsset({
@@ -75,7 +79,7 @@ export const updateTransactionFee = async (
   const isFundingUpdate = hashKey === 'fromFundHash';
   if (isFundingUpdate) {
     // TODO: this should be the function of any swap? Should be able to bump any tx
-    const swapProvider = getters.swapProvider(network, (item as SwapHistoryItem).provider);
+    const swapProvider = getters.swapProvider(network, (item as SwapHistoryItem).provider) as LiqualitySwapProvider;
     await swapProvider.updateOrder(item);
   }
 

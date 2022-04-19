@@ -1,12 +1,12 @@
 import { ActionContext, rootActionContext } from '../..';
 import { createHistoryNotification } from '../../broker/notification';
-import { BaseHistoryItem, Network, WalletId } from '../../types';
+import { HistoryItem, Network, WalletId } from '../../types';
 import { performNextTransactionAction } from './send';
 
 export const performNextAction = async (
   context: ActionContext,
   { network, walletId, id }: { network: Network; walletId: WalletId; id: string }
-): Promise<Partial<BaseHistoryItem> | undefined> => {
+): Promise<Partial<HistoryItem> | undefined> => {
   const { dispatch, commit, getters } = rootActionContext(context);
   const item = getters.historyItemById(network, walletId, id);
   if (!item) return;
@@ -45,7 +45,7 @@ export const performNextAction = async (
     createHistoryNotification({
       ...item,
       ...updates,
-    });
+    } as HistoryItem);
     if (!updates.error) {
       dispatch.performNextAction({ network, walletId, id });
     }

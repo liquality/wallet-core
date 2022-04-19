@@ -1,5 +1,5 @@
 import buildConfig from '../build.config';
-import { Network } from '../store/types';
+import { Network, SwapProviderType } from '../store/types';
 import astroportInfo from '../swaps/astroport/info.json';
 import fastbtcInfo from '../swaps/fastbtc/info.json';
 import liqualityInfo from '../swaps/liquality/info.json';
@@ -9,18 +9,17 @@ import oneinchInfo from '../swaps/oneinch/info.json';
 import sovrynInfo from '../swaps/sovryn/info.json';
 import thorchainInfo from '../swaps/thorchain/info.json';
 import uniswapInfo from '../swaps/uniswap/info.json';
-import { SwapProviderType } from './swapProviderType';
 
 const swapProviderInfo = {
-  [SwapProviderType.LIQUALITY]: liqualityInfo,
-  [SwapProviderType.UNISWAPV2]: uniswapInfo,
-  [SwapProviderType.ONEINCHV4]: oneinchInfo,
-  [SwapProviderType.THORCHAIN]: thorchainInfo,
-  [SwapProviderType.FASTBTC]: fastbtcInfo,
-  [SwapProviderType.LIQUALITYBOOST_NATIVE_TO_ERC20]: liqualityBoostNativeToERC20Info,
-  [SwapProviderType.LIQUALITYBOOST_ERC20_TO_NATIVE]: liqualityBoostERC20toNativeInfo,
-  [SwapProviderType.SOVRYN]: sovrynInfo,
-  [SwapProviderType.ASTROPORT]: astroportInfo,
+  [SwapProviderType.Liquality]: liqualityInfo,
+  [SwapProviderType.UniswapV2]: uniswapInfo,
+  [SwapProviderType.OneInch]: oneinchInfo,
+  [SwapProviderType.Thorchain]: thorchainInfo,
+  [SwapProviderType.FastBTC]: fastbtcInfo,
+  [SwapProviderType.LiqualityBoostNativeToERC20]: liqualityBoostNativeToERC20Info,
+  [SwapProviderType.LiqualityBoostERC20ToNative]: liqualityBoostERC20toNativeInfo,
+  [SwapProviderType.Sovryn]: sovrynInfo,
+  [SwapProviderType.Astroport]: astroportInfo,
 };
 
 export function getSwapProviderConfig(network: Network, providerId: string) {

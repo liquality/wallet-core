@@ -8,19 +8,18 @@ import { OneinchSwapProvider } from '../../swaps/oneinch/OneinchSwapProvider';
 import { SovrynSwapProvider } from '../../swaps/sovryn/SovrynSwapProvider';
 import { ThorchainSwapProvider } from '../../swaps/thorchain/ThorchainSwapProvider';
 import { UniswapSwapProvider } from '../../swaps/uniswap/UniswapSwapProvider';
-import { SwapProviderType } from '../../utils/swapProviderType';
-import { Network } from '../types';
+import { Network, SwapProviderType } from '../types';
 
 const providers = {
-  [SwapProviderType.LIQUALITY]: LiqualitySwapProvider,
-  [SwapProviderType.UNISWAPV2]: UniswapSwapProvider,
-  [SwapProviderType.ONEINCHV4]: OneinchSwapProvider,
-  [SwapProviderType.THORCHAIN]: ThorchainSwapProvider,
-  [SwapProviderType.LIQUALITYBOOST_NATIVE_TO_ERC20]: LiqualityBoostNativeToERC20,
-  [SwapProviderType.LIQUALITYBOOST_ERC20_TO_NATIVE]: LiqualityBoostERC20toNative,
-  [SwapProviderType.FASTBTC]: FastbtcSwapProvider,
-  [SwapProviderType.SOVRYN]: SovrynSwapProvider,
-  [SwapProviderType.ASTROPORT]: AstroportSwapProvider,
+  [SwapProviderType.Liquality]: LiqualitySwapProvider,
+  [SwapProviderType.UniswapV2]: UniswapSwapProvider,
+  [SwapProviderType.OneInch]: OneinchSwapProvider,
+  [SwapProviderType.Thorchain]: ThorchainSwapProvider,
+  [SwapProviderType.LiqualityBoostNativeToERC20]: LiqualityBoostNativeToERC20,
+  [SwapProviderType.LiqualityBoostERC20ToNative]: LiqualityBoostERC20toNative,
+  [SwapProviderType.FastBTC]: FastbtcSwapProvider,
+  [SwapProviderType.Sovryn]: SovrynSwapProvider,
+  [SwapProviderType.Astroport]: AstroportSwapProvider,
 };
 
 export const createSwapProvider = (network: Network, providerId: string) => {
