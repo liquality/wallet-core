@@ -33,12 +33,20 @@ class AstroportSwapProvider extends SwapProvider {
       return null;
     }
 
-    const fromAmountInUnit = currencyToUnit(fromInfo, new BN(amount)).toFixed();
+    const fromAmountInUnit = currencyToUnit(
+      fromInfo,
+      new BN(amount).decimalPlaces(fromInfo.decimals, BN.ROUND_DOWN) // ignore all decimals after nth
+    ).toFixed();
+
     const { rate, fromTokenAddress, toTokenAddress, pairAddress } = await this._getSwapRate(
       fromAmountInUnit,
       fromInfo,
       toInfo
     );
+
+    if (rate.amount === '0' || rate.return_amount === '0') {
+      return null;
+    }
 
     return {
       from,
