@@ -352,12 +352,6 @@ class SovrynSwapProvider extends SwapProvider {
     return new BN(amount).times(new BN(0.995)).toFixed(0);
   }
 
-  protected _txTypes() {
-    return {
-      SWAP: 'SWAP',
-    };
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       WAITING_FOR_APPROVE_CONFIRMATIONS: {
@@ -405,6 +399,12 @@ class SovrynSwapProvider extends SwapProvider {
           };
         },
       },
+    };
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
     };
   }
 

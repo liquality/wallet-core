@@ -239,12 +239,6 @@ class AstroportSwapProvider extends SwapProvider {
     return resp.contract_addr;
   }
 
-  protected _txTypes() {
-    return {
-      SWAP: 'SWAP',
-    };
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       WAITING_FOR_SWAP_CONFIRMATIONS: {
@@ -271,6 +265,12 @@ class AstroportSwapProvider extends SwapProvider {
           return { message: 'Swap failed' };
         },
       },
+    };
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
     };
   }
 

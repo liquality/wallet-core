@@ -286,13 +286,6 @@ export class LiqualitySwapProvider extends SwapProvider {
     return updates;
   }
 
-  protected _txTypes() {
-    return {
-      SWAP_INITIATION: 'SWAP_INITIATION',
-      SWAP_CLAIM: 'SWAP_CLAIM',
-    };
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       INITIATED: {
@@ -388,6 +381,13 @@ export class LiqualitySwapProvider extends SwapProvider {
         label: 'Quote Expired',
         filterStatus: 'REFUNDED',
       },
+    };
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP_INITIATION: 'SWAP_INITIATION',
+      SWAP_CLAIM: 'SWAP_CLAIM',
     };
   }
 

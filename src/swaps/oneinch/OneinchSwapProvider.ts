@@ -257,12 +257,6 @@ class OneinchSwapProvider extends SwapProvider {
     return updates;
   }
 
-  protected _txTypes() {
-    return {
-      SWAP: 'SWAP',
-    };
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       WAITING_FOR_APPROVE_CONFIRMATIONS: {
@@ -310,6 +304,12 @@ class OneinchSwapProvider extends SwapProvider {
           };
         },
       },
+    };
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
     };
   }
 

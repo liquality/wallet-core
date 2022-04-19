@@ -456,12 +456,6 @@ class ThorchainSwapProvider extends SwapProvider {
     return updates;
   }
 
-  protected _txTypes() {
-    return {
-      SWAP: 'SWAP',
-    };
-  }
-
   private feeUnits = {
     SWAP: {
       ETH: 200000,
@@ -523,6 +517,12 @@ class ThorchainSwapProvider extends SwapProvider {
           };
         },
       },
+    };
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
     };
   }
 
