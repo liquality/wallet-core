@@ -81,7 +81,7 @@ class OneinchSwapProvider extends SwapProvider {
 
     const api = new ethers.providers.StaticJsonRpcProvider(chainToRpcProviders[chainId]);
     const erc20 = new ethers.Contract(cryptoassets[quote.from].contractAddress!, ERC20.abi, api);
-    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.toAccountId);
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     const fromAddress = chains[fromChain].formatAddress(fromAddressRaw, network);
     const allowance = await erc20.allowance(fromAddress, this.config.routerAddress);
     const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
