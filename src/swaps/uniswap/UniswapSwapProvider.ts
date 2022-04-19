@@ -35,7 +35,7 @@ export interface UniswapSwapProviderConfig extends BaseSwapProviderConfig {
   routerAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
 }
 
-interface UniswapSwapHistoryItem extends SwapHistoryItem {
+export interface UniswapSwapHistoryItem extends SwapHistoryItem {
   approveTxHash: string;
   swapTxHash: string;
   approveTx: Transaction<ethereum.Transaction>;

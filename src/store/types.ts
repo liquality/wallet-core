@@ -149,7 +149,6 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   toAccountId: AccountId;
   toAmount: string;
   bridgeAsset?: Asset;
-  receiveFee?: string;
 }
 
 export type HistoryItem = SendHistoryItem | SwapHistoryItem;

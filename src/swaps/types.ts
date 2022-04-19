@@ -43,12 +43,12 @@ export type NextSwapActionRequest<T = SwapHistoryItem> = {
   swap: T;
 };
 
-export type EstimateFeeRequest<T = string> = {
+export type EstimateFeeRequest<T = string, Q = SwapQuote> = {
   network: Network;
   walletId: string;
   asset: Asset;
   txType: T;
-  quote: SwapQuote;
+  quote: Q;
   feePrices: number[];
   max: boolean;
 };

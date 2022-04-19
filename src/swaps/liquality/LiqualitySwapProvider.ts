@@ -125,7 +125,7 @@ export class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  public async newSwap({ network, walletId, quote: _quote }: SwapRequest) {
+  public async newSwap({ network, walletId, quote: _quote }: SwapRequest<LiqualitySwapHistoryItem>) {
     const lockedQuote = await this._getQuote({
       from: _quote.from,
       to: _quote.to,
@@ -140,7 +140,7 @@ export class LiqualitySwapProvider extends SwapProvider {
       ..._quote,
       ...lockedQuote,
     };
-    if (await this.hasQuoteExpired({ swap: quote })) {
+    if (await this.hasQuoteExpired(quote)) {
       throw new Error('The quote is expired.');
     }
 
@@ -282,7 +282,7 @@ export class LiqualitySwapProvider extends SwapProvider {
     let updates: Partial<HistoryItem> = {};
     switch (swap.status) {
       case 'INITIATED':
-        updates = await this.reportInitiation({ swap });
+        updates = await this.reportInitiation(swap);
         break;
 
       case 'INITIATION_REPORTED':
@@ -518,7 +518,7 @@ export class LiqualitySwapProvider extends SwapProvider {
   }
 
   private async fundSwap({ swap, network, walletId }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
-    if (await this.hasQuoteExpired({ swap })) {
+    if (await this.hasQuoteExpired(swap)) {
       return { status: 'QUOTE_EXPIRED' };
     }
 
@@ -550,8 +550,8 @@ export class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  private async reportInitiation({ swap }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
-    if (await this.hasQuoteExpired({ swap })) {
+  private async reportInitiation(swap: LiqualitySwapHistoryItem) {
+    if (await this.hasQuoteExpired(swap)) {
       return { status: 'WAITING_FOR_REFUND' };
     }
 
@@ -717,7 +717,7 @@ export class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  private async hasQuoteExpired({ swap }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
+  private async hasQuoteExpired(swap: LiqualitySwapHistoryItem) {
     return timestamp() >= swap.expiresAt;
   }
 

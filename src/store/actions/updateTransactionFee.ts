@@ -1,7 +1,7 @@
 import { Transaction } from '@liquality/types';
 import { isObject } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
-import { LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
+import { LiqualitySwapHistoryItem, LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
 import { Asset, HistoryItem, Network, SwapHistoryItem, WalletId } from '../types';
 import { unlockAsset } from '../utils';
 
@@ -80,7 +80,7 @@ export const updateTransactionFee = async (
   if (isFundingUpdate) {
     // TODO: this should be the function of any swap? Should be able to bump any tx
     const swapProvider = getters.swapProvider(network, (item as SwapHistoryItem).provider) as LiqualitySwapProvider;
-    await swapProvider.updateOrder(item);
+    await swapProvider.updateOrder(item as LiqualitySwapHistoryItem);
   }
 
   return newTx;
