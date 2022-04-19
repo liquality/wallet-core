@@ -99,12 +99,9 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
     const result = await this.liqualitySwapProvider.newSwap({
       network,
       walletId,
-      quote: {
-        ..._quote,
-        to: _quote.bridgeAsset,
-        toAmount: _quote.bridgeAssetAmount,
-      },
+      quote: this.swapLiqualityFormat(_quote),
     });
+
     return {
       ...result,
       ..._quote,
@@ -118,46 +115,45 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
   }
 
   async estimateFees({ network, walletId, asset, txType, quote, feePrices, max }) {
-    const liqualityFees = await this.liqualitySwapProvider.estimateFees({
-      network,
-      walletId,
-      asset,
-      txType: txType === this._txTypes().SWAP ? this._txTypes().SWAP_CLAIM : txType,
-      quote: {
-        ...quote,
-        to: quote.bridgeAsset,
-        toAmount: quote.bridgeAssetAmount,
-      },
-      feePrices,
-      max,
-    });
+    const input = { network, walletId, asset, txType, quote, feePrices, max };
 
-    if (isERC20(asset) && txType === this._txTypes().SWAP) {
-      const automatedMarketMakerFees = await this.bridgeAssetToAutomatedMarketMaker[quote.bridgeAsset].estimateFees({
-        network,
-        walletId,
-        asset,
-        txType: this._txTypes().SWAP,
-        quote: {
-          ...quote,
-          from: quote.bridgeAsset,
-          fromAmount: quote.bridgeAssetAmount,
-          fromAccountId: quote.toAccountId,
-          slippagePercentage,
-        },
-        feePrices,
-        max,
+    if (txType === this.fromTxType) {
+      // swap initiation fee
+      const liqualityFees = await this.liqualitySwapProvider.estimateFees({
+        ...input,
+        txType: this.liqualitySwapProvider.fromTxType,
+        quote: this.swapLiqualityFormat(quote),
       });
 
-      const totalFees = {};
+      return liqualityFees;
+    } else if (txType === this.toTxType) {
+      // swap claim fee
+      const liqualityFees = await this.liqualitySwapProvider.estimateFees({
+        ...input,
+        asset: quote.bridgeAsset,
+        txType: this.liqualitySwapProvider.toTxType,
+        quote: this.swapLiqualityFormat(quote),
+      });
 
+      // amm fee
+      const automatedMarketMakerFees = await this.bridgeAssetToAutomatedMarketMaker[quote.bridgeAsset].estimateFees({
+        ...input,
+        asset: quote.bridgeAsset,
+        // all AMMs have the same fromTxType
+        txType: this.sovrynSwapProvider.fromTxType,
+        quote: this.swapAutomatedMarketMakerFormat(quote),
+      });
+
+      const combinedFees = {};
       for (const key in automatedMarketMakerFees) {
-        totalFees[key] = new BN(automatedMarketMakerFees[key]).plus(liqualityFees[key]);
+        combinedFees[key] = new BN(automatedMarketMakerFees[key]).plus(liqualityFees[key]);
       }
 
-      return totalFees;
+      return combinedFees;
+    } else {
+      // unknown tx type
+      return null;
     }
-    return liqualityFees;
   }
 
   async finalizeLiqualitySwapAndStartAutomatedMarketMaker({ swap, network, walletId }) {
@@ -174,35 +170,19 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
   async performNextSwapAction(store, { network, walletId, swap }) {
     let updates;
 
-    const swapLiqualityFormat = {
-      ...swap,
-      to: swap.bridgeAsset,
-      toAmount: swap.bridgeAssetAmount,
-      slippagePercentage,
-    };
-
-    const swapAutomatedMarketMakerFormat = {
-      ...swap,
-      from: swap.bridgeAsset,
-      fromAmount: swap.bridgeAssetAmount,
-      fromAccountId: swap.toAccountId,
-      slippagePercentage,
-      fee: swap.claimFee,
-    };
-
     if (swap.status === 'WAITING_FOR_CLAIM_CONFIRMATIONS') {
       updates = await withInterval(async () =>
         this.finalizeLiqualitySwapAndStartAutomatedMarketMaker({
-          swap: swapLiqualityFormat,
           network,
           walletId,
+          swap: this.swapLiqualityFormat(swap),
         })
       );
     } else {
       updates = await this.liqualitySwapProvider.performNextSwapAction(store, {
         network,
         walletId,
-        swap: swapLiqualityFormat,
+        swap: this.swapLiqualityFormat(swap),
       });
     }
 
@@ -210,14 +190,11 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       updates = await this.bridgeAssetToAutomatedMarketMaker[swap.bridgeAsset].performNextSwapAction(store, {
         network,
         walletId,
-        swap: swapAutomatedMarketMakerFormat,
+        swap: this.swapAutomatedMarketMakerFormat(swap),
       });
     }
-    return updates;
-  }
 
-  protected _txTypes(): Record<string, string | null> {
-    return { ...this.liqualitySwapProvider.txTypes, ...this.oneinchSwapProvider.txTypes };
+    return updates;
   }
 
   protected _getStatuses(): Record<string, SwapStatus> {
@@ -272,12 +249,19 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
     };
   }
 
+  protected _txTypes(): Record<string, string | null> {
+    return {
+      FROM_CHAIN: 'FROM_CHAIN',
+      TO_CHAIN: 'TO_CHAIN',
+    };
+  }
+
   protected _fromTxType(): string | null {
-    return this._txTypes().SWAP_INITIATION;
+    return this._txTypes().FROM_CHAIN;
   }
 
   protected _toTxType(): string | null {
-    return this._txTypes().SWAP;
+    return this._txTypes().TO_CHAIN;
   }
 
   protected _timelineDiagramSteps(): string[] {
@@ -286,6 +270,26 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
 
   protected _totalSteps(): number {
     return 5;
+  }
+
+  private swapLiqualityFormat(swap: any) {
+    return {
+      ...swap,
+      to: swap.bridgeAsset,
+      toAmount: swap.bridgeAssetAmount,
+      slippagePercentage,
+    };
+  }
+
+  private swapAutomatedMarketMakerFormat(swap: any) {
+    return {
+      ...swap,
+      from: swap.bridgeAsset,
+      fromAmount: swap.bridgeAssetAmount,
+      fromAccountId: swap.toAccountId, // AMM swaps happen on the same account
+      slippagePercentage,
+      fee: swap.claimFee,
+    };
   }
 }
 
