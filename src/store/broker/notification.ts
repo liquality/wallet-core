@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import store from '../../store';
 import { Notification } from '../../types';
 import { prettyBalance } from '../../utils/coinFormatter';
@@ -8,19 +9,21 @@ const SEND_STATUS_MAP = {
   WAITING_FOR_CONFIRMATIONS(item: SendHistoryItem) {
     return {
       title: `New ${item.from} Transaction`,
-      message: `Sending ${prettyBalance(item.amount, item.from)} ${item.from} to ${item.toAddress}`,
+      message: `Sending ${prettyBalance(new BigNumber(item.amount), item.from)} ${item.from} to ${item.toAddress}`,
     };
   },
   FAILED(item: SendHistoryItem) {
     return {
       title: `${item.from} Transaction Failed`,
-      message: `Failed to send ${prettyBalance(item.amount, item.from)} ${item.from} to ${item.toAddress}`,
+      message: `Failed to send ${prettyBalance(new BigNumber(item.amount), item.from)} ${item.from} to ${
+        item.toAddress
+      }`,
     };
   },
   SUCCESS(item: SendHistoryItem) {
     return {
       title: `${item.from} Transaction Confirmed`,
-      message: `Sent ${prettyBalance(item.amount, item.from)} ${item.from} to ${item.toAddress}`,
+      message: `Sent ${prettyBalance(new BigNumber(item.amount), item.from)} ${item.from} to ${item.toAddress}`,
     };
   },
 };

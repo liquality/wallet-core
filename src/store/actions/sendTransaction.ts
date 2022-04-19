@@ -71,7 +71,7 @@ export const sendTransaction = async (
     to: asset,
     from: asset,
     toAddress: to,
-    amount: new BN(amount).toNumber(),
+    amount: new BN(amount).toFixed(),
     fee,
     tx,
     txHash: tx.hash,

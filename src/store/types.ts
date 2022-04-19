@@ -127,7 +127,7 @@ export enum SendStatus {
 export interface SendHistoryItem extends BaseHistoryItem {
   type: TransactionType.Send;
   toAddress: string;
-  amount: number;
+  amount: string;
   tx: Transaction;
   txHash: string;
   accountId: AccountId;
