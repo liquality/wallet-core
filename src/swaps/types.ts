@@ -1,5 +1,15 @@
 import BigNumber from 'bignumber.js';
+import { SwapProviderDefinition } from '../build.config';
 import { AccountId, Asset, Network, SwapHistoryItem } from '../store/types';
+
+export interface BaseSwapProviderConfig extends SwapProviderDefinition {
+  providerId: string;
+}
+
+export interface LiqualityBoostSwapProviderConfig extends BaseSwapProviderConfig {
+  network: Network;
+  supportedBridgeAssets: Asset[];
+}
 
 export interface GetQuoteResult {
   from: Asset;

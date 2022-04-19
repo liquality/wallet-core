@@ -7,12 +7,17 @@ import { withInterval } from '../../store/actions/performNextAction/utils';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { SwapProvider } from '../SwapProvider';
-import { QuoteRequest, SwapStatus } from '../types';
+import { BaseSwapProviderConfig, QuoteRequest, SwapStatus } from '../types';
 
 const fastBtcSatoshiFee = 5000;
 const fastBtcPercentageFee = 0.2;
 
+export interface FastBtcSwapProviderConfig extends BaseSwapProviderConfig {
+  bridgeEndpoint: string;
+}
+
 class FastbtcSwapProvider extends SwapProvider {
+  config: FastBtcSwapProviderConfig;
   socketConnection: any;
   constructor(config) {
     super(config);
@@ -35,7 +40,7 @@ class FastbtcSwapProvider extends SwapProvider {
       {
         from: 'BTC',
         to: 'RBTC',
-        rate: 0.998,
+        rate: '0.998',
         max: currencyToUnit(cryptoassets.BTC, new BN(validAmountRange.max)).toFixed(),
         min: currencyToUnit(cryptoassets.BTC, new BN(validAmountRange.min)).toFixed(),
       },

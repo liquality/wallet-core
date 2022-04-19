@@ -67,13 +67,16 @@ export interface Account extends AccountDefinition {
   derivationPath: string;
 }
 
-export interface MarketData {
+export interface PairData {
   from: Asset;
   to: Asset;
-  provider: string;
-  rate: number;
+  rate: string;
   max: string;
   min: string;
+}
+
+export interface MarketData extends PairData {
+  provider: string;
 }
 
 export enum FeeLabel {

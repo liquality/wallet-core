@@ -11,7 +11,7 @@ import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
 import { SwapProvider } from '../SwapProvider';
-import { SwapStatus } from '../types';
+import { BaseSwapProviderConfig, SwapStatus } from '../types';
 
 const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies['@liquality/client']
   .replace('^', '')
@@ -22,16 +22,36 @@ const headers = {
   'x-liquality-user-agent': VERSION_STRING,
 };
 
+export interface LiqualityMarketData {
+  from: string;
+  to: string;
+  status: string;
+  updatedAt: Date;
+  createdAt: Date;
+  max: number;
+  min: number;
+  minConf: number;
+  rate: number;
+}
+
+export interface LiqualitySwapProviderConfig extends BaseSwapProviderConfig {
+  agent: string;
+}
+
 export class LiqualitySwapProvider extends SwapProvider {
-  public async getSupportedPairs() {
-    const markets = (
+  config: LiqualitySwapProviderConfig;
+  private async getMarketInfo(): Promise<LiqualityMarketData[]> {
+    return (
       await axios({
         url: this.config.agent + '/api/swap/marketinfo',
         method: 'get',
         headers,
       })
     ).data;
+  }
 
+  public async getSupportedPairs() {
+    const markets = await this.getMarketInfo();
     const pairs = markets
       .filter((market) => cryptoassets[market.from] && cryptoassets[market.to])
       .map((market) => ({

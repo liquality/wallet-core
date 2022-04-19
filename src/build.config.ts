@@ -3,7 +3,7 @@ import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-test
 import { ChainId } from '@liquality/cryptoassets';
 import { Asset, Network, SwapProviderType } from './store/types';
 
-export interface BaseSwapProviderConfig {
+export interface SwapProviderDefinition {
   name: string;
   icon: string;
   type: SwapProviderType;
@@ -16,7 +16,7 @@ export interface WalletCoreConfig {
   };
   swapProviders: {
     [key in Network]: {
-      [providerId: string]: BaseSwapProviderConfig;
+      [providerId: string]: SwapProviderDefinition;
     };
   };
   networks: Network[];
@@ -98,14 +98,14 @@ const config: WalletCoreConfig = {
       liqualityBoostNativeToERC20: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostNativeToERC20,
-        network: 'testnet',
+        network: Network.Testnet,
         icon: 'liqualityboost.svg',
         supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
       },
       liqualityBoostERC20toNative: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostERC20ToNative,
-        network: 'testnet',
+        network: Network.Testnet,
         icon: 'liqualityboost.svg',
         supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
       },
@@ -140,14 +140,14 @@ const config: WalletCoreConfig = {
       liqualityBoostNativeToERC20: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostNativeToERC20,
-        network: 'mainnet',
+        network: Network.Mainnet,
         icon: 'liqualityboost.svg',
         supportedBridgeAssets: [],
       },
       liqualityBoostERC20toNative: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostERC20ToNative,
-        network: 'mainnet',
+        network: Network.Mainnet,
         icon: 'liqualityboost.svg',
         supportedBridgeAssets: [],
       },

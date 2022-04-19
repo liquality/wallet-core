@@ -15,11 +15,16 @@ import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
-import { SwapStatus } from '../types';
+import { BaseSwapProviderConfig, SwapStatus } from '../types';
 
 const SWAP_DEADLINE = 30 * 60; // 30 minutes
 
+export interface UniswapSwapProviderConfig extends BaseSwapProviderConfig {
+  routerAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
+}
+
 class UniswapSwapProvider extends SwapProvider {
+  config: UniswapSwapProviderConfig;
   _apiCache: any;
   constructor(config) {
     super(config);
@@ -263,7 +268,10 @@ class UniswapSwapProvider extends SwapProvider {
 
     const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
     const account = this.getAccount(quote.fromAccountId);
-    const client = this.getClient(network, walletId, quote.from, account?.type);
+    if (!account) {
+      throw new Error(`UniswapSwapProvider: Account with id ${quote.fromAccountId} not found`);
+    }
+    const client = this.getClient(network, walletId, quote.from, account.id);
 
     let gasLimit = 0;
     if (await this.requiresApproval({ network, walletId, quote })) {

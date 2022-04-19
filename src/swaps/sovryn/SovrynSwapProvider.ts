@@ -13,7 +13,7 @@ import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
-import { SwapStatus } from '../types';
+import { BaseSwapProviderConfig, SwapStatus } from '../types';
 
 // use WRBTC address for RBTC native token
 const wrappedRbtcAddress = {
@@ -21,7 +21,14 @@ const wrappedRbtcAddress = {
   testnet: SovrynTestnetAddresses.BTC_token,
 };
 
+export interface SovrynSwapProviderConfig extends BaseSwapProviderConfig {
+  routerAddress: string;
+  routerAddressRBTC: string;
+  rpcURL: string;
+}
+
 class SovrynSwapProvider extends SwapProvider {
+  config: SovrynSwapProviderConfig;
   _apiCache: any;
   constructor(config) {
     super(config);
@@ -232,7 +239,8 @@ class SovrynSwapProvider extends SwapProvider {
 
     const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
     const account = this.getAccount(quote.fromAccountId);
-    const client = this.getClient(network, walletId, quote.from, account?.type);
+    if (!account) throw new Error(`SovrynSwapProvider: Account with id ${quote.fromAccountId} not found`);
+    const client = this.getClient(network, walletId, quote.from, account.id);
 
     let gasLimit = 0;
     if (await this.requiresApproval({ network, walletId, quote })) {

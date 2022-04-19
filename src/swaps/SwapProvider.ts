@@ -1,8 +1,8 @@
-import { BaseSwapProviderConfig } from '../build.config';
 import store, { ActionContext } from '../store';
 import { createNotification } from '../store/broker/notification';
-import { MarketData, Network, SwapHistoryItem } from '../store/types';
+import { MarketData, Network, PairData, SwapHistoryItem } from '../store/types';
 import {
+  BaseSwapProviderConfig,
   EstimateFeeRequest,
   EstimateFeeResponse,
   GetQuoteResult,
@@ -37,7 +37,7 @@ export abstract class SwapProvider {
    * Get the supported pairs of this provider for this network
    * @param {{ network }} network
    */
-  public abstract getSupportedPairs({ network }: { network: Network }): Promise<MarketData[]>;
+  public abstract getSupportedPairs({ network }: { network: Network }): Promise<PairData[]>;
 
   /**
    * Get a quote for the specified parameters

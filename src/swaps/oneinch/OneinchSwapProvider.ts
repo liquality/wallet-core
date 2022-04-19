@@ -1,4 +1,4 @@
-import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import axios from 'axios';
 import BN from 'bignumber.js';
@@ -11,7 +11,7 @@ import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
-import { SwapStatus } from '../types';
+import { BaseSwapProviderConfig, SwapStatus } from '../types';
 
 const nativeAssetAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 const slippagePercentage = 0.5;
@@ -22,7 +22,16 @@ const chainToRpcProviders = {
   43114: 'https://api.avax.network/ext/bc/C/rpc',
 };
 
+export interface OneinchSwapProviderConfig extends BaseSwapProviderConfig {
+  agent: string;
+  routerAddress: string;
+  referrerAddress: { [key in ChainId]?: string };
+  referrerFee: number;
+}
+
 class OneinchSwapProvider extends SwapProvider {
+  config: OneinchSwapProviderConfig;
+
   async getSupportedPairs() {
     return [];
   }
@@ -110,7 +119,8 @@ class OneinchSwapProvider extends SwapProvider {
     const toChain = cryptoassets[quote.to].chain;
     const fromChain = cryptoassets[quote.from].chain;
     const chainId = ChainNetworks[toChain][network].chainId;
-    if (toChain !== fromChain || !chainToRpcProviders[chainId]) return null;
+    if (toChain !== fromChain || !chainToRpcProviders[chainId])
+      throw new Error(`Route ${fromChain} - ${toChain} not supported`);
 
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);

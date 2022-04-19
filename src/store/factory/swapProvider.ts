@@ -25,5 +25,6 @@ const providers = {
 export const createSwapProvider = (network: Network, providerId: string) => {
   const swapProviderConfig = buildConfig.swapProviders[network][providerId];
   const SwapProvider = providers[swapProviderConfig.type];
+  // @ts-ignore TODO: i'll fix it
   return new SwapProvider({ ...swapProviderConfig, providerId });
 };

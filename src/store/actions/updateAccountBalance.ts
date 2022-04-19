@@ -20,7 +20,7 @@ export const updateAccountBalance = async (
         asset,
         accountId,
       });
-      let addresses = [];
+      let addresses: Address[] = [];
       if (type.includes('ledger')) {
         addresses = account.addresses.map(
           (a) =>

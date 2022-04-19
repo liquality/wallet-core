@@ -8,7 +8,7 @@ import { LiqualitySwapProvider } from '../../liquality/LiqualitySwapProvider';
 import { OneinchSwapProvider } from '../../oneinch/OneinchSwapProvider';
 import { SovrynSwapProvider } from '../../sovryn/SovrynSwapProvider';
 import { SwapProvider } from '../../SwapProvider';
-import { SwapStatus } from '../../types';
+import { LiqualityBoostSwapProviderConfig, SwapStatus } from '../../types';
 
 const slippagePercentage = 3;
 
@@ -19,11 +19,13 @@ class LiqualityBoostERC20toNative extends SwapProvider {
 
   private lspEndStates = ['REFUNDED', 'SUCCESS', 'QUOTE_EXPIRED'];
 
+  config: LiqualityBoostSwapProviderConfig;
+
   // TODO: types
   bridgeAssetToAutomatedMarketMaker: any;
   supportedBridgeAssets: any;
 
-  constructor(config) {
+  constructor(config: LiqualityBoostSwapProviderConfig) {
     super(config);
     this.liqualitySwapProvider = createSwapProvider(this.config.network, 'liquality') as LiqualitySwapProvider;
     this.sovrynSwapProvider = createSwapProvider(this.config.network, 'sovryn') as SovrynSwapProvider;
