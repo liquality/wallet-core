@@ -100,14 +100,14 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.LiqualityBoostNativeToERC20,
         network: Network.Testnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
       liqualityBoostERC20toNative: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostERC20ToNative,
         network: Network.Testnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
       uniswapV2: {
         name: 'Uniswap V2',
@@ -142,14 +142,14 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.LiqualityBoostNativeToERC20,
         network: Network.Mainnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: [],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
       liqualityBoostERC20toNative: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostERC20ToNative,
         network: Network.Mainnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: [],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
       uniswapV2: {
         name: 'Uniswap V2',

@@ -4,6 +4,7 @@ import { withInterval } from '../../../store/actions/performNextAction/utils';
 import { createSwapProvider } from '../../../store/factory/swapProvider';
 import { getNativeAsset, isERC20 } from '../../../utils/asset';
 import { prettyBalance } from '../../../utils/coinFormatter';
+import { AstroportSwapProvider } from '../../astroport/AstroportSwapProvider';
 import { LiqualitySwapProvider } from '../../liquality/LiqualitySwapProvider';
 import { OneinchSwapProvider } from '../../oneinch/OneinchSwapProvider';
 import { SovrynSwapProvider } from '../../sovryn/SovrynSwapProvider';
@@ -16,6 +17,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
   private liqualitySwapProvider: LiqualitySwapProvider;
   private sovrynSwapProvider: SovrynSwapProvider;
   private oneinchSwapProvider: OneinchSwapProvider;
+  private astroportSwapProvider: AstroportSwapProvider;
 
   private lspEndStates = ['REFUNDED', 'SUCCESS', 'QUOTE_EXPIRED'];
 
@@ -33,12 +35,15 @@ class LiqualityBoostERC20toNative extends SwapProvider {
 
     if (this.config.network === 'mainnet') {
       this.oneinchSwapProvider = createSwapProvider(this.config.network, 'oneinchV4') as OneinchSwapProvider;
+      this.astroportSwapProvider = createSwapProvider(this.config.network, 'astroport') as AstroportSwapProvider;
       this.bridgeAssetToAutomatedMarketMaker = {
         MATIC: this.oneinchSwapProvider,
         ETH: this.oneinchSwapProvider,
         BNB: this.oneinchSwapProvider,
         RBTC: this.sovrynSwapProvider,
         AVAX: this.oneinchSwapProvider,
+        UST: this.astroportSwapProvider,
+        LUNA: this.astroportSwapProvider,
       };
     } else if (this.config.network === 'testnet') {
       this.bridgeAssetToAutomatedMarketMaker = {
@@ -85,6 +90,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       bridgeAsset,
       bridgeAssetAmount: quote.toAmount,
       path: quote.path,
+      fromTokenAddress: quote.fromTokenAddress, // for Terra ERC20
     };
   }
 
