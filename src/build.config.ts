@@ -142,14 +142,14 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.LiqualityBoostNativeToERC20,
         network: Network.Mainnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: [],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
       },
       liqualityBoostERC20toNative: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostERC20ToNative,
         network: Network.Mainnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: [],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
       },
       uniswapV2: {
         name: 'Uniswap V2',
