@@ -43,7 +43,6 @@ export interface SovrynSwapHistoryItem extends SwapHistoryItem {
   swapTxHash: string;
   approveTx: Transaction<ethereum.Transaction>;
   swapTx: Transaction<ethereum.Transaction>;
-  path: string[];
 }
 
 class SovrynSwapProvider extends SwapProvider {

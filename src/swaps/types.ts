@@ -22,6 +22,8 @@ export interface SwapQuote extends GetQuoteResult {
   provider: string;
   fromAccountId: AccountId;
   toAccountId: AccountId;
+  path?: string[] | null;
+  slippage?: number;
 }
 
 export type QuoteRequest = {
@@ -62,4 +64,9 @@ export type SwapStatus = {
   label: string;
   filterStatus: string;
   notification?: (swap?: unknown) => { message: string };
+};
+
+export type ActionStatus = {
+  endTime: number;
+  status: string;
 };

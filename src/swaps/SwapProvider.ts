@@ -2,6 +2,7 @@ import store, { ActionContext } from '../store';
 import { createNotification } from '../store/broker/notification';
 import { MarketData, Network, PairData, SwapHistoryItem } from '../store/types';
 import {
+  ActionStatus,
   BaseSwapProviderConfig,
   EstimateFeeRequest,
   EstimateFeeResponse,
@@ -62,7 +63,13 @@ export abstract class SwapProvider {
   public abstract performNextSwapAction(
     store: ActionContext,
     nextSwapAction: NextSwapActionRequest
-  ): Promise<Partial<SwapHistoryItem>>;
+  ): Promise<Partial<SwapHistoryItem> | undefined>;
+
+  public async waitForSwapConfirmations(
+    nextSwapActionRequest: NextSwapActionRequest
+  ): Promise<ActionStatus | undefined> {
+    return;
+  }
 
   /**
    * Gets the market data

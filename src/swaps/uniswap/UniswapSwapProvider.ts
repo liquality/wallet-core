@@ -19,6 +19,7 @@ import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
 import {
+  ActionStatus,
   BaseSwapProviderConfig,
   EstimateFeeRequest,
   EstimateFeeResponse,
@@ -373,7 +374,7 @@ class UniswapSwapProvider extends SwapProvider {
         return {
           endTime: Date.now(),
           status: Number(status) === 1 ? 'SUCCESS' : 'FAILED',
-        };
+        } as ActionStatus;
       }
     } catch (e) {
       if (e.name === 'TxNotFoundError') console.warn(e);
