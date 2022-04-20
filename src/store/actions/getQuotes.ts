@@ -13,16 +13,22 @@ export const getQuotes = async (
     to,
     fromAccountId,
     toAccountId,
+    // Amount is string because in some contexts, it is passed over messages not supporting full objects
     amount,
-  }: { network: Network; from: Asset; to: Asset; fromAccountId: AccountId; toAccountId: AccountId; amount: BigNumber }
+  }: { network: Network; from: Asset; to: Asset; fromAccountId: AccountId; toAccountId: AccountId; amount: string }
 ): Promise<SwapQuote[]> => {
+  if (!amount) {
+    return [];
+  }
   const { getters } = rootActionContext(context);
   const quotes = await Bluebird.map(
     Object.keys(buildConfig.swapProviders[network]),
     async (provider) => {
       const swapProvider = getters.swapProvider(network, provider);
       // Quote errors should not halt the process
-      const quote = await swapProvider.getQuote({ network, from, to, amount }).catch(console.error);
+      const quote = await swapProvider
+        .getQuote({ network, from, to, amount: new BigNumber(amount) })
+        .catch(console.error);
       return quote ? { ...quote, provider, fromAccountId, toAccountId } : null;
     },
     { concurrency: 5 }

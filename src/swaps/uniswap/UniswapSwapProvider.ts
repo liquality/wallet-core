@@ -386,7 +386,7 @@ class UniswapSwapProvider extends SwapProvider {
     store: ActionContext,
     { network, walletId, swap }: NextSwapActionRequest<UniswapSwapHistoryItem>
   ) {
-    let updates: Partial<HistoryItem>;
+    let updates: Partial<HistoryItem> = {};
 
     switch (swap.status) {
       case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
@@ -400,8 +400,6 @@ class UniswapSwapProvider extends SwapProvider {
       case 'WAITING_FOR_SWAP_CONFIRMATIONS':
         updates = await withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
         break;
-      default:
-        throw new Error('UniswapSwapProvider: unknown status');
     }
 
     return updates as SwapHistoryItem;

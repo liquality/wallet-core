@@ -79,13 +79,13 @@ class SovrynSwapProvider extends SwapProvider {
     // generate path
     const path = await ssnContract.conversionPath(fromTokenAddress, toTokenAddress);
     // calculate rates
-    const rate = await ssnContract.rateByPath(path, fromAmountInUnit);
+    const rate: ethers.BigNumber = await ssnContract.rateByPath(path, fromAmountInUnit);
 
     return {
       from,
       to,
       fromAmount: fromAmountInUnit,
-      toAmount: rate.toFixed(),
+      toAmount: rate.toString(),
       path: path,
     };
   }
