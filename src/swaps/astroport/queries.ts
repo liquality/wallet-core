@@ -1,5 +1,6 @@
 import { MsgExecuteContract } from '@terra-money/terra.js';
 
+
 const ADDRESSES = {
   ASSETS_CONTRACT: 'terra1m6ywlgn6wrjuagcmmezzz2a029gtldhey5k552',
   FACTORY_CONTRACT: 'terra16t7dpwwgx9n3lq6l6te3753lsjqwhxwpday9zx',
@@ -12,7 +13,7 @@ const ADDRESSES = {
     1. UST <-> LUNA
     2. UST -> ERC20
  */
-export const getRateNativeToAsset = (fromAmount, asset, pairAddress?) => {
+export const getRateNativeToAsset = (fromAmount: string, asset: string, pairAddress?: string) => {
   const isDenom = asset === 'uluna' || asset === 'uusd';
 
   const query = {
@@ -57,7 +58,7 @@ export const getRateNativeToAsset = (fromAmount, asset, pairAddress?) => {
     2. ERC20 <-> ERC20
     3. ERC20 -> UST
  */
-export const getRateERC20ToERC20 = (fromAmount, firstAsset, secondAsset, pairAddress?) => {
+export const getRateERC20ToERC20 = (fromAmount: string, firstAsset: string, secondAsset: string, pairAddress?: string) => {
   const isFirstAssetDenom = firstAsset === 'uluna' || firstAsset === 'uusd';
   const isSecondAssetDenom = secondAsset === 'uluna' || secondAsset === 'uusd';
 
@@ -135,7 +136,7 @@ export const getRateERC20ToERC20 = (fromAmount, firstAsset, secondAsset, pairAdd
     1. UST <-> Luna
     1. UST -> ERC20
 */
-export const buildSwapFromNativeTokenMsg = (quote, denom, address, pairAddress?) => {
+export const buildSwapFromNativeTokenMsg = (quote: any, denom: string, address: string, pairAddress?: string) => {
   const to = pairAddress ? pairAddress : ADDRESSES.ASSETS_CONTRACT; // This address is for UST <-> Luna pair
 
   return {
@@ -172,7 +173,7 @@ export const buildSwapFromNativeTokenMsg = (quote, denom, address, pairAddress?)
     2. ERC20 <-> LUNA
 */
 
-export const buildSwapFromContractTokenMsg = (quote, recipient, fromTokenAddress, toTokenAddress) => {
+export const buildSwapFromContractTokenMsg = (quote: any, recipient: string, fromTokenAddress: string, toTokenAddress: string) => {
   const isERC20ToLuna = quote.to === 'LUNA';
   const isLunaToERC20 = quote.from === 'LUNA';
   const isERC20ToERC20 = quote.to !== 'LUNA' && quote.from !== 'LUNA';
@@ -272,7 +273,7 @@ export const buildSwapFromContractTokenMsg = (quote, recipient, fromTokenAddress
     1. ERC20 -> UST
 */
 
-export const buildSwapFromContractTokenToUSTMsg = (quote, address, fromTokenAddress, pairAddress) => {
+export const buildSwapFromContractTokenToUSTMsg = (quote: any, address: string, fromTokenAddress: string, pairAddress: string) => {
   const msgInBase64 = Buffer.from(
     JSON.stringify({
       swap: {},
@@ -297,7 +298,7 @@ export const buildSwapFromContractTokenToUSTMsg = (quote, address, fromTokenAddr
 };
 
 // ============== Get Pair Address ==============
-export const getPairAddressQuery = (tokenAddress) => ({
+export const getPairAddressQuery = (tokenAddress: string) => ({
   pair: {
     asset_infos: [
       {
