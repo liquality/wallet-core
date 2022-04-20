@@ -1,5 +1,5 @@
 import { MsgExecuteContract } from '@terra-money/terra.js';
-
+import { SwapHistoryItem } from '../../store/types';
 
 const ADDRESSES = {
   ASSETS_CONTRACT: 'terra1m6ywlgn6wrjuagcmmezzz2a029gtldhey5k552',
@@ -58,7 +58,12 @@ export const getRateNativeToAsset = (fromAmount: string, asset: string, pairAddr
     2. ERC20 <-> ERC20
     3. ERC20 -> UST
  */
-export const getRateERC20ToERC20 = (fromAmount: string, firstAsset: string, secondAsset: string, pairAddress?: string) => {
+export const getRateERC20ToERC20 = (
+  fromAmount: string,
+  firstAsset: string,
+  secondAsset: string,
+  pairAddress?: string
+) => {
   const isFirstAssetDenom = firstAsset === 'uluna' || firstAsset === 'uusd';
   const isSecondAssetDenom = secondAsset === 'uluna' || secondAsset === 'uusd';
 
@@ -136,7 +141,12 @@ export const getRateERC20ToERC20 = (fromAmount: string, firstAsset: string, seco
     1. UST <-> Luna
     1. UST -> ERC20
 */
-export const buildSwapFromNativeTokenMsg = (quote: any, denom: string, address: string, pairAddress?: string) => {
+export const buildSwapFromNativeTokenMsg = (
+  quote: SwapHistoryItem,
+  denom: string,
+  address: string,
+  pairAddress?: string
+) => {
   const to = pairAddress ? pairAddress : ADDRESSES.ASSETS_CONTRACT; // This address is for UST <-> Luna pair
 
   return {
@@ -173,7 +183,12 @@ export const buildSwapFromNativeTokenMsg = (quote: any, denom: string, address: 
     2. ERC20 <-> LUNA
 */
 
-export const buildSwapFromContractTokenMsg = (quote: any, recipient: string, fromTokenAddress: string, toTokenAddress: string) => {
+export const buildSwapFromContractTokenMsg = (
+  quote: SwapHistoryItem,
+  recipient: string,
+  fromTokenAddress: string,
+  toTokenAddress: string
+) => {
   const isERC20ToLuna = quote.to === 'LUNA';
   const isLunaToERC20 = quote.from === 'LUNA';
   const isERC20ToERC20 = quote.to !== 'LUNA' && quote.from !== 'LUNA';
@@ -273,7 +288,12 @@ export const buildSwapFromContractTokenMsg = (quote: any, recipient: string, fro
     1. ERC20 -> UST
 */
 
-export const buildSwapFromContractTokenToUSTMsg = (quote: any, address: string, fromTokenAddress: string, pairAddress: string) => {
+export const buildSwapFromContractTokenToUSTMsg = (
+  quote: SwapHistoryItem,
+  address: string,
+  fromTokenAddress: string,
+  pairAddress: string
+) => {
   const msgInBase64 = Buffer.from(
     JSON.stringify({
       swap: {},
