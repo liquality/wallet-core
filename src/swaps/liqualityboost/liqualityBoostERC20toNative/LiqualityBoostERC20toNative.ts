@@ -1,5 +1,4 @@
 import { assets, unitToCurrency } from '@liquality/cryptoassets';
-import { ethereum, Transaction } from '@liquality/types';
 import BN from 'bignumber.js';
 import { ActionContext } from '../../../store';
 import { withInterval } from '../../../store/actions/performNextAction/utils';
@@ -25,21 +24,9 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../../types';
+import { BoostHistoryItem, BoostNextSwapActionRequest } from '../types';
 
 const slippagePercentage = 3;
-
-export interface BoostERC20toNativeHistoryItem extends LiqualitySwapHistoryItem {
-  approveTxHash: string;
-  swapTxHash: string;
-  approveTx: Transaction<ethereum.Transaction>;
-  swapTx: Transaction<ethereum.Transaction>;
-  bridgeAsset: Asset;
-  bridgeAssetAmount: string;
-}
-export interface BoostNextSwapActionRequest extends Partial<NextSwapActionRequest> {
-  swapLSP: LiqualitySwapHistoryItem;
-  swapAMM: SwapHistoryItem;
-}
 
 class LiqualityBoostERC20toNative extends SwapProvider {
   private liqualitySwapProvider: LiqualitySwapProvider;
@@ -49,7 +36,6 @@ class LiqualityBoostERC20toNative extends SwapProvider {
   private lspEndStates = ['REFUNDED', 'SUCCESS', 'QUOTE_EXPIRED'];
 
   config: LiqualityBoostSwapProviderConfig;
-
   bridgeAssetToAutomatedMarketMaker: { [key: string]: SwapProvider };
   supportedBridgeAssets: Asset[];
 
@@ -117,7 +103,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     };
   }
 
-  async newSwap({ network, walletId, quote: _quote }: SwapRequest<BoostERC20toNativeHistoryItem>) {
+  async newSwap({ network, walletId, quote: _quote }: SwapRequest<BoostHistoryItem>) {
     // ERC20 -> Bridge asset
     const result = await this.bridgeAssetToAutomatedMarketMaker[_quote.bridgeAsset].newSwap({
       network,
@@ -136,7 +122,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     };
   }
 
-  async updateOrder(order: BoostERC20toNativeHistoryItem) {
+  async updateOrder(order: BoostHistoryItem) {
     return await this.liqualitySwapProvider.updateOrder(order as LiqualitySwapHistoryItem);
   }
 
@@ -148,7 +134,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     quote,
     feePrices,
     max,
-  }: EstimateFeeRequest<string, BoostERC20toNativeHistoryItem>) {
+  }: EstimateFeeRequest<string, BoostHistoryItem>) {
     // bridge asset -> 'to' asset
     const liqualityFees = await this.liqualitySwapProvider.estimateFees({
       network,
@@ -203,9 +189,9 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     const _walletId = walletId as WalletId;
 
     const resultAMM = await this.bridgeAssetToAutomatedMarketMaker[
-      swapAMM.bridgeAsset as Asset
+      swapAMM?.bridgeAsset as Asset
     ].waitForSwapConfirmations({
-      swap: swapAMM,
+      swap: swapAMM as SwapHistoryItem,
       network: _network,
       walletId: _walletId,
     });
@@ -228,7 +214,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
 
   async performNextSwapAction(
     store: ActionContext,
-    { network, walletId, swap }: NextSwapActionRequest<BoostERC20toNativeHistoryItem>
+    { network, walletId, swap }: NextSwapActionRequest<BoostHistoryItem>
   ) {
     let updates: Partial<SwapHistoryItem>;
     const swapLiqualityFormat: LiqualitySwapHistoryItem = {
@@ -333,7 +319,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       CONFIRM_COUNTER_PARTY_INITIATION: {
         ...this.liqualitySwapProvider.statuses.CONFIRM_COUNTER_PARTY_INITIATION,
         label: 'Locking {bridgeAsset}',
-        notification(swap: BoostERC20toNativeHistoryItem) {
+        notification(swap: BoostHistoryItem) {
           return {
             message: `Counterparty sent ${prettyBalance(Number(swap.bridgeAssetAmount), swap.bridgeAsset)} ${
               swap.bridgeAsset
