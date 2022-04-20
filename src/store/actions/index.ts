@@ -16,6 +16,7 @@ export * from './enableEthereumInjection';
 export * from './exportPrivateKey';
 export * from './forgetDappConnections';
 export * from './getLockForAsset';
+export * from './getNFTAssets';
 export * from './getQuotes';
 export * from './getUnusedAddresses';
 export * from './hardware-wallet';
