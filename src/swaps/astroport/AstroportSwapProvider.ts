@@ -27,6 +27,11 @@ import {
   getRateNativeToAsset,
 } from './queries';
 
+interface RateResponse {
+  amount: number;
+  return_amount: number;
+}
+
 interface AstroportSwapHistoryItem extends SwapHistoryItem {
   swapTxHash: string;
   swapTx: Transaction<terra.InputTransaction>;
@@ -202,7 +207,7 @@ class AstroportSwapProvider extends SwapProvider {
     const erc20ToNative = fromInfo.type === 'erc20' && toInfo.type === 'native';
 
     // Select correct query and address depending on coin types
-    let contractData = {};
+    let contractData;
 
     let fromTokenAddress, toTokenAddress;
 
@@ -247,14 +252,14 @@ class AstroportSwapProvider extends SwapProvider {
           ? getRateERC20ToERC20(fromAmount, fromTokenAddress, toDenom)
           : getRateNativeToAsset(fromAmount, fromTokenAddress, pairAddress);
     } else {
-      throw new Error(`From: ${fromInfo.type} To: ${toInfo.type}`);
+      throw new Error(`AstroportSwapProvider: Invalid swap pair From: ${fromInfo.type} To: ${toInfo.type}`);
     }
 
     const { address, query } = contractData;
 
     const pairAddress = address;
 
-    const rate = await rpc.wasm.contractQuery(address, query);
+    const rate: RateResponse = await rpc.wasm.contractQuery(address, query);
 
     return { rate, fromTokenAddress, toTokenAddress, pairAddress };
   }
@@ -264,7 +269,11 @@ class AstroportSwapProvider extends SwapProvider {
 
     const query = getPairAddressQuery(tokenAddress);
 
-    const resp = await rpc.wasm.contractQuery('terra1fnywlw4edny3vw44x04xd67uzkdqluymgreu7g', query);
+    // TODO: fully define this type?
+    const resp: { contract_addr: string } = await rpc.wasm.contractQuery(
+      'terra1fnywlw4edny3vw44x04xd67uzkdqluymgreu7g',
+      query
+    );
 
     return resp.contract_addr;
   }
