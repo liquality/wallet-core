@@ -6,7 +6,6 @@ import {
   AccountId,
   AnalyticsState,
   Asset,
-  SwapHistoryItem,
   CustomToken,
   ExperimentType,
   FiatRates,
@@ -15,6 +14,7 @@ import {
   Network,
   RootState,
   SendHistoryItem,
+  SwapHistoryItem,
   Wallet,
   WalletId,
 } from './types';
