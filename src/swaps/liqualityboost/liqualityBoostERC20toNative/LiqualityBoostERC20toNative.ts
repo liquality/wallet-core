@@ -112,6 +112,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
         ..._quote,
         to: _quote.bridgeAsset,
         toAmount: _quote.bridgeAssetAmount,
+        toAccountId: _quote.fromAccountId,
       },
     });
 
@@ -146,7 +147,6 @@ class LiqualityBoostERC20toNative extends SwapProvider {
         ...quote,
         from: quote.bridgeAsset,
         toAmount: quote.bridgeAssetAmount,
-        toAccountId: quote.fromAccountId,
       },
       feePrices,
       max,
@@ -163,6 +163,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
           ...quote,
           to: quote.bridgeAsset,
           toAmount: quote.bridgeAssetAmount,
+          toAccountId: quote.fromAccountId,
           slippage: slippagePercentage,
         },
         feePrices,
@@ -221,7 +222,6 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       ...swap,
       from: swap.bridgeAsset,
       fromAmount: swap.bridgeAssetAmount,
-      toAccountId: swap.fromAccountId,
       slippage: slippagePercentage,
     };
 
@@ -229,6 +229,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       ...swap,
       to: swap.bridgeAsset,
       toAmount: swap.bridgeAssetAmount,
+      toAccountId: swap.fromAccountId, // AMM swaps happen on same account
       slippagePercentage,
     };
 
