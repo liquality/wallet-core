@@ -66,7 +66,7 @@ export abstract class SwapProvider {
   ): Promise<Partial<SwapHistoryItem> | undefined>;
 
   public async waitForSwapConfirmations(
-    nextSwapActionRequest: NextSwapActionRequest
+    _nextSwapActionRequest: NextSwapActionRequest
   ): Promise<ActionStatus | undefined> {
     return;
   }

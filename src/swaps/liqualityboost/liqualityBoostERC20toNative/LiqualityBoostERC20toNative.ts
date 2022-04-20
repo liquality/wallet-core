@@ -46,7 +46,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     this.sovrynSwapProvider = createSwapProvider(this.config.network, 'sovryn') as SovrynSwapProvider;
     this.supportedBridgeAssets = this.config.supportedBridgeAssets;
 
-    if (this.config.network === 'mainnet') {
+    if (this.config.network === Network.Mainnet) {
       this.oneinchSwapProvider = createSwapProvider(this.config.network, 'oneinchV4') as OneinchSwapProvider;
       this.bridgeAssetToAutomatedMarketMaker = {
         MATIC: this.oneinchSwapProvider,
@@ -55,7 +55,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
         RBTC: this.sovrynSwapProvider,
         AVAX: this.oneinchSwapProvider,
       };
-    } else if (this.config.network === 'testnet') {
+    } else if (this.config.network === Network.Testnet) {
       this.bridgeAssetToAutomatedMarketMaker = {
         RBTC: this.sovrynSwapProvider,
       };
