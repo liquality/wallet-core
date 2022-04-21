@@ -206,6 +206,7 @@ const config: WalletCoreConfig = {
     ChainId.Bitcoin,
     ChainId.Ethereum,
     ChainId.Rootstock,
+    ChainId.BinanceSmartChain,
     ChainId.Near,
     ChainId.Polygon,
     ChainId.Arbitrum,
