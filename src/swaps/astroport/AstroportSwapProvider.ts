@@ -142,13 +142,9 @@ class AstroportSwapProvider extends SwapProvider {
     _store: ActionContext,
     { network, walletId, swap }: NextSwapActionRequest<AstroportSwapHistoryItem>
   ) {
-    let updates;
-
     if (swap.status === 'WAITING_FOR_SWAP_CONFIRMATIONS') {
-      updates = await withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
+      return withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
     }
-
-    return updates as SwapHistoryItem;
   }
 
   // ======== MIN AMOUNT =======

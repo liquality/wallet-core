@@ -7,7 +7,7 @@ import { mapValues } from 'lodash';
 import pkg from '../../../package.json';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
-import { AccountId, Asset, HistoryItem, Network, SwapHistoryItem, WalletId } from '../../store/types';
+import { AccountId, Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
 import { timestamp, wait } from '../../store/utils';
 import { isERC20 } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
@@ -279,56 +279,43 @@ export class LiqualitySwapProvider extends SwapProvider {
     store: ActionContext,
     { network, walletId, swap }: NextSwapActionRequest<LiqualitySwapHistoryItem>
   ) {
-    let updates: Partial<HistoryItem> = {};
     switch (swap.status) {
       case 'INITIATED':
-        updates = await this.reportInitiation(swap);
-        break;
+        return this.reportInitiation(swap);
 
       case 'INITIATION_REPORTED':
-        updates = await withInterval(async () => this.confirmInitiation({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.confirmInitiation({ swap, network, walletId }));
 
       case 'INITIATION_CONFIRMED':
-        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+        return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
           this.fundSwap({ swap, network, walletId })
         );
-        break;
 
       case 'FUNDED':
-        updates = await withInterval(async () => this.findCounterPartyInitiation({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.findCounterPartyInitiation({ swap, network, walletId }));
 
       case 'CONFIRM_COUNTER_PARTY_INITIATION':
-        updates = await withInterval(async () => this.confirmCounterPartyInitiation({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.confirmCounterPartyInitiation({ swap, network, walletId }));
 
       case 'READY_TO_CLAIM':
-        updates = await withLock(store, { item: swap, network, walletId, asset: swap.to }, async () =>
+        return withLock(store, { item: swap, network, walletId, asset: swap.to }, async () =>
           this.claimSwap({ swap, network, walletId })
         );
-        break;
 
       case 'WAITING_FOR_CLAIM_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForClaimConfirmations({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForClaimConfirmations({ swap, network, walletId }));
 
       case 'WAITING_FOR_REFUND':
-        updates = await withInterval(async () => this.waitForRefund({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForRefund({ swap, network, walletId }));
 
       case 'GET_REFUND':
-        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+        return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
           this.refundSwap({ swap, network, walletId })
         );
-        break;
 
       case 'WAITING_FOR_REFUND_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForRefundConfirmations({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForRefundConfirmations({ swap, network, walletId }));
     }
-
-    return updates as SwapHistoryItem;
   }
 
   protected _txTypes() {

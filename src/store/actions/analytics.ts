@@ -5,7 +5,6 @@ import { version as walletVersion } from '../../../package.json';
 import { AnalyticsState } from '../types';
 
 const useAnalytics = !!process.env.VUE_APP_AMPLITUDE_API_KEY;
-console.log('ANALITYCS_ENABLED', useAnalytics);
 
 export const initializeAnalyticsPreferences = (context: ActionContext, { accepted }: { accepted: boolean }) => {
   const { commit } = rootActionContext(context);

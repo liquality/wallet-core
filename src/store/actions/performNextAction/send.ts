@@ -1,6 +1,6 @@
 import { TxStatus } from '@liquality/types';
 import { ActionContext, rootActionContext } from '../..';
-import { HistoryItem, Network, SendHistoryItem, SendStatus, WalletId } from '../../types';
+import { Network, SendHistoryItem, SendStatus, WalletId } from '../../types';
 import { withInterval } from './utils';
 
 function txStatusToSendStatus(txStatus: TxStatus) {
@@ -49,11 +49,7 @@ export const performNextTransactionAction = async (
   context: ActionContext,
   { network, walletId, transaction }: { network: Network; walletId: WalletId; transaction: SendHistoryItem }
 ) => {
-  let updates: Partial<HistoryItem> = {};
-
-  if (transaction.status === 'WAITING_FOR_CONFIRMATIONS') {
-    updates = await withInterval(async () => waitForConfirmations(context, { transaction, network, walletId }));
+  if (transaction.status === SendStatus.WAITING_FOR_CONFIRMATIONS) {
+    return withInterval(async () => waitForConfirmations(context, { transaction, network, walletId }));
   }
-
-  return updates;
 };

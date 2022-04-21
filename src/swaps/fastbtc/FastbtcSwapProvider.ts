@@ -6,7 +6,7 @@ import { io, Socket } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext } from '../../store';
 import { withInterval } from '../../store/actions/performNextAction/utils';
-import { HistoryItem, SwapHistoryItem } from '../../store/types';
+import { SwapHistoryItem } from '../../store/types';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { SwapProvider } from '../SwapProvider';
@@ -251,18 +251,12 @@ class FastbtcSwapProvider extends SwapProvider {
     _store: ActionContext,
     { network, walletId, swap }: NextSwapActionRequest<FastBtcSwapHistoryItem>
   ) {
-    let updates: Partial<HistoryItem> = {};
-
     switch (swap.status) {
       case 'WAITING_FOR_SEND_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForSendConfirmations({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForSendConfirmations({ swap, network, walletId }));
       case 'WAITING_FOR_RECEIVE':
-        updates = await withInterval(async () => this.waitForReceive({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForReceive({ swap, network, walletId }));
     }
-
-    return updates as SwapHistoryItem;
   }
 
   protected _txTypes() {

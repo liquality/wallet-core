@@ -17,7 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import buildConfig from '../../build.config';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
-import { Asset, HistoryItem, Network, SwapHistoryItem, WalletId } from '../../store/types';
+import { Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
 import { isERC20 } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
@@ -583,26 +583,18 @@ class ThorchainSwapProvider extends SwapProvider {
     store: ActionContext,
     { network, walletId, swap }: NextSwapActionRequest<ThorchainSwapHistoryItem>
   ) {
-    let updates: Partial<HistoryItem> = {};
-
     switch (swap.status) {
       case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
       case 'APPROVE_CONFIRMED':
-        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+        return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
           this.sendSwap({ swap, network, walletId })
         );
-        break;
       case 'WAITING_FOR_SEND_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForSendConfirmations({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForSendConfirmations({ swap, network, walletId }));
       case 'WAITING_FOR_RECEIVE':
-        updates = await withInterval(async () => this.waitForReceive({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForReceive({ swap, network, walletId }));
     }
-
-    return updates as SwapHistoryItem;
   }
 
   protected _txTypes() {

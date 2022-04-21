@@ -10,7 +10,7 @@ import * as ethers from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
-import { Asset, HistoryItem, Network, SwapHistoryItem } from '../../store/types';
+import { Asset, Network, SwapHistoryItem } from '../../store/types';
 import { isERC20 } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
@@ -342,23 +342,16 @@ class SovrynSwapProvider extends SwapProvider {
     store: ActionContext,
     { network, walletId, swap }: NextSwapActionRequest<SovrynSwapHistoryItem>
   ) {
-    let updates: Partial<HistoryItem> = {};
-
     switch (swap.status) {
       case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
       case 'APPROVE_CONFIRMED':
-        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+        return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
           this.sendSwap({ quote: swap, network, walletId })
         );
-        break;
       case 'WAITING_FOR_SWAP_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
     }
-
-    return updates as SwapHistoryItem;
   }
 
   // ======== HELPER METHODS ========

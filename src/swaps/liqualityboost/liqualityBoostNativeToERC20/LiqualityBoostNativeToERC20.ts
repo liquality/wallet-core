@@ -197,7 +197,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
     store: ActionContext,
     { network, walletId, swap }: NextSwapActionRequest<BoostHistoryItem>
   ) {
-    let updates: Partial<SwapHistoryItem>;
+    let updates: Partial<SwapHistoryItem> | undefined;
 
     const swapLiqualityFormat: LiqualitySwapHistoryItem = {
       ...swap,
@@ -216,13 +216,13 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
     };
 
     if (swap.status === 'WAITING_FOR_CLAIM_CONFIRMATIONS') {
-      updates = (await withInterval(async () =>
+      updates = await withInterval(async () =>
         this.finalizeLiqualitySwapAndStartAutomatedMarketMaker({
           swapLSP: swapLiqualityFormat,
           network,
           walletId,
         })
-      )) as SwapHistoryItem;
+      );
     } else {
       updates = await this.liqualitySwapProvider.performNextSwapAction(store, {
         network,
@@ -232,11 +232,11 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
     }
 
     if (!updates) {
-      updates = (await this.bridgeAssetToAutomatedMarketMaker[swap.bridgeAsset].performNextSwapAction(store, {
+      updates = await this.bridgeAssetToAutomatedMarketMaker[swap.bridgeAsset].performNextSwapAction(store, {
         network,
         walletId,
         swap: swapAutomatedMarketMakerFormat,
-      })) as SwapHistoryItem;
+      });
     }
     return updates;
   }
