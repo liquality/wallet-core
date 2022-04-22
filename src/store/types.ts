@@ -112,7 +112,7 @@ export interface BaseHistoryItem {
   endTime?: number;
   status: string; // TODO: actual types?
   to: Asset;
-  type: TransactionType; // swpa send?
+  type: TransactionType;
   walletId: WalletId;
   error?: string;
   waitingForLock?: boolean;
