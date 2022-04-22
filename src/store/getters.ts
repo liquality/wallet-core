@@ -53,8 +53,6 @@ type Cryptoassets = {
   [asset: string]: Asset;
 };
 
-// TODO: specify return types so direct-vuex works
-
 export default {
   client(...context: GetterContext) {
     const { state, getters } = rootGetterContext(context);
@@ -266,14 +264,15 @@ export default {
     const { getters } = rootGetterContext(context);
     const { cryptoassets } = getters;
 
-    const chainAssets = Object.entries(cryptoassets).reduce((chains, [asset, assetData]) => {
-      // @ts-ignore TODO: typed getters
-      const assets = assetData.chain in chains ? chains[assetData.chain] : [];
-      return Object.assign({}, chains, {
-        // @ts-ignore TODO: typed getters
-        [assetData.chain]: [...assets, asset],
-      });
-    }, {});
+    const chainAssets = Object.entries(cryptoassets).reduce(
+      (chains: { [chain in ChainId]?: AssetType[] }, [asset, assetData]) => {
+        const assets = assetData.chain in chains ? chains[assetData.chain]! : [];
+        return Object.assign({}, chains, {
+          [assetData.chain]: [...assets, asset],
+        });
+      },
+      {}
+    );
     return chainAssets;
   },
   analyticsEnabled(...context: GetterContext): boolean {
