@@ -141,9 +141,6 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   claimFee: number;
   fromAmount: string;
   fromAccountId: AccountId;
-  fromFundHash: string;
-  fromFundTx: Transaction;
-  maxFeeSlippageMultiplier: number;
   provider: string;
   slippage: number;
   toAccountId: AccountId;

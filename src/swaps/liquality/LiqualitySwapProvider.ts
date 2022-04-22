@@ -61,6 +61,8 @@ export interface LiqualitySwapHistoryItem extends SwapHistoryItem {
   expiresAt: number;
   swapExpiration: number;
   nodeSwapExpiration: number;
+  fromFundHash: string;
+  fromFundTx: Transaction;
   refundTx: Transaction;
   refundHash: string;
   toClaimTx: Transaction;
