@@ -1,16 +1,51 @@
 import {setupWallet} from './index';
 import defaultWalletOptions from './walletOptions/defaultOptions';
 import buildConfig from "./build.config";
-import {Network} from "./store/types";
+import {FeeLabel, Network} from "./store/types";
 import {ChainId} from "@liquality/cryptoassets";
+import BN from "bignumber.js";
 
-test('Initial State with RSK Legacy Derivation', async () => {
+test('Initial State of wallet setup', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
     expect(wallet.state.rskLegacyDerivation).toBe(false);
     expect(wallet.state.version).toBe(18);
     expect(wallet.state.activeNetwork).toBe('mainnet');
     expect(wallet.state.injectEthereumChain).toBe('ethereum');
     expect(wallet.state.injectEthereum).toBe(true);
+});
+
+test('should be able to create wallet and change network', async () => {
+    const wallet = await setupWallet(defaultWalletOptions);
+    await wallet.dispatch.createWallet({
+        key: '0x1234567890123456789012345678901234567890',
+        mnemonic: 'test',
+        imported: false,
+    });
+    console.log(JSON.stringify(wallet.state));
+    expect(wallet.state.wallets.length).toBe(1);
+    expect(wallet.state.wallets[0].id).not.toBe(undefined);
+    expect(wallet.state.wallets[0].name).toEqual("Account 1")
+    expect(wallet.state.wallets[0].mnemonic).toBe('test');
+    expect(wallet.state.wallets[0].at).not.toBe(0);
+    expect(wallet.state.unlockedAt).toBe(0);
+    expect(wallet.state.activeNetwork).toBe('mainnet');
+    expect(wallet.state.wallets[0].imported).toBe(false);
+    expect(wallet.state.activeWalletId).not.toBe(null);
+    const numberOfAccounts = wallet.state.accounts;
+    const walletId = wallet.state.activeWalletId;
+    expect(numberOfAccounts[walletId]).not.toBe(undefined);
+    expect(numberOfAccounts[walletId]).toHaveProperty("mainnet");
+    expect(numberOfAccounts[walletId]).toHaveProperty("testnet");
+    expect(wallet.state.enabledChains[walletId]).toHaveProperty("mainnet");
+    expect(wallet.state.enabledChains[walletId]).toHaveProperty("testnet");
+    expect(wallet.state.enabledChains[walletId]).toHaveProperty("testnet");
+    expect(wallet.state.enabledChains[walletId]).toHaveProperty("mainnet");
+
+    // change network
+    await wallet.dispatch.changeActiveNetwork({
+        network: Network.Testnet
+    });
+    expect(wallet.state.activeNetwork).toBe("testnet");
 });
 
 test('should be able to create wallet and validate mainnet accounts', async () => {
@@ -172,6 +207,7 @@ test('Should be able create wallet and add custom tokens', async () => {
     expect(wallet.state.customTokens.testnet?.[wallet.state.activeWalletId][0].chain).toBe("bitcoin");
 
 })
+
 test('Should be able create wallet and add custom token and remove token', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
@@ -235,5 +271,125 @@ test('Should be able create wallet and add custom token and remove token', async
     expect((wallet.state.customTokens.mainnet?.[wallet.state.activeWalletId].length)).toBe(0);
 })
 
+test('should be ble to export private key', async () => {
+
+    const wallet = await setupWallet(defaultWalletOptions);
+    await wallet.dispatch.createWallet({
+        key: '0x1234567890123456789012345678901234567890',
+        mnemonic: 'test',
+        imported: true,
+    });
+    await wallet.dispatch.unlockWallet({
+        key: '0x1234567890123456789012345678901234567890',
+    });
+    expect(wallet.state.wallets.length).toBe(1);
+    expect(wallet.state.wallets[0].imported).toBe(true);
+    expect(wallet.state.unlockedAt).not.toBe(0);
+
+    await wallet.dispatch.initializeAnalyticsPreferences({
+        accepted: true,
+    });
+
+    expect(wallet.state.analytics.userId).not.toBe(null);
+    expect(wallet.state.analytics.acceptedDate).not.toBe(0);
+    expect(wallet.state.analytics.askedDate).not.toBe(0);
+    expect(wallet.state.analytics.askedTimes).toBe(0);
+    expect(wallet.state.analytics.notAskAgain).toBe(false);
+
+    const privateKey = await wallet.dispatch.exportPrivateKey({
+        network: Network.Mainnet,
+        walletId: wallet.state.activeWalletId,
+        accountId: "0",
+        chainId: ChainId.Ethereum,
+    });
+    expect(privateKey).not.toBeNull();
+    expect(privateKey).not.toBe(undefined)
+});
+
+test('should be ble to get marketData', async () => {
+
+    const wallet = await setupWallet(defaultWalletOptions);
+    await wallet.dispatch.createWallet({
+        key: '0x1234567890123456789012345678901234567890',
+        mnemonic: 'test',
+        imported: true,
+    });
+    await wallet.dispatch.unlockWallet({
+        key: '0x1234567890123456789012345678901234567890',
+    });
+    expect(wallet.state.wallets.length).toBe(1);
+    expect(wallet.state.wallets[0].imported).toBe(true);
+    expect(wallet.state.unlockedAt).not.toBe(0);
+
+    await wallet.dispatch.initializeAnalyticsPreferences({
+        accepted: true,
+    });
+
+    expect(wallet.state.analytics.userId).not.toBe(null);
+    await wallet.dispatch.updateMarketData({
+        network: Network.Mainnet
+    });
+    expect(wallet.state.marketData.mainnet?.length).toBeGreaterThan(10);
+});
+
+test('should be able to do send transaction', async () => {
+    const wallet = await setupWallet(defaultWalletOptions);
+    await wallet.dispatch.createWallet({
+        key: '0x1234567890123456789012345678901234567890',
+        mnemonic: 'test',
+        imported: true,
+    });
+    await wallet.dispatch.unlockWallet({
+        key: '0x1234567890123456789012345678901234567890',
+    });
+    expect(wallet.state.wallets.length).toBe(1);
+    expect(wallet.state.wallets[0].imported).toBe(true);
+    expect(wallet.state.unlockedAt).not.toBe(0);
+
+    await wallet.dispatch.initializeAnalyticsPreferences({
+        accepted: true,
+    });
+
+    expect(wallet.state.analytics.userId).not.toBe(null);
+    expect(wallet.state.analytics.acceptedDate).not.toBe(0);
+    expect(wallet.state.analytics.askedDate).not.toBe(0);
+    expect(wallet.state.analytics.askedTimes).toBe(0);
+    expect(wallet.state.analytics.notAskAgain).toBe(false);
+
+    const walletId = wallet.state.activeWalletId;
+    const mainnetAccounts = wallet?.state?.enabledAssets?.mainnet?.[walletId];
+    expect(mainnetAccounts).not.toBeNull();
+
+    // update balance this will generate address
+    if (mainnetAccounts) {
+        await wallet.dispatch.updateBalances({
+            network: Network.Mainnet,
+            walletId: wallet.state.activeWalletId,
+            assets: mainnetAccounts,
+        });
+    }
+
+    // update account balances
+    await wallet.dispatch.updateAccountBalance({
+        network: Network.Mainnet,
+        walletId: wallet.state.activeWalletId,
+        accountId: "0",
+    });
+
+    console.log(JSON.stringify(wallet.state));
+    await wallet.dispatch.sendTransaction({
+        network: Network.Mainnet,
+        walletId: wallet.state.activeWalletId,
+        accountId: "0",
+        asset: "ETH",
+        to: "0x1234567890123456789012345678901234567890",
+        amount: new BN(100000000000000000000),
+        data: "0x1234567890123456789012345678901234567890",
+        fee: 1,
+        gas: 1,
+        feeLabel: FeeLabel.Fast,
+        fiatRate: 1,
+    });
 
 
+})
