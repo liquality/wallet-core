@@ -38,12 +38,13 @@ export const updateTransactionFee = async (
     refundTx: 'fee',
   }[txKey] as string;
 
+  const accountId = item.type === TransactionType.Swap ? item.fromAccountId : item.accountId;
+
   const client = getters.client({
     network,
     walletId,
     asset,
-    // @ts-ignore
-    accountId: item.fromAccountId, // TODO: confirm if the from account should be used here
+    accountId,
   });
 
   const oldTx = (item as any)[txKey] as Transaction | string;

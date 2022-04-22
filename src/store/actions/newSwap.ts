@@ -24,7 +24,7 @@ export const newSwap = async (
   }
 ): Promise<SwapHistoryItem> => {
   const { commit, dispatch } = rootActionContext(context);
-  // @ts-ignore TODO: States should always be in string? Results are retuninrg BignNmber but storage is storing as string
+  // @ts-ignore TODO: Transition of quote from plain quote -> quote with options -> swap is not clearly typed
   const swap: SwapHistoryItem = {
     ...quote,
     type: TransactionType.Swap,
