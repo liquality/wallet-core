@@ -359,6 +359,12 @@ test('should be able to do send transaction', async () => {
     const walletId = wallet.state.activeWalletId;
     const mainnetAccounts = wallet?.state?.enabledAssets?.mainnet?.[walletId];
     expect(mainnetAccounts).not.toBeNull();
+    expect(wallet.state.accounts?.[walletId]?.mainnet?.[1]?.chain).toBe(ChainId.Ethereum);
+    const ethAccountId = wallet.state.accounts?.[walletId]?.mainnet?.[1]?.id;
+    console.log(ethAccountId);
+    const ethereumAddress = wallet.state.accounts?.[walletId]?.mainnet?.[1]?.addresses?.[0];
+    expect(ethereumAddress).not.toBeNull();
+    console.log(ethereumAddress);
 
     // update balance this will generate address
     if (mainnetAccounts) {
@@ -369,27 +375,29 @@ test('should be able to do send transaction', async () => {
         });
     }
 
-    // update account balances
-    await wallet.dispatch.updateAccountBalance({
-        network: Network.Mainnet,
-        walletId: wallet.state.activeWalletId,
-        accountId: "0",
-    });
+    // update account balances eth
+    if (ethAccountId && ethereumAddress) {
+        await wallet.dispatch.updateAccountBalance({
+            network: Network.Mainnet,
+            walletId: wallet.state.activeWalletId,
+            accountId: ethAccountId,
+        });
 
-    console.log(JSON.stringify(wallet.state));
-    await wallet.dispatch.sendTransaction({
-        network: Network.Mainnet,
-        walletId: wallet.state.activeWalletId,
-        accountId: "0",
-        asset: "ETH",
-        to: "0x1234567890123456789012345678901234567890",
-        amount: new BN(100000000000000000000),
-        data: "0x1234567890123456789012345678901234567890",
-        fee: 1,
-        gas: 1,
-        feeLabel: FeeLabel.Fast,
-        fiatRate: 1,
-    });
+        console.log(JSON.stringify(wallet.state));
+        await wallet.dispatch.sendTransaction({
+            network: Network.Mainnet,
+            walletId: wallet.state.activeWalletId,
+            accountId: ethAccountId,
+            asset: "ETH",
+            to: "0x1234567890123456789012345678901234567890",
+            amount: new BN(10000),
+            data: ethereumAddress,
+            fee: 0,
+            gas: 0,
+            feeLabel: FeeLabel.Fast,
+            fiatRate: 10,
+        });
+    }
 
 
 })
