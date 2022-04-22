@@ -1,4 +1,5 @@
 import { ActionContext, rootActionContext } from '..';
+import { getSwapProvider } from '../../factory/swapProvider';
 import { SwapQuote } from '../../swaps/types';
 import { FeeLabel, Network, SwapHistoryItem, TransactionType, WalletId } from '../types';
 
@@ -22,7 +23,7 @@ export const newSwap = async (
     claimFeeLabel: FeeLabel;
   }
 ): Promise<SwapHistoryItem> => {
-  const { commit, dispatch, getters } = rootActionContext(context);
+  const { commit, dispatch } = rootActionContext(context);
   // @ts-ignore TODO: States should always be in string? Results are retuninrg BignNmber but storage is storing as string
   const swap: SwapHistoryItem = {
     ...quote,
@@ -34,7 +35,7 @@ export const newSwap = async (
     fee,
   };
 
-  const swapProvider = getters.swapProvider(network, swap.provider!);
+  const swapProvider = getSwapProvider(network, swap.provider!);
   const initiationParams = await swapProvider.newSwap({
     network,
     walletId,

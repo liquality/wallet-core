@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import store from '../../store';
+import { getSwapProvider } from '../../factory/swapProvider';
 import { Notification } from '../../types';
 import { prettyBalance } from '../../utils/coinFormatter';
 import { walletOptionsStore } from '../../walletOptions';
@@ -32,7 +32,7 @@ export const createNotification = async (config: Notification) =>
   walletOptionsStore.walletOptions.createNotification(config);
 
 const createSwapNotification = (item: SwapHistoryItem) => {
-  const swapProvider = store.getters.swapProvider(item.network, item.provider);
+  const swapProvider = getSwapProvider(item.network, item.provider);
   const notificationFunction = swapProvider.statuses[item.status].notification;
   if (!notificationFunction) return;
   const notification = notificationFunction(item);

@@ -1,4 +1,5 @@
 import { ActionContext, rootActionContext } from '../..';
+import { getSwapProvider } from '../../../factory/swapProvider';
 import { createHistoryNotification } from '../../broker/notification';
 import { HistoryItem, Network, TransactionType, WalletId } from '../../types';
 import { performNextTransactionAction } from './send';
@@ -15,7 +16,7 @@ export const performNextAction = async (
   let updates;
   try {
     if (item.type === TransactionType.Swap) {
-      const swapProvider = getters.swapProvider(network, item.provider);
+      const swapProvider = getSwapProvider(network, item.provider);
 
       // TODO: should it take typed context?
       updates = await swapProvider.performNextSwapAction(context, {

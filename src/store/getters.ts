@@ -3,16 +3,13 @@ import { Asset, assets as cryptoassets, ChainId, unitToCurrency } from '@liquali
 import BN, { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash';
 import { rootGetterContext } from '.';
-import { SwapProvider } from '../swaps/SwapProvider';
+import { createClient } from '../factory/client';
 import { cryptoToFiat } from '../utils/coinFormatter';
 import { getDerivationPath } from '../utils/derivationPath';
 import { Networks } from '../utils/networks';
-import { createClient } from './factory/client';
-import { createSwapProvider } from './factory/swapProvider';
 import { Account, AccountId, AccountType, Asset as AssetType, HistoryItem, Network, WalletId } from './types';
 
 const clientCache: { [key: string]: Client } = {};
-const swapProviderCache: { [key: string]: SwapProvider } = {};
 
 const TESTNET_CONTRACT_ADDRESSES: { [asset: string]: string } = {
   DAI: '0xad6d458402f60fd3bd25163575031acdce07538d',
@@ -49,11 +46,6 @@ const TESTNET_ASSETS: { [asset: string]: Asset } = [
     },
   });
 }, {});
-
-const mapLegacyProvidersToSupported: { [index: string]: string } = {
-  oneinchV3: 'oneinchV4',
-  liqualityBoost: 'liqualityBoostNativeToERC20',
-};
 
 type GetterContext = [any, any];
 
@@ -118,25 +110,6 @@ export default {
       clientCache[cacheKey] = client;
 
       return client;
-    };
-  },
-  // TODO: does this even need to be a getter?
-  swapProvider() {
-    return (network: Network, providerId: string): SwapProvider => {
-      const supportedProviderId = mapLegacyProvidersToSupported[providerId]
-        ? mapLegacyProvidersToSupported[providerId]
-        : providerId;
-      const cacheKey = [network, supportedProviderId].join('-');
-
-      const cachedSwapProvider = swapProviderCache[cacheKey];
-      if (cachedSwapProvider) return cachedSwapProvider;
-
-      const swapProvider = createSwapProvider(network, supportedProviderId);
-      // @ts-ignore TODO: remove when swap providers are typed
-      swapProviderCache[cacheKey] = swapProvider;
-
-      // @ts-ignore TODO: remove when swap providers are typed
-      return swapProvider;
     };
   },
   historyItemById(...context: GetterContext) {
