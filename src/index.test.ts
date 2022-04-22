@@ -60,7 +60,38 @@ test('Should be able to validate enabled chains', async () => {
     expect(testnetAccounts?.length).toEqual(10);
 })
 
-test('Should be able to validate assets', async () => {
+test('Should be able to validate assets with analytics false', async () => {
+    const wallet = await setupWallet(defaultWalletOptions);
+    await wallet.dispatch.createWallet({
+        key: '0x1234567890123456789012345678901234567890',
+        mnemonic: 'test',
+        imported: true,
+    });
+    await wallet.dispatch.unlockWallet({
+        key: '0x1234567890123456789012345678901234567890',
+    });
+    await wallet.dispatch.initializeAnalyticsPreferences({
+        accepted: false,
+    });
+    console.log(JSON.stringify(wallet.state));
+    expect(wallet.state.wallets.length).toBe(1);
+    expect(wallet.state.wallets[0].imported).toBe(true);
+    expect(wallet.state.unlockedAt).not.toBe(0);
+
+    expect(wallet.state.analytics.userId).not.toBe(null);
+    expect(wallet.state.analytics.acceptedDate).toBe(0);
+    expect(wallet.state.analytics.askedDate).not.toBe(0);
+    expect(wallet.state.analytics.askedTimes).toBe(0);
+    expect(wallet.state.analytics.notAskAgain).toBe(false);
+
+    const walletId = wallet.state.activeWalletId;
+    const mainnetEnabledAssets = wallet.state.enabledAssets.mainnet?.[walletId];
+    const testnetEnabledAssets = wallet.state.enabledAssets.testnet?.[walletId];
+    expect(mainnetEnabledAssets?.length).toBeGreaterThan(1);
+    expect(testnetEnabledAssets?.length).toBeGreaterThan(1);
+})
+
+test('Should be able to validate analytics true', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
         key: '0x1234567890123456789012345678901234567890',
@@ -74,11 +105,15 @@ test('Should be able to validate assets', async () => {
     expect(wallet.state.wallets[0].imported).toBe(true);
     expect(wallet.state.unlockedAt).not.toBe(0);
 
-    const walletId = wallet.state.activeWalletId;
-    const mainnetEnabledAssets = wallet.state.enabledAssets.mainnet?.[walletId];
-    const testnetEnabledAssets = wallet.state.enabledAssets.testnet?.[walletId];
-    expect(mainnetEnabledAssets?.length).toBeGreaterThan(1);
-    expect(testnetEnabledAssets?.length).toBeGreaterThan(1);
+    await wallet.dispatch.initializeAnalyticsPreferences({
+        accepted: true,
+    });
+    console.log(JSON.stringify(wallet.state));
+    expect(wallet.state.analytics.userId).not.toBe(null);
+    expect(wallet.state.analytics.acceptedDate).not.toBe(0);
+    expect(wallet.state.analytics.askedDate).not.toBe(0);
+    expect(wallet.state.analytics.askedTimes).toBe(0);
+    expect(wallet.state.analytics.notAskAgain).toBe(false);
 })
 
 
