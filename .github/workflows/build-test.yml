@@ -1,6 +1,6 @@
 name: Build Test
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -14,4 +14,5 @@ jobs:
       - run: yarn
       - run: yarn lint
       - run: yarn build
+      - run: yarn test:integration
       - run: yarn test

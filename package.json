@@ -106,6 +106,7 @@
     "lint": "eslint . --ext .ts",
     "prettier:fix": "prettier --write .",
     "test": "jest --coverage",
+    "test:integration": "jest --verbose",
     "test:watch": "jest --watch"
   }
 }
