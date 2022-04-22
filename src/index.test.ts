@@ -75,7 +75,6 @@ test('Should be able to validate assets with analytics false', async () => {
     await wallet.dispatch.initializeAnalyticsPreferences({
         accepted: false,
     });
-    console.log(JSON.stringify(wallet.state));
     expect(wallet.state.wallets.length).toBe(1);
     expect(wallet.state.wallets[0].imported).toBe(true);
     expect(wallet.state.unlockedAt).not.toBe(0);
