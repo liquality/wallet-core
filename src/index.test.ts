@@ -33,6 +33,7 @@ test('should be able to create wallet and validate mainnet accounts', async () =
     expect(wallet.state.enabledChains[walletId]).toHaveProperty("testnet");
     expect(wallet.state.enabledChains[walletId]).toHaveProperty("mainnet");
 });
+
 test('Should be able to validate enabled chains', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
@@ -48,6 +49,8 @@ test('Should be able to validate enabled chains', async () => {
     const testnetAccounts = wallet.state.enabledChains[walletId]?.testnet;
     expect(mainnetAccounts).toEqual(buildConfig.chains);
     expect(testnetAccounts).toEqual(buildConfig.chains);
+    expect(mainnetAccounts?.length).toEqual(10);
+    expect(testnetAccounts?.length).toEqual(10);
 })
 
 
