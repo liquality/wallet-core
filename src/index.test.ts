@@ -1,7 +1,7 @@
 import {setupWallet} from './index';
 import defaultWalletOptions from './walletOptions/defaultOptions';
 import buildConfig from "./build.config";
-import {FeeLabel, Network} from "./store/types";
+import {ExperimentType, FeeLabel, Network} from "./store/types";
 import {ChainId} from "@liquality/cryptoassets";
 import BN from "bignumber.js";
 
@@ -84,9 +84,16 @@ test('Should be able to validate enabled chains', async () => {
     await wallet.dispatch.unlockWallet({
         key: '0x1234567890123456789012345678901234567890',
     });
+
+    await wallet.dispatch.setWatsNewModalShowed({
+        version: "1.0.0",
+    });
+    console.log(JSON.stringify(wallet.state));
     expect(wallet.state.wallets.length).toBe(1);
     expect(wallet.state.wallets[0].imported).toBe(true);
     expect(wallet.state.unlockedAt).not.toBe(0);
+
+    expect(wallet.state.watsNewModalVersion).toBe("1.0.0");
 
     const walletId = wallet.state.activeWalletId;
     const mainnetAccounts = wallet.state.enabledChains[walletId]?.mainnet;
@@ -149,6 +156,12 @@ test('Should be able to create wallet with validate analytics true', async () =>
     expect(wallet.state.analytics.askedDate).not.toBe(0);
     expect(wallet.state.analytics.askedTimes).toBe(0);
     expect(wallet.state.analytics.notAskAgain).toBe(false);
+
+    await wallet.dispatch.toggleExperiment({
+        name: ExperimentType.ManageAccounts,
+    });
+    expect(wallet.state.experiments.manageAccounts).toBe(true);
+
 })
 
 test('Should be able create wallet and add custom tokens', async () => {
@@ -359,21 +372,22 @@ test('should be able to do send transaction', async () => {
     const walletId = wallet.state.activeWalletId;
     const mainnetAccounts = wallet?.state?.enabledAssets?.mainnet?.[walletId];
     expect(mainnetAccounts).not.toBeNull();
-    expect(wallet.state.accounts?.[walletId]?.mainnet?.[1]?.chain).toBe(ChainId.Ethereum);
-    const ethAccountId = wallet.state.accounts?.[walletId]?.mainnet?.[1]?.id;
-    console.log(ethAccountId);
-    const ethereumAddress = wallet.state.accounts?.[walletId]?.mainnet?.[1]?.addresses?.[0];
-    expect(ethereumAddress).not.toBeNull();
-    console.log(ethereumAddress);
 
     // update balance this will generate address
     if (mainnetAccounts) {
         await wallet.dispatch.updateBalances({
             network: Network.Mainnet,
-            walletId: wallet.state.activeWalletId,
+            walletId: walletId,
             assets: mainnetAccounts,
         });
     }
+
+    const account = wallet.state.accounts?.[walletId]?.mainnet?.[1];
+    expect(account?.chain).toBe(ChainId.Ethereum);
+    const ethAccountId = account?.id;
+    console.log(JSON.stringify(account));
+    const ethereumAddress = account?.addresses[0];
+    expect(ethereumAddress).not.toBeNull();
 
     // update account balances eth
     if (ethAccountId && ethereumAddress) {
@@ -383,6 +397,14 @@ test('should be able to do send transaction', async () => {
             accountId: ethAccountId,
         });
 
+        if (mainnetAccounts) {
+            await wallet.dispatch.updateBalances({
+                network: Network.Mainnet,
+                walletId: wallet.state.activeWalletId,
+                assets: mainnetAccounts,
+            });
+        }
+
         console.log(JSON.stringify(wallet.state));
         await wallet.dispatch.sendTransaction({
             network: Network.Mainnet,
@@ -391,7 +413,7 @@ test('should be able to do send transaction', async () => {
             asset: "ETH",
             to: "0x1234567890123456789012345678901234567890",
             amount: new BN(10000),
-            data: ethereumAddress,
+            data: "0x1234567890123456789012345678901234567890",
             fee: 0,
             gas: 0,
             feeLabel: FeeLabel.Fast,
