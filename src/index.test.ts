@@ -513,7 +513,7 @@ test('should be able validate fiatRates for all mainnet assets', async () => {
     }
 })
 
-test('should be able validate externalConnections', async () => {
+test('should be able validate externalConnections & forgetDappConnections', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
         key: '0x1234567890123456789012345678901234567890',
@@ -568,11 +568,14 @@ test('should be able validate externalConnections', async () => {
         await wallet.dispatch.addExternalConnection(externalConnection);
     }
 
-    console.log(JSON.stringify(wallet.state));
-
-    expect(Object.keys(wallet.state.externalConnections).length).toBe(1);
+    expect(Object.keys(wallet.state.externalConnections[walletId]).length).toEqual(1);
     expect(wallet.state.externalConnections[walletId]?.[originName]?.defaultEthereum).toEqual(ethAccountId)
     expect(Object.keys(wallet.state.externalConnections[walletId]?.[originName]?.ethereum).length)
         .toBeGreaterThan(0);
     expect(wallet.state.externalConnections[walletId]?.[originName]?.ethereum[0]).toEqual(ethAccountId);
+
+    // forgot dapp connections
+    await wallet.dispatch.forgetDappConnections()
+    console.log(JSON.stringify(wallet.state))
+    expect(Object.keys(wallet.state.externalConnections[walletId]).length).toEqual(0);
 })
