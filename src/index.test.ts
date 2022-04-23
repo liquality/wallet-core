@@ -76,6 +76,9 @@ test('should be able to create wallet and validate mainnet accounts', async () =
 
 test('Should be able to validate enabled chains', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
+    await wallet.dispatch.setupWallet({
+        key: '0x1234567890123456789012345678901234567890',
+    });
     await wallet.dispatch.createWallet({
         key: '0x1234567890123456789012345678901234567890',
         mnemonic: 'test',
@@ -94,6 +97,10 @@ test('Should be able to validate enabled chains', async () => {
     expect(wallet.state.unlockedAt).not.toBe(0);
 
     expect(wallet.state.watsNewModalVersion).toBe("1.0.0");
+    expect(wallet.state.keyUpdatedAt).not.toBe(0);
+    expect(wallet.state.unlockedAt).not.toBe(0);
+    expect(wallet.state.setupAt).not.toBe(0);
+
 
     const walletId = wallet.state.activeWalletId;
     const mainnetAccounts = wallet.state.enabledChains[walletId]?.mainnet;
