@@ -13,3 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.4.0
       - uses: ArtiomTr/jest-coverage-report-action@v2.0.6
+        with:
+          github-token: ${{ secrets.SECRET_TOKEN }}
+          package-manager: yarn
+
