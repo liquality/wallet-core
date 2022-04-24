@@ -433,8 +433,6 @@ test('should be able to do send transaction', async () => {
             fiatRate: 10,
         });
     }
-
-
 })
 
 test('should be able validate fiatRates for all mainnet assets', async () => {
