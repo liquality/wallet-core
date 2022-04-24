@@ -2,20 +2,18 @@ import {setupWallet} from "../../index";
 import defaultWalletOptions from "../../walletOptions/defaultOptions";
 import {Network} from "../types";
 
+let wallet: any;
 describe('disable and enable assets', () => {
 
-    beforeEach(() => {
+    beforeEach(async () => {
         jest.useFakeTimers()
-    })
-
-    test("should be able to disable and enable mainnet assets", async () => {
-        const wallet = await setupWallet(defaultWalletOptions);
+         wallet = await setupWallet(defaultWalletOptions);
         await wallet.dispatch.setupWallet({
             key: '0x1234567890123456789012345678901234567890',
         });
         await wallet.dispatch.createWallet({
             key: '0x1234567890123456789012345678901234567890',
-            mnemonic: 'test',
+            mnemonic: 'rough symbol license spirit advance pact catalog vibrant dream great usage empty',
             imported: true,
         });
         await wallet.dispatch.unlockWallet({
@@ -25,6 +23,9 @@ describe('disable and enable assets', () => {
         await wallet.dispatch.setWatsNewModalShowed({
             version: "1.0.0",
         });
+    })
+
+    test("should be able to disable and enable mainnet assets", async () => {
         expect(wallet.state.wallets.length).toBe(1);
         expect(wallet.state.wallets[0].imported).toBe(true);
         expect(wallet.state.unlockedAt).not.toBe(0);
@@ -61,22 +62,6 @@ describe('disable and enable assets', () => {
         expect(mainnetEnabledAssets?.length).toBeGreaterThan(1);
     })
     test("should be able to disable and enable testnet assets", async () => {
-        const wallet = await setupWallet(defaultWalletOptions);
-        await wallet.dispatch.setupWallet({
-            key: '0x1234567890123456789012345678901234567890',
-        });
-        await wallet.dispatch.createWallet({
-            key: '0x1234567890123456789012345678901234567890',
-            mnemonic: 'rough symbol license spirit advance pact catalog vibrant dream great usage empty',
-            imported: true,
-        });
-        await wallet.dispatch.unlockWallet({
-            key: '0x1234567890123456789012345678901234567890',
-        });
-
-        await wallet.dispatch.setWatsNewModalShowed({
-            version: "1.0.0",
-        });
 
         // change network
         await wallet.dispatch.changeActiveNetwork({
