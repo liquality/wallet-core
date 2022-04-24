@@ -18,4 +18,5 @@ module.exports = {
   detectOpenHandles: true,
   testTimeout: 30000,
   verbose: true,
+  colors: true
 };
