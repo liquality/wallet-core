@@ -15,4 +15,5 @@ jobs:
       - uses: ArtiomTr/jest-coverage-report-action@v2.0.6
         with:
           package-manager: yarn
+          skip-step: all
 
