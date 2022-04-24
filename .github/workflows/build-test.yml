@@ -14,7 +14,7 @@ jobs:
       - run: yarn
       - run: yarn lint
       - run: yarn build
-      - run: |
+      - name: Run __tests__ (coverage)
+        run: |
           export FORCE_COLOR=true
-          yarn test:integration
-      - run: yarn test
+          yarn test:integration --coverage
