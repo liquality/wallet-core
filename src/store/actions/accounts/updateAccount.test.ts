@@ -33,20 +33,21 @@ describe('should be able to Update accounts', () => {
         const ethAccountId = account?.id;
         const derivationPath="m/41'/60'/0'/0/0"
 
-        const acountDetails = {
+        const accountDetails = {
             id: ethAccountId,
             walletId: walletId,
             createdAt: Date.now(),
-            enabled: false,
+            enabled: true,
             derivationPath: derivationPath,
         }
 
         await wallet.dispatch.updateAccount({
             walletId: walletId,
             network: Network.Mainnet,
-            account: acountDetails,
+            account: accountDetails,
         });
+        expect(wallet.state.accounts?.[walletId]?.mainnet?.[1]?.enabled).toBe(true);
+        //TODO: check if the derivation path is updated
         expect(wallet.state.accounts?.[walletId]?.mainnet?.[1]?.derivationPath).toEqual(derivationPath);
-        expect(wallet.state.accounts?.[walletId]?.mainnet?.[1]?.enabled).toBe(false);
     })
 })
