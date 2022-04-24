@@ -21,7 +21,6 @@ test('should be able to create wallet and change network', async () => {
         mnemonic: 'test',
         imported: false,
     });
-    console.log(JSON.stringify(wallet.state));
     expect(wallet.state.wallets.length).toBe(1);
     expect(wallet.state.wallets[0].id).not.toBe(undefined);
     expect(wallet.state.wallets[0].name).toEqual("Account 1")
@@ -91,7 +90,6 @@ test('Should be able to validate enabled chains', async () => {
     await wallet.dispatch.setWatsNewModalShowed({
         version: "1.0.0",
     });
-    console.log(JSON.stringify(wallet.state));
     expect(wallet.state.wallets.length).toBe(1);
     expect(wallet.state.wallets[0].imported).toBe(true);
     expect(wallet.state.unlockedAt).not.toBe(0);
@@ -392,7 +390,6 @@ test('should be able to do send transaction', async () => {
     const account = wallet.state.accounts?.[walletId]?.mainnet?.[1];
     expect(account?.chain).toBe(ChainId.Ethereum);
     const ethAccountId = account?.id;
-    console.log(JSON.stringify(account));
     const ethereumAddress = account?.addresses[0];
     expect(ethereumAddress).not.toBeNull();
 
@@ -415,13 +412,11 @@ test('should be able to do send transaction', async () => {
             await wallet.dispatch.updateFiatRates({
                 assets: mainnetAccounts
             });
-            console.log(JSON.stringify(wallet.state));
         }
         // update fees for specific asset
         await wallet.dispatch.updateFees({
             asset: "ETH"
         });
-        console.log(JSON.stringify(wallet.state));
         await wallet.dispatch.sendTransaction({
             network: Network.Mainnet,
             walletId: wallet.state.activeWalletId,
@@ -576,6 +571,5 @@ test('should be able validate externalConnections & forgetDappConnections', asyn
 
     // forgot dapp connections
     await wallet.dispatch.forgetDappConnections()
-    console.log(JSON.stringify(wallet.state))
     expect(Object.keys(wallet.state.externalConnections[walletId]).length).toEqual(0);
 })
