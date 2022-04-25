@@ -13,7 +13,7 @@ const ADDRESSES = {
     1. UST <-> LUNA
     2. UST -> ERC20
  */
-export const getRateNativeToAsset = (fromAmount: string, asset: string, pairAddress?: string) => {
+export const getRateNativeToAsset = (fromAmount: string, asset?: string, pairAddress?: string) => {
   const isDenom = asset === 'uluna' || asset === 'uusd';
 
   const query = {
@@ -60,8 +60,8 @@ export const getRateNativeToAsset = (fromAmount: string, asset: string, pairAddr
  */
 export const getRateERC20ToERC20 = (
   fromAmount: string,
-  firstAsset: string,
-  secondAsset: string,
+  firstAsset?: string,
+  secondAsset?: string,
   pairAddress?: string
 ) => {
   const isFirstAssetDenom = firstAsset === 'uluna' || firstAsset === 'uusd';
@@ -143,11 +143,12 @@ export const getRateERC20ToERC20 = (
 */
 export const buildSwapFromNativeTokenMsg = (
   quote: SwapHistoryItem,
-  denom: string,
   address: string,
+  denom?: string,
   pairAddress?: string
 ) => {
   const to = pairAddress ? pairAddress : ADDRESSES.ASSETS_CONTRACT; // This address is for UST <-> Luna pair
+  const coins = denom ? { [denom]: Number(quote.fromAmount) } : {};
 
   return {
     data: {
@@ -169,7 +170,7 @@ export const buildSwapFromNativeTokenMsg = (
               to: address,
             },
           },
-          { [denom]: Number(quote.fromAmount) }
+          coins
         ),
       ],
       gasLimit: 400_000,

@@ -87,7 +87,7 @@ class AstroportSwapProvider extends SwapProvider {
     let txData;
 
     if (isFromNative) {
-      txData = buildSwapFromNativeTokenMsg(quote, denom, address, pairAddress);
+      txData = buildSwapFromNativeTokenMsg(quote, address, denom, pairAddress);
     } else if (isFromERC20ToUST) {
       txData = buildSwapFromContractTokenToUSTMsg(quote, address, fromTokenAddress, pairAddress);
     } else {
@@ -186,7 +186,6 @@ class AstroportSwapProvider extends SwapProvider {
   }
 
   _getDenom(asset: string) {
-    if (!(asset === 'LUNA' || asset === 'UST')) throw new Error('BLA');
     return {
       LUNA: 'uluna',
       UST: 'uusd',
