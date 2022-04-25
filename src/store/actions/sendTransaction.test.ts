@@ -2,15 +2,21 @@ import { ChainId } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
-import { FeeLabel, Network } from '../types';
+import {FeeLabel, Network} from '../types';
+import * as Process from "process";
 
-describe.skip('send transaction tests', () => {
+describe('send transaction tests', () => {
   const wallet = setupWallet(defaultWalletOptions);
+  const TEST_MNEMONIC = Process.env.TEST_MNEMONIC;
+
+  if (!TEST_MNEMONIC) {
+    throw new Error('Please set the TEST_MNEMONIC environment variable');
+  }
 
   beforeEach(async () => {
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
-      mnemonic: 'camera horse oblige vivid drum wrap thought extend trigger fat oven rent',
+      mnemonic: TEST_MNEMONIC,
       imported: true,
     });
     await wallet.dispatch.unlockWallet({
@@ -58,11 +64,11 @@ describe.skip('send transaction tests', () => {
       assets: testnetEnabledAssets!,
     });
 
-    const account = wallet.state.accounts?.[walletId]?.testnet?.[1];
-    expect(account?.chain).toBe(ChainId.Ethereum);
-    const ethAccountId = account?.id;
-    const ethereumAddress = account?.addresses[0];
-    expect(ethereumAddress).not.toBeNull();
+    const account = wallet.state.accounts?.[walletId]?.testnet?.find((acc) => acc.chain === ChainId.Avalanche);
+    expect(account?.chain).toBe(ChainId.Avalanche);
+    const avaxAccountId = account?.id;
+    const avaxAddress = account?.addresses[0];
+    expect(avaxAddress).not.toBeNull();
     expect(testnetEnabledAssets?.length).toBeGreaterThan(10);
 
     // update fiat rates for all assets
@@ -76,31 +82,35 @@ describe.skip('send transaction tests', () => {
         asset: testnetAsset!,
       });
     }
-    console.log(JSON.stringify(wallet.state));
+    // console.log(JSON.stringify(wallet.state));
 
     const maintainElement = wallet.state.fees.testnet?.[walletId];
-    // ETH fee object checks
-    expect(maintainElement?.ETH).toHaveProperty('fast');
-    const ethFeeObject = maintainElement?.ETH.fast;
+    // AVAX fee object checks
+    expect(maintainElement?.AVAX).toHaveProperty('fast');
+    const avaxFeeObject = maintainElement?.AVAX.fast;
 
     await wallet.dispatch.sendTransaction({
       network: Network.Testnet,
       walletId: wallet.state.activeWalletId,
-      accountId: ethAccountId!,
-      asset: 'ETH',
-      to: '0x3f429e2212718A717Bd7f9E83CA47DAb7956447B',
-      amount: new BN(1),
+      accountId: avaxAccountId!,
+      asset: 'AVAX',
+      to: '0x9d6345f731e160cd90b65a91ab60f4f9e37bdbd2',
+      amount: new BN(10000000000000), //0.00001
       data: '',
       // @ts-ignore
-      fee: ethFeeObject.fee.maxPriorityFeePerGas + ethFeeObject.fee.suggestedBaseFeePerGas,
-      gas: 0,
+      fee: avaxFeeObject.fee,
+      gas: 21000,
       feeLabel: FeeLabel.Fast,
-      fiatRate: 0,
+      fiatRate: 72,
     });
-
-    console.log(JSON.stringify(wallet.state));
+    expect(wallet.state.history.testnet).toHaveProperty(walletId);
+    expect(wallet.state.history.testnet?.[walletId].length).toBe(1);
+    expect(wallet.state.history.testnet?.[walletId][0].type).toBe('SEND');
+    expect(wallet.state.history.testnet?.[walletId][0].network).toBe('testnet');
+    expect(wallet.state.history.testnet?.[walletId][0]).toHaveProperty('txHash');
+    //TODO: add pooling for transactions to check status is completed
   });
-  test('should be able to do send transaction using mainnet', async () => {
+  it.skip('should be able to do send transaction using mainnet', async () => {
     expect(wallet.state.wallets.length).toBe(1);
     expect(wallet.state.wallets[0].imported).toBe(true);
     expect(wallet.state.unlockedAt).not.toBe(0);
@@ -150,7 +160,7 @@ describe.skip('send transaction tests', () => {
     const maintainElement = wallet.state.fees.mainnet?.[walletId];
     // ETH fee object checks
     expect(maintainElement?.ETH).toHaveProperty('fast');
-    const ethFeeObject = maintainElement?.ETH.fast;
+    // const ethFeeObject = maintainElement?.ETH.fast;
 
     await wallet.dispatch.sendTransaction({
       network: Network.Mainnet,
@@ -161,7 +171,7 @@ describe.skip('send transaction tests', () => {
       amount: new BN(10000),
       data: '',
       // @ts-ignore
-      fee: ethFeeObject.fee.maxPriorityFeePerGas + ethFeeObject.fee.suggestedBaseFeePerGas,
+      fee: 55,
       gas: 0,
       feeLabel: FeeLabel.Fast,
       fiatRate: 10,

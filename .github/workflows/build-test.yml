@@ -17,4 +17,5 @@ jobs:
       - name: Run __tests__ (coverage)
         run: |
           export FORCE_COLOR=true
+          export TEST_MNEMONIC=${{ secrets.TEST_MNEMONIC }}
           yarn test:integration --coverage
