@@ -3,7 +3,7 @@ import defaultWalletOptions from '../../../walletOptions/defaultOptions';
 import { Network } from '../../types';
 
 describe('Remove account', () => {
-  test('should be able to remove account', async () => {
+  test.skip('should be able to remove account', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.setupWallet({
       key: '0x1234567890123456789012345678901234567890',

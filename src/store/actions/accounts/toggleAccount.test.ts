@@ -23,7 +23,7 @@ beforeEach(async () => {
     version: '1.0.0',
   });
 });
-test('should be able to toggle account', async () => {
+test.skip('should be able to toggle account', async () => {
   const walletId = wallet.state.activeWalletId;
   const btcMainnetAccountId = wallet.state.accounts?.[walletId].mainnet[0].id;
   const ethMainnetAccountId = wallet.state.accounts?.[walletId].mainnet[1].id;
