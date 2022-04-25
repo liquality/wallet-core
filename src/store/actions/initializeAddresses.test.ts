@@ -36,7 +36,7 @@ describe("initializeAddresses tests", () => {
         let mainnetAccounts = wallet.state.accounts?.[walletId]?.mainnet;
         let testnetAccounts = wallet.state.accounts?.[walletId]?.testnet;
         expect(mainnetAccounts?.length).not.toBe(0);
-        expect(mainnetAccounts?.length).not.toBe(0);
+        expect(testnetAccounts?.length).not.toBe(0);
 
         // @ts-ignore
         for (let i = 0; i < mainnetAccounts.length; i++) {

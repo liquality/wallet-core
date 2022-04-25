@@ -37,11 +37,11 @@ describe('updateFees tests', () => {
         expect(wallet.state.analytics.notAskAgain).toBe(false);
 
         const walletId = wallet.state.activeWalletId;
-        const mainnetAccountAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
-        expect(mainnetAccountAssets).not.toBeNull();
-        expect(mainnetAccountAssets?.length).toBeGreaterThan(10);
-        if (typeof mainnetAccountAssets !== 'undefined') {
-            for (const mainnnetAsset of mainnetAccountAssets) {
+        const mainnetEnabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
+        expect(mainnetEnabledAssets).not.toBeNull();
+        expect(mainnetEnabledAssets?.length).toBeGreaterThan(10);
+        if (typeof mainnetEnabledAssets !== 'undefined') {
+            for (const mainnnetAsset of mainnetEnabledAssets) {
                 await wallet.dispatch.updateFees({
                     asset: mainnnetAsset
                 });
@@ -74,11 +74,11 @@ describe('updateFees tests', () => {
         expect(wallet.state.analytics.notAskAgain).toBe(false);
 
         const walletId = wallet.state.activeWalletId;
-        const testnetAccountAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
-        expect(testnetAccountAssets).not.toBeNull();
-        expect(testnetAccountAssets?.length).toBeGreaterThan(10);
-        if (typeof testnetAccountAssets !== 'undefined') {
-            for (const testnetAsset of testnetAccountAssets) {
+        const testnetEnabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
+        expect(testnetEnabledAssets).not.toBeNull();
+        expect(testnetEnabledAssets?.length).toBeGreaterThan(10);
+        if (typeof testnetEnabledAssets !== 'undefined') {
+            for (const testnetAsset of testnetEnabledAssets) {
                 await wallet.dispatch.updateFees({
                     asset: testnetAsset
                 });
