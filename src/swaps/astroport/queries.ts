@@ -13,7 +13,7 @@ const ADDRESSES = {
     1. UST <-> LUNA
     2. UST -> ERC20
  */
-export const getRateNativeToAsset = (fromAmount: string, asset: string, pairAddress?: string) => {
+export const getRateNativeToAsset = (fromAmount: string, asset?: string, pairAddress?: string) => {
   const isDenom = asset === 'uluna' || asset === 'uusd';
 
   const query = {
@@ -60,8 +60,8 @@ export const getRateNativeToAsset = (fromAmount: string, asset: string, pairAddr
  */
 export const getRateERC20ToERC20 = (
   fromAmount: string,
-  firstAsset: string,
-  secondAsset: string,
+  firstAsset?: string,
+  secondAsset?: string,
   pairAddress?: string
 ) => {
   const isFirstAssetDenom = firstAsset === 'uluna' || firstAsset === 'uusd';
