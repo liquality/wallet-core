@@ -50,13 +50,13 @@ describe('updateFees tests', () => {
         const maintainElement = wallet.state.fees.mainnet?.[walletId];
         // BTC fee object checks
         expect(maintainElement?.BTC).toHaveProperty("slow");
-        expect(maintainElement?.BTC.slow.fee).toBe(1)
+        expect(maintainElement?.BTC.slow.fee).not.toBe(0)
         expect(maintainElement?.BTC.slow.wait).toBe(3600)
         expect(maintainElement?.BTC).toHaveProperty("average");
-        expect(maintainElement?.BTC.average.fee).toBe(1)
+        expect(maintainElement?.BTC.average.fee).not.toBe(0)
         expect(maintainElement?.BTC.average.wait).toBe(1800)
         expect(maintainElement?.BTC).toHaveProperty("fast");
-        expect(maintainElement?.BTC.fast.fee).toBe(1)
+        expect(maintainElement?.BTC.fast.fee).not.toBe(0)
         expect(maintainElement?.BTC.fast.wait).toBe(600)
         // LUNA fee object checks
         expect(maintainElement?.LUNA).toHaveProperty("slow");
@@ -87,13 +87,13 @@ describe('updateFees tests', () => {
         const testnetFeeElement = wallet.state.fees.mainnet?.[walletId];
         // BTC fee object checks
         expect(testnetFeeElement?.BTC).toHaveProperty("slow");
-        expect(testnetFeeElement?.BTC.slow.fee).toBe(1)
+        expect(testnetFeeElement?.BTC.slow.fee).not.toBe(0)
         expect(testnetFeeElement?.BTC.slow.wait).toBe(3600)
         expect(testnetFeeElement?.BTC).toHaveProperty("average");
-        expect(testnetFeeElement?.BTC.average.fee).toBe(1)
+        expect(testnetFeeElement?.BTC.average.fee).not.toBe(0)
         expect(testnetFeeElement?.BTC.average.wait).toBe(1800)
         expect(testnetFeeElement?.BTC).toHaveProperty("fast");
-        expect(testnetFeeElement?.BTC.fast.fee).toBe(1)
+        expect(testnetFeeElement?.BTC.fast.fee).not.toBe(0)
         expect(testnetFeeElement?.BTC.fast.wait).toBe(600)
         // LUNA fee object checks
         expect(testnetFeeElement?.LUNA).toHaveProperty("slow");
