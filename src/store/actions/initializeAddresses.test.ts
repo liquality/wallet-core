@@ -6,9 +6,6 @@ describe('initializeAddresses tests', () => {
   it('should be able to validate every asset has addresses', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.acceptTermsAndConditions({ analyticsAccepted: true });
-    await wallet.dispatch.setupWallet({
-      key: '0x1234567890123456789012345678901234567890',
-    });
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
       mnemonic: 'test',
