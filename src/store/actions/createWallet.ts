@@ -18,7 +18,7 @@ export const createWallet = async (
   const { networks, defaultAssets } = buildConfig;
   const { encrypted: encryptedWallets, keySalt } = await encrypt(JSON.stringify([wallet]), key);
 
-  commit.CREATE_WALLET({ keySalt, encryptedWallets, wallet });
+  commit.CREATE_WALLET({ key, keySalt, encryptedWallets, wallet });
   commit.CHANGE_ACTIVE_WALLETID({ walletId: id });
   commit.ENABLE_ASSETS({
     network: Network.Mainnet,
