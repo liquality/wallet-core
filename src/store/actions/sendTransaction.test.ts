@@ -10,7 +10,7 @@ describe('send transaction tests', () => {
         wallet = await setupWallet(defaultWalletOptions);
         await wallet.dispatch.createWallet({
             key: '0x1234567890123456789012345678901234567890',
-            mnemonic: 'test',
+            mnemonic: 'camera horse oblige vivid drum wrap thought extend trigger fat oven rent',
             imported: true,
         });
         await wallet.dispatch.unlockWallet({
@@ -83,13 +83,13 @@ describe('send transaction tests', () => {
             walletId: wallet.state.activeWalletId,
             accountId: ethAccountId,
             asset: "ETH",
-            to: "0x1234567890123456789012345678901234567890",
+            to: "0x3f429e2212718A717Bd7f9E83CA47DAb7956447B",
             amount: new BN(1),
-            data: "0x1234567890123456789012345678901234567890",
+            data: "0x3f429e2212718A717Bd7f9E83CA47DAb7956447B",
             fee: 0,
             gas: 0,
             feeLabel: FeeLabel.Fast,
-            fiatRate: 10,
+            fiatRate: 0,
         });
 
         console.log(JSON.stringify((wallet.state)))
