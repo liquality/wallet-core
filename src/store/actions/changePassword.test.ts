@@ -1,8 +1,8 @@
-import {setupWallet} from "../../index";
-import defaultWalletOptions from "../../walletOptions/defaultOptions";
+import { setupWallet } from '../../index';
+import defaultWalletOptions from '../../walletOptions/defaultOptions';
 
 describe('should be able to change password', () => {
-  test('change password test',async () => {
+  test('change password test', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
@@ -19,7 +19,7 @@ describe('should be able to change password', () => {
     await wallet.dispatch.initializeAnalyticsPreferences({
       accepted: true,
     });
-    expect(wallet.state.key).toBe("0x1234567890123456789012345678901234567890");
+    expect(wallet.state.key).toBe('0x1234567890123456789012345678901234567890');
     expect(wallet.state.analytics.userId).not.toBe(null);
     expect(wallet.state.analytics.acceptedDate).not.toBe(0);
     expect(wallet.state.analytics.askedDate).not.toBe(0);
@@ -33,6 +33,6 @@ describe('should be able to change password', () => {
     await wallet.dispatch.changePassword({
       key: '0x3334567890123456789012345678901234567890',
     });
-    expect(wallet.state.key).toBe("0x3334567890123456789012345678901234567890");
-  })
-})
+    expect(wallet.state.key).toBe('0x3334567890123456789012345678901234567890');
+  });
+});

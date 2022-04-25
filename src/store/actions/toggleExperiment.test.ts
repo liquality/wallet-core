@@ -1,6 +1,6 @@
-import {setupWallet} from "../../index";
-import defaultWalletOptions from "../../walletOptions/defaultOptions";
-import {ExperimentType} from "../types";
+import { setupWallet } from '../../index';
+import defaultWalletOptions from '../../walletOptions/defaultOptions';
+import { ExperimentType } from '../types';
 
 test('Should be able to validate toggleExperiment features', async () => {
   const wallet = await setupWallet(defaultWalletOptions);
@@ -29,6 +29,6 @@ test('Should be able to validate toggleExperiment features', async () => {
   await wallet.dispatch.toggleExperiment({
     name: ExperimentType.ManageAccounts,
   });
-  expect(wallet.state.experiments).toHaveProperty("manageAccounts");
+  expect(wallet.state.experiments).toHaveProperty('manageAccounts');
   expect(wallet.state.experiments.manageAccounts).toBe(true);
-})
+});

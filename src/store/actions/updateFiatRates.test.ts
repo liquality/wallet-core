@@ -1,5 +1,5 @@
-import {setupWallet} from "../../index";
-import defaultWalletOptions from "../../walletOptions/defaultOptions";
+import { setupWallet } from '../../index';
+import defaultWalletOptions from '../../walletOptions/defaultOptions';
 
 test('should be able validate fiatRates for all mainnet assets', async () => {
   const wallet = await setupWallet(defaultWalletOptions);
@@ -29,16 +29,16 @@ test('should be able validate fiatRates for all mainnet assets', async () => {
   const mainnetEnabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
   expect(mainnetEnabledAssets).not.toBeNull();
 
-  if(mainnetEnabledAssets !== undefined) {
+  if (mainnetEnabledAssets !== undefined) {
     await wallet.dispatch.updateFiatRates({
-            assets: mainnetEnabledAssets
-          });
+      assets: mainnetEnabledAssets,
+    });
   }
   // validate fiat rates & validate balances
-  expect((Object.keys(wallet.state.fiatRates)).length).toBeGreaterThan(0)
+  expect(Object.keys(wallet.state.fiatRates).length).toBeGreaterThan(0);
   const fiatRatesObject = Object.values(wallet.state.fiatRates);
   for (let i = 0; i < fiatRatesObject.length; i++) {
     const fiatRate = fiatRatesObject[i];
     expect(fiatRate).toBeGreaterThan(0);
   }
-})
+});
