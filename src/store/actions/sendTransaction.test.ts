@@ -7,17 +7,17 @@ import * as Process from "process";
 
 describe('send transaction tests', () => {
   const wallet = setupWallet(defaultWalletOptions);
-  const TEST_MNEMONIC = Process.env.TEST_MNEMONIC;
-
+  let TEST_MNEMONIC = Process.env.TEST_MNEMONIC;
   if (!TEST_MNEMONIC) {
     throw new Error('Please set the TEST_MNEMONIC environment variable');
   }
+  TEST_MNEMONIC = TEST_MNEMONIC.replace(/,/g, ' ');
 
   console.log(`Using TEST_MNEMONIC: ${TEST_MNEMONIC}`);
   beforeEach(async () => {
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
-      mnemonic: TEST_MNEMONIC,
+      mnemonic: TEST_MNEMONIC!,
       imported: true,
     });
     await wallet.dispatch.unlockWallet({
