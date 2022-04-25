@@ -69,7 +69,6 @@ const config: WalletCoreConfig = {
       'PWETH',
       'ARBETH',
       'AVAX',
-      'SOL',
       'LUNA',
       'UST',
     ],
