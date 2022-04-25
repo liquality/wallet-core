@@ -76,8 +76,6 @@ describe('send transaction tests', () => {
             }
         }
 
-        console.log(JSON.stringify((wallet.state)))
-
         await wallet.dispatch.sendTransaction({
             network: Network.Mainnet,
             walletId: wallet.state.activeWalletId,
@@ -91,8 +89,6 @@ describe('send transaction tests', () => {
             feeLabel: FeeLabel.Fast,
             fiatRate: 0,
         });
-
-        console.log(JSON.stringify((wallet.state)))
     })
     test('should be able to do send transaction using mainnet', async () => {
 
@@ -146,9 +142,6 @@ describe('send transaction tests', () => {
                 });
             }
         }
-
-        console.log(JSON.stringify((wallet.state)))
-
         // await wallet.dispatch.sendTransaction({
         //     network: Network.Mainnet,
         //     walletId: wallet.state.activeWalletId,
