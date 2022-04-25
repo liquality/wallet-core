@@ -2,6 +2,9 @@ import {setupWallet} from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
 
 test('should be able validate fiatRates for all mainnet assets', async () => {
+
+    jest.setTimeout(60000);
+
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
         key: '0x1234567890123456789012345678901234567890',
@@ -36,11 +39,11 @@ test('should be able validate fiatRates for all mainnet assets', async () => {
     // validate fiat rates & validate balances
     console.log(JSON.stringify(wallet.state.fiatRates));
     expect(Object.keys(wallet.state.fiatRates).length).toBeGreaterThan(0);
-    const fiatRatesKeys = Object.keys(wallet.state.fiatRates);
+    // const fiatRatesKeys = Object.keys(wallet.state.fiatRates);
     const fiatRatesValues = Object.values(wallet.state.fiatRates);
     for (let i = 0; i < fiatRatesValues.length; i++) {
         const fiatRate = fiatRatesValues[i];
-        console.log(`${fiatRatesKeys[i]}: ${fiatRate}`);
+        // console.log(`${fiatRatesKeys[i]}: ${fiatRate}`);
         expect(fiatRate).toBeGreaterThan(0);
     }
 });

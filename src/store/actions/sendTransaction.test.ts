@@ -13,6 +13,7 @@ describe('send transaction tests', () => {
     throw new Error('Please set the TEST_MNEMONIC environment variable');
   }
 
+  console.log(`Using TEST_MNEMONIC: ${TEST_MNEMONIC}`);
   beforeEach(async () => {
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
