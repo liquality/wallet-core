@@ -143,12 +143,11 @@ export const getRateERC20ToERC20 = (
 */
 export const buildSwapFromNativeTokenMsg = (
   quote: SwapHistoryItem,
+  denom: string,
   address: string,
-  denom?: string,
   pairAddress?: string
 ) => {
   const to = pairAddress ? pairAddress : ADDRESSES.ASSETS_CONTRACT; // This address is for UST <-> Luna pair
-  const coins = denom ? { [denom]: Number(quote.fromAmount) } : {};
 
   return {
     data: {
@@ -170,7 +169,7 @@ export const buildSwapFromNativeTokenMsg = (
               to: address,
             },
           },
-          coins
+          { [denom]: Number(quote.fromAmount) }
         ),
       ],
       gasLimit: 400_000,

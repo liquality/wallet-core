@@ -87,7 +87,10 @@ class AstroportSwapProvider extends SwapProvider {
     let txData;
 
     if (isFromNative) {
-      txData = buildSwapFromNativeTokenMsg(quote, address, denom, pairAddress);
+      if (!denom) {
+        throw new Error('AstroportSwapProvider: denom unresolved but required for swaps from native');
+      }
+      txData = buildSwapFromNativeTokenMsg(quote, denom, address, pairAddress);
     } else if (isFromERC20ToUST) {
       txData = buildSwapFromContractTokenToUSTMsg(quote, address, fromTokenAddress, pairAddress);
     } else {
