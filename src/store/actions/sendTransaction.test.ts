@@ -4,7 +4,7 @@ import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
 import { FeeLabel, Network } from '../types';
 
-describe('send transaction tests', () => {
+describe.skip('send transaction tests', () => {
   const wallet = setupWallet(defaultWalletOptions);
 
   beforeEach(async () => {
