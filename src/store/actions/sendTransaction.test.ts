@@ -42,7 +42,7 @@ describe.skip('send transaction tests', () => {
 
     const walletId = wallet.state.activeWalletId;
     let testnetEnabledAssets = wallet?.state?.enabledAssets?.testnet?.[walletId];
-    testnetEnabledAssets = testnetEnabledAssets!.filter(asset => asset !== 'SOL');
+    testnetEnabledAssets = testnetEnabledAssets!.filter((asset) => asset !== 'SOL');
     expect(testnetEnabledAssets?.length).not.toBe(0);
 
     // initialize addresses for all assets
@@ -115,7 +115,7 @@ describe.skip('send transaction tests', () => {
     const testnetEnabledAssets = wallet?.state?.enabledAssets?.testnet?.[walletId];
     expect(mainnetEnabledAssets?.length).not.toBe(0);
     expect(testnetEnabledAssets?.length).not.toBe(0);
-    mainnetEnabledAssets = mainnetEnabledAssets!.filter(asset => asset !== 'SOL');
+    mainnetEnabledAssets = mainnetEnabledAssets!.filter((asset) => asset !== 'SOL');
 
     // initialize addresses for all assets
     await wallet.dispatch.initializeAddresses({

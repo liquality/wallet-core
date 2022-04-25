@@ -291,5 +291,3 @@ test('Should be able create wallet and add custom token and remove token', async
   });
   expect(wallet.state.customTokens.mainnet?.[wallet.state.activeWalletId].length).toBe(0);
 });
-
-
