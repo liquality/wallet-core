@@ -329,27 +329,4 @@ test('should be ble to export private key', async () => {
   expect(privateKey).not.toBe(undefined);
 });
 
-test('should be ble to get marketData', async () => {
-  const wallet = await setupWallet(defaultWalletOptions);
-  await wallet.dispatch.createWallet({
-    key: '0x1234567890123456789012345678901234567890',
-    mnemonic: 'test',
-    imported: true,
-  });
-  await wallet.dispatch.unlockWallet({
-    key: '0x1234567890123456789012345678901234567890',
-  });
-  expect(wallet.state.wallets.length).toBe(1);
-  expect(wallet.state.wallets[0].imported).toBe(true);
-  expect(wallet.state.unlockedAt).not.toBe(0);
 
-  await wallet.dispatch.initializeAnalyticsPreferences({
-    accepted: true,
-  });
-
-  expect(wallet.state.analytics.userId).not.toBe(null);
-  await wallet.dispatch.updateMarketData({
-    network: Network.Mainnet,
-  });
-  expect(wallet.state.marketData.mainnet?.length).toBeGreaterThan(10);
-});
