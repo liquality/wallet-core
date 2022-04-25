@@ -41,7 +41,8 @@ describe.skip('send transaction tests', () => {
     expect(wallet.state.activeNetwork).toBe('testnet');
 
     const walletId = wallet.state.activeWalletId;
-    const testnetEnabledAssets = wallet?.state?.enabledAssets?.testnet?.[walletId];
+    let testnetEnabledAssets = wallet?.state?.enabledAssets?.testnet?.[walletId];
+    testnetEnabledAssets = testnetEnabledAssets!.filter(asset => asset !== 'SOL');
     expect(testnetEnabledAssets?.length).not.toBe(0);
 
     // initialize addresses for all assets
@@ -75,6 +76,8 @@ describe.skip('send transaction tests', () => {
         asset: testnetAsset!,
       });
     }
+    console.log(JSON.stringify(wallet.state));
+
     const maintainElement = wallet.state.fees.testnet?.[walletId];
     // ETH fee object checks
     expect(maintainElement?.ETH).toHaveProperty('fast');
@@ -94,9 +97,10 @@ describe.skip('send transaction tests', () => {
       feeLabel: FeeLabel.Fast,
       fiatRate: 0,
     });
+
     console.log(JSON.stringify(wallet.state));
   });
-  test.skip('should be able to do send transaction using mainnet', async () => {
+  test('should be able to do send transaction using mainnet', async () => {
     expect(wallet.state.wallets.length).toBe(1);
     expect(wallet.state.wallets[0].imported).toBe(true);
     expect(wallet.state.unlockedAt).not.toBe(0);
@@ -107,10 +111,11 @@ describe.skip('send transaction tests', () => {
     expect(wallet.state.analytics.notAskAgain).toBe(false);
 
     const walletId = wallet.state.activeWalletId;
-    const mainnetEnabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
+    let mainnetEnabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
     const testnetEnabledAssets = wallet?.state?.enabledAssets?.testnet?.[walletId];
     expect(mainnetEnabledAssets?.length).not.toBe(0);
     expect(testnetEnabledAssets?.length).not.toBe(0);
+    mainnetEnabledAssets = mainnetEnabledAssets!.filter(asset => asset !== 'SOL');
 
     // initialize addresses for all assets
     await wallet.dispatch.initializeAddresses({
@@ -141,7 +146,7 @@ describe.skip('send transaction tests', () => {
         asset: mainnnetAsset,
       });
     }
-
+    console.log(JSON.stringify(wallet.state));
     const maintainElement = wallet.state.fees.mainnet?.[walletId];
     // ETH fee object checks
     expect(maintainElement?.ETH).toHaveProperty('fast');
