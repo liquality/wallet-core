@@ -1,9 +1,9 @@
 import { ChainId } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
+import * as Process from 'process';
 import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
-import {FeeLabel, Network} from '../types';
-import * as Process from "process";
+import { FeeLabel, Network } from '../types';
 
 describe('send transaction tests', () => {
   const wallet = setupWallet(defaultWalletOptions);
