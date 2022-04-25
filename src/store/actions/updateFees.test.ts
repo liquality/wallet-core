@@ -23,6 +23,8 @@ describe('updateFees tests', () => {
     });
   });
   it('should be able to update mainnet assets fees', async () => {
+    jest.setTimeout(90000);
+
     expect(wallet.state.wallets.length).toBe(1);
     expect(wallet.state.wallets[0].imported).toBe(true);
     expect(wallet.state.unlockedAt).not.toBe(0);
