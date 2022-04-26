@@ -16,3 +16,42 @@ adjustments:
 - Add createBitcoinLedgerProvider and createEthereumLedgerProvider to wallet options and call it from client.
 - Move ledger-bridge-provider/config utils to utils. Remove ledger bridge and provider code.
 - Delete `requestOriginAccess.js`, `requestPermission.js` `requestUnlockWallet.js` actions. These should be in client app module.
+
+# Setup
+
+Install yarn
+
+```angular2html
+brew install yarn
+```
+
+## How to use
+
+```angular2html
+yarn add @liquality/wallet-core
+```
+
+
+## How to run tests
+
+Integration tests are written in [Jest](https://jestjs.io/).
+
+```angular2html
+yarn run test:integration
+```
+
+### code coverage
+
+```angular2html
+yarn run test
+```
+
+## Publish to npm
+
+* Only publishes if the version number in package.json differs from the latest on NPM
+
+* Change version number in package.json and run `yarn upgrade`
+
+* Commit and push to master
+
+* GitHub actions will publish to NPM
