@@ -6,6 +6,7 @@ import defaultWalletOptions from '../../walletOptions/defaultOptions';
 import { FeeLabel, Network } from '../types';
 
 describe('sendTransaction tests', () => {
+  jest.setTimeout(90000);
   const wallet = setupWallet(defaultWalletOptions);
   let TEST_MNEMONIC = Process.env.TEST_MNEMONIC;
   if (!TEST_MNEMONIC) {
@@ -24,7 +25,7 @@ describe('sendTransaction tests', () => {
     });
   });
 
-  it('should be able to do send transaction using testnet', async () => {
+  it('should be able to do send transaction (AVAX) using testnet', async () => {
     // change network to testnet
     await wallet.dispatch.changeActiveNetwork({
       network: Network.Testnet,
@@ -45,7 +46,7 @@ describe('sendTransaction tests', () => {
       walletId: walletId,
     });
 
-    // update balance this will generate addresses for each asset
+    // update balances for each asset
     await wallet.dispatch.updateBalances({
       network: Network.Testnet,
       walletId: walletId,
@@ -64,12 +65,10 @@ describe('sendTransaction tests', () => {
       assets: testnetEnabledAssets!,
     });
 
-    // update asset fee for all assets
-    for (const testnetAsset of testnetEnabledAssets!) {
-      await wallet.dispatch.updateFees({
-        asset: testnetAsset!,
-      });
-    }
+    // update asset fee
+    await wallet.dispatch.updateFees({
+      asset: ChainId.Avalanche,
+    });
     // console.log(JSON.stringify(wallet.state));
 
     const maintainElement = wallet.state.fees.testnet?.[walletId];

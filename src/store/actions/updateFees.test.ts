@@ -23,12 +23,11 @@ describe('updateFees tests', () => {
     const mainnetEnabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
     expect(mainnetEnabledAssets).not.toBeNull();
     expect(mainnetEnabledAssets?.length).toBeGreaterThan(10);
-    if (typeof mainnetEnabledAssets !== 'undefined') {
-      for (const mainnnetAsset of mainnetEnabledAssets) {
-        await wallet.dispatch.updateFees({
-          asset: mainnnetAsset,
-        });
-      }
+    // mainnet asset fee update
+    for (const mainnnetAsset of mainnetEnabledAssets!) {
+      await wallet.dispatch.updateFees({
+        asset: mainnnetAsset,
+      });
     }
     const maintainElement = wallet.state.fees.mainnet?.[walletId];
     // BTC fee object checks
