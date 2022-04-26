@@ -31,7 +31,6 @@ brew install yarn
 yarn add @liquality/wallet-core
 ```
 
-
 ## How to run tests
 
 Integration tests are written in [Jest](https://jestjs.io/).
@@ -48,10 +47,10 @@ yarn run test
 
 ## Publish to npm
 
-* Only publishes if the version number in package.json differs from the latest on NPM
+- Only publishes if the version number in package.json differs from the latest on NPM
 
-* Change version number in package.json and run `yarn upgrade`
+- Change version number in package.json and run `yarn upgrade`
 
-* Commit and push to master
+- Commit and push to master
 
-* GitHub actions will publish to NPM
+- GitHub actions will publish to NPM
