@@ -1,11 +1,11 @@
 import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
 
-let wallet: any;
 describe('updateFees tests', () => {
+  jest.setTimeout(90000);
+  const wallet = setupWallet(defaultWalletOptions);
   beforeEach(async () => {
     jest.useFakeTimers();
-    wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
       mnemonic: 'rough symbol license spirit advance pact catalog vibrant dream great usage empty',
@@ -14,25 +14,10 @@ describe('updateFees tests', () => {
     await wallet.dispatch.unlockWallet({
       key: '0x1234567890123456789012345678901234567890',
     });
-
-    await wallet.dispatch.setWatsNewModalShowed({
-      version: '1.0.0',
-    });
-    await wallet.dispatch.initializeAnalyticsPreferences({
-      accepted: true,
-    });
   });
-  it('should be able to update mainnet assets fees', async () => {
-    jest.setTimeout(90000);
 
+  it('should be able to update mainnet assets fees', async () => {
     expect(wallet.state.wallets.length).toBe(1);
-    expect(wallet.state.wallets[0].imported).toBe(true);
-    expect(wallet.state.unlockedAt).not.toBe(0);
-    expect(wallet.state.analytics.userId).not.toBe(null);
-    expect(wallet.state.analytics.acceptedDate).not.toBe(0);
-    expect(wallet.state.analytics.askedDate).not.toBe(0);
-    expect(wallet.state.analytics.askedTimes).toBe(0);
-    expect(wallet.state.analytics.notAskAgain).toBe(false);
 
     const walletId = wallet.state.activeWalletId;
     const mainnetEnabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
@@ -65,11 +50,7 @@ describe('updateFees tests', () => {
     expect(maintainElement?.LUNA.fast.fee).not.toBe(0);
   });
   it('should be able to update testnet assets fees', async () => {
-    expect(wallet.state.analytics.userId).not.toBe(null);
-    expect(wallet.state.analytics.acceptedDate).not.toBe(0);
-    expect(wallet.state.analytics.askedDate).not.toBe(0);
-    expect(wallet.state.analytics.askedTimes).toBe(0);
-    expect(wallet.state.analytics.notAskAgain).toBe(false);
+    expect(wallet.state.wallets.length).toBe(1);
 
     const walletId = wallet.state.activeWalletId;
     const testnetEnabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];

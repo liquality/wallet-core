@@ -5,7 +5,7 @@ import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
 import { FeeLabel, Network } from '../types';
 
-describe('send transaction tests', () => {
+describe('sendTransaction tests', () => {
   const wallet = setupWallet(defaultWalletOptions);
   let TEST_MNEMONIC = Process.env.TEST_MNEMONIC;
   if (!TEST_MNEMONIC) {
@@ -22,13 +22,6 @@ describe('send transaction tests', () => {
     await wallet.dispatch.unlockWallet({
       key: '0x1234567890123456789012345678901234567890',
     });
-
-    await wallet.dispatch.setWatsNewModalShowed({
-      version: '1.0.0',
-    });
-    await wallet.dispatch.initializeAnalyticsPreferences({
-      accepted: true,
-    });
   });
 
   it('should be able to do send transaction using testnet', async () => {
@@ -39,11 +32,6 @@ describe('send transaction tests', () => {
     expect(wallet.state.wallets.length).toBe(1);
     expect(wallet.state.wallets[0].imported).toBe(true);
     expect(wallet.state.unlockedAt).not.toBe(0);
-    expect(wallet.state.analytics.userId).not.toBe(null);
-    expect(wallet.state.analytics.acceptedDate).not.toBe(0);
-    expect(wallet.state.analytics.askedDate).not.toBe(0);
-    expect(wallet.state.analytics.askedTimes).toBe(0);
-    expect(wallet.state.analytics.notAskAgain).toBe(false);
     expect(wallet.state.activeNetwork).toBe('testnet');
 
     const walletId = wallet.state.activeWalletId;
