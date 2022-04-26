@@ -30,17 +30,10 @@ jobs:
         run: |
           yarn build
 
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v3.0.0
-        id: semantic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
 
-      - name: Release output details to GitHub
-        if: steps.semantic.outputs.new_release_published == 'true'
+      - if: steps.publish.outputs.type != 'none'
         run: |
-          echo ${{ steps.semantic.outputs.new_release_version }}
-          echo ${{ steps.semantic.outputs.new_release_major_version }}
-          echo ${{ steps.semantic.outputs.new_release_minor_version }}
-          echo ${{ steps.semantic.outputs.new_release_patch_version }}
+          echo "Version changed: ${{ steps.publish.outputs.old-version }} => ${{ steps.publish.outputs.version }}"
