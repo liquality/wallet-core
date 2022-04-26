@@ -79,6 +79,13 @@ describe('sendTransaction tests', () => {
     expect(wallet.state.history.testnet?.[walletId][0].type).toBe('SEND');
     expect(wallet.state.history.testnet?.[walletId][0].network).toBe('testnet');
     expect(wallet.state.history.testnet?.[walletId][0]).toHaveProperty('txHash');
-    //TODO: add pooling for transactions to check status is completed
+    const createNotification = jest.fn();
+    const b = {
+      title: 'Transaction sent',
+      message: 'Sending 0.00001 AVAX to 0x9d6345f731e160cd90b65a91ab60f4f9e37bdbd2',
+    };
+    const bound = createNotification.bind(b);
+    bound();
+    expect(createNotification).toHaveBeenCalled();
   });
 });
