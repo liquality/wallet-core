@@ -1,6 +1,6 @@
 import { Asset, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { TerraNetworks } from '@liquality/terra-networks';
-import { terra, Transaction } from '@liquality/types';
+import { TerraNetworks, TerraTypes } from '@liquality/terra';
+import { Transaction, TxStatus } from '@liquality/types';
 import { LCDClient } from '@terra-money/terra.js';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -34,7 +34,7 @@ interface RateResponse {
 
 interface AstroportSwapHistoryItem extends SwapHistoryItem {
   swapTxHash: string;
-  swapTx: Transaction<terra.InputTransaction>;
+  swapTx: Transaction<TerraTypes.TerraTxRequest>;
   fromTokenAddress: string;
   toTokenAddress: string;
   pairAddress: string;
@@ -128,11 +128,12 @@ class AstroportSwapProvider extends SwapProvider {
     try {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
-        const { status } = await client.getMethod('getTransactionByHash')(swap.swapTxHash);
+        const { status } = tx;
         this.updateBalances(network, walletId, [swap.from]);
+
         return {
           endTime: Date.now(),
-          status,
+          status: status === TxStatus.Success ? 'SUCCESS' : 'FAILED',
         };
       }
     } catch (e) {
@@ -180,12 +181,8 @@ class AstroportSwapProvider extends SwapProvider {
   // ======== UTILS ========
 
   _getRPC() {
-    const { chainID, nodeUrl } = TerraNetworks.terra_mainnet;
-
-    return new LCDClient({
-      chainID,
-      URL: nodeUrl,
-    });
+    const { chainId, rpcUrl } = TerraNetworks.terra_mainnet;
+    return new LCDClient({ chainID: String(chainId), URL: String(rpcUrl) });
   }
 
   _getDenom(asset: string) {

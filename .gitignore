@@ -12,6 +12,12 @@ coverage
 # Compiled files
 dist/
 
+# yarn
+.yarn/cache
+.yarn/versions
+.yarn/install-state.gz
+.yarn/unplugged
+
 # VS Code
 .vscode
 !.vscode/tasks.js

@@ -3,7 +3,7 @@ import { Asset, assets as cryptoassets, ChainId, unitToCurrency } from '@liquali
 import BN, { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash';
 import { rootGetterContext } from '.';
-import { createClient } from '../factory/client';
+import { createClient } from '../factory';
 import { cryptoToFiat } from '../utils/coinFormatter';
 import { getDerivationPath } from '../utils/derivationPath';
 import { Networks } from '../utils/networks';

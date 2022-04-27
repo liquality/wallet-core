@@ -1,4 +1,4 @@
-import { bitcoin } from '@liquality/types';
+import { BitcoinTypes } from '@liquality/bitcoin';
 
 export function shortenAddress(address: string) {
   const prefix = address.startsWith('0x') ? '0x' : '';
@@ -8,7 +8,7 @@ export function shortenAddress(address: string) {
   )}`;
 }
 
-export const BitcoinAddressType = bitcoin.AddressType;
+export const BitcoinAddressType = BitcoinTypes.AddressType;
 
 export const BTC_ADDRESS_TYPE_TO_PREFIX = {
   [BitcoinAddressType.LEGACY]: 44,

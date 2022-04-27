@@ -1,4 +1,5 @@
-import { ethereum, Transaction } from '@liquality/types';
+import { EvmTypes } from '@liquality/evm';
+import { Transaction } from '@liquality/types';
 import { Asset, SwapHistoryItem } from '../../store/types';
 import { LiqualitySwapHistoryItem } from '../liquality/LiqualitySwapProvider';
 import { NextSwapActionRequest } from '../types';
@@ -6,8 +7,8 @@ import { NextSwapActionRequest } from '../types';
 export interface BoostHistoryItem extends LiqualitySwapHistoryItem {
   approveTxHash: string;
   swapTxHash: string;
-  approveTx: Transaction<ethereum.Transaction>;
-  swapTx: Transaction<ethereum.Transaction>;
+  approveTx: Transaction<EvmTypes.EthersTransactionResponse>;
+  swapTx: Transaction<EvmTypes.EthersTransactionResponse>;
   bridgeAsset: Asset;
   bridgeAssetAmount: string;
 }
