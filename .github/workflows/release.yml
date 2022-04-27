@@ -24,17 +24,26 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-build-${{ env.cache-name }}-node${{ env.node-version }}
 
-      - run: yarn
-
       - name: build
         run: |
+          yarn
           yarn build
 
-      - uses: JS-DevTools/npm-publish@v1
-        id: publish
+      - id: publish
+        uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
 
       - if: steps.publish.outputs.type != 'none'
         run: |
           echo "Version changed: ${{ steps.publish.outputs.old-version }} => ${{ steps.publish.outputs.version }}"
+
+      - name: Create Release
+        if: steps.publish.outputs.type != 'none'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.publish.outputs.version }}
+          release_name: Release ${{ steps.publish.outputs.version }}
