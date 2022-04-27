@@ -30,22 +30,12 @@ describe('sendTransaction tests', () => {
     await wallet.dispatch.changeActiveNetwork({
       network: Network.Testnet,
     });
-    expect(wallet.state.wallets.length).toBe(1);
-    expect(wallet.state.wallets[0].imported).toBe(true);
-    expect(wallet.state.unlockedAt).not.toBe(0);
     expect(wallet.state.activeNetwork).toBe('testnet');
 
     const walletId = wallet.state.activeWalletId;
     let testnetEnabledAssets = wallet?.state?.enabledAssets?.testnet?.[walletId];
     testnetEnabledAssets = testnetEnabledAssets!.filter((asset) => asset !== 'SOL');
     expect(testnetEnabledAssets?.length).not.toBe(0);
-
-    // update balances for one asset
-    await wallet.dispatch.updateBalances({
-      network: Network.Testnet,
-      walletId: walletId,
-      assets: [ChainId.Avalanche],
-    });
 
     // update asset fee for one asset
     await wallet.dispatch.updateFees({

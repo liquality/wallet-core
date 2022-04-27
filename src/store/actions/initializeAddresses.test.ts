@@ -14,9 +14,6 @@ describe('initializeAddresses tests', () => {
     await wallet.dispatch.unlockWallet({
       key: '0x1234567890123456789012345678901234567890',
     });
-    expect(wallet.state.unlockedAt).not.toBe(0);
-    expect(wallet.state.setupAt).not.toBe(0);
-
     const walletId = wallet.state.activeWalletId;
     let mainnetAccounts = wallet.state.accounts?.[walletId]?.mainnet;
     let testnetAccounts = wallet.state.accounts?.[walletId]?.testnet;
