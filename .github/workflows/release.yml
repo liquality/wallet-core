@@ -1,40 +1,41 @@
-name: Release
+name: Release on Tag
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - 'v*'
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v2.4.2
         with:
           fetch-depth: 0
 
       - name: Build project
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v3.1.1
         with:
           node-version: 16
+          cache: 'yarn'
 
-      - uses: actions/cache@v2.1.7
+      - uses: actions/cache@3.0.2
         id: cache
         with:
           path: ~/.npm
           key: ${{ runner.os }}-build-${{ env.cache-name }}-node${{ env.node-version }}
 
-      - run: yarn
-
       - name: build
         run: |
+          yarn
           yarn build
 
-      - uses: JS-DevTools/npm-publish@v1
-        id: publish
+      - id: publish
+        run:
+          yarn publish
         with:
           token: ${{ secrets.NPM_TOKEN }}
 
-      - if: steps.publish.outputs.type != 'none'
-        run: |
-          echo "Version changed: ${{ steps.publish.outputs.old-version }} => ${{ steps.publish.outputs.version }}"
+      - name: Release
+        uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
+        if: startsWith(github.ref, 'refs/tags/')
