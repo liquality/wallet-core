@@ -92,4 +92,11 @@ yarn test
 
 - Commit and push to master
 
-- GitHub actions will publish to NPM
+- Do [Git Tagging](https://git-scm.com/book/en/v2/Git-Basics-Tagging)
+```shell
+ git tag v1.0.0 -m "Release v1.0.0"
+```
+```shell
+ git push origin v1.0.0
+```
+- GitHub actions will publish to NPM, Git tag & Release on GitHub
