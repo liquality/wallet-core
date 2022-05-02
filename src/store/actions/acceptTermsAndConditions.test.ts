@@ -17,5 +17,3 @@ describe('acceptTermsAndConditions', () => {
     expect(wallet.state.termsAcceptedAt).not.toBe(0);
   });
 });
-
-

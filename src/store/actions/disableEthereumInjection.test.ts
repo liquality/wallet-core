@@ -14,8 +14,10 @@ describe('disableEthereumInjection & enableEthereumInjection', () => {
     });
     expect(wallet.state.injectEthereum).toBe(true);
     await wallet.dispatch.disableEthereumInjection();
+    console.log(JSON.stringify(wallet.state));
     expect(wallet.state.injectEthereum).toBe(false);
     await wallet.dispatch.enableEthereumInjection();
     expect(wallet.state.injectEthereum).toBe(true);
+    console.log(JSON.stringify(wallet.state));
   });
 });
