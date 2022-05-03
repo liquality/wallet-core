@@ -4,7 +4,7 @@ import { Network } from '../types';
 
 describe('disableAssets and enableAssets', () => {
   it('should be able to enable assets & disable assets', async () => {
-    jest.useFakeTimers();
+    jest.setTimeout(90000);
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
@@ -16,20 +16,19 @@ describe('disableAssets and enableAssets', () => {
     });
 
     const walletId = wallet.state.activeWalletId;
-    const mainnetEnabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
     await wallet.dispatch.disableAssets({
       network: Network.Mainnet,
       walletId: walletId,
-      assets: mainnetEnabledAssets!,
+      assets: ['BTC'],
     });
     let enabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
-    expect(enabledAssets?.length).toEqual(0);
+    expect(enabledAssets).not.toContain('BTC');
     await wallet.dispatch.enableAssets({
       network: Network.Mainnet,
       walletId: walletId,
-      assets: mainnetEnabledAssets!,
+      assets: ['BTC'],
     });
     enabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
-    expect(enabledAssets?.length).not.toBe(0);
+    expect(enabledAssets).toContain('BTC');
   });
 });

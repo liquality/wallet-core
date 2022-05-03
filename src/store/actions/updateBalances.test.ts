@@ -35,7 +35,6 @@ describe('updateBalances tests', () => {
       walletId: walletId,
       assets: testnetEnabledAssets!,
     });
-    console.log(JSON.stringify(wallet.state));
 
     const account = wallet.state.accounts?.[walletId]?.testnet?.find((acc) => acc.chain === ChainId.Bitcoin);
     expect(account?.chain).toBe(ChainId.Bitcoin);

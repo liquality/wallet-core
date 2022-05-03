@@ -36,7 +36,6 @@ test('should be able validate fiatRates for all mainnet assets', async () => {
     assets: mainnetEnabledAssets!,
   });
   // validate fiat rates & validate balances
-  console.log(JSON.stringify(wallet.state.fiatRates));
   expect(Object.keys(wallet.state.fiatRates).length).toBeGreaterThan(0);
   // const fiatRatesKeys = Object.keys(wallet.state.fiatRates);
   const fiatRatesValues = Object.values(wallet.state.fiatRates);

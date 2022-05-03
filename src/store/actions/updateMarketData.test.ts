@@ -3,8 +3,9 @@ import defaultWalletOptions from '../../walletOptions/defaultOptions';
 import { Network } from '../types';
 
 describe('updateMarketData', () => {
+  jest.setTimeout(90000);
   const wallet = setupWallet(defaultWalletOptions);
-  beforeAll(async () => {
+  beforeEach(async () => {
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
       mnemonic: 'test',
@@ -16,10 +17,6 @@ describe('updateMarketData', () => {
     await wallet.dispatch.initializeAnalyticsPreferences({
       accepted: true,
     });
-  });
-
-  afterAll(async () => {
-    console.log('done');
   });
 
   test('should be able to get marketData', async () => {
