@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { ActionContext, rootActionContext } from '..';
 import buildConfig from '../../build.config';
-import { getSwapProvider } from '../../factory/swapProvider';
+import { getSwapProvider } from '../../factory/swap';
 import { MarketData, Network } from '../types';
 
 export const updateMarketData = async (

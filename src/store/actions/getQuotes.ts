@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import Bluebird from 'bluebird';
 import { ActionContext } from '..';
 import buildConfig from '../../build.config';
-import { getSwapProvider } from '../../factory/swapProvider';
+import { getSwapProvider } from '../../factory/swap';
 import { SwapQuote } from '../../swaps/types';
 import { AccountId, Asset, Network } from '../types';
 

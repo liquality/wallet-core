@@ -1,6 +1,6 @@
 import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
-import { AccountType, Asset, Network } from '../store/types';
-import { ChainNetworks } from '../utils/networks';
+import { AccountType, Asset, Network } from '../../store/types';
+import { ChainNetworks } from '../../utils/networks';
 import { createEVMClient } from './clients';
 
 export function createEthClient(

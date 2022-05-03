@@ -1,7 +1,7 @@
 import { Transaction } from '@chainify/types';
 import { isObject } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
-import { getSwapProvider } from '../../factory/swapProvider';
+import { getSwapProvider } from '../../factory/swap';
 import { LiqualitySwapHistoryItem, LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
 import { Asset, HistoryItem, Network, TransactionType, WalletId } from '../types';
 import { unlockAsset } from '../utils';

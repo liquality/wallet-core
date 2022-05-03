@@ -11,12 +11,12 @@ import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
 import { Network as ChainifyNetwork } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
-import buildConfig from '../build.config';
-import { AccountType, Asset, Network } from '../store/types';
-import cryptoassets from '../utils/cryptoassets';
-import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
-import { ChainNetworks } from '../utils/networks';
-import { walletOptionsStore } from '../walletOptions';
+import buildConfig from '../../build.config';
+import { AccountType, Asset, Network } from '../../store/types';
+import cryptoassets from '../../utils/cryptoassets';
+import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
+import { ChainNetworks } from '../../utils/networks';
+import { walletOptionsStore } from '../../walletOptions';
 
 export function createBtcClient(
   network: Network,
