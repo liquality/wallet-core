@@ -3,8 +3,8 @@ import defaultWalletOptions from '../../walletOptions/defaultOptions';
 import { Network } from '../types';
 
 describe('disableAssets and enableAssets', () => {
-  jest.useFakeTimers();
   it('should be able to enable assets & disable assets', async () => {
+    jest.useFakeTimers();
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
