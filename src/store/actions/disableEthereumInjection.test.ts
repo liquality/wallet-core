@@ -1,7 +1,8 @@
 import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
 
-describe.skip('disableEthereumInjection & enableEthereumInjection', () => {
+describe('disableEthereumInjection & enableEthereumInjection', () => {
+  jest.useFakeTimers();
   it('should be able to disable injectEthereumChain', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
