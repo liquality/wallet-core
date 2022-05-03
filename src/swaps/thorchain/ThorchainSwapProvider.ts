@@ -1,7 +1,7 @@
-import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@liquality/bitcoin';
-import { Client } from '@liquality/client';
+import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
+import { Client } from '@chainify/client';
+import { Transaction } from '@chainify/types';
 import { chains, currencyToUnit, isEthereumChain, unitToCurrency } from '@liquality/cryptoassets';
-import { Transaction } from '@liquality/types';
 import {
   getDoubleSwapOutput,
   getDoubleSwapSlip,

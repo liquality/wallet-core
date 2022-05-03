@@ -1,4 +1,4 @@
-import { BitcoinTypes } from '@liquality/bitcoin';
+import { BitcoinTypes } from '@chainify/bitcoin';
 import { ChainId } from '@liquality/cryptoassets';
 import { AccountType, Network } from '../store/types';
 import { BTC_ADDRESS_TYPE_TO_PREFIX } from '../utils/address';

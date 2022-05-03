@@ -1,5 +1,5 @@
+import { Address } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
-import { Address } from '@liquality/types';
 import Bluebird from 'bluebird';
 import { ActionContext, rootActionContext } from '..';
 import { assetsAdapter } from '../../utils/chainify';

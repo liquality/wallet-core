@@ -1,8 +1,8 @@
-import { BitcoinTypes } from '@liquality/bitcoin';
-import { BitcoinLedgerProvider } from '@liquality/bitcoin-ledger';
+import { BitcoinTypes } from '@chainify/bitcoin';
+import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
+import { EvmLedgerProvider } from '@chainify/evm-ledger';
+import { Network as ChainifyNetwork } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
-import { EvmLedgerProvider } from '@liquality/evm-ledger';
-import { Network as ChainifyNetwork } from '@liquality/types';
 import { Network, RootState } from './store/types';
 
 export interface ParsedCipherText {

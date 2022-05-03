@@ -1,4 +1,4 @@
-import { Client } from '@liquality/client';
+import { Client } from '@chainify/client';
 import { Asset, assets as cryptoassets, ChainId, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash';

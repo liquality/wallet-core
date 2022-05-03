@@ -3,14 +3,14 @@ import {
   BitcoinFeeApiProvider,
   BitcoinHDWalletProvider,
   BitcoinSwapEsploraProvider,
-} from '@liquality/bitcoin';
-import { Client, Fee } from '@liquality/client';
+} from '@chainify/bitcoin';
+import { Client, Fee } from '@chainify/client';
+import { EvmChainProvider, EvmSwapProvider, EvmWalletProvider } from '@chainify/evm';
+import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
+import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
+import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
+import { Network as ChainifyNetwork } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
-import { EvmChainProvider, EvmSwapProvider, EvmWalletProvider } from '@liquality/evm';
-import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@liquality/near';
-import { SolanaChainProvider, SolanaWalletProvider } from '@liquality/solana';
-import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@liquality/terra';
-import { Network as ChainifyNetwork } from '@liquality/types';
 import buildConfig from '../build.config';
 import { AccountType, Asset, Network } from '../store/types';
 import cryptoassets from '../utils/cryptoassets';

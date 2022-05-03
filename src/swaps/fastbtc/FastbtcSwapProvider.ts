@@ -1,7 +1,7 @@
-import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider, BitcoinTypes } from '@liquality/bitcoin';
-import { Client } from '@liquality/client';
+import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider, BitcoinTypes } from '@chainify/bitcoin';
+import { Client } from '@chainify/client';
+import { Transaction } from '@chainify/types';
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { Transaction } from '@liquality/types';
 import BN from 'bignumber.js';
 import { mapValues } from 'lodash';
 import { io, Socket } from 'socket.io-client';

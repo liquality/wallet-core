@@ -1,9 +1,9 @@
-import { BitcoinNetworks } from '@liquality/bitcoin';
+import { BitcoinNetworks } from '@chainify/bitcoin';
+import { EvmNetworks } from '@chainify/evm';
+import { NearNetworks } from '@chainify/near';
+import { SolanaNetworks } from '@chainify/solana';
+import { TerraNetworks } from '@chainify/terra';
 import { ChainId } from '@liquality/cryptoassets';
-import { EvmNetworks } from '@liquality/evm';
-import { NearNetworks } from '@liquality/near';
-import { SolanaNetworks } from '@liquality/solana';
-import { TerraNetworks } from '@liquality/terra';
 import { buildConfig } from '..';
 import { Network } from '../store/types';
 

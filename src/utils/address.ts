@@ -1,4 +1,4 @@
-import { BitcoinTypes } from '@liquality/bitcoin';
+import { BitcoinTypes } from '@chainify/bitcoin';
 
 export function shortenAddress(address: string) {
   const prefix = address.startsWith('0x') ? '0x' : '';

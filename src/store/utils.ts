@@ -1,5 +1,5 @@
+import { EvmChainProvider, EvmWalletProvider } from '@chainify/evm';
 import { ChainId } from '@liquality/cryptoassets';
-import { EvmChainProvider, EvmWalletProvider } from '@liquality/evm';
 import axios from 'axios';
 import EventEmitter from 'events';
 import { findKey, mapKeys, mapValues, random } from 'lodash';

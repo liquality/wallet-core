@@ -1,5 +1,5 @@
-import { EvmTypes } from '@liquality/evm';
-import { Transaction } from '@liquality/types';
+import { EvmTypes } from '@chainify/evm';
+import { Transaction } from '@chainify/types';
 import { Asset, SwapHistoryItem } from '../../store/types';
 import { LiqualitySwapHistoryItem } from '../liquality/LiqualitySwapProvider';
 import { NextSwapActionRequest } from '../types';

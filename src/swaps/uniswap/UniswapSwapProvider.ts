@@ -1,7 +1,7 @@
-import { Client } from '@liquality/client';
+import { Client } from '@chainify/client';
+import { EvmChainProvider, EvmTypes } from '@chainify/evm';
+import { Transaction, TxStatus } from '@chainify/types';
 import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { EvmChainProvider, EvmTypes } from '@liquality/evm';
-import { Transaction, TxStatus } from '@liquality/types';
 import { CurrencyAmount, Fraction, Percent, Token, TradeType, WETH9 } from '@uniswap/sdk-core';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import UniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json';

@@ -1,8 +1,8 @@
-import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@liquality/bitcoin';
-import { Client } from '@liquality/client';
+import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
+import { Client } from '@chainify/client';
+import { Asset as ChainifyAsset, Transaction } from '@chainify/types';
+import { sha256 } from '@chainify/utils';
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { Asset as ChainifyAsset, Transaction } from '@liquality/types';
-import { sha256 } from '@liquality/utils';
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
@@ -25,7 +25,7 @@ import {
   SwapStatus,
 } from '../types';
 
-const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies['@liquality/client']
+const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies['@chainify/client']
   .replace('^', '')
   .replace('~', '')})`;
 

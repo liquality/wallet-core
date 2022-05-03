@@ -2,10 +2,10 @@ import SovrynSwapNetworkABI from '@blobfishkate/sovryncontracts/abi/abiSovrynSwa
 import RBTCWrapperProxyABI from '@blobfishkate/sovryncontracts/abi/abiWrapperProxy_new.json';
 import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-mainnet.json';
 import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
-import { Client } from '@liquality/client';
+import { Client } from '@chainify/client';
+import { EvmChainProvider, EvmTypes } from '@chainify/evm';
+import { Transaction, TxStatus } from '@chainify/types';
 import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { EvmChainProvider, EvmTypes } from '@liquality/evm';
-import { Transaction, TxStatus } from '@liquality/types';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import BN from 'bignumber.js';
 import * as ethers from 'ethers';

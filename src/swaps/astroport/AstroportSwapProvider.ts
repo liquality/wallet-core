@@ -1,6 +1,6 @@
+import { TerraNetworks, TerraTypes } from '@chainify/terra';
+import { Transaction, TxStatus } from '@chainify/types';
 import { Asset, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { TerraNetworks, TerraTypes } from '@liquality/terra';
-import { Transaction, TxStatus } from '@liquality/types';
 import { LCDClient } from '@terra-money/terra.js';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';

@@ -1,4 +1,4 @@
-import { Transaction } from '@liquality/types';
+import { Transaction } from '@chainify/types';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';

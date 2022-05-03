@@ -458,6 +458,190 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chainify/bitcoin-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/bitcoin-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    "@chainify/bitcoin": "workspace:*"
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/hw-ledger": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@ledgerhq/hw-app-btc": 6.7.0
+    bip32: 2.0.6
+    bitcoinjs-lib: 5.2.0
+  languageName: node
+  linkType: soft
+
+"@chainify/bitcoin@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/bitcoin@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@types/bip32": ^2.0.0
+    "@types/bip39": ^3.0.0
+    "@types/bitcoinjs-lib": ^5.0.0
+    "@types/lodash": ^4.14.178
+    "@types/memoizee": ^0.4.7
+    bip174: ^2.0.1
+    bip32: 2.0.6
+    bip39: ^3.0.4
+    bitcoinjs-lib: 5.2.0
+    bitcoinjs-message: 2.2.0
+    coinselect: ^3.1.12
+    lodash: ^4.17.21
+    memoizee: ^0.4.15
+  languageName: node
+  linkType: soft
+
+"@chainify/client@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/client::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/client@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/client::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    "@chainify/errors": "workspace:*"
+    "@chainify/logger": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    axios: ^0.25.0
+  languageName: node
+  linkType: soft
+
+"@chainify/errors@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/errors::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/errors@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/errors::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    standard-error: ^1.1.0
+  languageName: node
+  linkType: soft
+
+"@chainify/evm-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/evm-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/evm": "workspace:*"
+    "@chainify/hw-ledger": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@ethersproject/abstract-provider": 5.6.0
+    "@ethersproject/abstract-signer": 5.6.0
+    "@ethersproject/providers": 5.6.0
+    "@ledgerhq/hw-app-eth": ^6.26.0
+  languageName: node
+  linkType: soft
+
+"@chainify/evm@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/evm@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@ethersproject/abi": 5.6.0
+    "@ethersproject/abstract-provider": 5.6.0
+    "@ethersproject/abstract-signer": 5.6.0
+    "@ethersproject/constants": 5.6.0
+    "@ethersproject/contracts": 5.6.0
+    "@ethersproject/providers": 5.6.0
+    "@ethersproject/solidity": 5.6.0
+    "@ethersproject/transactions": 5.6.0
+    "@ethersproject/wallet": 5.6.0
+    "@rainbow-me/fee-suggestions": ^2.0.0
+  languageName: node
+  linkType: soft
+
+"@chainify/hw-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/hw-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/hw-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/hw-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@ledgerhq/hw-transport": ^6.24.1
+  languageName: node
+  linkType: soft
+
+"@chainify/logger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/logger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/logger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/logger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@chainify/near@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/near::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/near@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/near::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    bn.js: ^5.2.0
+    near-api-js: ^0.44.2
+    near-seed-phrase: ^0.2.0
+  languageName: node
+  linkType: soft
+
+"@chainify/solana@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/solana::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/solana@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/solana::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/logger": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@solana/spl-token": ^0.2.0
+    "@solana/web3.js": ^1.37.2
+    bip39: ^3.0.4
+    ed25519-hd-key: ^1.2.0
+    tweetnacl: ^1.0.3
+  languageName: node
+  linkType: soft
+
+"@chainify/terra@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/terra::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/terra@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/terra::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@terra-money/terra.js": 2.1.18
+    "@types/luxon": ^2.0.9
+    lodash: ^4.17.21
+    luxon: ^2.3.1
+  languageName: node
+  linkType: soft
+
+"@chainify/types@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/types::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/types@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/types::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    "@ethersproject/bignumber": 5.6.0
+    bignumber.js: ^9.0.2
+  languageName: node
+  linkType: soft
+
+"@chainify/utils@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/utils::locator=%40liquality%2Fwallet-core%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@chainify/utils@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/utils::locator=%40liquality%2Fwallet-core%40workspace%3A."
+  dependencies:
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@ethersproject/sha2": 5.6.0
+    bech32: ^2.0.0
+    bs58: ^5.0.0
+    crypto-hashing: ^1.0.0
+    setimmediate: ^1.0.5
+  languageName: node
+  linkType: soft
+
 "@commitlint/cli@npm:^16.2.3":
   version: 16.2.3
   resolution: "@commitlint/cli@npm:16.2.3"
@@ -1523,58 +1707,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@liquality/bitcoin-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/bitcoin-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    "@ledgerhq/hw-app-btc": 6.7.0
-    "@liquality/bitcoin": "workspace:*"
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/hw-ledger": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    bip32: 2.0.6
-    bitcoinjs-lib: 5.2.0
-  languageName: node
-  linkType: soft
-
-"@liquality/bitcoin@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/bitcoin@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    "@types/bip32": ^2.0.0
-    "@types/bip39": ^3.0.0
-    "@types/bitcoinjs-lib": ^5.0.0
-    "@types/lodash": ^4.14.178
-    "@types/memoizee": ^0.4.7
-    bip174: ^2.0.1
-    bip32: 2.0.6
-    bip39: ^3.0.4
-    bitcoinjs-lib: 5.2.0
-    bitcoinjs-message: 2.2.0
-    coinselect: ^3.1.12
-    lodash: ^4.17.21
-    memoizee: ^0.4.15
-  languageName: node
-  linkType: soft
-
-"@liquality/client@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/client::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/client@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/client::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    "@liquality/errors": "workspace:*"
-    "@liquality/logger": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    axios: ^0.25.0
-  languageName: node
-  linkType: soft
-
 "@liquality/cryptoassets@npm:1.11.0":
   version: 1.11.0
   resolution: "@liquality/cryptoassets@npm:1.11.0"
@@ -1589,158 +1721,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@liquality/errors@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/errors::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/errors@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/errors::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    standard-error: ^1.1.0
-  languageName: node
-  linkType: soft
-
-"@liquality/evm-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/evm-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    "@ethersproject/abstract-provider": 5.6.0
-    "@ethersproject/abstract-signer": 5.6.0
-    "@ethersproject/providers": 5.6.0
-    "@ledgerhq/hw-app-eth": ^6.26.0
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/evm": "workspace:*"
-    "@liquality/hw-ledger": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-  languageName: node
-  linkType: soft
-
-"@liquality/evm@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/evm@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    "@ethersproject/abi": 5.6.0
-    "@ethersproject/abstract-provider": 5.6.0
-    "@ethersproject/abstract-signer": 5.6.0
-    "@ethersproject/constants": 5.6.0
-    "@ethersproject/contracts": 5.6.0
-    "@ethersproject/providers": 5.6.0
-    "@ethersproject/solidity": 5.6.0
-    "@ethersproject/transactions": 5.6.0
-    "@ethersproject/wallet": 5.6.0
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    "@rainbow-me/fee-suggestions": ^2.0.0
-  languageName: node
-  linkType: soft
-
-"@liquality/hw-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/hw-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/hw-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/hw-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    "@ledgerhq/hw-transport": ^6.24.1
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-  languageName: node
-  linkType: soft
-
-"@liquality/logger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/logger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/logger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/logger::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  languageName: node
-  linkType: soft
-
-"@liquality/near@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/near::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/near@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/near::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    bn.js: ^5.2.0
-    near-api-js: ^0.44.2
-    near-seed-phrase: ^0.2.0
-  languageName: node
-  linkType: soft
-
-"@liquality/solana@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/solana::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/solana@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/solana::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/logger": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    "@solana/spl-token": ^0.2.0
-    "@solana/web3.js": ^1.37.2
-    bip39: ^3.0.4
-    ed25519-hd-key: ^1.2.0
-    tweetnacl: ^1.0.3
-  languageName: node
-  linkType: soft
-
-"@liquality/terra@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/terra::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/terra@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/terra::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    "@terra-money/terra.js": 2.1.18
-    "@types/luxon": ^2.0.9
-    lodash: ^4.17.21
-    luxon: ^2.3.1
-  languageName: node
-  linkType: soft
-
-"@liquality/types@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/types::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/types@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/types::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    "@ethersproject/bignumber": 5.6.0
-    bignumber.js: ^9.0.2
-  languageName: node
-  linkType: soft
-
-"@liquality/utils@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/utils::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@liquality/utils@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/utils::locator=%40liquality%2Fwallet-core%40workspace%3A."
-  dependencies:
-    "@ethersproject/sha2": 5.6.0
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    bech32: ^2.0.0
-    bs58: ^5.0.0
-    crypto-hashing: ^1.0.0
-    setimmediate: ^1.0.5
-  languageName: node
-  linkType: soft
-
 "@liquality/wallet-core@workspace:.":
   version: 0.0.0-use.local
   resolution: "@liquality/wallet-core@workspace:."
   dependencies:
     "@babel/types": ^7.17.0
     "@blobfishkate/sovryncontracts": 1.3.27
+    "@chainify/bitcoin": 1.0.1
+    "@chainify/bitcoin-ledger": 1.0.1
+    "@chainify/client": 1.0.1
+    "@chainify/errors": 1.0.1
+    "@chainify/evm": 1.0.1
+    "@chainify/evm-ledger": 1.0.1
+    "@chainify/near": 1.0.1
+    "@chainify/solana": 1.0.1
+    "@chainify/terra": 1.0.1
+    "@chainify/types": 1.0.1
+    "@chainify/utils": 1.0.1
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
-    "@liquality/bitcoin": 2.0.4
-    "@liquality/bitcoin-ledger": 2.0.4
-    "@liquality/client": 2.0.4
     "@liquality/cryptoassets": 1.11.0
-    "@liquality/errors": 2.0.4
-    "@liquality/evm": 2.0.4
-    "@liquality/evm-ledger": 2.0.4
-    "@liquality/near": 2.0.4
-    "@liquality/solana": 2.0.4
-    "@liquality/terra": 2.0.4
-    "@liquality/types": 2.0.4
-    "@liquality/utils": 2.0.4
     "@thorchain/asgardex-util": ^0.10.0
     "@types/amplitude-js": ^8.16.0
     "@types/bluebird": ^3.5.36
