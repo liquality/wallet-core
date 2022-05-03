@@ -1,8 +1,9 @@
 import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
 
-describe('acceptTermsAndConditions', () => {
-  it('should be able to acceptTermsAndConditions', async () => {
+describe('disableEthereumInjection & enableEthereumInjection', () => {
+  it('should be able to disable injectEthereumChain', async () => {
+    jest.useFakeTimers();
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
@@ -12,8 +13,10 @@ describe('acceptTermsAndConditions', () => {
     await wallet.dispatch.unlockWallet({
       key: '0x1234567890123456789012345678901234567890',
     });
-    expect(wallet.state.termsAcceptedAt).toBe(0);
-    await wallet.dispatch.acceptTermsAndConditions({ analyticsAccepted: true });
-    expect(wallet.state.termsAcceptedAt).not.toBe(0);
+    expect(wallet.state.injectEthereum).toBe(true);
+    await wallet.dispatch.disableEthereumInjection();
+    expect(wallet.state.injectEthereum).toBe(false);
+    await wallet.dispatch.enableEthereumInjection();
+    expect(wallet.state.injectEthereum).toBe(true);
   });
 });
