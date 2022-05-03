@@ -57,7 +57,11 @@ export const updateTransactionFee = async (
     asset,
   });
   try {
-    newTx = await client.wallet.updateTransactionFee(oldTx, newFee);
+    if (client.swap.canUpdateFee()) {
+      newTx = await client.swap.updateTransactionFee(oldTx, newFee);
+    } else {
+      newTx = await client.wallet.updateTransactionFee(oldTx, newFee);
+    }
   } catch (e) {
     console.warn(e);
     throw e;
