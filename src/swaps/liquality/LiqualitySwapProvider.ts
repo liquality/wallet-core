@@ -9,14 +9,13 @@ import { mapValues } from 'lodash';
 import pkg from '../../../package.json';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
-import { AccountId, Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
+import { AccountId, Asset, Network, WalletId } from '../../store/types';
 import { timestamp, wait } from '../../store/utils';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
-import { SwapProvider } from '../SwapProvider';
+import { EvmSwapHistoryItem, EvmSwapProvider, EvmSwapProviderConfig } from '../EvmSwapProvider';
 import {
-  BaseSwapProviderConfig,
   EstimateFeeRequest,
   EstimateFeeResponse,
   NextSwapActionRequest,
@@ -51,7 +50,7 @@ export interface LiqualityMarketData {
   rate: number;
 }
 
-export interface LiqualitySwapHistoryItem extends SwapHistoryItem {
+export interface LiqualitySwapHistoryItem extends EvmSwapHistoryItem {
   orderId: string;
   fromAddress: string;
   toAddress: string;
@@ -71,11 +70,11 @@ export interface LiqualitySwapHistoryItem extends SwapHistoryItem {
   toFundHash: string;
 }
 
-export interface LiqualitySwapProviderConfig extends BaseSwapProviderConfig {
+export interface LiqualitySwapProviderConfig extends EvmSwapProviderConfig {
   agent: string;
 }
 
-export class LiqualitySwapProvider extends SwapProvider {
+export class LiqualitySwapProvider extends EvmSwapProvider {
   config: LiqualitySwapProviderConfig;
   private async getMarketInfo(): Promise<LiqualityMarketData[]> {
     return (
@@ -128,7 +127,17 @@ export class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  public async newSwap({ network, walletId, quote: _quote }: SwapRequest<LiqualitySwapHistoryItem>) {
+  public async newSwap(swapRequest: SwapRequest<LiqualitySwapHistoryItem>) {
+    const approveTx = await this.approve(swapRequest, true);
+
+    if (approveTx !== null) {
+      return approveTx;
+    }
+
+    return this.initiateSwap(swapRequest);
+  }
+
+  private async initiateSwap({ network, walletId, quote: _quote }: SwapRequest<LiqualitySwapHistoryItem>) {
     const lockedQuote = await this._getQuote({
       from: _quote.from,
       to: _quote.to,
@@ -288,6 +297,14 @@ export class LiqualitySwapProvider extends SwapProvider {
     { network, walletId, swap }: NextSwapActionRequest<LiqualitySwapHistoryItem>
   ) {
     switch (swap.status) {
+      case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
+        return withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
+
+      case 'APPROVE_CONFIRMED':
+        return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+          this.initiateSwap({ quote: swap, network, walletId })
+        );
+
       case 'INITIATED':
         return this.reportInitiation(swap);
 
@@ -327,6 +344,7 @@ export class LiqualitySwapProvider extends SwapProvider {
 
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
+      ...super._getStatuses(),
       INITIATED: {
         step: 0,
         label: 'Locking {from}',
