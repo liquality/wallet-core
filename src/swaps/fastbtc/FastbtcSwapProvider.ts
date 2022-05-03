@@ -65,18 +65,22 @@ export interface FastBtcSwapProviderConfig extends BaseSwapProviderConfig {
 class FastbtcSwapProvider extends SwapProvider {
   config: FastBtcSwapProviderConfig;
   socketConnection: Socket;
-  constructor(config: FastBtcSwapProviderConfig) {
-    super(config);
-    this.socketConnection = io(this.config.bridgeEndpoint, {
-      reconnectionDelayMax: 10000,
-    });
 
-    this.socketConnection.on('connect', function () {
-      console.log('FatBtc socket connected');
-    });
+  async connectSocket() {
+    if (this.socketConnection.connected) return true;
 
-    this.socketConnection.on('disconnect', function () {
-      console.log('FastBtc socket disconnected');
+    return new Promise((resolve) => {
+      this.socketConnection = io(this.config.bridgeEndpoint, {
+        reconnectionDelayMax: 10000,
+      });
+
+      this.socketConnection.on('connect', function () {
+        resolve(true);
+      });
+
+      this.socketConnection.on('disconnect', function () {
+        console.log('FastBtc socket disconnected');
+      });
     });
   }
 
@@ -94,6 +98,7 @@ class FastbtcSwapProvider extends SwapProvider {
   }
 
   async _getHistory(address: string): Promise<FastBtcDepositHistory[]> {
+    await this.connectSocket();
     return new Promise((resolve, reject) => {
       this.socketConnection.emit('getDepositHistory', address, (res: any) => {
         if (res && res.error) {
@@ -105,6 +110,7 @@ class FastbtcSwapProvider extends SwapProvider {
   }
 
   async _getAddress(address: string): Promise<FastBtcDepositAddress> {
+    await this.connectSocket();
     return new Promise((resolve, reject) => {
       this.socketConnection.emit('getDepositAddress', address, (err: Error, res: any) => {
         if (err) {
@@ -116,6 +122,7 @@ class FastbtcSwapProvider extends SwapProvider {
   }
 
   async _getTxAmount(): Promise<FastBtcTxAmount> {
+    await this.connectSocket();
     return new Promise((resolve) => {
       this.socketConnection.emit('txAmount', (res: any) => {
         resolve(res);
