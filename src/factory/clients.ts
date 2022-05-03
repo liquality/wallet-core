@@ -24,21 +24,23 @@ export function createBtcClient(
   accountType: AccountType,
   baseDerivationPath: string
 ) {
-  const isTestnet = network === 'testnet';
+  const isMainnet = network === 'mainnet';
   const bitcoinNetwork = ChainNetworks.bitcoin[network];
   const esploraApi = buildConfig.exploraApis[network];
   const batchEsploraApi = buildConfig.batchEsploraApis[network];
 
-  const feeProvider = new BitcoinFeeApiProvider('https://liquality.io/swap/mempool/v1/fees/recommended');
-  const chainProvider = new BitcoinEsploraBatchBaseProvider(
-    {
-      batchUrl: batchEsploraApi,
-      url: esploraApi,
-      network: bitcoinNetwork,
-      numberOfBlockConfirmation: 2,
-    },
-    feeProvider
-  );
+  const chainProvider = new BitcoinEsploraBatchBaseProvider({
+    batchUrl: batchEsploraApi,
+    url: esploraApi,
+    network: bitcoinNetwork,
+    numberOfBlockConfirmation: 2,
+  });
+
+  if (isMainnet) {
+    const feeProvider = new BitcoinFeeApiProvider('https://liquality.io/swap/mempool/v1/fees/recommended');
+    chainProvider.setFeeProvider(feeProvider);
+  }
+
   const swapProvider = new BitcoinSwapEsploraProvider({
     network: bitcoinNetwork,
     scraperUrl: esploraApi,
@@ -69,10 +71,6 @@ export function createBtcClient(
     };
     const walletProvider = new BitcoinHDWalletProvider(walletOptions, chainProvider);
     swapProvider.setWallet(walletProvider);
-  }
-
-  if (isTestnet) {
-    chainProvider.setFeeProvider(null);
   }
 
   return new Client().connect(swapProvider);
