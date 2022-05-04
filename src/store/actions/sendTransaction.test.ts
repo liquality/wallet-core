@@ -3,7 +3,8 @@ import BN from 'bignumber.js';
 import * as Process from 'process';
 import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
-import { FeeLabel, Network } from '../types';
+import {FeeLabel, Network} from '../types';
+import {getStatusLabel, getStep} from "../../utils/history";
 
 describe('sendTransaction tests', () => {
   jest.setTimeout(90000);
@@ -77,5 +78,10 @@ describe('sendTransaction tests', () => {
     const bound = createNotification.bind(b);
     bound();
     expect(createNotification).toHaveBeenCalled();
+
+    // check if the transaction is in the history
+    const historyObject = wallet.state.history.testnet?.[walletId]?.[0];
+    expect(getStatusLabel(historyObject!)).toBe('Pending');
+    expect(getStep(historyObject!)).toBe(0);
   });
 });
