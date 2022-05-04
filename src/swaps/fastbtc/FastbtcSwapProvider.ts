@@ -67,7 +67,7 @@ class FastbtcSwapProvider extends SwapProvider {
   socketConnection: Socket;
 
   async connectSocket() {
-    if (this.socketConnection.connected) return true;
+    if (this.socketConnection && this.socketConnection.connected) return true;
 
     return new Promise((resolve) => {
       this.socketConnection = io(this.config.bridgeEndpoint, {
