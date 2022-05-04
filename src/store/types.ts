@@ -102,6 +102,10 @@ export enum SwapProviderType {
   Astroport = 'astroport',
 }
 
+export enum EarnProviderType {
+  Anchor = 'anchor',
+}
+
 export interface BaseHistoryItem {
   fee: number;
   feeLabel: FeeLabel;

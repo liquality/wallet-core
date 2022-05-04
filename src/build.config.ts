@@ -1,13 +1,17 @@
 import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-mainnet.json';
 import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
 import { ChainId } from '@liquality/cryptoassets';
-import { Asset, Network, SwapProviderType } from './store/types';
+import { Asset, EarnProviderType, Network, SwapProviderType } from './store/types';
 
 export interface SwapProviderDefinition {
   name: string;
   icon: string;
   type: SwapProviderType;
   [x: string | number | symbol]: unknown;
+}
+
+export interface EarnProviderDefinition extends Omit<SwapProviderDefinition, 'type'> {
+  type: EarnProviderType;
 }
 
 export interface WalletCoreConfig {
@@ -17,6 +21,11 @@ export interface WalletCoreConfig {
   swapProviders: {
     [key in Network]: {
       [providerId: string]: SwapProviderDefinition;
+    };
+  };
+  earnProviders: {
+    [key in Network]: {
+      [providerId: string]: EarnProviderDefinition;
     };
   };
   networks: Network[];
@@ -182,6 +191,24 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.Astroport,
         URL: 'https://lcd.terra.dev',
         chainID: 'columbus-5',
+      },
+    },
+  },
+  earnProviders: {
+    testnet: {
+      UST: {
+        name: 'Anchor',
+        icon: 'astroport.svg',
+        type: EarnProviderType.Anchor,
+        URL: 'https://lcd.terra.dev',
+      },
+    },
+    mainnet: {
+      UST: {
+        name: 'Anchor',
+        icon: 'astroport.svg',
+        type: EarnProviderType.Anchor,
+        URL: 'https://lcd.terra.dev',
       },
     },
   },
