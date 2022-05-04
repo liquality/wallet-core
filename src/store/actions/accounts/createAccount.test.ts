@@ -1,6 +1,6 @@
-import {setupWallet} from "../../../index";
-import defaultWalletOptions from "../../../walletOptions/defaultOptions";
-import {Network} from "../../types";
+import { setupWallet } from '../../../index';
+import defaultWalletOptions from '../../../walletOptions/defaultOptions';
+import { Network } from '../../types';
 
 test('accounts createAccount', async () => {
   const wallet = await setupWallet(defaultWalletOptions);
@@ -22,7 +22,7 @@ test('accounts createAccount', async () => {
     account: {
       ...btcMainnetAccountDetails!,
       name: 'Bitcoin account 2',
-    }
+    },
   });
   expect(wallet.state.accounts[walletId!]?.mainnet.length).toBe(12);
-})
+});

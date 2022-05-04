@@ -5,12 +5,20 @@ import { ExperimentType, Network } from './store/types';
 import defaultWalletOptions from './walletOptions/defaultOptions';
 
 test('Initial State of wallet setup', async () => {
-  const wallet = await setupWallet(defaultWalletOptions);
+  let wallet = await setupWallet(defaultWalletOptions);
   expect(wallet.state.rskLegacyDerivation).toBe(false);
   expect(wallet.state.version).toBe(18);
   expect(wallet.state.activeNetwork).toBe('mainnet');
   expect(wallet.state.injectEthereumChain).toBe('ethereum');
   expect(wallet.state.injectEthereum).toBe(true);
+  wallet = setupWallet({
+    ...defaultWalletOptions,
+    initialState: {
+      ...wallet.state,
+      version: 17,
+    },
+  });
+  expect(wallet.state.version).toBe(17);
 });
 
 test('should be able to create wallet and validate mainnet accounts', async () => {
