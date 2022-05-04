@@ -2,7 +2,7 @@ import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
 import { Network } from '../types';
 
-describe('updateMarketData', () => {
+describe.skip('updateMarketData', () => {
   jest.setTimeout(90000);
   const wallet = setupWallet(defaultWalletOptions);
   beforeEach(async () => {
