@@ -1,16 +1,17 @@
 import { AnchorEarn, CHAINS, DENOMS, NETWORKS, OperationError, Output } from '@anchor-protocol/anchor-earn';
+import store from '../../store';
 import { EarnProvider } from '../EarnProvider';
 
 class AnchorEarnProvider extends EarnProvider {
   client: AnchorEarn;
 
-  constructor(mnemonic: string) {
+  constructor({ network }: { network: string }) {
     super();
 
     this.client = new AnchorEarn({
       chain: CHAINS.TERRA,
-      network: NETWORKS.COLUMBUS_5,
-      mnemonic,
+      network: network === 'mainnet' ? NETWORKS.COLUMBUS_5 : NETWORKS.BOMBAY_12,
+      mnemonic: store.state.wallets[0].mnemonic,
     });
   }
 
@@ -22,7 +23,6 @@ class AnchorEarnProvider extends EarnProvider {
     const { APY } = marketInfo.markets[0];
 
     const percentage = APY.split('.')[1];
-
     const formatted = percentage.slice(0, 2) + '.' + percentage.slice(2, 4);
 
     return formatted;

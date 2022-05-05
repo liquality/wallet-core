@@ -11,7 +11,7 @@ const createEarnProvider = (network: Network, asset: string) => {
   const earnProviderConfig = buildConfig.earnProviders[network][asset];
   const EarnProvider = providers[earnProviderConfig.type];
   // @ts-ignore TODO: i'll fix it
-  return new EarnProvider({ ...swapProviderConfig, asset });
+  return new EarnProvider({ network });
 };
 
 const earnProviderCache: { [key: string]: EarnProvider } = {};
