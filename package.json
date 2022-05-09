@@ -106,6 +106,7 @@
     "watch": "tsc -w -p src/",
     "lint": "eslint . --ext .ts",
     "prettier:fix": "prettier --write .",
+    "test:unit": "jest --watchAll --testPathPattern=src/store/actions/earn.test.ts",
     "test": "jest --coverage",
     "test:integration": "jest --verbose --forceExit",
     "test:watch": "jest --watch"
