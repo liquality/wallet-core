@@ -114,6 +114,11 @@ const config: WalletCoreConfig = {
         routerAddressRBTC: SovrynTestnetAddresses.proxy3,
         rpcURL: 'https://testnet.sovryn.app/rpc',
       },
+      hop: {
+        name: 'Hop',
+        icon: 'hop.svg',
+        type: SwapProviderType.Hop
+      }
     },
     mainnet: {
       liquality: {
@@ -183,6 +188,11 @@ const config: WalletCoreConfig = {
         URL: 'https://lcd.terra.dev',
         chainID: 'columbus-5',
       },
+      hop: {
+        name: 'Hop',
+        icon: 'hop.svg',
+        type: SwapProviderType.Hop
+      }
     },
   },
   discordUrl: 'https://discord.gg/Xsqw7PW8wk',

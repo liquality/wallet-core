@@ -24,6 +24,7 @@ export interface SwapQuote extends GetQuoteResult {
   toAccountId: AccountId;
   path?: string[] | null;
   slippage?: number;
+  hopChainFrom?: any;
 }
 
 export type QuoteRequest = {
