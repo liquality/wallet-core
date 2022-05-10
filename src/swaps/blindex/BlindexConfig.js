@@ -112,6 +112,7 @@ export const blindexConfig = {
     { address: "0x542fDA317318eBF1d3DEAf76E0b632741A7e677d", symbol: "WRBTC" },
     { address: "0x1D931Bf8656d795E50eF6D639562C5bD8Ac2B78f", symbol: "ETHs" },
     { address: "0xb5999795BE0EbB5bAb23144AA5FD6A02D080299F", symbol: "XUSD" },
+    { address: "0xe700691da7b9851f2f35f8b8182c69c53ccad9db", symbol: "DOC" },
     { address: "0x99ac494Badd0CBa26143bd423E39A088591C7B09", symbol: "BDEU" },
     { address: "0xB450ff06d950eFA9A9c0aD63790C51971C1BE885", symbol: "BDUS" },
     { address: "0xA4A8Fb98A26E5314397170e5D12Da8B73Dc2CEB5", symbol: "bXAU" },
