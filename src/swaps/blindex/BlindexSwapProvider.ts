@@ -123,8 +123,10 @@ export class BlindexSwapProvider extends SwapProvider {
       ...updates
     }
   }
+
   public async estimateFees({ network, walletId, asset, txType, quote, feePrices }: EstimateFeeRequest): Promise<EstimateFeeResponse | null> {
-    if (txType !== this._fromTxType()) throw new Error(`Invalid tx type ${txType}`)
+    if (txType !== this._fromTxType()) throw new Error(`Invalid tx type ${txType}`);
+    quote.path = this.bestRoute ?? [quote.from, quote.to];
 
     const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
     const account = this.getAccount(quote.fromAccountId)
@@ -132,7 +134,6 @@ export class BlindexSwapProvider extends SwapProvider {
       throw new Error(`BlindexSwapProvider: Account with id ${quote.fromAccountId} not found`);
     }
     const client = this.getClient(network, walletId, quote.from, account.id)
-
     let gasLimit = 0
     if (await this.requiresApproval({ network, walletId, quote })) {
       const approvalTx = await this.buildApprovalTx({
@@ -149,7 +150,6 @@ export class BlindexSwapProvider extends SwapProvider {
 
       gasLimit += await client.getMethod('estimateGas')(rawApprovalTx)
     }
-
     const swapTx = await this.buildSwapTx({ network, walletId, quote })
     const rawSwapTx = {
       from: swapTx.from,
@@ -158,14 +158,13 @@ export class BlindexSwapProvider extends SwapProvider {
       value: '0x' + swapTx.value.toString(16)
     }
     gasLimit += await client.getMethod('estimateGas')(rawSwapTx);
-
     const fees: EstimateFeeResponse = {};
-    for (const feePrice of feePrices) {
-      const gasPrice = new BN(feePrice).times(1e9) // ETH fee price is in gwei
-      const fee = new BN(gasLimit).times(1.1).times(gasPrice)
-      fees[feePrice] = unitToCurrency(cryptoassets[nativeAsset], fee)
+    for (const feePrice of feePrices) {;
+      const gasPrice = new BN(feePrice).times(1e9); // ETH fee price is in gwei
+      const fee = new BN(gasLimit).times(1.1).times(gasPrice);
+      fees[feePrice] = unitToCurrency(cryptoassets[nativeAsset], fee);
     }
-    return fees
+    return fees;
   }
   
   public async performNextSwapAction(store: ActionContext, { network, walletId, swap }: NextSwapActionRequest<BlindexSwapHistoryItem>): Promise<Partial<SwapHistoryItem> | undefined> {
@@ -394,7 +393,6 @@ export class BlindexSwapProvider extends SwapProvider {
     const chainId: number = ChainNetworks[toChain][network].chainId;
 
     const toToken = this.getToken(chainId, quote.to);
-
     const outputAmount = CurrencyAmount.fromRawAmount(toToken, new BN(quote.toAmount).toFixed());
     const minimumOutput = this.getMinimumOutput(outputAmount);
 
@@ -423,14 +421,14 @@ export class BlindexSwapProvider extends SwapProvider {
       encodedData = router.interface.encodeFunctionData(swapTokensMethod, [
         inputAmountHex,
         outputAmountHex,
-        this.bestRoute,
+        quote.path,
         toAddress,
         deadline
       ]);
     } else {
       encodedData = router.interface.encodeFunctionData('swapExactETHForTokens', [
         outputAmountHex,
-        this.bestRoute,
+        quote.path,
         toAddress,
         deadline
       ]);
@@ -459,6 +457,7 @@ export class BlindexSwapProvider extends SwapProvider {
   }
 
   private async sendSwap({ network, walletId, quote }: SwapRequest<SwapHistoryItem>) {
+    quote.path = this.bestRoute ?? [quote.from, quote.to];
     const txData = await this.buildSwapTx({ network, walletId, quote });
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 
