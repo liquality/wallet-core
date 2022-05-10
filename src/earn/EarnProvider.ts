@@ -9,6 +9,8 @@ export abstract class EarnProvider {
    */
   public abstract getDepositedAmount(): Promise<number>;
 
+  public abstract getTVL(): Promise<any>;
+
   /**
    * Make a deposit
    */

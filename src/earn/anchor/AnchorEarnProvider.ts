@@ -1,4 +1,6 @@
 import { AnchorEarn, CHAINS, DENOMS, NETWORKS, OperationError, Output } from '@anchor-protocol/anchor-earn';
+import axios from 'axios';
+import BN from 'bignumber.js';
 import store from '../../store';
 import { EarnProvider } from '../EarnProvider';
 
@@ -34,6 +36,17 @@ class AnchorEarnProvider extends EarnProvider {
     });
 
     return Number(balanceInfo.balances[0].deposit_balance);
+  }
+
+  public async getTVL(): Promise<any> {
+    const [collateralls, deposit] = await Promise.all([
+      axios.get('https://api.anchorprotocol.com/api/v2/collaterals'),
+      axios.get('https://api.anchorprotocol.com/api/v1/deposit'),
+    ]);
+
+    const tvl = new BN(collateralls.data.total_value).plus(new BN(deposit.data.total_ust_deposits));
+
+    return tvl.toFormat();
   }
 
   public async deposit(amount: string): Promise<Output | OperationError> {
