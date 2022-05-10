@@ -62,7 +62,8 @@ const config: WalletCoreConfig = {
       'XUSD',
       'ETHs',
       'bXAU',
-      'bGBP'
+      'bGBP',
+      'DOC'
     ],
     testnet: ['BTC', 'ETH', 'DAI', 'RBTC', 'BNB', 'NEAR', 'SOV', 'MATIC', 'PWETH', 'ARBETH', 'AVAX', 'LUNA', 'UST'],
   },
