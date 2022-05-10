@@ -2534,6 +2534,7 @@ __metadata:
     "@blobfishkate/sovryncontracts": 1.3.27
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
+    "@ethersproject/address": ^5.6.0
     "@liquality/bitcoin-esplora-batch-api-provider": 1.13.10
     "@liquality/bitcoin-esplora-swap-find-provider": 1.13.10
     "@liquality/bitcoin-fee-api-provider": 1.13.10
@@ -2574,6 +2575,7 @@ __metadata:
     "@liquality/terra-swap-find-provider": 1.13.10
     "@liquality/terra-swap-provider": 1.13.10
     "@liquality/terra-wallet-provider": 1.13.10
+    "@metamask/eth-sig-util": ^4.0.1
     "@thorchain/asgardex-util": ^0.10.0
     "@types/amplitude-js": ^8.16.0
     "@types/bluebird": ^3.5.36
@@ -2623,6 +2625,19 @@ __metadata:
     "@liquality/types": ^1.13.12
     lodash: ^4.17.20
   checksum: 6e0b811d6f7470950fd0dea17f653736170483b64432f4925150ee1329332b9e4e76cda4952cece0209cb853fc366d7145a40997ddb1698d0978276a3c335496
+  languageName: node
+  linkType: hard
+
+"@metamask/eth-sig-util@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@metamask/eth-sig-util@npm:4.0.1"
+  dependencies:
+    ethereumjs-abi: ^0.6.8
+    ethereumjs-util: ^6.2.1
+    ethjs-util: ^0.1.6
+    tweetnacl: ^1.0.3
+    tweetnacl-util: ^0.15.1
+  checksum: 740df4c92a1282e6be4c00c86c1a8ccfb93e767596e43f6da895aa5bab4a28fc3c2209f0327db34924a4a1e9db72bc4d3dddfcfc45cca0b218c9ccbf7d1b1445
   languageName: node
   linkType: hard
 
@@ -6168,7 +6183,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethereumjs-util@npm:^6.1.0":
+"ethereumjs-abi@npm:^0.6.8":
+  version: 0.6.8
+  resolution: "ethereumjs-abi@npm:0.6.8"
+  dependencies:
+    bn.js: ^4.11.8
+    ethereumjs-util: ^6.0.0
+  checksum: cede2a8ae7c7e04eeaec079c2f925601a25b2ef75cf9230e7c5da63b4ea27883b35447365a47e35c1e831af520973a2252af89022c292c18a09a4607821a366b
+  languageName: node
+  linkType: hard
+
+"ethereumjs-util@npm:^6.0.0, ethereumjs-util@npm:^6.1.0, ethereumjs-util@npm:^6.2.1":
   version: 6.2.1
   resolution: "ethereumjs-util@npm:6.2.1"
   dependencies:
@@ -6244,7 +6269,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethjs-util@npm:0.1.6":
+"ethjs-util@npm:0.1.6, ethjs-util@npm:^0.1.6":
   version: 0.1.6
   resolution: "ethjs-util@npm:0.1.6"
   dependencies:
@@ -11418,6 +11443,13 @@ __metadata:
   dependencies:
     safe-buffer: ^5.0.1
   checksum: 05f6510358f8afc62a057b8b692f05d70c1782b70db86d6a1e0d5e28a32389e52fa6e7707b6c5ecccacc031462e4bc35af85ecfe4bbc341767917b7cf6965711
+  languageName: node
+  linkType: hard
+
+"tweetnacl-util@npm:^0.15.1":
+  version: 0.15.1
+  resolution: "tweetnacl-util@npm:0.15.1"
+  checksum: ae6aa8a52cdd21a95103a4cc10657d6a2040b36c7a6da7b9d3ab811c6750a2d5db77e8c36969e75fdee11f511aa2b91c552496c6e8e989b6e490e54aca2864fc
   languageName: node
   linkType: hard
 
