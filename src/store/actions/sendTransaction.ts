@@ -1,4 +1,5 @@
 import { Transaction } from '@chainify/types';
+import { chains } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
@@ -37,14 +38,15 @@ export const sendTransaction = async (
   const { dispatch, commit, getters } = rootActionContext(context);
   const client = getters.client({ network, walletId, asset, accountId });
 
-  const _asset = assetsAdapter(asset);
+  const _asset = assetsAdapter(asset)[0];
   const tx = await client.wallet.sendTransaction({
-    to,
+    to: chains[_asset.chain].formatAddress(to),
     value: new BN(amount),
     data,
     gasLimit: gas,
     fee,
-    asset: _asset[0],
+    asset: _asset,
+    feeAsset: _asset,
   });
 
   const transaction: SendHistoryItem = {

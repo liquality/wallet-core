@@ -1727,17 +1727,17 @@ __metadata:
   dependencies:
     "@babel/types": ^7.17.0
     "@blobfishkate/sovryncontracts": 1.3.27
-    "@chainify/bitcoin": 1.0.1
-    "@chainify/bitcoin-ledger": 1.0.1
-    "@chainify/client": 1.0.1
-    "@chainify/errors": 1.0.1
-    "@chainify/evm": 1.0.1
-    "@chainify/evm-ledger": 1.0.1
-    "@chainify/near": 1.0.1
-    "@chainify/solana": 1.0.1
-    "@chainify/terra": 1.0.1
-    "@chainify/types": 1.0.1
-    "@chainify/utils": 1.0.1
+    "@chainify/bitcoin": 1.0.2
+    "@chainify/bitcoin-ledger": 1.0.2
+    "@chainify/client": 1.0.2
+    "@chainify/errors": 1.0.2
+    "@chainify/evm": 1.0.2
+    "@chainify/evm-ledger": 1.0.2
+    "@chainify/near": 1.0.2
+    "@chainify/solana": 1.0.2
+    "@chainify/terra": 1.0.2
+    "@chainify/types": 1.0.2
+    "@chainify/utils": 1.0.2
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
     "@liquality/cryptoassets": 1.11.0

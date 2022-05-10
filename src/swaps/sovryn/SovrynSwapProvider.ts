@@ -124,7 +124,9 @@ class SovrynSwapProvider extends SwapProvider {
     );
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw, network);
+    // don't pass network because Ethers does not support EIP1191
+    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw);
+
     const spender = (
       fromInfo.type === 'native' || toInfo.type === 'native' ? this.config.routerAddressRBTC : this.config.routerAddress
     ).toLowerCase();
@@ -156,7 +158,8 @@ class SovrynSwapProvider extends SwapProvider {
 
     const fromChain = fromInfo.chain;
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw, network);
+    // don't pass network because Ethers does not support EIP1191
+    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
@@ -229,7 +232,8 @@ class SovrynSwapProvider extends SwapProvider {
     const value = isERC20(quote.from) ? new BN(0) : new BN(quote.fromAmount);
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw, network);
+    // don't pass network because Ethers does not support EIP1191
+    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)

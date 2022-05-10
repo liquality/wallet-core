@@ -6,7 +6,6 @@ import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets'
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
-import pkg from '../../../package.json';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { AccountId, Asset, Network, WalletId } from '../../store/types';
@@ -24,13 +23,13 @@ import {
   SwapStatus,
 } from '../types';
 
-const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies['@chainify/client']
-  .replace('^', '')
-  .replace('~', '')})`;
+// const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies['@chainify/client']
+//   .replace('^', '')
+//   .replace('~', '')})`;
 
 const headers = {
-  'x-requested-with': VERSION_STRING,
-  'x-liquality-user-agent': VERSION_STRING,
+  // 'x-requested-with': VERSION_STRING,
+  // 'x-liquality-user-agent': VERSION_STRING,
 };
 
 export enum LiqualityTxTypes {
@@ -77,6 +76,7 @@ export interface LiqualitySwapProviderConfig extends EvmSwapProviderConfig {
 export class LiqualitySwapProvider extends EvmSwapProvider {
   config: LiqualitySwapProviderConfig;
   private async getMarketInfo(): Promise<LiqualityMarketData[]> {
+    console.log(this.config.agent + '/api/swap/marketinfo');
     return (
       await axios({
         url: this.config.agent + '/api/swap/marketinfo',
@@ -346,12 +346,12 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     return {
       ...super._getStatuses(),
       INITIATED: {
-        step: 0,
+        step: 1,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
       },
       INITIATION_REPORTED: {
-        step: 0,
+        step: 1,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
         notification() {
@@ -361,18 +361,13 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       INITIATION_CONFIRMED: {
-        step: 0,
+        step: 1,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
       },
 
-      FUNDED: {
-        step: 1,
-        label: 'Locking {to}',
-        filterStatus: 'PENDING',
-      },
       CONFIRM_COUNTER_PARTY_INITIATION: {
-        step: 1,
+        step: 2,
         label: 'Locking {to}',
         filterStatus: 'PENDING',
         notification(swap: any) {
@@ -383,7 +378,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       },
 
       READY_TO_CLAIM: {
-        step: 2,
+        step: 3,
         label: 'Claiming {to}',
         filterStatus: 'PENDING',
         notification() {
@@ -393,28 +388,28 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       WAITING_FOR_CLAIM_CONFIRMATIONS: {
-        step: 2,
+        step: 3,
         label: 'Claiming {to}',
         filterStatus: 'PENDING',
       },
       WAITING_FOR_REFUND: {
-        step: 2,
+        step: 3,
         label: 'Pending Refund',
         filterStatus: 'PENDING',
       },
       GET_REFUND: {
-        step: 2,
+        step: 3,
         label: 'Refunding {from}',
         filterStatus: 'PENDING',
       },
       WAITING_FOR_REFUND_CONFIRMATIONS: {
-        step: 2,
+        step: 3,
         label: 'Refunding {from}',
         filterStatus: 'PENDING',
       },
 
       REFUNDED: {
-        step: 3,
+        step: 4,
         label: 'Refunded',
         filterStatus: 'REFUNDED',
         notification(swap: any) {
@@ -424,7 +419,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       SUCCESS: {
-        step: 3,
+        step: 4,
         label: 'Completed',
         filterStatus: 'COMPLETED',
         notification(swap: any) {
@@ -434,7 +429,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       QUOTE_EXPIRED: {
-        step: 3,
+        step: 4,
         label: 'Quote Expired',
         filterStatus: 'REFUNDED',
       },
@@ -450,7 +445,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   }
 
   protected _timelineDiagramSteps(): string[] {
-    return ['INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
+    return ['APPROVE', 'INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
   }
 
   protected _totalSteps(): number {

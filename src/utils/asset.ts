@@ -11,11 +11,11 @@ type ExplorerMap = { [key in ChainId]?: { [key in Network]: { tx: string; addres
 const EXPLORERS: ExplorerMap = {
   ethereum: {
     testnet: {
-      tx: 'https://ropsten.etherscan.io/tx/0x{hash}',
+      tx: 'https://ropsten.etherscan.io/tx/{hash}',
       address: 'https://ropsten.etherscan.io/address/{hash}',
     },
     mainnet: {
-      tx: 'https://etherscan.io/tx/0x{hash}',
+      tx: 'https://etherscan.io/tx/{hash}',
       address: 'https://etherscan.io/address/{hash}',
     },
   },
@@ -31,31 +31,31 @@ const EXPLORERS: ExplorerMap = {
   },
   rsk: {
     testnet: {
-      tx: 'https://explorer.testnet.rsk.co/tx/0x{hash}',
+      tx: 'https://explorer.testnet.rsk.co/tx/{hash}',
       address: 'https://explorer.testnet.rsk.co/address/{hash}',
     },
     mainnet: {
-      tx: 'https://explorer.rsk.co/tx/0x{hash}',
+      tx: 'https://explorer.rsk.co/tx/{hash}',
       address: 'https://explorer.rsk.co/address/{hash}',
     },
   },
   bsc: {
     testnet: {
-      tx: 'https://testnet.bscscan.com/tx/0x{hash}',
+      tx: 'https://testnet.bscscan.com/tx/{hash}',
       address: 'https://testnet.bscscan.com/address/{hash}',
     },
     mainnet: {
-      tx: 'https://bscscan.com/tx/0x{hash}',
+      tx: 'https://bscscan.com/tx/{hash}',
       address: 'https://bscscan.com/address/{hash}',
     },
   },
   polygon: {
     testnet: {
-      tx: 'https://mumbai.polygonscan.com/tx/0x{hash}',
+      tx: 'https://mumbai.polygonscan.com/tx/{hash}',
       address: 'https://mumbai.polygonscan.com/address/{hash}',
     },
     mainnet: {
-      tx: 'https://polygonscan.com/tx/0x{hash}',
+      tx: 'https://polygonscan.com/tx/{hash}',
       address: 'https://polygonscan.com/address/{hash}',
     },
   },
@@ -81,21 +81,21 @@ const EXPLORERS: ExplorerMap = {
   },
   arbitrum: {
     testnet: {
-      tx: 'https://rinkeby-explorer.arbitrum.io/tx/0x{hash}',
+      tx: 'https://rinkeby-explorer.arbitrum.io/tx/{hash}',
       address: 'https://rinkeby-explorer.arbitrum.io/address/{hash}',
     },
     mainnet: {
-      tx: 'https://explorer.arbitrum.io/tx/0x{hash}',
+      tx: 'https://explorer.arbitrum.io/tx/{hash}',
       address: 'https://explorer.arbitrum.io/address/{hash}',
     },
   },
   avalanche: {
     testnet: {
-      tx: 'https://testnet.snowtrace.io/tx/0x{hash}',
+      tx: 'https://testnet.snowtrace.io/tx/{hash}',
       address: 'https://testnet.snowtrace.io/address/{hash}',
     },
     mainnet: {
-      tx: 'https://snowtrace.io/tx/0x{hash}',
+      tx: 'https://snowtrace.io/tx/{hash}',
       address: 'https://snowtrace.io/address/{hash}',
     },
   },
@@ -111,11 +111,11 @@ const EXPLORERS: ExplorerMap = {
   },
   fuse: {
     testnet: {
-      tx: 'https://explorer.fusespark.io/tx/0x{hash}',
+      tx: 'https://explorer.fusespark.io/tx/{hash}',
       address: 'https://explorer.fusespark.io/address/{hash}',
     },
     mainnet: {
-      tx: 'https://explorer.fuse.io/tx/0x{hash}',
+      tx: 'https://explorer.fuse.io/tx/{hash}',
       address: 'https://explorer.fuse.io/address/{hash}',
     },
   },
