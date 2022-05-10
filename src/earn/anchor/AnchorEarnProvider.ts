@@ -50,17 +50,21 @@ class AnchorEarnProvider extends EarnProvider {
   }
 
   public async deposit(amount: string): Promise<Output | OperationError> {
-    return await this.client.deposit({
+    const _transaction = await this.client.deposit({
       currency: DENOMS.UST,
       amount,
     });
+
+    return _transaction;
   }
 
   public async withdraw(amount: string): Promise<Output | OperationError> {
-    return await this.client.withdraw({
+    const transaction = await this.client.withdraw({
       currency: DENOMS.UST,
       amount,
     });
+
+    return transaction;
   }
 }
 
