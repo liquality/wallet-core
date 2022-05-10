@@ -9,7 +9,7 @@ export interface SignTypedMessageType<V extends SignTypedDataVersion, T extends 
   from: string;
 }
 
-const methodToVersion = {
+const methodToVersion: Record<string, SignTypedDataVersion> = {
   eth_signTypedData: SignTypedDataVersion.V4,
   eth_signTypedData_v3: SignTypedDataVersion.V3,
   eth_signTypedData_v4: SignTypedDataVersion.V4,
