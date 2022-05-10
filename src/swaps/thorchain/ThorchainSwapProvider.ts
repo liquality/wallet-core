@@ -156,9 +156,11 @@ export interface ThorchainSwapHistoryItem extends SwapHistoryItem {
   receiveFee: string;
   maxFeeSlippageMultiplier: number;
   approveTxHash: string;
-  fromFundHash: string;
   approveTx: Transaction;
+  fromFundHash: string;
   fromFundTx: Transaction;
+  receiveTxHash: string;
+  receiveTx: Transaction;
 }
 
 export interface ThorchainSwapQuote extends SwapQuote {

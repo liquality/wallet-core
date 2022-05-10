@@ -33,6 +33,7 @@ import buildConfig from '../build.config';
 import { AccountType, Asset, Network } from '../store/types';
 import { isERC20 } from '../utils/asset';
 import cryptoassets from '../utils/cryptoassets';
+import { signTypedMessage } from '../utils/eth_signTypedData_v4';
 import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
 import { ChainNetworks } from '../utils/networks';
 import { walletOptionsStore } from '../walletOptions';
@@ -142,6 +143,9 @@ function createEthereumClient(
     ethClient.addProvider(new EthereumSwapProvider());
     if (scraperApi) ethClient.addProvider(new EthereumScraperSwapFindProvider(scraperApi));
   }
+
+  // TODO: remove when Chainify is added
+  (ethClient.wallet as any).signTypedMessage = signTypedMessage.bind(ethClient.wallet);
 
   return ethClient;
 }
