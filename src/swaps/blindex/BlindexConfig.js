@@ -98,6 +98,13 @@ export const blindexConfig = {
       token1: "0x6542a10E68cEAc1Fa0641ec0D799a7492795AAC1",
       token0Symbol: "bGBP",
       token1Symbol: "BDX"
+    },
+    {
+          address: "0xfcbf64Ed39436111116F79f3E23BD3966BfE655e",
+          token0: "0xB450ff06d950eFA9A9c0aD63790C51971C1BE885",
+          token1: "0xe700691dA7b9851F2F35f8b8182c69c53CcaD9Db",
+          token0Symbol: "BDUS",
+          token1Symbol: "DOC"
     }
   ],
   ERC20_INFO: [
