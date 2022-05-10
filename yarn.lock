@@ -1483,10 +1483,10 @@
     ethereumjs-util "^7.1.3"
     lodash "^4.17.11"
 
-"@liquality/cryptoassets@^1.10.0":
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/@liquality/cryptoassets/-/cryptoassets-1.11.0.tgz#1242f7a42785bc13f3867f90921ea18e5584bf59"
-  integrity sha512-vHz8vs+xMz1nQ+gG3/uC6wIGE9dMbK1lFWgX1GgC2UByT+zkJtMlF4yoq/vlk4zm9scopjYOakPEKEp8bH1Kqw==
+"@liquality/cryptoassets@^1.12.0":
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/@liquality/cryptoassets/-/cryptoassets-1.12.0.tgz#35b9f14c309142a4517154a6ea2b1c2ab6e7fd5a"
+  integrity sha512-JOfFEPpy3dgMi8+n0WLejSEfGOyzFA4PIIdWJssXXuxvhi3QDgzZ+rNkfe+HjzUlYqyM6MQruiQTs1j0ikrrkw==
   dependencies:
     bignumber.js "^9.0.2"
     bitcoin-address-validation "^2.2.1"
