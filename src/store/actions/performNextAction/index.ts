@@ -1,24 +1,32 @@
+import { ActionContext, rootActionContext } from '../..';
+import { getSwapProvider } from '../../../factory/swapProvider';
 import { createHistoryNotification } from '../../broker/notification';
+import { HistoryItem, Network, TransactionType, WalletId } from '../../types';
 import { performNextTransactionAction } from './send';
 
-export const performNextAction = async (store, { network, walletId, id }) => {
-  const { dispatch, commit, getters } = store;
+export const performNextAction = async (
+  context: ActionContext,
+  { network, walletId, id }: { network: Network; walletId: WalletId; id: string }
+): Promise<Partial<HistoryItem> | undefined> => {
+  const { dispatch, commit, getters } = rootActionContext(context);
   const item = getters.historyItemById(network, walletId, id);
   if (!item) return;
   if (!item.status) return;
 
   let updates;
   try {
-    if (item.type === 'SWAP') {
-      const swapProvider = store.getters.swapProvider(network, item.provider);
-      updates = await swapProvider.performNextSwapAction(store, {
+    if (item.type === TransactionType.Swap) {
+      const swapProvider = getSwapProvider(network, item.provider);
+
+      // TODO: should it take typed context?
+      updates = await swapProvider.performNextSwapAction(context, {
         network,
         walletId,
         swap: item,
       });
     }
-    if (item.type === 'SEND') {
-      updates = await performNextTransactionAction(store, {
+    if (item.type === TransactionType.Send) {
+      updates = await performNextTransactionAction(context, {
         network,
         walletId,
         transaction: item,
@@ -28,7 +36,7 @@ export const performNextAction = async (store, { network, walletId, id }) => {
     updates = { error: e.toString() };
   }
   if (updates) {
-    commit('UPDATE_HISTORY', {
+    commit.UPDATE_HISTORY({
       network,
       walletId,
       id,
@@ -38,9 +46,9 @@ export const performNextAction = async (store, { network, walletId, id }) => {
     createHistoryNotification({
       ...item,
       ...updates,
-    });
+    } as HistoryItem);
     if (!updates.error) {
-      dispatch('performNextAction', { network, walletId, id });
+      dispatch.performNextAction({ network, walletId, id });
     }
   }
 

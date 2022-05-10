@@ -13,4 +13,8 @@ module.exports = {
       tsconfig: 'src/tsconfig.json',
     },
   },
+  reporters: ['default'],
+  forceExit: true,
+  detectOpenHandles: true,
+  verbose: true,
 };

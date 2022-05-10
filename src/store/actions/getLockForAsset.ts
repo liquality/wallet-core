@@ -1,10 +1,16 @@
+import { ActionContext, rootActionContext } from '..';
+import { Asset, BaseHistoryItem, Network, WalletId } from '../types';
 import { attemptToLockAsset, emitter, waitForRandom } from '../utils';
 
-export const getLockForAsset = async ({ dispatch, commit }, { network, walletId, asset, item }) => {
+export const getLockForAsset = async (
+  context: ActionContext,
+  { network, walletId, asset, item }: { network: Network; walletId: WalletId; asset: Asset; item: BaseHistoryItem }
+): Promise<string> => {
+  const { dispatch, commit } = rootActionContext(context);
   const { key, success } = attemptToLockAsset(network, walletId, asset);
 
   if (!success) {
-    commit('UPDATE_HISTORY', {
+    commit.UPDATE_HISTORY({
       network,
       walletId,
       id: item.id,
@@ -15,10 +21,10 @@ export const getLockForAsset = async ({ dispatch, commit }, { network, walletId,
 
     await new Promise((resolve) => emitter.once(`unlock:${key}`, () => resolve(null)));
 
-    return dispatch('getLockForAsset', { network, walletId, asset, item });
+    return dispatch.getLockForAsset({ network, walletId, asset, item });
   }
 
-  commit('UPDATE_HISTORY', {
+  commit.UPDATE_HISTORY({
     network,
     walletId,
     id: item.id,

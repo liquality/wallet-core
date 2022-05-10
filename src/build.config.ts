@@ -1,9 +1,41 @@
 import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-mainnet.json';
 import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
-import { Network } from './store/types';
-import { SwapProviderType } from './utils/swapProviderType';
+import { ChainId } from '@liquality/cryptoassets';
+import { Asset, Network, SwapProviderType } from './store/types';
 
-export default {
+export interface SwapProviderDefinition {
+  name: string;
+  icon: string;
+  type: SwapProviderType;
+  [x: string | number | symbol]: unknown;
+}
+
+export interface WalletCoreConfig {
+  defaultAssets: {
+    [key in Network]: Asset[];
+  };
+  swapProviders: {
+    [key in Network]: {
+      [providerId: string]: SwapProviderDefinition;
+    };
+  };
+  networks: Network[];
+  chains: ChainId[];
+  supportedBridgeAssets: Asset[];
+  discordUrl: string;
+  infuraApiKey: string;
+  exploraApis: {
+    [key in Network]: string;
+  };
+  batchEsploraApis: {
+    [key in Network]: string;
+  };
+  rskRpcUrls: {
+    [key in Network]: string;
+  };
+}
+
+const config: WalletCoreConfig = {
   defaultAssets: {
     mainnet: [
       'BTC',
@@ -25,22 +57,7 @@ export default {
       'LUNA',
       'UST',
     ],
-    testnet: [
-      'BTC',
-      'ETH',
-      'DAI',
-      'RBTC',
-      'BNB',
-      'NEAR',
-      'SOV',
-      'MATIC',
-      'PWETH',
-      'ARBETH',
-      'AVAX',
-      'SOL',
-      'LUNA',
-      'UST',
-    ],
+    testnet: ['BTC', 'ETH', 'DAI', 'RBTC', 'BNB', 'NEAR', 'SOV', 'MATIC', 'PWETH', 'ARBETH', 'AVAX', 'LUNA', 'UST'],
   },
   infuraApiKey: 'da99ebc8c0964bb8bb757b6f8cc40f1f',
   exploraApis: {
@@ -60,39 +77,39 @@ export default {
       liquality: {
         name: 'Liquality',
         icon: 'liquality.svg',
-        type: SwapProviderType.LIQUALITY,
+        type: SwapProviderType.Liquality,
         agent: process.env.VUE_APP_AGENT_TESTNET_URL || 'https://testnet-dev-agent.liq-chainhub.net',
       },
       liqualityBoostNativeToERC20: {
         name: 'Liquality Boost',
-        type: SwapProviderType.LIQUALITYBOOST_NATIVE_TO_ERC20,
-        network: 'testnet',
+        type: SwapProviderType.LiqualityBoostNativeToERC20,
+        network: Network.Testnet,
         icon: 'liqualityboost.svg',
         supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
       },
       liqualityBoostERC20toNative: {
         name: 'Liquality Boost',
-        type: SwapProviderType.LIQUALITYBOOST_ERC20_TO_NATIVE,
-        network: 'testnet',
+        type: SwapProviderType.LiqualityBoostERC20ToNative,
+        network: Network.Testnet,
         icon: 'liqualityboost.svg',
         supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
       },
       uniswapV2: {
         name: 'Uniswap V2',
         icon: 'uniswap.svg',
-        type: SwapProviderType.UNISWAPV2,
+        type: SwapProviderType.UniswapV2,
         routerAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
       },
       thorchain: {
         name: 'Thorchain',
         icon: 'thorchain.svg',
-        type: SwapProviderType.THORCHAIN,
+        type: SwapProviderType.Thorchain,
         thornode: 'https://testnet.thornode.thorchain.info',
       },
       sovryn: {
         name: 'Sovryn',
         icon: 'sovryn.svg',
-        type: SwapProviderType.SOVRYN,
+        type: SwapProviderType.Sovryn,
         routerAddress: SovrynTestnetAddresses.swapNetwork,
         routerAddressRBTC: SovrynTestnetAddresses.proxy3,
         rpcURL: 'https://testnet.sovryn.app/rpc',
@@ -102,33 +119,33 @@ export default {
       liquality: {
         name: 'Liquality',
         icon: 'liquality.svg',
-        type: SwapProviderType.LIQUALITY,
+        type: SwapProviderType.Liquality,
         agent: process.env.VUE_APP_AGENT_MAINNET_URL || 'https://mainnet-dev-agent.liq-chainhub.net',
       },
       liqualityBoostNativeToERC20: {
         name: 'Liquality Boost',
-        type: SwapProviderType.LIQUALITYBOOST_NATIVE_TO_ERC20,
-        network: 'mainnet',
+        type: SwapProviderType.LiqualityBoostNativeToERC20,
+        network: Network.Mainnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: [],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
       },
       liqualityBoostERC20toNative: {
         name: 'Liquality Boost',
-        type: SwapProviderType.LIQUALITYBOOST_ERC20_TO_NATIVE,
-        network: 'mainnet',
+        type: SwapProviderType.LiqualityBoostERC20ToNative,
+        network: Network.Mainnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: [],
+        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX'],
       },
       uniswapV2: {
         name: 'Uniswap V2',
         icon: 'uniswap.svg',
-        type: SwapProviderType.UNISWAPV2,
+        type: SwapProviderType.UniswapV2,
         routerAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
       },
       oneinchV4: {
         name: 'Oneinch V4',
         icon: 'oneinch.svg',
-        type: SwapProviderType.ONEINCHV4,
+        type: SwapProviderType.OneInch,
         agent: 'https://api.1inch.exchange/v4.0',
         routerAddress: '0x1111111254fb6c44bac0bed2854e76f90643097d',
         referrerAddress: {
@@ -142,13 +159,13 @@ export default {
       fastBTC: {
         name: 'FastBTC',
         icon: 'sovryn.svg',
-        type: SwapProviderType.FASTBTC,
+        type: SwapProviderType.FastBTC,
         bridgeEndpoint: 'http://3.131.33.161:3000/',
       },
       sovryn: {
         name: 'Sovryn',
         icon: 'sovryn.svg',
-        type: SwapProviderType.SOVRYN,
+        type: SwapProviderType.Sovryn,
         routerAddress: SovrynMainnetAddresses.swapNetwork,
         routerAddressRBTC: SovrynMainnetAddresses.proxy3,
         rpcURL: 'https://mainnet.sovryn.app/rpc',
@@ -156,13 +173,13 @@ export default {
       thorchain: {
         name: 'Thorchain',
         icon: 'thorchain.svg',
-        type: SwapProviderType.THORCHAIN,
+        type: SwapProviderType.Thorchain,
         thornode: 'https://thornode.thorchain.info',
       },
       astroport: {
         name: 'Astroport',
         icon: 'astroport.svg',
-        type: SwapProviderType.ASTROPORT,
+        type: SwapProviderType.Astroport,
         URL: 'https://lcd.terra.dev',
         chainID: 'columbus-5',
       },
@@ -170,6 +187,19 @@ export default {
   },
   discordUrl: 'https://discord.gg/Xsqw7PW8wk',
   networks: [Network.Mainnet, Network.Testnet],
-  chains: ['bitcoin', 'ethereum', 'rsk', 'bsc', 'near', 'polygon', 'arbitrum', 'terra', 'fuse', 'avalanche'],
+  chains: [
+    ChainId.Bitcoin,
+    ChainId.Ethereum,
+    ChainId.Rootstock,
+    ChainId.BinanceSmartChain,
+    ChainId.Near,
+    ChainId.Polygon,
+    ChainId.Arbitrum,
+    ChainId.Terra,
+    ChainId.Fuse,
+    ChainId.Avalanche,
+  ],
   supportedBridgeAssets: ['MATIC', 'RBTC', 'AVAX'],
 };
+
+export default config;

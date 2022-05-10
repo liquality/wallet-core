@@ -1,13 +1,23 @@
-import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { Asset, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import { TerraNetworks } from '@liquality/terra-networks';
+import { terra, Transaction } from '@liquality/types';
 import { LCDClient } from '@terra-money/terra.js';
-import BN from 'bignumber.js';
+import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
+import { ActionContext } from '../../store';
 import { withInterval } from '../../store/actions/performNextAction/utils';
+import { SwapHistoryItem } from '../../store/types';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { SwapProvider } from '../SwapProvider';
-import { QuoteRequest, SwapStatus } from '../types';
+import {
+  EstimateFeeRequest,
+  EstimateFeeResponse,
+  NextSwapActionRequest,
+  QuoteRequest,
+  SwapRequest,
+  SwapStatus,
+} from '../types';
 import {
   buildSwapFromContractTokenMsg,
   buildSwapFromContractTokenToUSTMsg,
@@ -17,12 +27,24 @@ import {
   getRateNativeToAsset,
 } from './queries';
 
+interface RateResponse {
+  amount: number;
+  return_amount: number;
+}
+
+interface AstroportSwapHistoryItem extends SwapHistoryItem {
+  swapTxHash: string;
+  swapTx: Transaction<terra.InputTransaction>;
+  fromTokenAddress: string;
+  toTokenAddress: string;
+  pairAddress: string;
+}
+
 class AstroportSwapProvider extends SwapProvider {
   async getSupportedPairs() {
     return [];
   }
 
-  // @ts-ignore TODO: check return type
   async getQuote(quoteRequest: QuoteRequest) {
     const { from, to, amount } = quoteRequest;
     const fromInfo = cryptoassets[from];
@@ -51,7 +73,7 @@ class AstroportSwapProvider extends SwapProvider {
     };
   }
 
-  async newSwap({ network, walletId, quote }) {
+  async newSwap({ network, walletId, quote }: SwapRequest<AstroportSwapHistoryItem>) {
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const [{ address }] = await client.wallet.getAddresses();
 
@@ -65,6 +87,9 @@ class AstroportSwapProvider extends SwapProvider {
     let txData;
 
     if (isFromNative) {
+      if (!denom) {
+        throw new Error('AstroportSwapProvider: denom unresolved but required for swaps from native');
+      }
       txData = buildSwapFromNativeTokenMsg(quote, denom, address, pairAddress);
     } else if (isFromERC20ToUST) {
       txData = buildSwapFromContractTokenToUSTMsg(quote, address, fromTokenAddress, pairAddress);
@@ -74,7 +99,12 @@ class AstroportSwapProvider extends SwapProvider {
 
     await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
 
-    const swapTx = await client.chain.sendTransaction(txData);
+    // @ts-ignore TODO: CAL should allow `any` for data
+    const swapTx = await client.chain.sendTransaction({
+      to: '',
+      value: new BigNumber(0),
+      ...txData,
+    });
 
     const updates = {
       status: 'WAITING_FOR_SWAP_CONFIRMATIONS',
@@ -92,7 +122,7 @@ class AstroportSwapProvider extends SwapProvider {
 
   // ======== STATE TRANSITIONS ========
 
-  async waitForSwapConfirmations({ swap, network, walletId }) {
+  async waitForSwapConfirmations({ swap, network, walletId }: NextSwapActionRequest<AstroportSwapHistoryItem>) {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
@@ -111,14 +141,13 @@ class AstroportSwapProvider extends SwapProvider {
     }
   }
 
-  async performNextSwapAction(_store, { network, walletId, swap }) {
-    let updates;
-
+  async performNextSwapAction(
+    _store: ActionContext,
+    { network, walletId, swap }: NextSwapActionRequest<AstroportSwapHistoryItem>
+  ) {
     if (swap.status === 'WAITING_FOR_SWAP_CONFIRMATIONS') {
-      updates = await withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
+      return withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
     }
-
-    return updates;
   }
 
   // ======== MIN AMOUNT =======
@@ -129,7 +158,7 @@ class AstroportSwapProvider extends SwapProvider {
 
   // ========= FEES ========
 
-  async estimateFees({ asset, txType, quote, feePrices }) {
+  async estimateFees({ asset, txType, quote, feePrices }: EstimateFeeRequest) {
     if (txType !== this.fromTxType) {
       throw new Error(`Invalid tx type ${txType}`);
     }
@@ -138,11 +167,11 @@ class AstroportSwapProvider extends SwapProvider {
 
     const gasLimit = quote.from === 'UST' || (quote.from === 'LUNA' && quote.to === 'UST') ? 400_000 : 1_500_000;
 
-    const fees = {};
+    const fees: EstimateFeeResponse = {};
 
     for (const feePrice of feePrices) {
       const fee = new BN(gasLimit).times(feePrice);
-      fees[feePrice] = unitToCurrency(cryptoassets[nativeAsset], fee).toFixed();
+      fees[feePrice] = new BN(unitToCurrency(cryptoassets[nativeAsset], fee).toFixed());
     }
 
     return fees;
@@ -159,14 +188,14 @@ class AstroportSwapProvider extends SwapProvider {
     });
   }
 
-  _getDenom(asset) {
+  _getDenom(asset: string) {
     return {
       LUNA: 'uluna',
       UST: 'uusd',
     }[asset];
   }
 
-  async _getSwapRate(fromAmount, fromInfo, toInfo) {
+  async _getSwapRate(fromAmount: string, fromInfo: Asset, toInfo: Asset) {
     const rpc = this._getRPC();
 
     // Check coin types
@@ -176,10 +205,7 @@ class AstroportSwapProvider extends SwapProvider {
     const erc20ToNative = fromInfo.type === 'erc20' && toInfo.type === 'native';
 
     // Select correct query and address depending on coin types
-    let contractData: any = {
-      address: '',
-      query: '',
-    };
+    let contractData;
 
     let fromTokenAddress, toTokenAddress;
 
@@ -190,10 +216,16 @@ class AstroportSwapProvider extends SwapProvider {
     } else if (erc20ToErc20) {
       fromTokenAddress = fromInfo.contractAddress;
       toTokenAddress = toInfo.contractAddress;
+      if (!fromTokenAddress || !toTokenAddress) {
+        throw new Error('AstroportSwapProvider: erc20ToErc20 swap but tokens missing contract address');
+      }
 
       contractData = getRateERC20ToERC20(fromAmount, fromTokenAddress, toTokenAddress);
     } else if (nativeToErc20) {
       toTokenAddress = toInfo.contractAddress;
+      if (!toTokenAddress) {
+        throw new Error('AstroportSwapProvider: nativeToErc20 swap but toToken missing contract address');
+      }
 
       const fromDenom = this._getDenom(fromInfo.code);
 
@@ -205,6 +237,9 @@ class AstroportSwapProvider extends SwapProvider {
           : getRateNativeToAsset(fromAmount, fromDenom, pairAddress);
     } else if (erc20ToNative) {
       fromTokenAddress = fromInfo.contractAddress;
+      if (!fromTokenAddress) {
+        throw new Error('AstroportSwapProvider: erc20ToNative swap but fromToken missing contract address');
+      }
 
       const toDenom = this._getDenom(toInfo.code);
 
@@ -215,26 +250,28 @@ class AstroportSwapProvider extends SwapProvider {
           ? getRateERC20ToERC20(fromAmount, fromTokenAddress, toDenom)
           : getRateNativeToAsset(fromAmount, fromTokenAddress, pairAddress);
     } else {
-      throw new Error(`From: ${fromInfo.type} To: ${toInfo.type}`);
+      throw new Error(`AstroportSwapProvider: Invalid swap pair From: ${fromInfo.type} To: ${toInfo.type}`);
     }
 
     const { address, query } = contractData;
 
     const pairAddress = address;
 
-    // TODO: type
-    const rate: any = await rpc.wasm.contractQuery(address, query);
+    const rate: RateResponse = await rpc.wasm.contractQuery(address, query);
 
     return { rate, fromTokenAddress, toTokenAddress, pairAddress };
   }
 
-  async _getPairAddress(tokenAddress) {
+  async _getPairAddress(tokenAddress: string): Promise<string> {
     const rpc = this._getRPC();
 
     const query = getPairAddressQuery(tokenAddress);
 
-    // TODO: type
-    const resp: any = await rpc.wasm.contractQuery('terra1fnywlw4edny3vw44x04xd67uzkdqluymgreu7g', query);
+    // TODO: fully define this type?
+    const resp: { contract_addr: string } = await rpc.wasm.contractQuery(
+      'terra1fnywlw4edny3vw44x04xd67uzkdqluymgreu7g',
+      query
+    );
 
     return resp.contract_addr;
   }
@@ -259,8 +296,10 @@ class AstroportSwapProvider extends SwapProvider {
         step: 1,
         label: 'Completed',
         filterStatus: 'COMPLETED',
-        notification(swap: any) {
-          return { message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use` };
+        notification(swap: AstroportSwapHistoryItem) {
+          return {
+            message: `Swap completed, ${prettyBalance(new BigNumber(swap.toAmount), swap.to)} ${swap.to} ready to use`,
+          };
         },
       },
       FAILED: {

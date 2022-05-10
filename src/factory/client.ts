@@ -29,13 +29,13 @@ import { TerraRpcProvider } from '@liquality/terra-rpc-provider';
 import { TerraSwapFindProvider } from '@liquality/terra-swap-find-provider';
 import { TerraSwapProvider } from '@liquality/terra-swap-provider';
 import { TerraWalletProvider } from '@liquality/terra-wallet-provider';
-import buildConfig from '../../build.config';
-import { isERC20 } from '../../utils/asset';
-import cryptoassets from '../../utils/cryptoassets';
-import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
-import { ChainNetworks } from '../../utils/networks';
-import { walletOptionsStore } from '../../walletOptions';
-import { AccountType, Asset, Network } from '../types';
+import buildConfig from '../build.config';
+import { AccountType, Asset, Network } from '../store/types';
+import { isERC20 } from '../utils/asset';
+import cryptoassets from '../utils/cryptoassets';
+import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
+import { ChainNetworks } from '../utils/networks';
+import { walletOptionsStore } from '../walletOptions';
 
 function createBtcClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
   const isTestnet = network === 'testnet';

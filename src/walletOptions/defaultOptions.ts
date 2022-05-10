@@ -12,12 +12,10 @@ const defaultWalletOptions: WalletOptions = {
         });
       });
     },
-    // @ts-ignore
-    encrypt(value, key) {
+    async encrypt(value, key) {
       return AES.encrypt(value, key);
     },
-    // @ts-ignore
-    decrypt(value, key) {
+    async decrypt(value, key) {
       return AES.decrypt(value, key);
     },
   },

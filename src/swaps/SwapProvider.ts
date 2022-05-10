@@ -1,7 +1,9 @@
-import store, { OriginalStore } from '../store';
+import store, { ActionContext } from '../store';
 import { createNotification } from '../store/broker/notification';
-import { MarketData, Network, SwapHistoryItem } from '../store/types';
+import { MarketData, Network, PairData, SwapHistoryItem } from '../store/types';
 import {
+  ActionStatus,
+  BaseSwapProviderConfig,
   EstimateFeeRequest,
   EstimateFeeResponse,
   GetQuoteResult,
@@ -12,10 +14,9 @@ import {
 } from './types';
 
 export abstract class SwapProvider {
-  // TODO: types
-  config: any;
+  config: BaseSwapProviderConfig;
 
-  constructor(config) {
+  constructor(config: BaseSwapProviderConfig) {
     this.config = config;
   }
 
@@ -37,7 +38,7 @@ export abstract class SwapProvider {
    * Get the supported pairs of this provider for this network
    * @param {{ network }} network
    */
-  public abstract getSupportedPairs({ network }: { network: Network });
+  public abstract getSupportedPairs({ network }: { network: Network }): Promise<PairData[]>;
 
   /**
    * Get a quote for the specified parameters
@@ -60,9 +61,15 @@ export abstract class SwapProvider {
    * @return updates An object representing updates to the current swap in the history
    */
   public abstract performNextSwapAction(
-    store: OriginalStore,
+    store: ActionContext,
     nextSwapAction: NextSwapActionRequest
-  ): Promise<Partial<SwapHistoryItem>>;
+  ): Promise<Partial<SwapHistoryItem> | undefined>;
+
+  public async waitForSwapConfirmations(
+    _nextSwapActionRequest: NextSwapActionRequest
+  ): Promise<ActionStatus | undefined> {
+    return;
+  }
 
   /**
    * Gets the market data

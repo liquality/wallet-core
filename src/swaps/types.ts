@@ -1,17 +1,29 @@
 import BigNumber from 'bignumber.js';
+import { SwapProviderDefinition } from '../build.config';
 import { AccountId, Asset, Network, SwapHistoryItem } from '../store/types';
+
+export interface BaseSwapProviderConfig extends SwapProviderDefinition {
+  providerId: string;
+}
+
+export interface LiqualityBoostSwapProviderConfig extends BaseSwapProviderConfig {
+  network: Network;
+  supportedBridgeAssets: Asset[];
+}
 
 export interface GetQuoteResult {
   from: Asset;
   to: Asset;
-  fromAmount: BigNumber;
-  toAmount: BigNumber;
+  fromAmount: string;
+  toAmount: string;
 }
 
 export interface SwapQuote extends GetQuoteResult {
   provider: string;
   fromAccountId: AccountId;
   toAccountId: AccountId;
+  path?: string[] | null;
+  slippage?: number;
 }
 
 export type QuoteRequest = {
@@ -21,24 +33,24 @@ export type QuoteRequest = {
   amount: BigNumber;
 };
 
-export type SwapRequest = {
+export type SwapRequest<T = SwapHistoryItem> = {
   network: Network;
   walletId: string;
-  quote: SwapQuote;
+  quote: T;
 };
 
-export type NextSwapActionRequest = {
+export type NextSwapActionRequest<T = SwapHistoryItem> = {
   network: Network;
   walletId: string;
-  swap: SwapHistoryItem;
+  swap: T;
 };
 
-export type EstimateFeeRequest = {
+export type EstimateFeeRequest<T = string, Q = SwapQuote> = {
   network: Network;
   walletId: string;
   asset: Asset;
-  txType: string;
-  quote: SwapQuote;
+  txType: T;
+  quote: Q;
   feePrices: number[];
   max: boolean;
 };
@@ -52,4 +64,9 @@ export type SwapStatus = {
   label: string;
   filterStatus: string;
   notification?: (swap?: unknown) => { message: string };
+};
+
+export type ActionStatus = {
+  endTime: number;
+  status: string;
 };

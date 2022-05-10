@@ -50,17 +50,21 @@ export default {
   SET_STATE(state: RootState, { newState }: { newState: RootState }) {
     Object.assign(state, newState);
   },
-  SETUP_WALLET(state: RootState, { key }: { key: string }) {
-    state.key = key;
-    state.keyUpdatedAt = Date.now();
-    state.setupAt = Date.now();
-  },
   CREATE_WALLET(
     state: RootState,
-    { keySalt, encryptedWallets, wallet }: { keySalt: string; encryptedWallets: string; wallet: Wallet }
+    {
+      key,
+      keySalt,
+      encryptedWallets,
+      wallet,
+    }: { key: string; keySalt: string; encryptedWallets: string; wallet: Wallet }
   ) {
-    state.encryptedWallets = encryptedWallets;
+    state.key = key;
     state.keySalt = keySalt;
+    state.keyUpdatedAt = Date.now();
+
+    state.setupAt = Date.now();
+    state.encryptedWallets = encryptedWallets;
     state.wallets = [wallet];
     if (!state.accounts[wallet.id]) {
       Vue.set(state.accounts, wallet.id, {
@@ -92,7 +96,10 @@ export default {
     state.unlockedAt = 0;
     state.wallets = [];
   },
-  UNLOCK_WALLET(state: RootState, { key, wallets, unlockedAt }: { key: string; wallets: Wallet[]; unlockedAt: 0 }) {
+  UNLOCK_WALLET(
+    state: RootState,
+    { key, wallets, unlockedAt }: { key: string; wallets: Wallet[]; unlockedAt: number }
+  ) {
     state.key = key;
     state.wallets = wallets;
     state.unlockedAt = unlockedAt;
@@ -292,12 +299,10 @@ export default {
   },
   REMOVE_CUSTOM_TOKEN(
     state: RootState,
-    { network, walletId, customToken }: { network: Network; walletId: WalletId; customToken: CustomToken }
+    { network, walletId, symbol }: { network: Network; walletId: WalletId; symbol: string }
   ) {
     ensureNetworkWalletTree(state.customTokens, network, walletId, []);
-    const indexOfToken = state.customTokens[network]![walletId].findIndex(
-      (token) => token.symbol === customToken.symbol
-    );
+    const indexOfToken = state.customTokens[network]![walletId].findIndex((token) => token.symbol === symbol);
     if (indexOfToken !== -1) {
       state.customTokens[network]![walletId].splice(indexOfToken, 1);
     }
@@ -416,7 +421,7 @@ export default {
   REMOVE_EXTERNAL_CONNECTIONS(state: RootState, { activeWalletId }: { activeWalletId: WalletId }) {
     Vue.set(state.externalConnections, activeWalletId, {});
   },
-  SET_ANALYTICS_PREFERENCES(state: RootState, payload: AnalyticsState) {
+  SET_ANALYTICS_PREFERENCES(state: RootState, payload: Partial<AnalyticsState>) {
     state.analytics = {
       ...state.analytics,
       ...payload,

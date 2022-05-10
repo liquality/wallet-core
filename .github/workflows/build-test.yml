@@ -1,6 +1,6 @@
 name: Build Test
 
-on: [push]
+on: [pull_request]
 
 jobs:
   build:
@@ -14,4 +14,8 @@ jobs:
       - run: yarn
       - run: yarn lint
       - run: yarn build
-      - run: yarn test
+      - name: Run __tests__ (coverage)
+        run: |
+          export FORCE_COLOR=true
+          export TEST_MNEMONIC=${{ secrets.TEST_MNEMONIC }}
+          yarn test:integration --coverage
