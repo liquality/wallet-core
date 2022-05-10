@@ -10,109 +10,29 @@ import { prettyBalance } from '../../utils/coinFormatter'
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils'
 import { isERC20 } from '../../utils/asset'
 import {
-  // BaseSwapProviderConfig,
+  BaseSwapProviderConfig,
   EstimateFeeRequest,
   EstimateFeeResponse,
-  // GetQuoteResult,
   NextSwapActionRequest,
   QuoteRequest,
-  // SwapQuote,
   SwapRequest,
   SwapStatus,
 } from '../types';
 import { ActionContext } from '../../store'
-// import { Network, PairData, SwapHistoryItem, WalletId } from '../../store/types'
 import { Network} from '../../store/types'
 
+export interface HopSwapProviderConfig extends BaseSwapProviderConfig {
+  graphqlBaseURL: string;
+}
+
 class HopSwapProvider extends SwapProvider {
-  protected _getStatuses(): Record<string, SwapStatus> {
-    return {
-      WAITING_FOR_APPROVE_CONFIRMATIONS: {
-        step: 0,
-        label: 'Approving {from}',
-        filterStatus: 'PENDING',
-        notification(swap : any) {
-          return {
-            message: `Approving ${swap.from}`
-          }
-        }
-      },
-      APPROVE_CONFIRMED: {
-        step: 1,
-        label: 'Swapping {from}',
-        filterStatus: 'PENDING'
-      },
-      WAITING_FOR_SEND_SWAP_CONFIRMATIONS: {
-        step: 1,
-        label: 'Swapping {from}',
-        filterStatus: 'PENDING',
-        notification() {
-          return {
-            message: 'Engaging the hop.exchange'
-          }
-        }
-      },
-      WAITING_FOR_RECIEVE_SWAP_CONFIRMATIONS: {
-        step: 2,
-        label: 'Swapping {to}',
-        filterStatus: 'PENDING',
-        notification() {
-          return {
-            message: 'Engaging the hop.exchange'
-          }
-        }
-      },
-      SUCCESS: {
-        step: 3,
-        label: 'Completed',
-        filterStatus: 'COMPLETED',
-        notification(swap: any) {
-          return {
-            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to
-              } ready to use`
-          }
-        }
-      },
-      FAILED: {
-        step: 3,
-        label: 'Swap Failed',
-        filterStatus: 'REFUNDED',
-        notification() {
-          return {
-            message: 'Swap failed'
-          }
-        }
-      }
-    }
-  }
-
-  protected _txTypes(): Record<string, string | null> {
-    return {
-      SWAP: 'SWAP',
-    };
-  }
-  protected _fromTxType(): string | null {
-   return this._txTypes().SWAP;
-  }
-  protected _toTxType(): string | null {
-    return null;
-  }
-  protected _totalSteps(): number {
-    return 4;
-  }
-  protected _timelineDiagramSteps(): string[] {
-    return ['APPROVE', 'INITIATION', 'RECEIVE']
-  }
-
-  config: any;
-  _apiCache: any;
+  config: HopSwapProviderConfig;
   graphqlURLs: { [key: string]: string };
 
-  constructor(config: any) {
+  constructor(config: HopSwapProviderConfig) {
     super(config)
-    this._apiCache = {}
     this.graphqlURLs = {
-      url: 'https://api.thegraph.com/subgraphs/name/hop-protocol',
+      url: this.config.graphqlBaseURL,
       ethereum: 'hop-mainnet',
       xdai: 'hop-xdai',
       arbitrum: 'hop-arbitrum',
@@ -168,7 +88,7 @@ class HopSwapProvider extends SwapProvider {
     return slugToChain[chainName]
   }
   // L2->L1 or L2->L2
-  GQL_getDestinationTxHashFromL2Source(transferId: any) {
+  GQL_getDestinationTxHashFromL2Source(transferId: string) {
     return `query {
         withdrawalBondeds(
           where: {
@@ -185,7 +105,7 @@ class HopSwapProvider extends SwapProvider {
     `
   }
   // L1->L2
-  GQL_getDestinationTxHashFromL1Source(recipient : any) {
+  GQL_getDestinationTxHashFromL1Source(recipient : string) {
     return `query {
         transferFromL1Completeds(
           where: {
@@ -204,7 +124,7 @@ class HopSwapProvider extends SwapProvider {
     `
   }
 
-  GQL_getTransferIdByTxHash(txHash: any) {
+  GQL_getTransferIdByTxHash(txHash: string) {
     return `query {
         transferSents(
           where: {
@@ -494,7 +414,7 @@ class HopSwapProvider extends SwapProvider {
   }
 
   async waitForRecieveSwapConfirmations({ swap, network, walletId }: any) {
-    const { hopChainFrom, hopChainTo, fromFundHash, from, to, fromAccountId } = swap
+    const { hopChainFrom, hopChainTo, fromFundHash, from, to, fromAccountId, toAccountId } = swap
     const client = this._getClient(network, walletId, from, fromAccountId)
     const privKey = await client.wallet.exportPrivateKey()
     const signer = new Wallet(privKey)
@@ -524,7 +444,7 @@ class HopSwapProvider extends SwapProvider {
       const destinationTxHash = data[methodName]?.[0]?.transactionHash
 
       if (!destinationTxHash) return
-      const client = this._getClient(network, walletId, to, fromAccountId)
+      const client = this._getClient(network, walletId, to, toAccountId)
       const tx = await client.chain.getTransactionByHash(data[methodName]?.[0]?.transactionHash)
       if (tx && tx.confirmations && tx.confirmations >= 1) {
         return {
@@ -575,6 +495,84 @@ class HopSwapProvider extends SwapProvider {
         break
     }
     return updates
+  }
+
+  protected _getStatuses(): Record<string, SwapStatus> {
+    return {
+      WAITING_FOR_APPROVE_CONFIRMATIONS: {
+        step: 0,
+        label: 'Approving {from}',
+        filterStatus: 'PENDING',
+        notification(swap : any) {
+          return {
+            message: `Approving ${swap.from}`
+          }
+        }
+      },
+      APPROVE_CONFIRMED: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING'
+      },
+      WAITING_FOR_SEND_SWAP_CONFIRMATIONS: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
+        notification() {
+          return {
+            message: 'Engaging the hop.exchange'
+          }
+        }
+      },
+      WAITING_FOR_RECIEVE_SWAP_CONFIRMATIONS: {
+        step: 2,
+        label: 'Swapping {to}',
+        filterStatus: 'PENDING',
+        notification() {
+          return {
+            message: 'Engaging the hop.exchange'
+          }
+        }
+      },
+      SUCCESS: {
+        step: 3,
+        label: 'Completed',
+        filterStatus: 'COMPLETED',
+        notification(swap: any) {
+          return {
+            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to
+              } ready to use`
+          }
+        }
+      },
+      FAILED: {
+        step: 3,
+        label: 'Swap Failed',
+        filterStatus: 'REFUNDED',
+        notification() {
+          return {
+            message: 'Swap failed'
+          }
+        }
+      }
+    }
+  }
+  protected _txTypes(): Record<string, string | null> {
+    return {
+      SWAP: 'SWAP',
+    };
+  }
+  protected _fromTxType(): string | null {
+   return this._txTypes().SWAP;
+  }
+  protected _toTxType(): string | null {
+    return null;
+  }
+  protected _totalSteps(): number {
+    return 4;
+  }
+  protected _timelineDiagramSteps(): string[] {
+    return ['APPROVE', 'INITIATION', 'RECEIVE']
   }
 }
 

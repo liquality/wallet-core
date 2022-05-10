@@ -113,11 +113,6 @@ const config: WalletCoreConfig = {
         routerAddress: SovrynTestnetAddresses.swapNetwork,
         routerAddressRBTC: SovrynTestnetAddresses.proxy3,
         rpcURL: 'https://testnet.sovryn.app/rpc',
-      },
-      hop: {
-        name: 'Hop',
-        icon: 'hop.svg',
-        type: SwapProviderType.Hop
       }
     },
     mainnet: {
@@ -191,7 +186,8 @@ const config: WalletCoreConfig = {
       hop: {
         name: 'Hop',
         icon: 'hop.svg',
-        type: SwapProviderType.Hop
+        type: SwapProviderType.Hop,
+        graphqlBaseURL: 'https://api.thegraph.com/subgraphs/name/hop-protocol',
       }
     },
   },
