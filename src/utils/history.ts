@@ -33,10 +33,12 @@ export function getStep(item: HistoryItem) {
   if (item.type === TransactionType.Send) {
     return SEND_STATUS_STEP_MAP[item.status];
   }
-  if (item.type === 'SWAP') {
+  if (item.type === TransactionType.Swap) {
     const swapProvider = getSwapProvider(item.network, item.provider);
     return swapProvider.statuses[item.status].step;
   }
+
+  throw new Error('getStep: Unknown type');
 }
 
 export const ACTIVITY_FILTER_TYPES = {
