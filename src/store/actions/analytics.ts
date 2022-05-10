@@ -1,44 +1,60 @@
 import amplitude from 'amplitude-js';
 import { v4 as uuidv4 } from 'uuid';
+import { ActionContext, rootActionContext } from '..';
 import { version as walletVersion } from '../../../package.json';
+import { AnalyticsState } from '../types';
+
+export interface AmplitudeProperties {
+  category?: string;
+  action?: string;
+  label?: string;
+  [key: string]: any;
+}
 
 const useAnalytics = !!process.env.VUE_APP_AMPLITUDE_API_KEY;
-console.log('ANALITYCS_ENABLED', useAnalytics);
 
-export const initializeAnalyticsPreferences = ({ commit }, { accepted }) => {
-  commit('SET_ANALYTICS_PREFERENCES', {
+export const initializeAnalyticsPreferences = (context: ActionContext, { accepted }: { accepted: boolean }) => {
+  const { commit } = rootActionContext(context);
+  commit.SET_ANALYTICS_PREFERENCES({
     userId: uuidv4(),
-    acceptedDate: accepted ? Date.now() : null,
+    acceptedDate: accepted ? Date.now() : 0,
     askedTimes: 0,
     askedDate: Date.now(),
     notAskAgain: false,
   });
 };
 
-export const updateAnalyticsPreferences = ({ commit }, payload) => {
-  commit('SET_ANALYTICS_PREFERENCES', { ...payload });
+export const updateAnalyticsPreferences = (context: ActionContext, payload: AnalyticsState) => {
+  const { commit } = rootActionContext(context);
+  commit.SET_ANALYTICS_PREFERENCES({ ...payload });
 };
 
-export const setAnalyticsResponse = async ({ commit }, { accepted }) => {
+export const setAnalyticsResponse = async (context: ActionContext, { accepted }: { accepted: boolean }) => {
+  const { commit } = rootActionContext(context);
   if (accepted) {
-    commit('SET_ANALYTICS_PREFERENCES', { acceptedDate: Date.now() });
+    commit.SET_ANALYTICS_PREFERENCES({ acceptedDate: Date.now() });
   } else {
-    commit('SET_ANALYTICS_PREFERENCES', { acceptedDate: null });
+    commit.SET_ANALYTICS_PREFERENCES({ acceptedDate: 0 });
   }
 };
 
-export const initializeAnalytics = async ({ dispatch, state }) => {
+export const initializeAnalytics = async (context: ActionContext): Promise<boolean> => {
+  const { state, dispatch } = rootActionContext(context);
   if (!state.analytics || !state.analytics.userId) {
-    await dispatch('initializeAnalyticsPreferences', { accepted: false });
+    await dispatch.initializeAnalyticsPreferences({ accepted: false });
     return false;
   } else if (state.analytics?.acceptedDate && useAnalytics) {
-    amplitude.getInstance().init(process.env.VUE_APP_AMPLITUDE_API_KEY, state.analytics?.userId);
+    amplitude.getInstance().init(process.env.VUE_APP_AMPLITUDE_API_KEY!, state.analytics?.userId);
     return true;
   }
   return false;
 };
 
-export const trackAnalytics = ({ state }, { event, properties = {} }) => {
+export const trackAnalytics = (
+  context: ActionContext,
+  { event, properties = {} }: { event: string; properties: AmplitudeProperties }
+): amplitude.LogReturn => {
+  const { state } = rootActionContext(context);
   if (useAnalytics && state.analytics && state.analytics.acceptedDate && state.analytics.userId) {
     const { activeNetwork, activeWalletId, version } = state;
     return amplitude.getInstance().logEvent(event, {

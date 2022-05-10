@@ -1,9 +1,33 @@
-export const clientExec = async ({ getters }, { network, walletId, asset, method, args, returnType, accountId }) => {
+import { Address } from '@liquality/types';
+import { ActionContext, rootActionContext } from '..';
+import { AccountId, Asset, Network, WalletId } from '../types';
+
+export const clientExec = async (
+  context: ActionContext,
+  {
+    network,
+    walletId,
+    asset,
+    method,
+    args,
+    returnType,
+    accountId,
+  }: {
+    network: Network;
+    walletId: WalletId;
+    asset: Asset;
+    method: string;
+    args: string[];
+    returnType: string;
+    accountId: AccountId;
+  }
+): Promise<any> => {
+  const { getters } = rootActionContext(context);
   const client = getters.client({ network, walletId, asset, accountId });
 
   const [namespace, fnName] = method.split('.');
 
-  let result = await client[namespace][fnName](...args);
+  let result = await (client as any)[namespace][fnName](...args);
 
   if (returnType) {
     switch (returnType) {
@@ -12,7 +36,7 @@ export const clientExec = async ({ getters }, { network, walletId, asset, method
         break;
 
       case 'Addresses':
-        result = result.map((item) => item.address);
+        result = result.map((item: Address) => item.address);
         break;
 
       case 'BigNumber':

@@ -47,10 +47,10 @@ export enum AccountType {
 export interface AccountDefinition {
   type: AccountType;
   name: string;
-  alias: string;
+  alias?: string;
   chain: ChainId;
   index: number;
-  derivationPath: string;
+  derivationPath?: string;
   addresses: string[];
   assets: Asset[];
   balances: Record<Asset, string>;
@@ -64,15 +64,19 @@ export interface Account extends AccountDefinition {
   walletId: WalletId;
   createdAt: number;
   enabled: boolean;
+  derivationPath: string;
 }
 
-export interface MarketData {
+export interface PairData {
   from: Asset;
   to: Asset;
-  provider: string;
-  rate: number;
+  rate: string;
   max: string;
   min: string;
+}
+
+export interface MarketData extends PairData {
+  provider: string;
 }
 
 export enum FeeLabel {
@@ -88,7 +92,8 @@ export enum TransactionType {
 
 export enum SwapProviderType {
   Liquality = 'liquality',
-  LiqualityBoost = 'liqualityBoost',
+  LiqualityBoostNativeToERC20 = 'liqualityBoostNativeToERC20',
+  LiqualityBoostERC20ToNative = 'liqualityBoostERC20toNative',
   UniswapV2 = 'uniswapV2',
   FastBTC = 'fastBTC',
   OneInch = 'oneinchV4',
@@ -103,12 +108,14 @@ export interface BaseHistoryItem {
   from: Asset;
   id: string;
   network: Network;
-  receiveFee: string;
   startTime: number;
+  endTime?: number;
   status: string; // TODO: actual types?
   to: Asset;
-  type: TransactionType; // swpa send?
+  type: TransactionType;
   walletId: WalletId;
+  error?: string;
+  waitingForLock?: boolean;
 }
 
 export enum SendStatus {
@@ -120,7 +127,7 @@ export enum SendStatus {
 export interface SendHistoryItem extends BaseHistoryItem {
   type: TransactionType.Send;
   toAddress: string;
-  amount: number;
+  amount: string;
   tx: Transaction;
   txHash: string;
   accountId: AccountId;
@@ -131,16 +138,15 @@ export interface SendHistoryItem extends BaseHistoryItem {
 export interface SwapHistoryItem extends BaseHistoryItem {
   type: TransactionType.Swap;
   claimFeeLabel: FeeLabel;
+  claimFee: number;
   fromAmount: string;
   fromAccountId: AccountId;
-  fromFundHash: string;
-  fromFundTx: Transaction;
-  maxFeeSlippageMultiplier: number;
-  provider: SwapProviderType;
+  provider: string;
   slippage: number;
   toAccountId: AccountId;
   toAmount: string;
   bridgeAsset?: Asset;
+  path?: string[];
 }
 
 export type HistoryItem = SendHistoryItem | SwapHistoryItem;
@@ -179,7 +185,7 @@ export interface RootState {
 
   fiatRates: FiatRates;
   fees: NetworkWalletIdMap<Record<Asset, FeeDetails>>;
-  history: NetworkWalletIdMap<BaseHistoryItem[]>;
+  history: NetworkWalletIdMap<HistoryItem[]>;
   marketData: Partial<Record<Network, MarketData[]>>;
 
   activeNetwork: Network;

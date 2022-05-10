@@ -1,5 +1,4 @@
 {
-  /*TODO: switch more rules to true*/
   "compilerOptions": {
     "target": "es6",
     "declaration": true,

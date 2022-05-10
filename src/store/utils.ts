@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Client } from '@liquality/client';
 import { AssetTypes, ChainId } from '@liquality/cryptoassets';
 import { EthereumErc20Provider } from '@liquality/ethereum-erc20-provider';
@@ -10,20 +9,21 @@ import { findKey, mapKeys, mapValues, random } from 'lodash';
 import buildConfig from '../build.config';
 import cryptoassets from '../utils/cryptoassets';
 import { ChainNetworks } from '../utils/networks';
+import { Asset, Network, RootState, WalletId } from './types';
 
-export const CHAIN_LOCK = {};
+export const CHAIN_LOCK: { [key: string]: boolean } = {};
 
 export const emitter = new EventEmitter();
 
-const wait = (millis) => new Promise((resolve) => setTimeout(() => resolve(), millis));
+const wait = (millis: number) => new Promise<void>((resolve) => setTimeout(() => resolve(), millis));
 
 export { wait };
 
-export const waitForRandom = (min, max) => wait(random(min, max));
+export const waitForRandom = (min: number, max: number) => wait(random(min, max));
 
 export const timestamp = () => Date.now();
 
-export const attemptToLockAsset = (network, walletId, asset) => {
+export const attemptToLockAsset = (network: Network, walletId: WalletId, asset: Asset) => {
   const chain = cryptoassets[asset].chain;
   const key = [network, walletId, chain].join('-');
 
@@ -42,7 +42,7 @@ export const attemptToLockAsset = (network, walletId, asset) => {
   };
 };
 
-export const unlockAsset = (key) => {
+export const unlockAsset = (key: string) => {
   CHAIN_LOCK[key] = false;
 
   emitter.emit(`unlock:${key}`);
@@ -58,14 +58,18 @@ const getRskERC20Assets = () => {
   return erc20.map((erc) => cryptoassets[erc]);
 };
 
-export const shouldApplyRskLegacyDerivation = async (accounts, mnemonic?, indexPath = 0) => {
+export const shouldApplyRskLegacyDerivation = async (
+  accounts: RootState['accounts'],
+  mnemonic?: string,
+  indexPath = 0
+) => {
   const rskERC20Assets = getRskERC20Assets();
   const walletIds = Object.keys(accounts);
 
-  const addresses = [];
+  const addresses: string[] = [];
 
   walletIds.forEach((wallet) => {
-    const walletAccounts = accounts[wallet].mainnet;
+    const walletAccounts = accounts[wallet]!.mainnet;
 
     walletAccounts.forEach((account) => {
       if (account.chain === ChainId.Rootstock) {
@@ -93,7 +97,7 @@ export const shouldApplyRskLegacyDerivation = async (accounts, mnemonic?, indexP
   const erc20BalancesPromises = rskERC20Assets.map((asset) => {
     const client = new Client()
       .addProvider(new EthereumRpcProvider({ uri: 'https://public-node.rsk.co' }))
-      .addProvider(new EthereumErc20Provider(asset.contractAddress));
+      .addProvider(new EthereumErc20Provider(asset.contractAddress!));
 
     return client.chain.getBalance(addresses);
   });
@@ -103,19 +107,19 @@ export const shouldApplyRskLegacyDerivation = async (accounts, mnemonic?, indexP
   return balances.some((amount) => amount.isGreaterThan(0));
 };
 
-export async function getPrices(baseCurrencies, toCurrency) {
+export async function getPrices(baseCurrencies: string[], toCurrency: string) {
   const coindIds = baseCurrencies
     .filter((currency) => cryptoassets[currency]?.coinGeckoId)
     .map((currency) => cryptoassets[currency].coinGeckoId);
   const { data } = await axios.get(
     `${COIN_GECKO_API}/simple/price?ids=${coindIds.join(',')}&vs_currencies=${toCurrency}`
   );
-  let prices = mapKeys(data, (v, coinGeckoId) => findKey(cryptoassets, (asset) => asset.coinGeckoId === coinGeckoId));
-  prices = mapValues(prices, (rates) => mapKeys(rates, (v, k) => k.toUpperCase()));
+  let prices = mapKeys(data, (_, coinGeckoId) => findKey(cryptoassets, (asset) => asset.coinGeckoId === coinGeckoId));
+  prices = mapValues(prices, (rates) => mapKeys(rates, (_, k) => k.toUpperCase()));
 
   for (const baseCurrency of baseCurrencies) {
     if (!prices[baseCurrency] && cryptoassets[baseCurrency]?.matchingAsset) {
-      prices[baseCurrency] = prices[cryptoassets[baseCurrency]?.matchingAsset];
+      prices[baseCurrency] = prices[cryptoassets[baseCurrency].matchingAsset!];
     }
   }
   const symbolPrices = mapValues(prices, (rates) => rates[toCurrency.toUpperCase()]);

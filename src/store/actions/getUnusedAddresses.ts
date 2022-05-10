@@ -1,12 +1,26 @@
 import { ChainId } from '@liquality/cryptoassets';
 import Bluebird from 'bluebird';
+import { ActionContext, rootActionContext } from '..';
 import { isEthereumChain } from '../../utils/asset';
+import { AccountId, Asset, Network, WalletId } from '../types';
 
-export const getUnusedAddresses = async ({ state, commit, getters }, { network, walletId, assets, accountId }) => {
+export const getUnusedAddresses = async (
+  context: ActionContext,
+  {
+    network,
+    walletId,
+    assets,
+    accountId,
+  }: { network: Network; walletId: WalletId; assets: Asset[]; accountId: AccountId }
+): Promise<string[]> => {
+  const { state, commit, getters } = rootActionContext(context);
   return Bluebird.map(
     assets,
     async (asset) => {
       const accounts = state.accounts[walletId]?.[network];
+      if (!accounts) {
+        throw new Error('getUnusedAddresses: Accounts not found ');
+      }
       const index = accounts.findIndex((a) => a.id === accountId);
       if (index >= 0 && asset) {
         const account = accounts[index];
@@ -31,11 +45,10 @@ export const getUnusedAddresses = async ({ state, commit, getters }, { network, 
           updatedAddresses = [address];
         }
 
-        commit('UPDATE_ACCOUNT_ADDRESSES', {
+        commit.UPDATE_ACCOUNT_ADDRESSES({
           network,
           accountId: account.id,
           walletId,
-          asset,
           addresses: updatedAddresses,
         });
 

@@ -1,15 +1,31 @@
+import { Transaction } from '@liquality/types';
 import { isObject } from 'lodash';
-import { rootActionContext } from '..';
-import { SwapHistoryItem } from '../types';
+import { ActionContext, rootActionContext } from '..';
+import { getSwapProvider } from '../../factory/swapProvider';
+import { LiqualitySwapHistoryItem, LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
+import { Asset, HistoryItem, Network, TransactionType, WalletId } from '../types';
 import { unlockAsset } from '../utils';
 
-export const updateTransactionFee = async (context, { network, walletId, asset, id, hash, newFee }) => {
+export const updateTransactionFee = async (
+  context: ActionContext,
+  {
+    network,
+    walletId,
+    asset,
+    id,
+    hash,
+    newFee,
+  }: { network: Network; walletId: WalletId; asset: Asset; id: string; hash: string; newFee: number }
+): Promise<Transaction> => {
   const { dispatch, commit, getters } = rootActionContext(context);
   const item = getters.historyItemById(network, walletId, id);
 
-  const hashKey = Object.keys(item).find((key) => item[key] === hash);
+  if (!item) throw new Error('updateTransactionFee: Item does not exist');
 
-  const txKey = Object.keys(item).find((key) => isObject(item[key]) && item[key].hash === hash);
+  const hashKey = Object.keys(item).find((key: keyof HistoryItem) => item[key] === hash);
+
+  // @ts-ignore TODO: this needs refactoring to be more typescripty
+  const txKey = Object.keys(item).find((key: keyof HistoryItem) => isObject(item[key]) && item[key].hash === hash);
 
   if (!hashKey || !txKey) {
     throw new Error('Updating fee: Transaction not found');
@@ -22,15 +38,16 @@ export const updateTransactionFee = async (context, { network, walletId, asset, 
     refundTx: 'fee',
   }[txKey] as string;
 
+  const accountId = item.type === TransactionType.Swap ? item.fromAccountId : item.accountId;
+
   const client = getters.client({
     network,
     walletId,
     asset,
-    // @ts-ignore
-    accountId: item.fromAccountId, // TODO: confirm if the from account should be used here
+    accountId,
   });
 
-  const oldTx = item[txKey];
+  const oldTx = (item as any)[txKey] as Transaction | string;
 
   let newTx;
   const lock = await dispatch.getLockForAsset({
@@ -63,9 +80,12 @@ export const updateTransactionFee = async (context, { network, walletId, asset, 
 
   const isFundingUpdate = hashKey === 'fromFundHash';
   if (isFundingUpdate) {
+    if (item.type !== TransactionType.Swap) {
+      throw new Error('updateTransactionFee: Funding update must be swap transaction type.');
+    }
     // TODO: this should be the function of any swap? Should be able to bump any tx
-    const swapProvider = getters.swapProvider(network, (item as SwapHistoryItem).provider);
-    await swapProvider.updateOrder(item);
+    const swapProvider = getSwapProvider(network, item.provider) as LiqualitySwapProvider;
+    await swapProvider.updateOrder(item as LiqualitySwapHistoryItem);
   }
 
   return newTx;

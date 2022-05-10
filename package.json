@@ -1,6 +1,6 @@
 {
   "name": "@liquality/wallet-core",
-  "version": "1.4.21",
+  "version": "1.4.31",
   "description": "Common library for liquality wallet",
   "repository": "git@github.com:liquality/wallet-core.git",
   "author": "monokh <mnokhb@gmail.com>",
@@ -77,6 +77,10 @@
   },
   "devDependencies": {
     "@babel/types": "^7.17.0",
+    "@commitlint/cli": "^16.2.3",
+    "@commitlint/config-conventional": "^16.2.1",
+    "@types/amplitude-js": "^8.16.0",
+    "@types/bluebird": "^3.5.36",
     "@types/chrome": "^0.0.179",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^27.4.1",
@@ -89,6 +93,7 @@
     "eslint": "^8.9.0",
     "eslint-config-prettier": "^8.4.0",
     "eslint-plugin-jest": "^26.1.1",
+    "husky": "^7.0.4",
     "jest": "^27.5.1",
     "prettier": "^2.5.1",
     "prettier-plugin-organize-imports": "^2.3.4",
@@ -101,6 +106,7 @@
     "lint": "eslint . --ext .ts",
     "prettier:fix": "prettier --write .",
     "test": "jest --coverage",
+    "test:integration": "jest --verbose --forceExit",
     "test:watch": "jest --watch"
   }
 }

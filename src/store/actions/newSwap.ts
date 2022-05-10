@@ -1,14 +1,41 @@
-export const newSwap = async (store, { network, walletId, quote, fee, claimFee, feeLabel, claimFeeLabel }) => {
-  const swap = { ...quote };
+import { ActionContext, rootActionContext } from '..';
+import { getSwapProvider } from '../../factory/swapProvider';
+import { SwapQuote } from '../../swaps/types';
+import { FeeLabel, Network, SwapHistoryItem, TransactionType, WalletId } from '../types';
 
-  swap.type = 'SWAP';
-  swap.network = network;
-  swap.startTime = Date.now();
-  swap.walletId = walletId;
-  swap.fee = fee;
-  swap.claimFee = claimFee;
+export const newSwap = async (
+  context: ActionContext,
+  {
+    network,
+    walletId,
+    quote,
+    fee,
+    claimFee,
+    feeLabel,
+    claimFeeLabel,
+  }: {
+    network: Network;
+    walletId: WalletId;
+    quote: SwapQuote;
+    fee: number;
+    claimFee: number;
+    feeLabel: FeeLabel;
+    claimFeeLabel: FeeLabel;
+  }
+): Promise<SwapHistoryItem> => {
+  const { commit, dispatch } = rootActionContext(context);
+  // @ts-ignore TODO: Transition of quote from plain quote -> quote with options -> swap is not clearly typed
+  const swap: SwapHistoryItem = {
+    ...quote,
+    type: TransactionType.Swap,
+    network,
+    startTime: Date.now(),
+    walletId,
+    claimFee,
+    fee,
+  };
 
-  const swapProvider = store.getters.swapProvider(network, swap.provider);
+  const swapProvider = getSwapProvider(network, swap.provider!);
   const initiationParams = await swapProvider.newSwap({
     network,
     walletId,
@@ -22,13 +49,13 @@ export const newSwap = async (store, { network, walletId, quote, fee, claimFee, 
     claimFeeLabel,
   };
 
-  store.commit('NEW_SWAP', {
+  commit.NEW_SWAP({
     network,
     walletId,
     swap: createdSwap,
   });
 
-  store.dispatch('performNextAction', {
+  dispatch.performNextAction({
     network,
     walletId,
     id: createdSwap.id,

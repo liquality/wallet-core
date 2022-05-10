@@ -1,5 +1,4 @@
 {
-  /*TODO: switch more rules to true*/
   "compilerOptions": {
     "target": "es6",
     "declaration": true,
@@ -15,14 +14,14 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
     "rootDir": ".",
     "outDir": "../dist/",
     "removeComments": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true // TODO: remove this if possible
+    "skipLibCheck": true
   },
   "include": ["**/*"],
   "references": [
