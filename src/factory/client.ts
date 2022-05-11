@@ -123,13 +123,15 @@ function createEthereumClient(
   } else {
     ethClient.addProvider(
       new EthereumJsWalletProvider({
-        network: ethereumNetwork,
+        network: { ...ethereumNetwork, chainId: 4 },
         mnemonic,
         derivationPath,
         hardfork,
       })
     );
   }
+  // const nftProvider = new EvmNftProvider(ethereumNetwork as EthereumNetwork, {} as any);
+  // console.log('🚀 ~ file: client.ts ~ line 135 ~ nftProvider', nftProvider);
 
   if (isERC20(asset)) {
     const contractAddress = cryptoassets[asset].contractAddress;

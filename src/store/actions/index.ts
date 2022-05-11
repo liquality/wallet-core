@@ -27,6 +27,7 @@ export * from './performNextAction';
 export * from './proxyMutation';
 export * from './removeCustomToken';
 export * from './retrySwap';
+export * from './sendNFTTransaction';
 export * from './sendTransaction';
 export * from './setEthereumInjectionChain';
 export * from './setWatsNewModalVersion';
