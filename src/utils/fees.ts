@@ -13,13 +13,13 @@ const FEE_OPTIONS = {
   CUSTOM: { name: 'Custom', label: 'Custom' },
 };
 
-const feePriceInWei = (asset: Asset, feePrice: number) => {
+const feePriceInUnit = (asset: Asset, feePrice: number) => {
   return isEthereumChain(asset) ? new BN(feePrice).times(1e9) : feePrice; // ETH fee price is in gwei
 };
 
 function getSendFee(asset: Asset, feePrice: number) {
   const assetInfo = cryptoassets[asset];
-  const fee = new BN(assetInfo.sendGasLimit).times(feePriceInWei(asset, feePrice));
+  const fee = new BN(assetInfo.sendGasLimit).times(feePriceInUnit(asset, feePrice));
   return unitToCurrency(assetInfo, fee);
 }
 
@@ -28,7 +28,7 @@ function getTxFee(units: FeeUnits, _asset: Asset, _feePrice: number) {
   const nativeAsset = chains[chainId].nativeAsset;
   const asset = isERC20(_asset) ? 'ERC20' : _asset;
   const feeUnits = units[asset];
-  const fee = new BN(feeUnits).times(feePriceInWei(_asset, _feePrice));
+  const fee = new BN(feeUnits).times(feePriceInUnit(_asset, _feePrice));
 
   return unitToCurrency(cryptoassets[nativeAsset], fee);
 }
