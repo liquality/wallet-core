@@ -1,4 +1,4 @@
-import { chains, currencyToUnit, isEthereumChain, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, chains, currencyToUnit, isEthereumChain, unitToCurrency } from '@liquality/cryptoassets';
 import { EthereumNetwork } from '@liquality/ethereum-networks';
 import { Transaction } from '@liquality/types';
 import {
@@ -40,7 +40,7 @@ const THORCHAIN_DECIMAL = 8;
 const SAFE_FEE_MULTIPLIER = 1.3;
 const MAX_FEE_SLIPPAGE_MULTIPLIER = 3;
 
-const SUPPORTED_CHAINS = ['bitcoin', 'ethereum'];
+const SUPPORTED_CHAINS = [ChainId.Bitcoin, ChainId.Ethereum];
 
 const OUT_MEMO_TO_STATUS = {
   OUT: 'SUCCESS',
