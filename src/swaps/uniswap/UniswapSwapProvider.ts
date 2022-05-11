@@ -105,9 +105,14 @@ class UniswapSwapProvider extends SwapProvider {
 
   async getQuote({ network, from, to, amount }: QuoteRequest) {
     // Uniswap only provides liquidity for ethereum tokens
-    if (!isEthereumChain(from) || !isEthereumChain(to)) return null;
+    if (!isEthereumChain(from) || !isEthereumChain(to)) {
+      return null;
+    }
+
     // Only uniswap on ethereum is supported atm
-    if (cryptoassets[from].chain !== ChainId.Ethereum || cryptoassets[to].chain !== ChainId.Ethereum) return null;
+    if (cryptoassets[from].chain !== ChainId.Ethereum || cryptoassets[to].chain !== ChainId.Ethereum) {
+      return null;
+    }
 
     const chainId = this.getChainId(from, network);
 

@@ -1,4 +1,4 @@
-import { Asset, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { Asset, AssetTypes, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import { TerraNetworks } from '@liquality/terra-networks';
 import { terra, Transaction } from '@liquality/types';
 import { LCDClient } from '@terra-money/terra.js';
@@ -207,10 +207,10 @@ class AstroportSwapProvider extends SwapProvider {
     const rpc = this._getRPC();
 
     // Check coin types
-    const nativeToNative = fromInfo.type === 'native' && toInfo.type === 'native';
-    const erc20ToErc20 = fromInfo.type === 'erc20' && toInfo.type === 'erc20';
-    const nativeToErc20 = fromInfo.type === 'native' && toInfo.type === 'erc20';
-    const erc20ToNative = fromInfo.type === 'erc20' && toInfo.type === 'native';
+    const nativeToNative = fromInfo.type === AssetTypes.native && toInfo.type === AssetTypes.native;
+    const erc20ToErc20 = fromInfo.type === AssetTypes.erc20 && toInfo.type === AssetTypes.erc20;
+    const nativeToErc20 = fromInfo.type === AssetTypes.native && toInfo.type === AssetTypes.erc20;
+    const erc20ToNative = fromInfo.type === AssetTypes.erc20 && toInfo.type === AssetTypes.native;
 
     // Select correct query and address depending on coin types
     let contractData;
