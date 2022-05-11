@@ -14,14 +14,16 @@ export interface LiqualityBoostSwapProviderConfig extends BaseSwapProviderConfig
 export interface GetQuoteResult {
   from: Asset;
   to: Asset;
-  fromAmount: BigNumber;
-  toAmount: BigNumber;
+  fromAmount: string;
+  toAmount: string;
 }
 
 export interface SwapQuote extends GetQuoteResult {
   provider: string;
   fromAccountId: AccountId;
   toAccountId: AccountId;
+  path?: string[] | null;
+  slippage?: number;
 }
 
 export type QuoteRequest = {
@@ -31,24 +33,24 @@ export type QuoteRequest = {
   amount: BigNumber;
 };
 
-export type SwapRequest = {
+export type SwapRequest<T = SwapHistoryItem> = {
   network: Network;
   walletId: string;
-  quote: SwapHistoryItem;
+  quote: T;
 };
 
-export type NextSwapActionRequest = {
+export type NextSwapActionRequest<T = SwapHistoryItem> = {
   network: Network;
   walletId: string;
-  swap: SwapHistoryItem;
+  swap: T;
 };
 
-export type EstimateFeeRequest = {
+export type EstimateFeeRequest<T = string, Q = SwapQuote> = {
   network: Network;
   walletId: string;
   asset: Asset;
-  txType: string;
-  quote: SwapQuote;
+  txType: T;
+  quote: Q;
   feePrices: number[];
   max: boolean;
 };
@@ -62,4 +64,9 @@ export type SwapStatus = {
   label: string;
   filterStatus: string;
   notification?: (swap?: unknown) => { message: string };
+};
+
+export type ActionStatus = {
+  endTime: number;
+  status: string;
 };

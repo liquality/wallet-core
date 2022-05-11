@@ -22,11 +22,13 @@ const swapProviderInfo = {
   [SwapProviderType.Astroport]: astroportInfo,
 };
 
-export function getSwapProviderConfig(network: Network, providerId: string) {
+function getSwapProviderConfig(network: Network, providerId: string) {
   return buildConfig.swapProviders[network][providerId];
 }
 
-export function getSwapProviderInfo(network: Network, providerId: string) {
+function getSwapProviderInfo(network: Network, providerId: string) {
   const config = getSwapProviderConfig(network, providerId);
   return swapProviderInfo[config.type];
 }
+
+export { getSwapProviderConfig, getSwapProviderInfo };

@@ -1,3 +1,4 @@
+import { EthereumRpcProvider } from '@liquality/ethereum-rpc-provider';
 import { Transaction } from '@liquality/types';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -41,11 +42,9 @@ export const sendTransaction = async (
     accountId,
   });
 
-  // @ts-ignore
-  const originalEstimateGas = client._providers[0].estimateGas;
+  const originalEstimateGas = (client._providers[0] as EthereumRpcProvider).estimateGas;
   if (gas) {
-    // @ts-ignore
-    client._providers[0].estimateGas = async () => {
+    (client._providers[0] as EthereumRpcProvider).estimateGas = async () => {
       return gas;
     };
   }
@@ -59,8 +58,7 @@ export const sendTransaction = async (
       fee,
     });
   } finally {
-    // @ts-ignore
-    client._providers[0].estimateGas = originalEstimateGas;
+    (client._providers[0] as EthereumRpcProvider).estimateGas = originalEstimateGas;
   }
 
   const transaction: SendHistoryItem = {
@@ -71,7 +69,7 @@ export const sendTransaction = async (
     to: asset,
     from: asset,
     toAddress: to,
-    amount: new BN(amount).toNumber(),
+    amount: new BN(amount).toFixed(),
     fee,
     tx,
     txHash: tx.hash,

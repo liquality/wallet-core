@@ -1,6 +1,7 @@
 import { ActionContext, rootActionContext } from '../..';
+import { getSwapProvider } from '../../../factory/swapProvider';
 import { createHistoryNotification } from '../../broker/notification';
-import { HistoryItem, Network, WalletId } from '../../types';
+import { HistoryItem, Network, TransactionType, WalletId } from '../../types';
 import { performNextTransactionAction } from './send';
 
 export const performNextAction = async (
@@ -14,8 +15,8 @@ export const performNextAction = async (
 
   let updates;
   try {
-    if (item.type === 'SWAP') {
-      const swapProvider = getters.swapProvider(network, item.provider);
+    if (item.type === TransactionType.Swap) {
+      const swapProvider = getSwapProvider(network, item.provider);
 
       // TODO: should it take typed context?
       updates = await swapProvider.performNextSwapAction(context, {
@@ -24,7 +25,7 @@ export const performNextAction = async (
         swap: item,
       });
     }
-    if (item.type === 'SEND') {
+    if (item.type === TransactionType.Send) {
       updates = await performNextTransactionAction(context, {
         network,
         walletId,
