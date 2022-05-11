@@ -12,13 +12,14 @@ import { v4 as uuidv4 } from 'uuid';
 import buildConfig from '../../build.config';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
-import { Asset, HistoryItem, Network, SwapHistoryItem, WalletId } from '../../store/types';
+import { Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
 import { isERC20, isEthereumChain } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
 import {
+  ActionStatus,
   BaseSwapProviderConfig,
   EstimateFeeRequest,
   EstimateFeeResponse,
@@ -104,9 +105,14 @@ class UniswapSwapProvider extends SwapProvider {
 
   async getQuote({ network, from, to, amount }: QuoteRequest) {
     // Uniswap only provides liquidity for ethereum tokens
-    if (!isEthereumChain(from) || !isEthereumChain(to)) return null;
+    if (!isEthereumChain(from) || !isEthereumChain(to)) {
+      return null;
+    }
+
     // Only uniswap on ethereum is supported atm
-    if (cryptoassets[from].chain !== ChainId.Ethereum || cryptoassets[to].chain !== ChainId.Ethereum) return null;
+    if (cryptoassets[from].chain !== ChainId.Ethereum || cryptoassets[to].chain !== ChainId.Ethereum) {
+      return null;
+    }
 
     const chainId = this.getChainId(from, network);
 
@@ -373,7 +379,7 @@ class UniswapSwapProvider extends SwapProvider {
         return {
           endTime: Date.now(),
           status: Number(status) === 1 ? 'SUCCESS' : 'FAILED',
-        };
+        } as ActionStatus;
       }
     } catch (e) {
       if (e.name === 'TxNotFoundError') console.warn(e);
@@ -385,25 +391,16 @@ class UniswapSwapProvider extends SwapProvider {
     store: ActionContext,
     { network, walletId, swap }: NextSwapActionRequest<UniswapSwapHistoryItem>
   ) {
-    let updates: Partial<HistoryItem>;
-
     switch (swap.status) {
       case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
       case 'APPROVE_CONFIRMED':
-        updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+        return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
           this.sendSwap({ quote: swap, network, walletId })
         );
-        break;
       case 'WAITING_FOR_SWAP_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
-        break;
-      default:
-        throw new Error('UniswapSwapProvider: unknown status');
+        return withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
     }
-
-    return updates as SwapHistoryItem;
   }
 
   protected _txTypes() {

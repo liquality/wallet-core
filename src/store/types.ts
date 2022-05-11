@@ -112,7 +112,7 @@ export interface BaseHistoryItem {
   endTime?: number;
   status: string; // TODO: actual types?
   to: Asset;
-  type: TransactionType; // swpa send?
+  type: TransactionType;
   walletId: WalletId;
   error?: string;
   waitingForLock?: boolean;
@@ -141,14 +141,12 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   claimFee: number;
   fromAmount: string;
   fromAccountId: AccountId;
-  fromFundHash: string;
-  fromFundTx: Transaction;
-  maxFeeSlippageMultiplier: number;
   provider: string;
   slippage: number;
   toAccountId: AccountId;
   toAmount: string;
   bridgeAsset?: Asset;
+  path?: string[];
 }
 
 export type HistoryItem = SendHistoryItem | SwapHistoryItem;

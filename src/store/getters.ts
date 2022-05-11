@@ -3,16 +3,13 @@ import { Asset, assets as cryptoassets, ChainId, unitToCurrency } from '@liquali
 import BN, { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash';
 import { rootGetterContext } from '.';
-import { SwapProvider } from '../swaps/SwapProvider';
+import { createClient } from '../factory/client';
 import { cryptoToFiat } from '../utils/coinFormatter';
 import { getDerivationPath } from '../utils/derivationPath';
 import { Networks } from '../utils/networks';
-import { createClient } from './factory/client';
-import { createSwapProvider } from './factory/swapProvider';
 import { Account, AccountId, AccountType, Asset as AssetType, HistoryItem, Network, WalletId } from './types';
 
 const clientCache: { [key: string]: Client } = {};
-const swapProviderCache: { [key: string]: SwapProvider } = {};
 
 const TESTNET_CONTRACT_ADDRESSES: { [asset: string]: string } = {
   DAI: '0xad6d458402f60fd3bd25163575031acdce07538d',
@@ -50,18 +47,11 @@ const TESTNET_ASSETS: { [asset: string]: Asset } = [
   });
 }, {});
 
-const mapLegacyProvidersToSupported: { [index: string]: string } = {
-  oneinchV3: 'oneinchV4',
-  liqualityBoost: 'liqualityBoostNativeToERC20',
-};
-
 type GetterContext = [any, any];
 
 type Cryptoassets = {
   [asset: string]: Asset;
 };
-
-// TODO: specify return types so direct-vuex works
 
 export default {
   client(...context: GetterContext) {
@@ -87,6 +77,11 @@ export default {
       const _accountType = account?.type || accountType;
       const _accountIndex = account?.index || accountIndex;
       const { chain } = getters.cryptoassets[asset] || cryptoassets[asset];
+
+      if (account && account.chain !== chain) {
+        throw new Error(`asset: ${asset} and accountId: ${accountId} belong to different chains`);
+      }
+
       let derivationPath: string;
       // when we ask for ledger accounts from the ledger device we don't have the derivation path
       // the !account doesn't exist in this case or if we call the getter with accountId equals to null
@@ -113,25 +108,6 @@ export default {
       clientCache[cacheKey] = client;
 
       return client;
-    };
-  },
-  // TODO: does this even need to be a getter?
-  swapProvider() {
-    return (network: Network, providerId: string): SwapProvider => {
-      const supportedProviderId = mapLegacyProvidersToSupported[providerId]
-        ? mapLegacyProvidersToSupported[providerId]
-        : providerId;
-      const cacheKey = [network, supportedProviderId].join('-');
-
-      const cachedSwapProvider = swapProviderCache[cacheKey];
-      if (cachedSwapProvider) return cachedSwapProvider;
-
-      const swapProvider = createSwapProvider(network, supportedProviderId);
-      // @ts-ignore TODO: remove when swap providers are typed
-      swapProviderCache[cacheKey] = swapProvider;
-
-      // @ts-ignore TODO: remove when swap providers are typed
-      return swapProvider;
     };
   },
   historyItemById(...context: GetterContext) {
@@ -288,14 +264,15 @@ export default {
     const { getters } = rootGetterContext(context);
     const { cryptoassets } = getters;
 
-    const chainAssets = Object.entries(cryptoassets).reduce((chains, [asset, assetData]) => {
-      // @ts-ignore TODO: typed getters
-      const assets = assetData.chain in chains ? chains[assetData.chain] : [];
-      return Object.assign({}, chains, {
-        // @ts-ignore TODO: typed getters
-        [assetData.chain]: [...assets, asset],
-      });
-    }, {});
+    const chainAssets = Object.entries(cryptoassets).reduce(
+      (chains: { [chain in ChainId]?: AssetType[] }, [asset, assetData]) => {
+        const assets = assetData.chain in chains ? chains[assetData.chain]! : [];
+        return Object.assign({}, chains, {
+          [assetData.chain]: [...assets, asset],
+        });
+      },
+      {}
+    );
     return chainAssets;
   },
   analyticsEnabled(...context: GetterContext): boolean {

@@ -1,5 +1,4 @@
 {
-  /*TODO: switch more rules to true*/
   "compilerOptions": {
     "target": "es6",
     "declaration": true,
@@ -22,7 +21,7 @@
     "outDir": "../dist/",
     "removeComments": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true // TODO: remove this if possible
+    "skipLibCheck": true
   },
   "include": ["**/*"],
   "references": [

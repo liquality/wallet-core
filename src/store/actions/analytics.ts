@@ -4,8 +4,14 @@ import { ActionContext, rootActionContext } from '..';
 import { version as walletVersion } from '../../../package.json';
 import { AnalyticsState } from '../types';
 
+export interface AmplitudeProperties {
+  category?: string;
+  action?: string;
+  label?: string;
+  [key: string]: any;
+}
+
 const useAnalytics = !!process.env.VUE_APP_AMPLITUDE_API_KEY;
-console.log('ANALITYCS_ENABLED', useAnalytics);
 
 export const initializeAnalyticsPreferences = (context: ActionContext, { accepted }: { accepted: boolean }) => {
   const { commit } = rootActionContext(context);
@@ -46,9 +52,8 @@ export const initializeAnalytics = async (context: ActionContext): Promise<boole
 
 export const trackAnalytics = (
   context: ActionContext,
-  { event, properties = {} }: { event: any; properties: any }
-): any => {
-  // TODO: types?
+  { event, properties = {} }: { event: string; properties: AmplitudeProperties }
+): amplitude.LogReturn => {
   const { state } = rootActionContext(context);
   if (useAnalytics && state.analytics && state.analytics.acceptedDate && state.analytics.userId) {
     const { activeNetwork, activeWalletId, version } = state;

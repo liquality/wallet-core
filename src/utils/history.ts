@@ -1,5 +1,5 @@
 import moment from 'moment';
-import store from '../store';
+import { getSwapProvider } from '../factory/swapProvider';
 import { HistoryItem, SendStatus, TransactionType } from '../store/types';
 
 export const SEND_STATUS_STEP_MAP = {
@@ -19,7 +19,7 @@ export function getStatusLabel(item: HistoryItem) {
     return SEND_STATUS_LABEL_MAP[item.status] || '';
   }
   if (item.type === TransactionType.Swap) {
-    const swapProvider = store.getters.swapProvider(item.network, item.provider);
+    const swapProvider = getSwapProvider(item.network, item.provider);
     return (
       swapProvider.statuses[item.status].label
         .replace('{from}', item.from)
@@ -33,10 +33,12 @@ export function getStep(item: HistoryItem) {
   if (item.type === TransactionType.Send) {
     return SEND_STATUS_STEP_MAP[item.status];
   }
-  if (item.type === 'SWAP') {
-    const swapProvider = store.getters.swapProvider(item.network, item.provider);
+  if (item.type === TransactionType.Swap) {
+    const swapProvider = getSwapProvider(item.network, item.provider);
     return swapProvider.statuses[item.status].step;
   }
+
+  throw new Error('getStep: Unknown type');
 }
 
 export const ACTIVITY_FILTER_TYPES = {
@@ -96,7 +98,7 @@ export const applyActivityFilters = (
   if (statuses.length > 0) {
     data = data.filter((i) => {
       if (i.type === 'SWAP') {
-        const swapProvider = store.getters.swapProvider(i.network, i.provider);
+        const swapProvider = getSwapProvider(i.network, i.provider);
         return statuses.includes(swapProvider.statuses[i.status].filterStatus);
       }
 

@@ -29,13 +29,14 @@ import { TerraRpcProvider } from '@liquality/terra-rpc-provider';
 import { TerraSwapFindProvider } from '@liquality/terra-swap-find-provider';
 import { TerraSwapProvider } from '@liquality/terra-swap-provider';
 import { TerraWalletProvider } from '@liquality/terra-wallet-provider';
-import buildConfig from '../../build.config';
-import { isERC20 } from '../../utils/asset';
-import cryptoassets from '../../utils/cryptoassets';
-import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
-import { ChainNetworks } from '../../utils/networks';
-import { walletOptionsStore } from '../../walletOptions';
-import { AccountType, Asset, Network } from '../types';
+import buildConfig from '../build.config';
+import { AccountType, Asset, Network } from '../store/types';
+import { isERC20 } from '../utils/asset';
+import cryptoassets from '../utils/cryptoassets';
+import { signTypedMessage } from '../utils/eth_signTypedData_v4';
+import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
+import { ChainNetworks } from '../utils/networks';
+import { walletOptionsStore } from '../walletOptions';
 
 function createBtcClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
   const isTestnet = network === 'testnet';
@@ -142,6 +143,9 @@ function createEthereumClient(
     ethClient.addProvider(new EthereumSwapProvider());
     if (scraperApi) ethClient.addProvider(new EthereumScraperSwapFindProvider(scraperApi));
   }
+
+  // TODO: remove when Chainify is added
+  (ethClient.wallet as any).signTypedMessage = signTypedMessage.bind(ethClient.wallet);
 
   return ethClient;
 }
@@ -436,16 +440,17 @@ export const createClient = (
 ) => {
   const assetData = cryptoassets[asset];
 
-  if (assetData.chain === 'bitcoin') return createBtcClient(network, mnemonic, accountType, derivationPath);
-  if (assetData.chain === 'rsk') return createRskClient(asset, network, mnemonic, accountType, derivationPath);
-  if (assetData.chain === 'bsc') return createBSCClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === 'polygon') return createPolygonClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === 'arbitrum') return createArbitrumClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === 'near') return createNearClient(network, mnemonic, derivationPath);
-  if (assetData?.chain === 'solana') return createSolanaClient(network, mnemonic, derivationPath);
-  if (assetData.chain === 'terra') return createTerraClient(network, mnemonic, derivationPath, asset);
-  if (assetData.chain === 'avalanche') return createAvalancheClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === 'fuse') return createFuseClient(asset, network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Bitcoin) return createBtcClient(network, mnemonic, accountType, derivationPath);
+  if (assetData.chain === ChainId.Rootstock)
+    return createRskClient(asset, network, mnemonic, accountType, derivationPath);
+  if (assetData.chain === ChainId.BinanceSmartChain) return createBSCClient(asset, network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Polygon) return createPolygonClient(asset, network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Arbitrum) return createArbitrumClient(asset, network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Near) return createNearClient(network, mnemonic, derivationPath);
+  if (assetData?.chain === ChainId.Solana) return createSolanaClient(network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Terra) return createTerraClient(network, mnemonic, derivationPath, asset);
+  if (assetData.chain === ChainId.Avalanche) return createAvalancheClient(asset, network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Fuse) return createFuseClient(asset, network, mnemonic, derivationPath);
 
   return createEthClient(asset, network, mnemonic, accountType, derivationPath);
 };

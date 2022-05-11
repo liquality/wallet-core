@@ -1,16 +1,62 @@
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { bitcoin, Transaction } from '@liquality/types';
 import BN from 'bignumber.js';
 import { mapValues } from 'lodash';
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
+import { ActionContext } from '../../store';
 import { withInterval } from '../../store/actions/performNextAction/utils';
+import { SwapHistoryItem } from '../../store/types';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { SwapProvider } from '../SwapProvider';
-import { BaseSwapProviderConfig, QuoteRequest, SwapStatus } from '../types';
+import {
+  BaseSwapProviderConfig,
+  EstimateFeeRequest,
+  NextSwapActionRequest,
+  QuoteRequest,
+  SwapRequest,
+  SwapStatus,
+} from '../types';
 
-const fastBtcSatoshiFee = 5000;
-const fastBtcPercentageFee = 0.2;
+const FAST_BTC_SATOSHI_FEE = 5000;
+const FAST_BTC_PERCENTAGE_FEE = 0.2;
+
+export interface FastBtcTxAmount {
+  max: number;
+  min: number;
+}
+
+export interface FastBtcDepositAddress {
+  id: number;
+  web3adr: string;
+  btcadr: string;
+  label: string;
+  dateAdded: number;
+  signatures: { signer: string; signature: string }[];
+}
+
+export enum FastBtcStatus { // TODO: what else?
+  Confirmed = 'confirmed',
+}
+
+export enum FastBtcType {
+  Deposit = 'deposit',
+  Transfer = 'transfer',
+}
+
+export interface FastBtcDepositHistory {
+  dateAdded: number;
+  txHash: string;
+  type: FastBtcType;
+  status: FastBtcStatus;
+  valueBtc: number;
+}
+
+export interface FastBtcSwapHistoryItem extends SwapHistoryItem {
+  swapTxHash: string;
+  swapTx: Transaction<bitcoin.Transaction>;
+}
 
 export interface FastBtcSwapProviderConfig extends BaseSwapProviderConfig {
   bridgeEndpoint: string;
@@ -18,19 +64,23 @@ export interface FastBtcSwapProviderConfig extends BaseSwapProviderConfig {
 
 class FastbtcSwapProvider extends SwapProvider {
   config: FastBtcSwapProviderConfig;
-  socketConnection: any;
-  constructor(config) {
-    super(config);
-    this.socketConnection = io(this.config.bridgeEndpoint, {
-      reconnectionDelayMax: 10000,
-    });
+  socketConnection: Socket;
 
-    this.socketConnection.on('connect', function () {
-      console.log('FatBtc socket connected');
-    });
+  async connectSocket() {
+    if (this.socketConnection && this.socketConnection.connected) return true;
 
-    this.socketConnection.on('disconnect', function () {
-      console.log('FastBtc socket disconnected');
+    return new Promise((resolve) => {
+      this.socketConnection = io(this.config.bridgeEndpoint, {
+        reconnectionDelayMax: 10000,
+      });
+
+      this.socketConnection.on('connect', function () {
+        resolve(true);
+      });
+
+      this.socketConnection.on('disconnect', function () {
+        console.log('FastBtc socket disconnected');
+      });
     });
   }
 
@@ -47,10 +97,10 @@ class FastbtcSwapProvider extends SwapProvider {
     ];
   }
 
-  // TODO: return type
-  async _getHistory(web3Addr): Promise<any[]> {
+  async _getHistory(address: string): Promise<FastBtcDepositHistory[]> {
+    await this.connectSocket();
     return new Promise((resolve, reject) => {
-      this.socketConnection.emit('getDepositHistory', web3Addr, (res) => {
+      this.socketConnection.emit('getDepositHistory', address, (res: any) => {
         if (res && res.error) {
           reject(res.err);
         }
@@ -59,10 +109,10 @@ class FastbtcSwapProvider extends SwapProvider {
     });
   }
 
-  // TODO: type
-  async _getAddress(web3Addr): Promise<any> {
+  async _getAddress(address: string): Promise<FastBtcDepositAddress> {
+    await this.connectSocket();
     return new Promise((resolve, reject) => {
-      this.socketConnection.emit('getDepositAddress', web3Addr, (err, res) => {
+      this.socketConnection.emit('getDepositAddress', address, (err: Error, res: any) => {
         if (err) {
           reject(err);
         }
@@ -71,16 +121,15 @@ class FastbtcSwapProvider extends SwapProvider {
     });
   }
 
-  // TODO: type
-  async _getTxAmount(): Promise<any> {
+  async _getTxAmount(): Promise<FastBtcTxAmount> {
+    await this.connectSocket();
     return new Promise((resolve) => {
-      this.socketConnection.emit('txAmount', (res) => {
+      this.socketConnection.emit('txAmount', (res: any) => {
         resolve(res);
       });
     });
   }
 
-  // @ts-ignore
   async getQuote(quoteRequest: QuoteRequest) {
     const { from, to, amount } = quoteRequest;
     if (from !== 'BTC' || to !== 'RBTC') {
@@ -88,21 +137,20 @@ class FastbtcSwapProvider extends SwapProvider {
     }
     const fromAmountInUnit = new BN(currencyToUnit(cryptoassets[from], new BN(amount)));
     const validAmountRange = await this._getTxAmount();
-    const isQuoteAmountInTheRange = amount <= validAmountRange.max && amount >= validAmountRange.min;
+    const isQuoteAmountInTheRange = amount.lte(validAmountRange.max) && amount.gte(validAmountRange.min);
     if (!isQuoteAmountInTheRange) return null;
     const toAmountInUnit = new BN(
-      currencyToUnit(cryptoassets[to], new BN(amount).minus(unitToCurrency(cryptoassets[from], fastBtcSatoshiFee)))
-    ).times(1 - fastBtcPercentageFee / 100);
+      currencyToUnit(cryptoassets[to], new BN(amount).minus(unitToCurrency(cryptoassets[from], FAST_BTC_SATOSHI_FEE)))
+    ).times(1 - FAST_BTC_PERCENTAGE_FEE / 100);
     return {
       from,
       to,
-      // TODO: Amounts should be in BigNumber to prevent loss of precision
-      fromAmount: fromAmountInUnit.toNumber(),
-      toAmount: toAmountInUnit.toNumber(),
+      fromAmount: fromAmountInUnit.toFixed(),
+      toAmount: toAmountInUnit.toFixed(),
     };
   }
 
-  async sendSwap({ network, walletId, quote }) {
+  async sendSwap({ network, walletId, quote }: SwapRequest) {
     if (quote.from !== 'BTC' || quote.to !== 'RBTC') return null;
     const toChain = cryptoassets[quote.to].chain;
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
@@ -124,7 +172,7 @@ class FastbtcSwapProvider extends SwapProvider {
     };
   }
 
-  async newSwap({ network, walletId, quote }) {
+  async newSwap({ network, walletId, quote }: SwapRequest) {
     const updates = await this.sendSwap({ network, walletId, quote });
 
     return {
@@ -135,7 +183,7 @@ class FastbtcSwapProvider extends SwapProvider {
     };
   }
 
-  async estimateFees({ network, walletId, asset, txType, quote, feePrices, max }) {
+  async estimateFees({ network, walletId, asset, txType, quote, feePrices, max }: EstimateFeeRequest) {
     if (txType === this._txTypes().SWAP && asset === 'BTC') {
       const client = this.getClient(network, walletId, asset, quote.fromAccountId);
       const value = max ? undefined : new BN(quote.fromAmount);
@@ -146,7 +194,7 @@ class FastbtcSwapProvider extends SwapProvider {
     return null;
   }
 
-  async waitForSendConfirmations({ swap, network, walletId }) {
+  async waitForSendConfirmations({ swap, network, walletId }: NextSwapActionRequest<FastBtcSwapHistoryItem>) {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
@@ -163,7 +211,7 @@ class FastbtcSwapProvider extends SwapProvider {
     }
   }
 
-  async waitForReceive({ swap, network, walletId }) {
+  async waitForReceive({ swap, network, walletId }: NextSwapActionRequest<FastBtcSwapHistoryItem>) {
     try {
       const toChain = cryptoassets[swap.to].chain;
       const toAddressRaw = await this.getSwapAddress(network, walletId, swap.to, swap.toAccountId);
@@ -178,16 +226,16 @@ class FastbtcSwapProvider extends SwapProvider {
       for (const transaction of addressHistory) {
         if (
           transaction.txHash === swap.swapTxHash &&
-          transaction.status === 'confirmed' &&
-          transaction.type === 'deposit'
+          transaction.status === FastBtcStatus.Confirmed &&
+          transaction.type === FastBtcType.Deposit
         ) {
           isDepositConfirmed = true;
           depositConfirmationDate = new Date(transaction.dateAdded).getTime();
           depositAmount = transaction.valueBtc;
         } else if (
           isDepositConfirmed &&
-          transaction.status === 'confirmed' &&
-          transaction.type === 'transfer' &&
+          transaction.status === FastBtcStatus.Confirmed &&
+          transaction.type === FastBtcType.Transfer &&
           transaction.valueBtc === depositAmount &&
           new Date(transaction.dateAdded).getTime() - depositConfirmationDate > 0 &&
           new Date(transaction.dateAdded).getTime() - depositConfirmationDate < 86400000
@@ -206,19 +254,16 @@ class FastbtcSwapProvider extends SwapProvider {
     }
   }
 
-  async performNextSwapAction(_store, { network, walletId, swap }) {
-    let updates;
-
+  async performNextSwapAction(
+    _store: ActionContext,
+    { network, walletId, swap }: NextSwapActionRequest<FastBtcSwapHistoryItem>
+  ) {
     switch (swap.status) {
       case 'WAITING_FOR_SEND_CONFIRMATIONS':
-        updates = await withInterval(async () => this.waitForSendConfirmations({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForSendConfirmations({ swap, network, walletId }));
       case 'WAITING_FOR_RECEIVE':
-        updates = await withInterval(async () => this.waitForReceive({ swap, network, walletId }));
-        break;
+        return withInterval(async () => this.waitForReceive({ swap, network, walletId }));
     }
-
-    return updates;
   }
 
   protected _txTypes() {

@@ -29,7 +29,6 @@ export * from './removeCustomToken';
 export * from './retrySwap';
 export * from './sendTransaction';
 export * from './setEthereumInjectionChain';
-export * from './setupWallet';
 export * from './setWatsNewModalVersion';
 export * from './showNotification';
 export * from './toggleExperiment';

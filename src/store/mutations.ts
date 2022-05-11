@@ -6,7 +6,6 @@ import {
   AccountId,
   AnalyticsState,
   Asset,
-  SwapHistoryItem,
   CustomToken,
   ExperimentType,
   FiatRates,
@@ -15,6 +14,7 @@ import {
   Network,
   RootState,
   SendHistoryItem,
+  SwapHistoryItem,
   Wallet,
   WalletId,
   NFTAsset,
@@ -52,17 +52,21 @@ export default {
   SET_STATE(state: RootState, { newState }: { newState: RootState }) {
     Object.assign(state, newState);
   },
-  SETUP_WALLET(state: RootState, { key }: { key: string }) {
-    state.key = key;
-    state.keyUpdatedAt = Date.now();
-    state.setupAt = Date.now();
-  },
   CREATE_WALLET(
     state: RootState,
-    { keySalt, encryptedWallets, wallet }: { keySalt: string; encryptedWallets: string; wallet: Wallet }
+    {
+      key,
+      keySalt,
+      encryptedWallets,
+      wallet,
+    }: { key: string; keySalt: string; encryptedWallets: string; wallet: Wallet }
   ) {
-    state.encryptedWallets = encryptedWallets;
+    state.key = key;
     state.keySalt = keySalt;
+    state.keyUpdatedAt = Date.now();
+
+    state.setupAt = Date.now();
+    state.encryptedWallets = encryptedWallets;
     state.wallets = [wallet];
     if (!state.accounts[wallet.id]) {
       Vue.set(state.accounts, wallet.id, {

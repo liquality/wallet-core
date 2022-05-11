@@ -1,8 +1,9 @@
 import { Transaction } from '@liquality/types';
 import { isObject } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
+import { getSwapProvider } from '../../factory/swapProvider';
 import { LiqualitySwapHistoryItem, LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
-import { Asset, HistoryItem, Network, SwapHistoryItem, WalletId } from '../types';
+import { Asset, HistoryItem, Network, TransactionType, WalletId } from '../types';
 import { unlockAsset } from '../utils';
 
 export const updateTransactionFee = async (
@@ -37,12 +38,13 @@ export const updateTransactionFee = async (
     refundTx: 'fee',
   }[txKey] as string;
 
+  const accountId = item.type === TransactionType.Swap ? item.fromAccountId : item.accountId;
+
   const client = getters.client({
     network,
     walletId,
     asset,
-    // @ts-ignore
-    accountId: item.fromAccountId, // TODO: confirm if the from account should be used here
+    accountId,
   });
 
   const oldTx = (item as any)[txKey] as Transaction | string;
@@ -78,8 +80,11 @@ export const updateTransactionFee = async (
 
   const isFundingUpdate = hashKey === 'fromFundHash';
   if (isFundingUpdate) {
+    if (item.type !== TransactionType.Swap) {
+      throw new Error('updateTransactionFee: Funding update must be swap transaction type.');
+    }
     // TODO: this should be the function of any swap? Should be able to bump any tx
-    const swapProvider = getters.swapProvider(network, (item as SwapHistoryItem).provider) as LiqualitySwapProvider;
+    const swapProvider = getSwapProvider(network, item.provider) as LiqualitySwapProvider;
     await swapProvider.updateOrder(item as LiqualitySwapHistoryItem);
   }
 
