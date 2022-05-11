@@ -32,7 +32,6 @@ jobs:
           echo '//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}' > .npmrc
           echo 'registry: https://registry.npmjs.org/' >> .yarnrc
           yarn
-          yarn config list
           yarn build
 
       - name: publish
