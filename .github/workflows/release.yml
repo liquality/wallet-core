@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-node@v3.1.1
         with:
           node-version: 16
-#          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'https://registry.npmjs.org'
           always-auth: true
 
       - uses: actions/cache@v3.0.2
@@ -29,12 +29,15 @@ jobs:
 
       - name: build
         run: |
+          echo '//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}' > .npmrc
+          echo 'registry: https://registry.npmjs.org/' >> .yarnrc
+          rm yarn.lock
           yarn
+          yarn config list
           yarn build
 
       - name: publish
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
           yarn npm publish --access public
 #        env:
 #          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
