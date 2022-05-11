@@ -34,11 +34,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-#      - name: publish
-#        uses: JS-DevTools/npm-publish@v1
-#        with:
-#          token: ${{ secrets.NPM_TOKEN }}
-
       - name: Changelog
         if: always()
         uses: scottbrenner/generate-changelog-action@v1.3.3
