@@ -87,7 +87,7 @@ export class BlindexSwapProvider extends SwapProvider {
       !this.availableTokenSymbols.includes(from) ||
       !this.availableTokenSymbols.includes(to)
     ) {
-      return null
+      return null;
     }
 
     const fromContractAddress: string =
@@ -100,7 +100,12 @@ export class BlindexSwapProvider extends SwapProvider {
       amount,
       fromContractAddress,
       toContractAddress
-    )
+    );
+
+    if(!bestRouteWithValOut){
+      return null;
+    }
+    
     const amountOut_d18 = this.ethersBigNumberToDecimal(bestRouteWithValOut.finalAmount, DECIMALS)
     return {
       from,
@@ -193,6 +198,26 @@ export class BlindexSwapProvider extends SwapProvider {
     return updates;
   }
 
+  public async waitForSwapConfirmations({ swap, network, walletId }: NextSwapActionRequest<BlindexSwapHistoryItem>) {
+    const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
+
+    try {
+      const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
+      if (tx && tx.confirmations && tx.confirmations > 0) {
+        // Check transaction status - it may fail due to slippage
+        const { status } = await client.getMethod('getTransactionReceipt')(swap.swapTxHash);
+        this.updateBalances(network, walletId, [swap.from]);
+        return {
+          endTime: Date.now(),
+          status: Number(status) === 1 ? 'SUCCESS' : 'FAILED'
+        };
+      }
+    } catch (e) {
+      if (e.name === 'TxNotFoundError') console.warn(e);
+      else throw e;
+    }
+  }
+
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       WAITING_FOR_APPROVE_CONFIRMATIONS: {
@@ -226,9 +251,7 @@ export class BlindexSwapProvider extends SwapProvider {
         filterStatus: 'COMPLETED',
         notification(swap: any) {
           return {
-            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${
-              swap.to
-            } ready to use`
+            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`
           }
         }
       },
@@ -349,7 +372,7 @@ export class BlindexSwapProvider extends SwapProvider {
     );
   }
 
-  async requiresApproval({ network, walletId, quote }: { network: Network; walletId: WalletId; quote: SwapQuote }) {
+  private async requiresApproval({ network, walletId, quote }: { network: Network; walletId: WalletId; quote: SwapQuote }) {
     if (!isERC20(quote.from)) return false
 
     const fromChain = cryptoassets[quote.from].chain
@@ -498,18 +521,18 @@ export class BlindexSwapProvider extends SwapProvider {
       amount_d18,
       leftToken,
       rightToken
-    )
-    this.bestRoute = bestRoute.route
-    return bestRoute
+    );
+    this.bestRoute = bestRoute.route;
+    return bestRoute;
   }
 
-  numberToEthersBigNumberFixed(n: number, decimals: number) {
+  private numberToEthersBigNumberFixed(n: number, decimals: number) {
     const precision = 1e6;
     n = Math.round(n * precision);
     return ethers.BigNumber.from(10).pow(decimals).mul(n).div(precision);
   }
 
-  ethersBigNumberToDecimal(n: BN, decimals: number) {
+  private ethersBigNumberToDecimal(n: ethers.BigNumber, decimals: number) {
     return Number(n.toString()) / 10 ** decimals
   }
 }
