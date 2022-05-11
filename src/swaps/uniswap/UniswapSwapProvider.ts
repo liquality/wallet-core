@@ -334,7 +334,12 @@ class UniswapSwapProvider extends SwapProvider {
       data: swapTx.data,
       value: '0x' + swapTx.value.toString(16),
     };
-    gasLimit += await client.getMethod('estimateGas')(rawSwapTx);
+
+    try {
+      gasLimit += await client.getMethod('estimateGas')(rawSwapTx);
+    } catch {
+      gasLimit += 350_000; // estimateGas is failing if token that we are swapping is not approved
+    }
 
     const fees: EstimateFeeResponse = {};
     for (const feePrice of feePrices) {
