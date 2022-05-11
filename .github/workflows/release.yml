@@ -14,12 +14,9 @@ jobs:
           fetch-depth: 0
 
       - name: Build project
-        # Setup .npmrc file to publish to npm
         uses: actions/setup-node@v3.1.1
         with:
           node-version: 16
-#          registry-url: 'https://registry.npmjs.org'
-#          always-auth: true
 
       - uses: actions/cache@v3.0.2
         id: cache
@@ -29,8 +26,6 @@ jobs:
 
       - name: build
         run: |
-#          echo '//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}' > .npmrc
-#          echo 'registry: https://registry.npmjs.org/' >> .yarnrc
           yarn
           yarn build
 
@@ -38,8 +33,6 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-#        env:
-#          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Changelog
         if: always()
