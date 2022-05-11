@@ -17,6 +17,7 @@ jobs:
         uses: actions/setup-node@v3.1.1
         with:
           node-version: 16
+          registry-url: 'https://registry.npmjs.org'
 
       - uses: actions/cache@v3.0.2
         id: cache
@@ -29,10 +30,14 @@ jobs:
           yarn
           yarn build
 
-      - name: publish
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+#      - name: publish
+#        uses: JS-DevTools/npm-publish@v1
+#        with:
+#          token: ${{ secrets.NPM_TOKEN }}
 
       - name: Changelog
         if: always()
