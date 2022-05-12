@@ -95,8 +95,9 @@
     "eslint": "^8.9.0",
     "eslint-config-prettier": "^8.4.0",
     "eslint-plugin-jest": "^26.1.1",
-    "husky": "^7.0.4",
+    "husky": "^8.0.0",
     "jest": "^27.5.1",
+    "pinst": "^3.0.0",
     "prettier": "^2.5.1",
     "prettier-plugin-organize-imports": "^2.3.4",
     "ts-jest": "^27.1.3",
@@ -109,7 +110,10 @@
     "prettier:fix": "prettier --write .",
     "test": "jest --coverage",
     "test:integration": "jest --verbose --forceExit",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "postinstall": "husky install",
+    "prepack": "pinst --disable",
+    "postpack": "pinst --enable"
   },
   "packageManager": "yarn@3.1.1"
 }
