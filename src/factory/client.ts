@@ -286,7 +286,7 @@ function createBSCClient(asset: Asset, network: Network, mnemonic: string, deriv
 function createPolygonClient(asset: Asset, network: Network, mnemonic: string, derivationPath: string) {
   const isTestnet = network === 'testnet';
   const polygonNetwork = ChainNetworks.polygon[network];
-  const rpcApi = isTestnet ? 'https://rpc-mumbai.maticvigil.com' : 'https://polygon-rpc.com';
+  const rpcApi = isTestnet ? 'https://rpc-mumbai.matic.today' : 'https://polygon-rpc.com';
   const scraperApi = isTestnet
     ? 'https://polygon-mumbai-api.liq-chainhub.net/'
     : 'https://polygon-mainnet-api.liq-chainhub.net/';

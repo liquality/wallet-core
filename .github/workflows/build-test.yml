@@ -1,7 +1,12 @@
 name: Build Test
 
-on: [pull_request]
-
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches-ignore:
+      - renovate*
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,6 +21,7 @@ jobs:
       - run: yarn build
       - name: Run __tests__ (coverage)
         run: |
+          yarn rebuild
           export FORCE_COLOR=true
           export TEST_MNEMONIC=${{ secrets.TEST_MNEMONIC }}
           yarn test:integration --coverage
