@@ -38,7 +38,7 @@ import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
 import { ChainNetworks } from '../utils/networks';
 import { walletOptionsStore } from '../walletOptions';
 
-function createBtcClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
+function createBtcClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string, publicKey?: string, chainCode?: string) {
   const isTestnet = network === 'testnet';
   const bitcoinNetwork = ChainNetworks.bitcoin[network];
   const esploraApi = buildConfig.exploraApis[network];
@@ -67,7 +67,9 @@ function createBtcClient(network: Network, mnemonic: string, accountType: Accoun
       network,
       bitcoinNetwork,
       addressType,
-      derivationPath
+      derivationPath,
+      publicKey,
+      chainCode
     );
     // @ts-ignore
     btcClient.addProvider(ledgerProvider);
@@ -436,11 +438,13 @@ export const createClient = (
   network: Network,
   mnemonic: string,
   accountType: AccountType,
-  derivationPath: string
+  derivationPath: string,
+  publicKey?: string,
+  chainCode?: string
 ) => {
   const assetData = cryptoassets[asset];
 
-  if (assetData.chain === ChainId.Bitcoin) return createBtcClient(network, mnemonic, accountType, derivationPath);
+  if (assetData.chain === ChainId.Bitcoin) return createBtcClient(network, mnemonic, accountType, derivationPath, publicKey, chainCode);
   if (assetData.chain === ChainId.Rootstock)
     return createRskClient(asset, network, mnemonic, accountType, derivationPath);
   if (assetData.chain === ChainId.BinanceSmartChain) return createBSCClient(asset, network, mnemonic, derivationPath);

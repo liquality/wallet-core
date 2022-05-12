@@ -59,7 +59,7 @@ test('Should be able to validate enabled chains', async () => {
     key: '0x1234567890123456789012345678901234567890',
   });
 
-  await wallet.dispatch.setWatsNewModalShowed({
+  await wallet.dispatch.setWhatsNewModalVersion({
     version: '1.0.0',
   });
   expect(wallet.state.wallets.length).toBe(1);
@@ -67,7 +67,7 @@ test('Should be able to validate enabled chains', async () => {
   expect(wallet.state.unlockedAt).not.toBe(0);
   expect(wallet.state.termsAcceptedAt).not.toBe(0);
 
-  expect(wallet.state.watsNewModalVersion).toBe('1.0.0');
+  expect(wallet.state.whatsNewModalVersion).toBe('1.0.0');
   expect(wallet.state.keyUpdatedAt).not.toBe(0);
   expect(wallet.state.unlockedAt).not.toBe(0);
   expect(wallet.state.setupAt).not.toBe(0);

@@ -64,6 +64,8 @@ export default {
       useCache = true,
       accountType = AccountType.Default,
       accountIndex = 0,
+      chainCode = undefined,
+      publicKey = undefined
     }: {
       network: Network;
       walletId: WalletId;
@@ -72,6 +74,8 @@ export default {
       useCache?: boolean;
       accountType?: AccountType;
       accountIndex?: number;
+      chainCode?: string | undefined;
+      publicKey?: string | undefined;
     }): Client => {
       const account = accountId ? getters.accountItem(accountId) : null;
       const _accountType = account?.type || accountType;
@@ -104,7 +108,15 @@ export default {
       }
 
       const { mnemonic } = wallet;
-      const client = createClient(asset, network, mnemonic, _accountType, derivationPath);
+      const client = createClient(
+        asset,
+        network,
+        mnemonic,
+        _accountType,
+        derivationPath,
+        account?.chainCode || chainCode,
+        account?.publicKey || publicKey
+      );
       clientCache[cacheKey] = client;
 
       return client;

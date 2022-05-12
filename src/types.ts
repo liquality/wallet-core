@@ -28,7 +28,9 @@ export interface WalletOptions {
     network: Network,
     bitcoinNetwork: BitcoinNetwork,
     addressType: string,
-    baseDerivationPath: string
+    baseDerivationPath: string,
+    publicKey?: string,
+    chainCode?: string,
   ): BitcoinLedgerProvider;
   createEthereumLedgerProvider?(
     network: Network,

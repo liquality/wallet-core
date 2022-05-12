@@ -434,8 +434,8 @@ export default {
       [name]: experiments && experiments[name] ? !experiments[name] : true,
     };
   },
-  SET_WATS_NEW_MODAL_VERSION(state: RootState, { version }: { version: string }) {
-    state.watsNewModalVersion = version;
+  SET_WHATS_NEW_MODAL_VERSION(state: RootState, { version }: { version: string }) {
+    state.whatsNewModalVersion = version;
   },
   TOGGLE_BLOCKCHAIN(
     state: RootState,
