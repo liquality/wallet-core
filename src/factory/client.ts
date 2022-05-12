@@ -20,6 +20,7 @@ import { NearJsWalletProvider } from '@liquality/near-js-wallet-provider';
 import { NearRpcProvider } from '@liquality/near-rpc-provider';
 import { NearSwapFindProvider } from '@liquality/near-swap-find-provider';
 import { NearSwapProvider } from '@liquality/near-swap-provider';
+import { NftProvider } from '@liquality/nft-provider';
 import { Provider } from '@liquality/provider';
 import { SolanaRpcProvider } from '@liquality/solana-rpc-provider';
 import { SolanaSwapFindProvider } from '@liquality/solana-swap-find-provider';
@@ -130,7 +131,9 @@ function createEthereumClient(
       })
     );
   }
-  // const nftProvider = new EvmNftProvider(ethereumNetwork as EthereumNetwork, {} as any);
+  // ethClient.addProvider(nftProvider)
+
+  // const nftProvider = new EvmNftProvider(EthereumJsWalletProvider, httpConfig);
   // console.log('🚀 ~ file: client.ts ~ line 135 ~ nftProvider', nftProvider);
 
   if (isERC20(asset)) {
@@ -148,6 +151,9 @@ function createEthereumClient(
 
   // TODO: remove when Chainify is added
   (ethClient.wallet as any).signTypedMessage = signTypedMessage.bind(ethClient.wallet);
+
+  const openSeaAPI = 'https://rinkeby-api.opensea.io/api/v1/';
+  ethClient.addProvider(new NftProvider(openSeaAPI));
 
   return ethClient;
 }

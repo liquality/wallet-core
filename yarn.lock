@@ -850,7 +850,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/contracts@npm:5.6.0":
+"@ethersproject/contracts@npm:5.6.0, @ethersproject/contracts@npm:^5.5.0":
   version: 5.6.0
   resolution: "@ethersproject/contracts@npm:5.6.0"
   dependencies:
@@ -2342,6 +2342,67 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@liquality/nft-base-provider@npm:^1.13.12":
+  version: 1.13.12
+  resolution: "@liquality/nft-base-provider@npm:1.13.12"
+  dependencies:
+    "@babel/runtime": ^7.12.1
+    "@ethersproject/contracts": ^5.5.0
+    "@liquality/errors": ^1.13.12
+    "@liquality/ethereum-utils": ^1.13.12
+    "@liquality/provider": ^1.13.12
+    "@liquality/types": ^1.13.12
+    "@liquality/utils": ^1.13.12
+  checksum: 4e730dbc50206174453a9c56a17b74391c28a5e4a81641c341900c5d64b88093e69d69050d52040f0b126361afc42f2b8d1961bfd3c63f886a6658acd0fc7897
+  languageName: node
+  linkType: hard
+
+"@liquality/nft-erc1155-provider@npm:^1.13.12":
+  version: 1.13.12
+  resolution: "@liquality/nft-erc1155-provider@npm:1.13.12"
+  dependencies:
+    "@babel/runtime": ^7.12.1
+    "@liquality/errors": ^1.13.12
+    "@liquality/ethereum-utils": ^1.13.12
+    "@liquality/nft-base-provider": ^1.13.12
+    "@liquality/types": ^1.13.12
+    "@liquality/utils": ^1.13.12
+    lodash: ^4.17.20
+  checksum: b34784f0f0d43e20b6d3d02500be09824dbf329db689b79dc6ddc29dd59d21ceb98734b91a84848aa04857a075b6734759ee80d494f35ee119000c0d55abbc5c
+  languageName: node
+  linkType: hard
+
+"@liquality/nft-erc721-provider@npm:^1.13.12":
+  version: 1.13.12
+  resolution: "@liquality/nft-erc721-provider@npm:1.13.12"
+  dependencies:
+    "@babel/runtime": ^7.12.1
+    "@liquality/errors": ^1.13.12
+    "@liquality/ethereum-utils": ^1.13.12
+    "@liquality/nft-base-provider": ^1.13.12
+    "@liquality/types": ^1.13.12
+    "@liquality/utils": ^1.13.12
+    lodash: ^4.17.20
+  checksum: e5b5948f9f3c8097e23d4406b87c49ecac89dcf4c949e144b9ac6689b163c5a10f666a49d853c458e323a791636d376566eb0bf7707cca7392337a7e060ef324
+  languageName: node
+  linkType: hard
+
+"@liquality/nft-provider@npm:^1.13.12":
+  version: 1.13.12
+  resolution: "@liquality/nft-provider@npm:1.13.12"
+  dependencies:
+    "@babel/runtime": ^7.12.1
+    "@liquality/ethereum-utils": ^1.13.12
+    "@liquality/nft-base-provider": ^1.13.12
+    "@liquality/nft-erc1155-provider": ^1.13.12
+    "@liquality/nft-erc721-provider": ^1.13.12
+    "@liquality/node-provider": ^1.13.12
+    "@liquality/types": ^1.13.12
+    "@liquality/utils": ^1.13.12
+  checksum: 60668e84f8a5d31e9bd69be4e49e529a83834cc4d3e75fcd8cf3a1b3092ebece8a336c50bcb9308b1c2c2f4ac5539c53010f067715b00f8579ff02c6f529c4b7
+  languageName: node
+  linkType: hard
+
 "@liquality/node-provider@npm:^1.13.10, @liquality/node-provider@npm:^1.13.12":
   version: 1.13.12
   resolution: "@liquality/node-provider@npm:1.13.12"
@@ -2686,6 +2747,7 @@ __metadata:
     "@liquality/near-rpc-provider": 1.13.10
     "@liquality/near-swap-find-provider": 1.13.10
     "@liquality/near-swap-provider": 1.13.10
+    "@liquality/nft-provider": ^1.13.12
     "@liquality/solana-networks": 1.13.10
     "@liquality/solana-rpc-provider": 1.13.10
     "@liquality/solana-swap-find-provider": 1.13.10

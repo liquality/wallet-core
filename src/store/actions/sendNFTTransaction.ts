@@ -11,8 +11,8 @@ export const sendNFTTransaction = async (
     receiver,
     tokenIDs,
     values,
-    data,
-  }: // fee,
+  }: // data,
+  // fee,
   {
     network: Network;
     walletId: WalletId;
@@ -20,7 +20,7 @@ export const sendNFTTransaction = async (
     receiver: string;
     tokenIDs: number[];
     values: number[];
-    data: string;
+    // data: string;
     // fee: number;
   }
 ): Promise<any> => {
@@ -31,6 +31,15 @@ export const sendNFTTransaction = async (
     asset: 'ETH',
   });
 
-  const nft = await client.nft.transfer(contract, receiver, tokenIDs, values, data);
-  console.log('🚀 ~ file: sendNFT.js ~ line 10 ~ sendNFT ~ nft', nft);
+  console.log('🚀 ~ file: sendNFTTransaction.ts ~ line 35 ~ values', values);
+  console.log('🚀 ~ file: sendNFTTransaction.ts ~ line 35 ~ tokenIDs', tokenIDs);
+  console.log('🚀 ~ file: sendNFTTransaction.ts ~ line 35 ~ receiver', receiver);
+  console.log('🚀 ~ file: sendNFTTransaction.ts ~ line 35 ~ contract', contract);
+  // try {
+  const response = await client.nft.transfer(contract, receiver, tokenIDs, values);
+  console.log('🚀 ~ file: sendNFT.js ~ line 10 ~ sendNFT ~ response', response);
+  return response;
+  // } catch (error) {
+  //   return error;
+  // }
 };

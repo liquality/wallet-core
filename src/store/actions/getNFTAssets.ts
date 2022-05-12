@@ -17,9 +17,9 @@ export const getNFTAssets = async (
     walletId,
     asset: 'ETH',
   });
-  console.log('🚀 ~ file: getNFTAssets.ts ~ line 20 ~ fetch', client.nft.fetch());
+  console.log('🚀 ~ file: getNFTAssets.ts ~ line 20 ~ fetch', await client.nft.fetch());
 
-  const nft = await client.nft.fetch()
+  const nft = await client.nft.fetch();
 
   nft.assets.forEach((asset: any) => {
     if (state.starredNFTs) {
