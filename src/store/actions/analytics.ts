@@ -1,7 +1,7 @@
 import amplitude from 'amplitude-js';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
-import { version as walletVersion } from '../../../package.json';
+import { version as walletCoreVersion } from '../../../package.json';
 import { AnalyticsState } from '../types';
 
 export interface AmplitudeProperties {
@@ -62,7 +62,7 @@ export const trackAnalytics = (
       network: activeNetwork,
       walletId: activeWalletId,
       migrationVersion: version,
-      walletVersion,
+      walletCoreVersion,
     });
   }
 };
