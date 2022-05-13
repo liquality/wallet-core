@@ -1,4 +1,4 @@
-import { ChainId, chains, isEthereumChain as _isEthereumChain } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId, chains, isEthereumChain as _isEthereumChain } from '@liquality/cryptoassets';
 import axios from 'axios';
 import * as ethers from 'ethers';
 import buildConfig from '../build.config';
@@ -130,7 +130,7 @@ function getChainExplorer(chain: ChainId) {
 }
 
 export const isERC20 = (asset: Asset) => {
-  return cryptoassets[asset]?.type === 'erc20';
+  return cryptoassets[asset]?.type === AssetTypes.erc20;
 };
 
 export const isEthereumChain = (asset: Asset) => {
@@ -148,7 +148,7 @@ export const isEthereumNativeAsset = (asset: Asset) => {
 };
 
 export const getNativeAsset = (asset: Asset) => {
-  if (cryptoassets[asset]?.type === 'native') return asset;
+  if (cryptoassets[asset]?.type === AssetTypes.native) return asset;
 
   const chainId = cryptoassets[asset]?.chain;
   return chainId ? chains[chainId].nativeAsset : asset;

@@ -33,3 +33,9 @@ dist/
 
 # Misc
 .DS_Store
+
+# yarn
+.yarn/cache
+.yarn/versions
+.yarn/install-state.gz
+.yarn/unplugged

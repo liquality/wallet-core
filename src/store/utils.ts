@@ -1,5 +1,5 @@
 import { EvmChainProvider, EvmWalletProvider } from '@chainify/evm';
-import { ChainId } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId } from '@liquality/cryptoassets';
 import axios from 'axios';
 import EventEmitter from 'events';
 import { findKey, mapKeys, mapValues, random } from 'lodash';
@@ -48,7 +48,7 @@ const COIN_GECKO_API = 'https://api.coingecko.com/api/v3';
 
 const getRskERC20Assets = () => {
   const erc20 = Object.keys(cryptoassets).filter(
-    (asset) => cryptoassets[asset].chain === ChainId.Rootstock && cryptoassets[asset].type === 'erc20'
+    (asset) => cryptoassets[asset].chain === ChainId.Rootstock && cryptoassets[asset].type === AssetTypes.erc20
   );
 
   return erc20.map((erc) => cryptoassets[erc]);
