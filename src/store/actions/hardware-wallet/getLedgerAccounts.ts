@@ -78,7 +78,6 @@ export const getLedgerAccounts = async (
       // verify if the account exists
       const existingIndex = existingAccounts.findIndex((a) => {
           const addresses = a.addresses.map((a) => chains[chain].formatAddress(a, network))
-          console.log('addresses', addresses, normalizedAddress, addresses.includes(normalizedAddress))
           return addresses.includes(normalizedAddress)
       });
       const exists = existingIndex >= 0;
