@@ -6,6 +6,7 @@ import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets'
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
+import pkg from '../../../package.json';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { AccountId, Asset, Network, WalletId } from '../../store/types';
@@ -23,13 +24,13 @@ import {
   SwapStatus,
 } from '../types';
 
-// const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies['@chainify/client']
-//   .replace('^', '')
-//   .replace('~', '')})`;
+const VERSION_STRING = `Wallet ${pkg.version} (Chainify ${pkg.dependencies['@chainify/client']
+  .replace('^', '')
+  .replace('~', '')})`;
 
 const headers = {
-  // 'x-requested-with': VERSION_STRING,
-  // 'x-liquality-user-agent': VERSION_STRING,
+  'x-requested-with': VERSION_STRING,
+  'x-liquality-user-agent': VERSION_STRING,
 };
 
 export enum LiqualityTxTypes {
