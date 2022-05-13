@@ -1,4 +1,4 @@
-import { Account } from "../types";
+import { Account, AccountType } from "../types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const removeExistingLedgerAccounts = {
@@ -12,7 +12,7 @@ export const removeExistingLedgerAccounts = {
       }
       for (const network in state.accounts[walletId]) {
         accounts[walletId][network] = state.accounts[walletId][network].filter((a: Account) => {
-          return !a.type?.includes('ledger')
+          return [AccountType.BitcoinLedgerNativeSegwit, AccountType.BitcoinLedgerLegacy].includes(a.type)
         })
       }
     }
