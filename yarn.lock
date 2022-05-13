@@ -5,12 +5,12 @@ __metadata:
   version: 5
   cacheKey: 8
 
-"@amplitude/analytics-connector@npm:1.4.1":
-  version: 1.4.1
-  resolution: "@amplitude/analytics-connector@npm:1.4.1"
+"@amplitude/analytics-connector@npm:1.4.2":
+  version: 1.4.2
+  resolution: "@amplitude/analytics-connector@npm:1.4.2"
   dependencies:
     "@amplitude/ua-parser-js": 0.7.26
-  checksum: 3c9062286eb6d501fe3f44347a8d43142218b548fcf358987aae6d9a2e29083d5f0497ed3d00f589fdb50f518dec4ed5b00113007b4078520fb88435d92d08ed
+  checksum: be0753d05d1ca199d859da003e9891f2ef6b449cbf1e631ecb63a483e7f02403aca9f67f72c5fd3279a022fbc6e3f696a974f7f8deaf87089a5acccf077c500d
   languageName: node
   linkType: hard
 
@@ -1707,9 +1707,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@liquality/cryptoassets@npm:1.11.0":
-  version: 1.11.0
-  resolution: "@liquality/cryptoassets@npm:1.11.0"
+"@liquality/cryptoassets@npm:1.12.0":
+  version: 1.12.0
+  resolution: "@liquality/cryptoassets@npm:1.12.0"
   dependencies:
     bignumber.js: ^9.0.2
     bitcoin-address-validation: ^2.2.1
@@ -1717,7 +1717,7 @@ __metadata:
     cashaddrjs: ^0.4.4
     ethereumjs-util: ^7.1.4
     lodash: ^4.17.11
-  checksum: 6893b30c1b01102f753b1ba739d83e0977451755341ef8aaf8c15ef11ff13586f8ddcb042504cca11833d9dfd272f1b3b1d7105ac45b2a1da6d065d23cbcb01d
+  checksum: bb01fa3b403bd1bbb404805d1896f3e56292303e1a94711731675a0f960fc8113edfc2457236b44c49ad0c524e1e815e0d380554deaffb2678e4b6d260b887f3
   languageName: node
   linkType: hard
 
@@ -1740,7 +1740,7 @@ __metadata:
     "@chainify/utils": 1.0.2
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
-    "@liquality/cryptoassets": 1.11.0
+    "@liquality/cryptoassets": 1.12.0
     "@thorchain/asgardex-util": ^0.10.0
     "@types/amplitude-js": ^8.16.0
     "@types/bluebird": ^3.5.36
@@ -1758,7 +1758,7 @@ __metadata:
     "@uniswap/v2-periphery": ^1.1.0-beta.0
     "@uniswap/v2-sdk": ^3.0.1
     "@xchainjs/xchain-util": ^0.6.0
-    amplitude-js: ^8.17.0
+    amplitude-js: 8.18.2
     bignumber.js: ^9.0.2
     detect-circular-deps: ^3.0.0
     direct-vuex: ^0.12.1
@@ -1771,7 +1771,7 @@ __metadata:
     moment: ^2.29.1
     prettier: ^2.5.1
     prettier-plugin-organize-imports: ^2.3.4
-    socket.io-client: ^4.4.1
+    socket.io-client: 4.5.0
     ts-jest: ^27.1.3
     tslib: ^2.3.1
     typescript: ^4.5.5
@@ -2843,17 +2843,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"amplitude-js@npm:^8.17.0":
-  version: 8.18.1
-  resolution: "amplitude-js@npm:8.18.1"
+"amplitude-js@npm:8.18.2":
+  version: 8.18.2
+  resolution: "amplitude-js@npm:8.18.2"
   dependencies:
-    "@amplitude/analytics-connector": 1.4.1
+    "@amplitude/analytics-connector": 1.4.2
     "@amplitude/ua-parser-js": 0.7.26
     "@amplitude/utils": ^1.0.5
     "@babel/runtime": ^7.3.4
     blueimp-md5: ^2.10.0
     query-string: 5
-  checksum: 1f1fad638033da99a4f467c5c4c47cb2e7b01b95723c48ef1fd521e24c9f7813b9182a625859d381cefab885bd8b7655815242125b5158bb4179baeeecc1f544
+  checksum: 9a91bc03aa7e28a496da706553a8e4db7fabea7ef775a789dd8ee6cfd29816945c558731715872a4bbdca00a9005752c41665d2426058d637a85e54faa06408b
   languageName: node
   linkType: hard
 
@@ -9883,7 +9883,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socket.io-client@npm:^4.4.1":
+"socket.io-client@npm:4.5.0":
   version: 4.5.0
   resolution: "socket.io-client@npm:4.5.0"
   dependencies:
