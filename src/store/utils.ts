@@ -1,5 +1,5 @@
 import { Client } from '@liquality/client';
-import { ChainId } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId } from '@liquality/cryptoassets';
 import { EthereumErc20Provider } from '@liquality/ethereum-erc20-provider';
 import { EthereumJsWalletProvider } from '@liquality/ethereum-js-wallet-provider';
 import { EthereumRpcProvider } from '@liquality/ethereum-rpc-provider';
@@ -52,7 +52,7 @@ const COIN_GECKO_API = 'https://api.coingecko.com/api/v3';
 
 const getRskERC20Assets = () => {
   const erc20 = Object.keys(cryptoassets).filter(
-    (asset) => cryptoassets[asset].chain === 'rsk' && cryptoassets[asset].type === 'erc20'
+    (asset) => cryptoassets[asset].chain === ChainId.Rootstock && cryptoassets[asset].type === AssetTypes.erc20
   );
 
   return erc20.map((erc) => cryptoassets[erc]);

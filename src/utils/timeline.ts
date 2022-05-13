@@ -8,12 +8,12 @@ import { UniswapSwapHistoryItem } from '../swaps/uniswap/UniswapSwapProvider';
 import { getTransactionExplorerLink, isERC20 } from './asset';
 import { getStep } from './history';
 
-enum Side {
+export enum TimelineSide {
   RIGHT = 'right',
   LEFT = 'left',
 }
 
-enum TimelineAction {
+export enum TimelineAction {
   LOCK = 'lock',
   CLAIM = 'claim',
   REFUND = 'refund',
@@ -22,7 +22,7 @@ enum TimelineAction {
   SWAP = 'swap',
 }
 
-const ACTIONS_TERMS = {
+export const ACTIONS_TERMS = {
   [TimelineAction.LOCK]: {
     default: 'Lock',
     pending: 'Locking',
@@ -61,19 +61,19 @@ const ACTIONS_TERMS = {
   },
 };
 
-interface TimelineStep {
-  side: Side;
+export interface TimelineStep {
+  side: TimelineSide;
   pending: boolean;
   completed: boolean;
   title: string;
   tx?: Transaction;
 }
 
-type GetClientFunction = (options: { walletId: WalletId; network: Network; asset: Asset }) => Client;
+export type GetClientFunction = (options: { walletId: WalletId; network: Network; asset: Asset }) => Client;
 
-type GetStepFunction = (completed: boolean, pending: boolean, side: Side) => Promise<TimelineStep>;
+export type GetStepFunction = (completed: boolean, pending: boolean, side: TimelineSide) => Promise<TimelineStep>;
 
-interface TimelineTransaction extends Transaction {
+export interface TimelineTransaction extends Transaction {
   asset: string;
   explorerLink: string;
 }
@@ -118,7 +118,7 @@ export async function getSwapTimeline(item: SwapHistoryItem, getClient: GetClien
   async function getTransactionStep(
     completed: boolean,
     pending: boolean,
-    side: Side,
+    side: TimelineSide,
     hash: string,
     defaultTx: Transaction | null,
     asset: Asset,
@@ -145,7 +145,7 @@ export async function getSwapTimeline(item: SwapHistoryItem, getClient: GetClien
     }
     return step;
   }
-  async function getInitiationStep(completed: boolean, pending: boolean, side: Side) {
+  async function getInitiationStep(completed: boolean, pending: boolean, side: TimelineSide) {
     return getTransactionStep(
       completed,
       pending,
@@ -156,7 +156,7 @@ export async function getSwapTimeline(item: SwapHistoryItem, getClient: GetClien
       TimelineAction.LOCK
     );
   }
-  async function getAgentInitiationStep(completed: boolean, pending: boolean, side: Side) {
+  async function getAgentInitiationStep(completed: boolean, pending: boolean, side: TimelineSide) {
     return getTransactionStep(
       completed,
       pending,
@@ -167,7 +167,7 @@ export async function getSwapTimeline(item: SwapHistoryItem, getClient: GetClien
       TimelineAction.LOCK
     );
   }
-  async function getClaimRefundStep(completed: boolean, pending: boolean, side: Side) {
+  async function getClaimRefundStep(completed: boolean, pending: boolean, side: TimelineSide) {
     return (item as LiqualitySwapHistoryItem).refundHash
       ? getTransactionStep(
           completed,
@@ -188,7 +188,7 @@ export async function getSwapTimeline(item: SwapHistoryItem, getClient: GetClien
           TimelineAction.CLAIM
         );
   }
-  async function getApproveStep(completed: boolean, pending: boolean, side: Side) {
+  async function getApproveStep(completed: boolean, pending: boolean, side: TimelineSide) {
     return getTransactionStep(
       completed,
       pending,
@@ -199,10 +199,10 @@ export async function getSwapTimeline(item: SwapHistoryItem, getClient: GetClien
       TimelineAction.APPROVE
     );
   }
-  async function getSwapStep(completed: boolean, pending: boolean, side: Side) {
+  async function getSwapStep(completed: boolean, pending: boolean, side: TimelineSide) {
     return (item as LiqualitySwapHistoryItem).refundHash
       ? {
-          side: Side.RIGHT,
+          side: TimelineSide.RIGHT,
           pending: false,
           completed: true,
           title: `${ACTIONS_TERMS.swap.pending} ${item.to} Interrupted`,
@@ -217,7 +217,7 @@ export async function getSwapTimeline(item: SwapHistoryItem, getClient: GetClien
           TimelineAction.SWAP
         );
   }
-  async function getReceiveStep(completed: boolean, pending: boolean, side: Side) {
+  async function getReceiveStep(completed: boolean, pending: boolean, side: TimelineSide) {
     return item.status === 'REFUNDED'
       ? getTransactionStep(
           completed,
@@ -255,8 +255,10 @@ export async function getSwapTimeline(item: SwapHistoryItem, getClient: GetClien
   for (let i = 0; i < steps.length; i++) {
     const completed = getStep(item) > i;
     const pending = getStep(item) === i;
-    const side = i % 2 === 0 ? Side.LEFT : Side.RIGHT;
+    const side = i % 2 === 0 ? TimelineSide.LEFT : TimelineSide.RIGHT;
     const step = await steps[i](completed, pending, side);
     timeline.push(step);
   }
+
+  return timeline;
 }
