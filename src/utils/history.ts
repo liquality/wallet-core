@@ -15,6 +15,9 @@ export const SEND_STATUS_LABEL_MAP = {
 };
 
 export function getStatusLabel(item: HistoryItem) {
+  if (item.type === TransactionType.NFT) {
+    return SEND_STATUS_LABEL_MAP[item.status] || '';
+  }
   if (item.type === TransactionType.Send) {
     return SEND_STATUS_LABEL_MAP[item.status] || '';
   }
@@ -30,6 +33,9 @@ export function getStatusLabel(item: HistoryItem) {
 }
 
 export function getStep(item: HistoryItem) {
+  if (item.type === TransactionType.NFT) {
+    return SEND_STATUS_STEP_MAP[item.status];
+  }
   if (item.type === TransactionType.Send) {
     return SEND_STATUS_STEP_MAP[item.status];
   }
@@ -45,6 +51,10 @@ export const ACTIVITY_FILTER_TYPES = {
   SWAP: {
     label: 'Swap',
     icon: 'swap',
+  },
+  NFT: {
+    label: 'NFT',
+    icon: 'nft',
   },
   SEND: {
     label: 'Send',

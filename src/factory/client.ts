@@ -124,7 +124,7 @@ function createEthereumClient(
   } else {
     ethClient.addProvider(
       new EthereumJsWalletProvider({
-        network: ethereumNetwork,
+        network: { ...ethereumNetwork, chainId: 4 },
         mnemonic,
         derivationPath,
         hardfork,
@@ -164,9 +164,8 @@ function createEthClient(
   const isTestnet = network === 'testnet';
   const ethereumNetwork = ChainNetworks.ethereum[network];
   const infuraApi = isTestnet
-    ? `https://ropsten.infura.io/v3/${buildConfig.infuraApiKey}`
+    ? `https://rinkeby.infura.io/v3/${buildConfig.infuraApiKey}`
     : `https://mainnet.infura.io/v3/${buildConfig.infuraApiKey}`;
-  console.log('🚀 ~ file: client.ts ~ line 167 ~ infuraApi', infuraApi);
   const scraperApi = isTestnet
     ? 'https://eth-ropsten-api.liq-chainhub.net/'
     : 'https://eth-mainnet-api.liq-chainhub.net/';

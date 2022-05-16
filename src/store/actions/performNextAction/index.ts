@@ -3,6 +3,7 @@ import { getSwapProvider } from '../../../factory/swapProvider';
 import { createHistoryNotification } from '../../broker/notification';
 import { HistoryItem, Network, TransactionType, WalletId } from '../../types';
 import { performNextTransactionAction } from './send';
+import { performNextNFTTransactionAction } from './sendNFT';
 
 export const performNextAction = async (
   context: ActionContext,
@@ -27,6 +28,13 @@ export const performNextAction = async (
     }
     if (item.type === TransactionType.Send) {
       updates = await performNextTransactionAction(context, {
+        network,
+        walletId,
+        transaction: item,
+      });
+    }
+    if (item.type === TransactionType.NFT) {
+      updates = await performNextNFTTransactionAction(context, {
         network,
         walletId,
         transaction: item,
