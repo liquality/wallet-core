@@ -164,8 +164,9 @@ function createEthClient(
   const isTestnet = network === 'testnet';
   const ethereumNetwork = ChainNetworks.ethereum[network];
   const infuraApi = isTestnet
-    ? `https://rinkeby.infura.io/v3/${buildConfig.infuraApiKey}`
+    ? `https://ropsten.infura.io/v3/${buildConfig.infuraApiKey}`
     : `https://mainnet.infura.io/v3/${buildConfig.infuraApiKey}`;
+  console.log('🚀 ~ file: client.ts ~ line 167 ~ infuraApi', infuraApi);
   const scraperApi = isTestnet
     ? 'https://eth-ropsten-api.liq-chainhub.net/'
     : 'https://eth-mainnet-api.liq-chainhub.net/';
