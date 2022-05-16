@@ -148,9 +148,6 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   toAmount: string;
   bridgeAsset?: Asset;
   path?: string[];
-  hopAsset?: any;
-  hopChainFrom?: any;
-  hopChainTo?: any;
 }
 
 export type HistoryItem = SendHistoryItem | SwapHistoryItem;
