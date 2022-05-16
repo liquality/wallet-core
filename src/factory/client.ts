@@ -278,7 +278,7 @@ function createBSCClient(asset: Asset, network: Network, mnemonic: string, deriv
 function createPolygonClient(asset: Asset, network: Network, mnemonic: string, derivationPath: string) {
   const isTestnet = network === 'testnet';
   const polygonNetwork = ChainNetworks.polygon[network];
-  const rpcApi = isTestnet ? 'https://rpc-mumbai.maticvigil.com' : 'https://polygon-rpc.com';
+  const rpcApi = isTestnet ? 'https://rpc-mumbai.matic.today' : 'https://polygon-rpc.com';
   const scraperApi = isTestnet
     ? 'https://polygon-mumbai-api.liq-chainhub.net/'
     : 'https://polygon-mainnet-api.liq-chainhub.net/';
@@ -440,16 +440,17 @@ export const createClient = (
 ) => {
   const assetData = cryptoassets[asset];
 
-  if (assetData.chain === 'bitcoin') return createBtcClient(network, mnemonic, accountType, derivationPath);
-  if (assetData.chain === 'rsk') return createRskClient(asset, network, mnemonic, accountType, derivationPath);
-  if (assetData.chain === 'bsc') return createBSCClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === 'polygon') return createPolygonClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === 'arbitrum') return createArbitrumClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === 'near') return createNearClient(network, mnemonic, derivationPath);
-  if (assetData?.chain === 'solana') return createSolanaClient(network, mnemonic, derivationPath);
-  if (assetData.chain === 'terra') return createTerraClient(network, mnemonic, derivationPath, asset);
-  if (assetData.chain === 'avalanche') return createAvalancheClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === 'fuse') return createFuseClient(asset, network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Bitcoin) return createBtcClient(network, mnemonic, accountType, derivationPath);
+  if (assetData.chain === ChainId.Rootstock)
+    return createRskClient(asset, network, mnemonic, accountType, derivationPath);
+  if (assetData.chain === ChainId.BinanceSmartChain) return createBSCClient(asset, network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Polygon) return createPolygonClient(asset, network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Arbitrum) return createArbitrumClient(asset, network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Near) return createNearClient(network, mnemonic, derivationPath);
+  if (assetData?.chain === ChainId.Solana) return createSolanaClient(network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Terra) return createTerraClient(network, mnemonic, derivationPath, asset);
+  if (assetData.chain === ChainId.Avalanche) return createAvalancheClient(asset, network, mnemonic, derivationPath);
+  if (assetData.chain === ChainId.Fuse) return createFuseClient(asset, network, mnemonic, derivationPath);
 
   return createEthClient(asset, network, mnemonic, accountType, derivationPath);
 };

@@ -17,6 +17,7 @@ import {
   QuoteRequest,
   SwapRequest,
   SwapStatus,
+  SwapQuote,
 } from '../types';
 import { ActionContext } from '../../store'
 import { Network, SwapHistoryItem} from '../../store/types'
@@ -24,6 +25,14 @@ import {getDestinationTxGQL,getTransferIdByTxHash } from './queries'
 
 export interface HopSwapProviderConfig extends BaseSwapProviderConfig {
   graphqlBaseURL: string;
+}
+
+export interface HopSwapQuote extends SwapQuote {
+  hopChainFrom: Chain;
+}
+
+export enum HopTxTypes {
+  SWAP = 'SWAP',
 }
 
 export interface HopSwapHistoryItem extends SwapHistoryItem {
@@ -284,7 +293,7 @@ class HopSwapProvider extends SwapProvider {
    * @return Object of key feePrice and value fee
    */
   // eslint-disable-next-line no-unused-vars
-  async estimateFees({ asset, txType, quote, feePrices }: EstimateFeeRequest) {
+  async estimateFees({ asset, txType, quote, feePrices }: EstimateFeeRequest<HopTxTypes, HopSwapQuote>) {
     if (txType !== this.fromTxType) {
       throw new Error(`Invalid tx type ${txType}`);
     }

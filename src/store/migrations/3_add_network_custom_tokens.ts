@@ -1,3 +1,5 @@
+import { ChainId } from '@liquality/cryptoassets';
+
 // Add network to custom tokens
 export const addNetworkCustomTokens = {
   version: 3,
@@ -6,13 +8,13 @@ export const addNetworkCustomTokens = {
       mainnet: {
         [state.activeWalletId]: state.customTokens?.mainnet?.[state.activeWalletId].map((token: any) => ({
           ...token,
-          network: 'ethereum',
+          network: ChainId.Ethereum,
         })),
       },
       testnet: {
         [state.activeWalletId]: state.customTokens?.testnet?.[state.activeWalletId].map((token: any) => ({
           ...token,
-          network: 'ethereum',
+          network: ChainId.Ethereum,
         })),
       },
     };
