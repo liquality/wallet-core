@@ -12,13 +12,14 @@ import {
   HistoryItem,
   MarketData,
   Network,
+  NFTAsset,
+  NFTAssets,
+  NFTSendHistoryItem,
   RootState,
   SendHistoryItem,
   SwapHistoryItem,
   Wallet,
   WalletId,
-  NFTAsset,
-  NFTAssets,
 } from './types';
 
 const ensureNetworkWalletTree = (ref: any, network: Network, walletId: WalletId, initialValue: any) => {
@@ -117,6 +118,14 @@ export default {
   NEW_TRASACTION(
     state: RootState,
     { network, walletId, transaction }: { network: Network; walletId: WalletId; transaction: SendHistoryItem }
+  ) {
+    ensureNetworkWalletTree(state.history, network, walletId, []);
+
+    state.history[network]![walletId].push(transaction);
+  },
+  NEW_NFT_TRASACTION(
+    state: RootState,
+    { network, walletId, transaction }: { network: Network; walletId: WalletId; transaction: NFTSendHistoryItem }
   ) {
     ensureNetworkWalletTree(state.history, network, walletId, []);
 
@@ -430,32 +439,31 @@ export default {
     };
   },
   SET_NFT_ASSETS(state: RootState, payload: NFTAssets) {
-    state.nftAssets = payload
+    state.nftAssets = payload;
   },
   SET_NFT_ASSETS_NUMBER(state: RootState, payload: number) {
-    state.nftAssetsNumber = payload
+    state.nftAssetsNumber = payload;
   },
   SET_STARRED_NFTS(state: RootState, payload: NFTAsset) {
-    const starredNFTs: NFTAsset[] = state.starredNFTs || []
+    const starredNFTs: NFTAsset[] = state.starredNFTs || [];
 
     const index = starredNFTs.findIndex(
-      (nft: NFTAsset) =>
-        nft.asset_contract.address === payload.asset_contract.address && nft.id === payload.id
-    )
+      (nft: NFTAsset) => nft.asset_contract.address === payload.asset_contract.address && nft.id === payload.id
+    );
 
     if (index !== -1) {
-      starredNFTs.splice(index, 1)
+      starredNFTs.splice(index, 1);
     } else {
-      starredNFTs.push(payload)
+      starredNFTs.push(payload);
     }
 
-    const collectionName: any= payload.collection.name
-    const collection = state.nftAssets[collectionName]
+    const collectionName: any = payload.collection.name;
+    const collection = state.nftAssets[collectionName];
     const sortedCollection: NFTAsset[] = collection.sort((a: NFTAsset, b: NFTAsset) => {
-      return a.starred === b.starred ? 0 : a.starred ? -1 : 1
-    })
-    state.nftAssets[collectionName] = sortedCollection
-    state.starredNFTs = starredNFTs
+      return a.starred === b.starred ? 0 : a.starred ? -1 : 1;
+    });
+    state.nftAssets[collectionName] = sortedCollection;
+    state.starredNFTs = starredNFTs;
   },
   TOGGLE_EXPERIMENT(state: RootState, { name }: { name: ExperimentType }) {
     const { experiments } = state;

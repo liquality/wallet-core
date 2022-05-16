@@ -124,17 +124,13 @@ function createEthereumClient(
   } else {
     ethClient.addProvider(
       new EthereumJsWalletProvider({
-        network: { ...ethereumNetwork, chainId: 4 },
+        network: ethereumNetwork,
         mnemonic,
         derivationPath,
         hardfork,
       })
     );
   }
-  // ethClient.addProvider(nftProvider)
-
-  // const nftProvider = new EvmNftProvider(EthereumJsWalletProvider, httpConfig);
-  // console.log('🚀 ~ file: client.ts ~ line 135 ~ nftProvider', nftProvider);
 
   if (isERC20(asset)) {
     const contractAddress = cryptoassets[asset].contractAddress;
@@ -168,7 +164,7 @@ function createEthClient(
   const isTestnet = network === 'testnet';
   const ethereumNetwork = ChainNetworks.ethereum[network];
   const infuraApi = isTestnet
-    ? `https://ropsten.infura.io/v3/${buildConfig.infuraApiKey}`
+    ? `https://rinkeby.infura.io/v3/${buildConfig.infuraApiKey}`
     : `https://mainnet.infura.io/v3/${buildConfig.infuraApiKey}`;
   const scraperApi = isTestnet
     ? 'https://eth-ropsten-api.liq-chainhub.net/'
