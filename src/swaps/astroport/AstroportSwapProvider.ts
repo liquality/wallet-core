@@ -1,4 +1,4 @@
-import { Asset, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { Asset, AssetTypes, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import { TerraNetworks } from '@liquality/terra-networks';
 import { terra, Transaction } from '@liquality/types';
 import { LCDClient } from '@terra-money/terra.js';
@@ -55,12 +55,20 @@ class AstroportSwapProvider extends SwapProvider {
       return null;
     }
 
-    const fromAmountInUnit = currencyToUnit(fromInfo, new BN(amount)).toFixed();
+    const fromAmountInUnit = currencyToUnit(
+      fromInfo,
+      new BN(amount).decimalPlaces(fromInfo.decimals, BN.ROUND_DOWN) // ignore all decimals after nth
+    ).toFixed();
+
     const { rate, fromTokenAddress, toTokenAddress, pairAddress } = await this._getSwapRate(
       fromAmountInUnit,
       fromInfo,
       toInfo
     );
+
+    if (rate.amount === 0 || rate.return_amount === 0) {
+      return null;
+    }
 
     return {
       from,
@@ -199,10 +207,10 @@ class AstroportSwapProvider extends SwapProvider {
     const rpc = this._getRPC();
 
     // Check coin types
-    const nativeToNative = fromInfo.type === 'native' && toInfo.type === 'native';
-    const erc20ToErc20 = fromInfo.type === 'erc20' && toInfo.type === 'erc20';
-    const nativeToErc20 = fromInfo.type === 'native' && toInfo.type === 'erc20';
-    const erc20ToNative = fromInfo.type === 'erc20' && toInfo.type === 'native';
+    const nativeToNative = fromInfo.type === AssetTypes.native && toInfo.type === AssetTypes.native;
+    const erc20ToErc20 = fromInfo.type === AssetTypes.erc20 && toInfo.type === AssetTypes.erc20;
+    const nativeToErc20 = fromInfo.type === AssetTypes.native && toInfo.type === AssetTypes.erc20;
+    const erc20ToNative = fromInfo.type === AssetTypes.erc20 && toInfo.type === AssetTypes.native;
 
     // Select correct query and address depending on coin types
     let contractData;
@@ -276,12 +284,6 @@ class AstroportSwapProvider extends SwapProvider {
     return resp.contract_addr;
   }
 
-  protected _txTypes() {
-    return {
-      SWAP: 'SWAP',
-    };
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       WAITING_FOR_SWAP_CONFIRMATIONS: {
@@ -310,6 +312,12 @@ class AstroportSwapProvider extends SwapProvider {
           return { message: 'Swap failed' };
         },
       },
+    };
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
     };
   }
 

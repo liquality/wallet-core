@@ -105,9 +105,14 @@ class UniswapSwapProvider extends SwapProvider {
 
   async getQuote({ network, from, to, amount }: QuoteRequest) {
     // Uniswap only provides liquidity for ethereum tokens
-    if (!isEthereumChain(from) || !isEthereumChain(to)) return null;
+    if (!isEthereumChain(from) || !isEthereumChain(to)) {
+      return null;
+    }
+
     // Only uniswap on ethereum is supported atm
-    if (cryptoassets[from].chain !== ChainId.Ethereum || cryptoassets[to].chain !== ChainId.Ethereum) return null;
+    if (cryptoassets[from].chain !== ChainId.Ethereum || cryptoassets[to].chain !== ChainId.Ethereum) {
+      return null;
+    }
 
     const chainId = this.getChainId(from, network);
 
@@ -334,7 +339,12 @@ class UniswapSwapProvider extends SwapProvider {
       data: swapTx.data,
       value: '0x' + swapTx.value.toString(16),
     };
-    gasLimit += await client.getMethod('estimateGas')(rawSwapTx);
+
+    try {
+      gasLimit += await client.getMethod('estimateGas')(rawSwapTx);
+    } catch {
+      gasLimit += 350_000; // estimateGas is failing if token that we are swapping is not approved
+    }
 
     const fees: EstimateFeeResponse = {};
     for (const feePrice of feePrices) {
@@ -398,12 +408,6 @@ class UniswapSwapProvider extends SwapProvider {
     }
   }
 
-  protected _txTypes() {
-    return {
-      SWAP: 'SWAP',
-    };
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       WAITING_FOR_APPROVE_CONFIRMATIONS: {
@@ -451,6 +455,12 @@ class UniswapSwapProvider extends SwapProvider {
           };
         },
       },
+    };
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
     };
   }
 

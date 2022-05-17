@@ -101,6 +101,7 @@ export enum SwapProviderType {
   Thorchain = 'thorchain',
   Astroport = 'astroport',
   Blindex = 'blindex',
+  Hop = 'hop'
 }
 
 export interface BaseHistoryItem {

@@ -11,6 +11,7 @@ import { SovrynSwapProvider } from '../swaps/sovryn/SovrynSwapProvider';
 import { SwapProvider } from '../swaps/SwapProvider';
 import { ThorchainSwapProvider } from '../swaps/thorchain/ThorchainSwapProvider';
 import { UniswapSwapProvider } from '../swaps/uniswap/UniswapSwapProvider';
+import { HopSwapProvider } from '../swaps/hop/HopSwapProvider';
 
 const providers = {
   [SwapProviderType.Liquality]: LiqualitySwapProvider,
@@ -22,7 +23,8 @@ const providers = {
   [SwapProviderType.FastBTC]: FastbtcSwapProvider,
   [SwapProviderType.Sovryn]: SovrynSwapProvider,
   [SwapProviderType.Astroport]: AstroportSwapProvider,
-  [SwapProviderType.Blindex]: BlindexSwapProvider
+  [SwapProviderType.Blindex]: BlindexSwapProvider,
+  [SwapProviderType.Hop]: HopSwapProvider
 };
 
 const createSwapProvider = (network: Network, providerId: string) => {

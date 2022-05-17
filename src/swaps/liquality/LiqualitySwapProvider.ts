@@ -320,10 +320,6 @@ export class LiqualitySwapProvider extends SwapProvider {
     }
   }
 
-  protected _txTypes() {
-    return LiqualityTxTypes;
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       INITIATED: {
@@ -420,6 +416,10 @@ export class LiqualitySwapProvider extends SwapProvider {
         filterStatus: 'REFUNDED',
       },
     };
+  }
+
+  protected _txTypes() {
+    return LiqualityTxTypes;
   }
 
   protected _fromTxType(): LiqualityTxTypes | null {

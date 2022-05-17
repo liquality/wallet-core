@@ -1,5 +1,6 @@
 import buildConfig from '../build.config';
 import { Network, SwapProviderType } from '../store/types';
+import hopInfo from '../swaps/hop/info.json';
 import astroportInfo from '../swaps/astroport/info.json';
 import fastbtcInfo from '../swaps/fastbtc/info.json';
 import liqualityInfo from '../swaps/liquality/info.json';
@@ -21,7 +22,8 @@ const swapProviderInfo = {
   [SwapProviderType.LiqualityBoostERC20ToNative]: liqualityBoostERC20toNativeInfo,
   [SwapProviderType.Sovryn]: sovrynInfo,
   [SwapProviderType.Astroport]: astroportInfo,
-  [SwapProviderType.Blindex]: blindexInfo
+  [SwapProviderType.Blindex]: blindexInfo,
+  [SwapProviderType.Hop]: hopInfo
 };
 
 function getSwapProviderConfig(network: Network, providerId: string) {
