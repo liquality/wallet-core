@@ -27,6 +27,10 @@ import {
 } from '../../types';
 import { BoostHistoryItem, BoostNextSwapActionRequest } from '../types';
 
+export interface BoostNativeERC20toNativeSwapQuote extends SwapQuote {
+  fromTokenAddress: string;
+}
+
 const slippagePercentage = 3;
 
 class LiqualityBoostERC20toNative extends SwapProvider {
@@ -84,7 +88,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       from,
       to: bridgeAsset,
       amount,
-    })) as SwapQuote;
+    })) as BoostNativeERC20toNativeSwapQuote;
     if (!quote) return null;
 
     // get rate between native asset and 'to' asset (which is native too)

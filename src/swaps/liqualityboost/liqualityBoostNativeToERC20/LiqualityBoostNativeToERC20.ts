@@ -27,6 +27,10 @@ import {
 } from '../../types';
 import { BoostHistoryItem, BoostNextSwapActionRequest } from '../types';
 
+export interface BoostNativeToERC20SwapQuote extends SwapQuote {
+  fromTokenAddress: string;
+}
+
 const slippagePercentage = 3;
 class LiqualityBoostNativeToERC20 extends SwapProvider {
   private liqualitySwapProvider: LiqualitySwapProvider;
@@ -97,7 +101,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       from: bridgeAsset,
       to,
       amount: bridgeAssetQuantity,
-    })) as SwapQuote;
+    })) as BoostNativeToERC20SwapQuote;
 
     if (!finalQuote) {
       return null;
