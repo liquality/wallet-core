@@ -1198,9 +1198,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hop-protocol/sdk@npm:^0.0.1-beta.314":
-  version: 0.0.1-beta.316
-  resolution: "@hop-protocol/sdk@npm:0.0.1-beta.316"
+"@hop-protocol/sdk@npm:0.0.1-beta.314":
+  version: 0.0.1-beta.314
+  resolution: "@hop-protocol/sdk@npm:0.0.1-beta.314"
   dependencies:
     "@eth-optimism/contracts": ^0.5.2
     "@ethersproject/abi": ^5.4.0
@@ -1208,14 +1208,14 @@ __metadata:
     "@hop-protocol/core": 0.0.1-beta.63
     "@maticnetwork/maticjs": ^2.0.38
     dotenv: ^8.2.0
-    ethereum-block-by-date: ^1.4.5
+    ethereum-block-by-date: ^1.4.2
     ethers: ^5.5.1
     eventemitter3: ^4.0.7
     fast-memoize: ^2.5.2
     isomorphic-fetch: ^3.0.0
     luxon: ^2.0.1
     web3: ^1.3.5
-  checksum: a29d7865d092e19c1a0cf07768e04dd3319114ce83665e363803a14ab97e95c141d54c9877bc0106b054ac862b8c58f9f79d7440fd45544dc31d3a2f02da0f46
+  checksum: 320976043edbb4daa31e545ab54dc299ed08d1e06358f787ce25c3489910ef686d1e9c99638e2675b5e33fe443524d98e9e253a4c9d78fb594825f08cbab2f28
   languageName: node
   linkType: hard
 
@@ -2694,7 +2694,7 @@ __metadata:
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
     "@ethersproject/address": ^5.6.0
-    "@hop-protocol/sdk": ^0.0.1-beta.314
+    "@hop-protocol/sdk": 0.0.1-beta.314
     "@liquality/bitcoin-esplora-batch-api-provider": 1.13.10
     "@liquality/bitcoin-esplora-swap-find-provider": 1.13.10
     "@liquality/bitcoin-fee-api-provider": 1.13.10
@@ -6544,7 +6544,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethereum-block-by-date@npm:^1.4.5":
+"ethereum-block-by-date@npm:^1.4.2":
   version: 1.4.5
   resolution: "ethereum-block-by-date@npm:1.4.5"
   dependencies:

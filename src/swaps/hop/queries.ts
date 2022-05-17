@@ -1,5 +1,5 @@
 // L1->L2
-function  queryGetDestinationTxHashFromL1Source(recipient : string) {
+function  getDestinationTxHashFromL1Source(recipient : string) {
   return `query {
       transferFromL1Completeds(
         where: {
@@ -19,7 +19,7 @@ function  queryGetDestinationTxHashFromL1Source(recipient : string) {
 }
 
   // L2->L1 or L2->L2
-function queryGetDestinationTxHashFromL2Source(transferId: string) {
+function getDestinationTxHashFromL2Source(transferId: string) {
   return `query {
       withdrawalBondeds(
         where: {
@@ -57,6 +57,6 @@ export function  getTransferIdByTxHash(txHash: string) {
 
 export function  getDestinationTxGQL(transferId: string, recipient: string, isFromL1Source: boolean) {
     return isFromL1Source
-      ? queryGetDestinationTxHashFromL1Source(recipient)
-      : queryGetDestinationTxHashFromL2Source(transferId)
+      ? getDestinationTxHashFromL1Source(recipient)
+      : getDestinationTxHashFromL2Source(transferId)
 }
