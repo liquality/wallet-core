@@ -1,16 +1,13 @@
 name: Build Test
 
 on:
-  push:
+  pull_request:
     paths-ignore:
       - '**/node_modules/**'
       - '.github/**'
-    branches:
-      - test
-  pull_request:
+      - '.github/*'
     branches-ignore:
       - renovate*
-      - feature/*
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -2,27 +2,45 @@
   "categories": [
     {
       "title": "## 🚀 Features",
-      "labels": ["feature"]
+      "labels": [
+        "feature"
+      ]
     },
     {
       "title": "## 🐛 Fixes",
-      "labels": ["fix"]
+      "labels": [
+        "fix"
+      ]
     },
     {
       "title": "## 🧪 Tests",
-      "labels": ["test"]
+      "labels": [
+        "test"
+      ]
     },
     {
       "title": "## 💬 Other",
-      "labels": ["other"]
+      "labels": [
+        "other"
+      ]
+    },
+    {
+      "title": "## 📝 Continuous Integration",
+      "labels": [
+        "ci-update"
+      ]
     },
     {
       "title": "## 📦 Dependencies",
-      "labels": ["dependencies"]
+      "labels": [
+        "dependencies"
+      ]
     },
     {
       "title": "## 📚 Documentation",
-      "labels": ["documentation"]
+      "labels": [
+        "documentation"
+      ]
     }
   ],
   "sort": "ASC",
