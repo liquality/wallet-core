@@ -15,20 +15,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/labeler@v4
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Get Current Tag
-        id: get_current_tag
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
-
-      - name: Get Previous tag
-        id: previous_tag
-        run: echo ::set-output name=tag::$(git tag --sort v:refname | tail -n 2 | head -n 1)
-
-      - name: Build project
-        uses: actions/setup-node@v3.1.1
+      - uses: actions/setup-node@v3.1.1
         with:
           node-version: 16
           registry-url: 'https://registry.npmjs.org'
@@ -55,8 +42,6 @@ jobs:
           configuration: "configs/configuration_complex.json"
           owner: "Liquality"
           repo: "wallet-core"
-#          fromTag: "${{ steps.previous_tag.outputs.tag }}"
-#          toTag: "${{ steps.get_current_tag.outputs.tag }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

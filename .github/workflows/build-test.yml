@@ -6,7 +6,7 @@ on:
       - '**/node_modules/**'
       - '.github/**'
     branches:
-      - master
+      - test
   pull_request:
     branches-ignore:
       - renovate*

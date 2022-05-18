@@ -19,6 +19,10 @@
     {
       "title": "## 📦 Dependencies",
       "labels": ["dependencies"]
+    },
+    {
+      "title": "## 📚 Documentation",
+      "labels": ["documentation"]
     }
   ],
   "sort": "ASC",

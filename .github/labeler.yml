@@ -1,12 +1,18 @@
 feature:
   - any: [ 'src/**/*', '!src/docs/*' ]
 
+fix:
+  - any: [ 'src/**/*', '!src/docs/*' ]
+
 test:
   - any: [ 'src/**/*.test.ts','src/**/*.spec.ts' ]
 
 other:
-  - any: [ '.github/**/*' ]
+  - any: [ '.github/**/*','.github/*' ]
 
 dependencies:
   - any: [ 'package.json', 'yarn.lock' ]
+
+documentation:
+  - any: [ 'README.md' ]
 
