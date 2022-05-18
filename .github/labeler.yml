@@ -1,0 +1,12 @@
+feature:
+  - any: [ 'src/**/*', '!src/docs/*' ]
+
+test:
+  - any: [ 'src/**/*.test.ts','src/**/*.spec.ts' ]
+
+other:
+  - any: [ '.github/**/*' ]
+
+dependencies:
+  - any: [ 'package.json', 'yarn.lock' ]
+
