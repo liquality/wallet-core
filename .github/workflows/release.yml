@@ -15,6 +15,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get Current Tag
+        id: get_current_tag
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+
+      - name: Get Previous tag
+        id: previous_tag
+        run: echo ::set-output name=tag::$(git tag --sort v:refname | tail -n 2 | head -n 1)
+
       - name: Build project
         uses: actions/setup-node@v3.1.1
         with:
@@ -37,7 +45,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build Changelog
-        id: build_changelog
+        id: github_release
         uses: mikepenz/release-changelog-builder-action@v3
         with:
           configuration: "configuration.json"
