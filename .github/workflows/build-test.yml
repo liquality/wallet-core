@@ -5,12 +5,10 @@ on:
     paths-ignore:
       - '**/node_modules/**'
       - '.github/**'
-    branches:
-      - test
+      - '.github/*'
   pull_request:
     branches-ignore:
       - renovate*
-      - feature/*
 jobs:
   build:
     runs-on: ubuntu-latest
