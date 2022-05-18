@@ -51,8 +51,8 @@ jobs:
           configuration: "configs/configuration_complex.json"
           owner: "Liquality"
           repo: "wallet-core"
-          fromTag: "${{ steps.previous_tag.outputs.tag }}"
-          toTag: "${{ steps.get_current_tag.outputs.tag }}"
+#          fromTag: "${{ steps.previous_tag.outputs.tag }}"
+#          toTag: "${{ steps.get_current_tag.outputs.tag }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
