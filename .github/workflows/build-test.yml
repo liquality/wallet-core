@@ -2,6 +2,9 @@ name: Build Test
 
 on:
   push:
+    paths-ignore:
+      - '**/node_modules/**'
+      - '.github/**'
     branches:
       - master
   pull_request:
