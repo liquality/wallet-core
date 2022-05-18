@@ -34,12 +34,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Changelog
-        if: always()
-        uses: scottbrenner/generate-changelog-action@v1.3.3
-        id: Changelog
+      - name: "Build Changelog"
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@{latest-release}
         env:
-         REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
         id: create_release
@@ -50,4 +49,4 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           body: |
-             ${{ steps.Changelog.outputs.changelog }}
+            ${{steps.build_changelog.outputs.changelog}}
