@@ -2,9 +2,9 @@ name: "Pull Request Labeler"
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
-    branches:
-      - master
+    types: [opened, reopened, synchronize, edited]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 jobs:
   triage:
     permissions:
