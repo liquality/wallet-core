@@ -10,6 +10,9 @@ test:
 other:
   - any: [ '.github/**/*','.github/*' ]
 
+ci-update:
+  - any: [ '.github/**/*','.github/*' ]
+
 dependencies:
   - any: [ 'package.json', 'yarn.lock' ]
 

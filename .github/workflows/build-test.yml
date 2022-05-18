@@ -1,12 +1,11 @@
 name: Build Test
 
 on:
-  push:
+  pull_request:
     paths-ignore:
       - '**/node_modules/**'
       - '.github/**'
       - '.github/*'
-  pull_request:
     branches-ignore:
       - renovate*
 jobs:
