@@ -7,9 +7,6 @@ fix:
 test:
   - any: [ 'src/**/*.test.ts','src/**/*.spec.ts' ]
 
-other:
-  - any: [ '.github/**/*','.github/*' ]
-
 ci-update:
   - any: [ '.github/**/*','.github/*', 'configs/*' ]
 
