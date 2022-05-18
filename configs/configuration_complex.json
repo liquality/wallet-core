@@ -11,6 +11,14 @@
     {
       "title": "## 🧪 Tests",
       "labels": ["test"]
+    },
+    {
+      "title": "## 💬 Other",
+      "labels": ["other"]
+    },
+    {
+      "title": "## 📦 Dependencies",
+      "labels": ["dependencies"]
     }
   ],
   "sort": "ASC",
