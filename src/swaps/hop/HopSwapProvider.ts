@@ -68,7 +68,7 @@ class HopSwapProvider extends SwapProvider {
   }
 
   gasLimit(networkName: string){
-    const networkToGasLimit : { [key: string]: {send: number, approve: number} } = {
+    const networkToGasLimit : { [key: string]: {[key: string]: number} } = {
       arbitrum: {
         send: 900000,
         approve: 1000000
@@ -78,8 +78,8 @@ class HopSwapProvider extends SwapProvider {
         approve: 300000
       },
       ethereum: {
-        send: 150000,
-        approve: 100000
+        send: 300000,
+        approve: 300000
       }
     }
     return networkToGasLimit[networkName]
@@ -195,11 +195,26 @@ class HopSwapProvider extends SwapProvider {
     }
   }
 
+  _formatFee(fee: any, networkName: string, type: string ){
+    if(fee.maxFeePerGas && fee.maxPriorityFeePerGas){
+      return {
+        maxFeePerGas: '0x' + (new BN(fee.maxFeePerGas).times(1e9).decimalPlaces(0)).toString(16), 
+        maxPriorityFeePerGas: '0x' + (new BN(fee.maxPriorityFeePerGas).times(1e9).decimalPlaces(0)).toString(16),
+        gasLimit: this.gasLimit(networkName)[type]
+      }
+    }
+    return {
+      gasPrice: '0x' + (new BN(fee).times(1e9).decimalPlaces(0)).toString(16),
+      gasLimit: this.gasLimit(networkName)[type]
+    }
+  }
+
   async _approveToken(bridge: HopBridge, chainFrom: Chain, fromAmount: string, signer: Wallet, fee: number) {
     const txData = await bridge.populateSendApprovalTx(fromAmount, chainFrom)
+    const feeFormated = this._formatFee(fee, (chainFrom.name).toLowerCase(), 'approve')
     const approveTx = await signer.sendTransaction({
       ...txData,
-      gasPrice: '0x' + new BN(fee).times(1e9).toString(16)
+      ...feeFormated
     })
     approveTx.hash = approveTx?.hash?.substring(2)
     return {
@@ -230,9 +245,10 @@ class HopSwapProvider extends SwapProvider {
       hop?.getChainProvider(chainFrom)
     )
     const txData = await bridge?.populateSendTx(fromAmount, chainFrom, chainTo)
+    const feeFormated = this._formatFee(quote.fee, (chainFrom.name).toLowerCase(), 'send')
     const fromFundTx = await signer.sendTransaction({
       ...txData,
-      gasPrice: '0x' + new BN(quote.fee).times(1e9).toString(16)
+      ...feeFormated
     })
     fromFundTx.hash = fromFundTx?.hash?.substring(2)
     return {
