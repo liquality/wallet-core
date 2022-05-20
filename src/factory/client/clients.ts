@@ -1,5 +1,5 @@
 import {
-  BitcoinEsploraBatchBaseProvider,
+  BitcoinEsploraApiProvider,
   BitcoinFeeApiProvider,
   BitcoinHDWalletProvider,
   BitcoinSwapEsploraProvider,
@@ -13,6 +13,7 @@ import { Network as ChainifyNetwork } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
 import buildConfig from '../../build.config';
 import { AccountType, Asset, Network } from '../../store/types';
+import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
 import cryptoassets from '../../utils/cryptoassets';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
@@ -29,7 +30,7 @@ export function createBtcClient(
   const esploraApi = buildConfig.exploraApis[network];
   const batchEsploraApi = buildConfig.batchEsploraApis[network];
 
-  const chainProvider = new BitcoinEsploraBatchBaseProvider({
+  const chainProvider = new BitcoinEsploraApiProvider({
     batchUrl: batchEsploraApi,
     url: esploraApi,
     network: bitcoinNetwork,
@@ -86,7 +87,7 @@ export function createEVMClient(
   derivationPath: string
 ) {
   const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider);
-  const swapProvider = new EvmSwapProvider({ contractAddress: '0x133713376F69C1A67d7f3594583349DFB53d8166' });
+  const swapProvider = new EvmSwapProvider({ contractAddress: HTLC_CONTRACT_ADDRESS });
 
   if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
     const assetData = cryptoassets[asset];
