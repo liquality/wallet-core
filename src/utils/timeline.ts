@@ -259,4 +259,6 @@ export async function getSwapTimeline(item: SwapHistoryItem, getClient: GetClien
     const step = await steps[i](completed, pending, side);
     timeline.push(step);
   }
+
+  return timeline;
 }
