@@ -31,6 +31,7 @@ const chainToRpcProviders: { [chainId: number]: string } = {
   56: 'https://bsc-dataseed.binance.org',
   137: 'https://polygon-rpc.com',
   43114: 'https://api.avax.network/ext/bc/C/rpc',
+  42161: `https://arbitrum-mainnet.infura.io/v3/${buildConfig.infuraApiKey}`,
 };
 
 export interface OneinchSwapHistoryItem extends SwapHistoryItem {
