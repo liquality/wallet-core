@@ -6,6 +6,7 @@ import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets'
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import pkg from '../../../package.json';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
@@ -77,7 +78,6 @@ export interface LiqualitySwapProviderConfig extends EvmSwapProviderConfig {
 export class LiqualitySwapProvider extends EvmSwapProvider {
   config: LiqualitySwapProviderConfig;
   private async getMarketInfo(): Promise<LiqualityMarketData[]> {
-    console.log(this.config.agent + '/api/swap/marketinfo');
     return (
       await axios({
         url: this.config.agent + '/api/swap/marketinfo',
@@ -130,12 +130,8 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
 
   public async newSwap(swapRequest: SwapRequest<LiqualitySwapHistoryItem>) {
     const approveTx = await this.approve(swapRequest, true);
-
-    if (approveTx !== null) {
-      return approveTx;
-    }
-
-    return this.initiateSwap(swapRequest);
+    const updates = approveTx !== null ? approveTx : await this.initiateSwap(swapRequest);
+    return { id: uuidv4(), ...updates };
   }
 
   private async initiateSwap({ network, walletId, quote: _quote }: SwapRequest<LiqualitySwapHistoryItem>) {
@@ -144,6 +140,9 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       to: _quote.to,
       amount: _quote.fromAmount,
     });
+
+    // Do not override the id that was created during approve step
+    delete lockedQuote.id;
 
     if (new BN(lockedQuote.toAmount).lt(new BN(_quote.toAmount).times(0.995))) {
       throw new Error('The quote slippage is too high (> 0.5%). Try again.');
@@ -502,7 +501,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   private async refundSwap({ swap, network, walletId }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
     const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
     await this.sendLedgerNotification(swap.fromAccountId, 'Signing required to refund the swap.');
-    const fromAsset = cryptoassets[swap.to];
+    const fromAsset = cryptoassets[swap.from];
     const asset = { ...fromAsset, isNative: fromAsset.type === 'native' } as ChainifyAsset;
     const refundTx = await fromClient.swap.refundSwap(
       {
@@ -581,7 +580,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       });
 
       if (tx) {
-        const initiateTxHash = tx.hash;
+        const toFundHash = tx.hash;
 
         const isVerified = await toClient.swap.verifyInitiateSwapTransaction(
           {
@@ -592,12 +591,12 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
             secretHash: swap.secretHash,
             expiration: swap.nodeSwapExpiration,
           },
-          initiateTxHash
+          toFundHash
         );
 
         if (isVerified) {
           return {
-            initiateTxHash,
+            toFundHash,
             status: 'CONFIRM_COUNTER_PARTY_INITIATION',
           };
         }
