@@ -1,6 +1,6 @@
 import { assets, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
-import { getSwapProvider } from '../../../factory/swap';
+import { getSwapProvider } from '../../../factory';
 import { ActionContext } from '../../../store';
 import { withInterval } from '../../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem, WalletId } from '../../../store/types';
