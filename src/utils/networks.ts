@@ -51,7 +51,7 @@ export const ChainNetworks = {
   [ChainId.Polygon]: {
     testnet: {
       ...EvmNetworks.polygon_testnet,
-      rpcUrl: 'https://rpc-mumbai.maticvigil.com',
+      rpcUrl: 'https://rpc-mumbai.matic.today',
     },
     mainnet: {
       ...EvmNetworks.polygon_mainnet,

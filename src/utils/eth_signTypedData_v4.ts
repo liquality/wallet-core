@@ -10,7 +10,7 @@ export interface SignTypedMessageType<V extends SignTypedDataVersion, T extends 
 }
 
 const methodToVersion: Record<string, SignTypedDataVersion> = {
-  eth_signTypedData: SignTypedDataVersion.V4,
+  eth_signTypedData: SignTypedDataVersion.V1,
   eth_signTypedData_v3: SignTypedDataVersion.V3,
   eth_signTypedData_v4: SignTypedDataVersion.V4,
 };
@@ -28,12 +28,16 @@ export async function signTypedMessage(this: EvmWalletProvider, payload: any): P
     MessageTypes
   >;
 
-  if (isAddress(first)) {
-    msgParams.from = first;
-    msgParams.data = second;
-  } else {
-    msgParams.from = second;
-    msgParams.data = first;
+  try {
+    if (isAddress(first)) {
+      msgParams.from = first;
+      msgParams.data = JSON.parse(second);
+    } else {
+      msgParams.from = second;
+      msgParams.data = JSON.parse(first);
+    }
+  } catch (err) {
+    throw new Error(`Invalid JSON: ${err}`);
   }
 
   const extraParams = payload.params[2] || {};

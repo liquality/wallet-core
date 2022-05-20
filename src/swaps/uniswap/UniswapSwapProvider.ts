@@ -345,7 +345,12 @@ class UniswapSwapProvider extends SwapProvider {
       data: swapTx.data,
       value: '0x' + swapTx.value.toString(16),
     };
-    gasLimit += (await client.chain.getProvider().estimateGas(rawSwapTx)).toNumber();
+    
+    try {
+      gasLimit += (await client.chain.getProvider().estimateGas(rawSwapTx)).toNumber();
+    } catch {
+      gasLimit += 350_000; // estimateGas is failing if token that we are swapping is not approved
+    }
 
     const fees: EstimateFeeResponse = {};
     for (const feePrice of feePrices) {
@@ -409,12 +414,6 @@ class UniswapSwapProvider extends SwapProvider {
     }
   }
 
-  protected _txTypes() {
-    return {
-      SWAP: 'SWAP',
-    };
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       WAITING_FOR_APPROVE_CONFIRMATIONS: {
@@ -462,6 +461,12 @@ class UniswapSwapProvider extends SwapProvider {
           };
         },
       },
+    };
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
     };
   }
 

@@ -279,12 +279,6 @@ class FastbtcSwapProvider extends SwapProvider {
     }
   }
 
-  protected _txTypes() {
-    return {
-      SWAP: 'SWAP',
-    };
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       WAITING_FOR_SEND_CONFIRMATIONS: {
@@ -322,6 +316,12 @@ class FastbtcSwapProvider extends SwapProvider {
           };
         },
       },
+    };
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
     };
   }
 

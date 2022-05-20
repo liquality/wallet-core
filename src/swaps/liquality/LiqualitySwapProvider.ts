@@ -338,10 +338,6 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     }
   }
 
-  protected _txTypes() {
-    return LiqualityTxTypes;
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       ...super._getStatuses(),
@@ -434,6 +430,10 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         filterStatus: 'REFUNDED',
       },
     };
+  }
+
+  protected _txTypes() {
+    return LiqualityTxTypes;
   }
 
   protected _fromTxType(): LiqualityTxTypes | null {

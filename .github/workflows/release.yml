@@ -4,8 +4,10 @@ on:
   push:
     tags:
       - 'v*'
+
 jobs:
   release:
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -13,13 +15,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build project
-        # Setup .npmrc file to publish to npm
-        uses: actions/setup-node@v3.1.1
+      - uses: actions/setup-node@v3.1.1
         with:
           node-version: 16
           registry-url: 'https://registry.npmjs.org'
-          cache: 'yarn'
 
       - uses: actions/cache@v3.0.2
         id: cache
@@ -32,12 +31,26 @@ jobs:
           yarn
           yarn build
 
-      - name: publish
-        run: |
-          yarn publish
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Release
-        uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v3
+        with:
+          configuration: "configs/configuration_complex.json"
+          owner: "Liquality"
+          repo: "wallet-core"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: ${{steps.github_release.outputs.changelog}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

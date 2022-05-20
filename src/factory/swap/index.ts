@@ -2,6 +2,7 @@ import buildConfig from '../../build.config';
 import { Network, SwapProviderType } from '../../store/types';
 import { AstroportSwapProvider } from '../../swaps/astroport/AstroportSwapProvider';
 import { FastbtcSwapProvider } from '../../swaps/fastbtc/FastbtcSwapProvider';
+import { HopSwapProvider } from '../../swaps/hop/HopSwapProvider';
 import { LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
 import { LiqualityBoostERC20toNative } from '../../swaps/liqualityboost/liqualityBoostERC20toNative/LiqualityBoostERC20toNative';
 import { LiqualityBoostNativeToERC20 } from '../../swaps/liqualityboost/liqualityBoostNativeToERC20/LiqualityBoostNativeToERC20';
@@ -21,6 +22,7 @@ const providers = {
   [SwapProviderType.FastBTC]: FastbtcSwapProvider,
   [SwapProviderType.Sovryn]: SovrynSwapProvider,
   [SwapProviderType.Astroport]: AstroportSwapProvider,
+  [SwapProviderType.Hop]: HopSwapProvider,
 };
 
 const createSwapProvider = (network: Network, providerId: string) => {
