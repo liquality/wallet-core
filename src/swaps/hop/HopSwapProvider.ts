@@ -22,6 +22,8 @@ import {
 import { ActionContext } from '../../store'
 import { Network, SwapHistoryItem} from '../../store/types'
 import {getDestinationTxGQL,getTransferIdByTxHash } from './queries'
+import { EIP1559Fee } from '@liquality/types'
+
 
 export interface HopSwapProviderConfig extends BaseSwapProviderConfig {
   graphqlBaseURL: string;
@@ -195,16 +197,16 @@ class HopSwapProvider extends SwapProvider {
     }
   }
 
-  _formatFee(fee: any, networkName: string, type: string ){
-    if(fee.maxFeePerGas && fee.maxPriorityFeePerGas){
+  _formatFee(fee: EIP1559Fee | number, networkName: string, type: string ){
+    if(typeof(fee) === 'number'){
       return {
-        maxFeePerGas: '0x' + (new BN(fee.maxFeePerGas).times(1e9).decimalPlaces(0)).toString(16), 
-        maxPriorityFeePerGas: '0x' + (new BN(fee.maxPriorityFeePerGas).times(1e9).decimalPlaces(0)).toString(16),
+        gasPrice: '0x' + (new BN(fee).times(1e9).decimalPlaces(0)).toString(16),
         gasLimit: this.gasLimit(networkName)[type]
       }
     }
     return {
-      gasPrice: '0x' + (new BN(fee).times(1e9).decimalPlaces(0)).toString(16),
+      maxFeePerGas: '0x' + (new BN(fee.maxFeePerGas).times(1e9).decimalPlaces(0)).toString(16), 
+      maxPriorityFeePerGas: '0x' + (new BN(fee.maxPriorityFeePerGas).times(1e9).decimalPlaces(0)).toString(16),
       gasLimit: this.gasLimit(networkName)[type]
     }
   }
