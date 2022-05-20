@@ -28,12 +28,6 @@ export abstract class EvmSwapProvider extends SwapProvider {
   async approve(swapRequest: SwapRequest, approveMax = true) {
     const { quote, network, walletId } = swapRequest;
     const fromAsset = cryptoassets[quote.from];
-    const toAsset = cryptoassets[quote.to];
-
-    // approve should be applicable only for EVM swaps on the same chain
-    if (fromAsset.chain !== toAsset.chain) {
-      return null;
-    }
 
     // only ERC20 tokens allowed
     if (!fromAsset.contractAddress) {
@@ -43,8 +37,7 @@ export abstract class EvmSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId) as Client<EvmChainProvider>;
     const signer = client.wallet.getSigner();
 
-    const tokenContractAddress = fromAsset.contractAddress;
-    const tokenContract = Typechain.ERC20__factory.connect(tokenContractAddress, signer);
+    const tokenContract = Typechain.ERC20__factory.connect(fromAsset.contractAddress, signer);
 
     const userAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     const userAddress = chains[fromAsset.chain].formatAddress(userAddressRaw, network);
