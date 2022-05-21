@@ -2736,6 +2736,7 @@ __metadata:
     "@liquality/terra-swap-provider": 1.13.10
     "@liquality/terra-wallet-provider": 1.13.10
     "@metamask/eth-sig-util": ^4.0.1
+    "@terra-money/terra.js": 2.1.18
     "@thorchain/asgardex-util": ^0.10.0
     "@types/amplitude-js": ^8.16.0
     "@types/bluebird": ^3.5.36
@@ -3046,6 +3047,28 @@ __metadata:
   dependencies:
     defer-to-connect: ^1.0.1
   checksum: 4d9158061c5f397c57b4988cde33a163244e4f02df16364f103971957a32886beb104d6180902cbe8b38cb940e234d9f98a4e486200deca621923f62f50a06fe
+  languageName: node
+  linkType: hard
+
+"@terra-money/terra.js@npm:2.1.18":
+  version: 2.1.18
+  resolution: "@terra-money/terra.js@npm:2.1.18"
+  dependencies:
+    "@terra-money/terra.proto": ^0.1.7
+    axios: ^0.21.1
+    bech32: ^2.0.0
+    bip32: ^2.0.6
+    bip39: ^3.0.3
+    bufferutil: ^4.0.3
+    decimal.js: ^10.2.1
+    jscrypto: ^1.0.1
+    long: ^4.0.0
+    readable-stream: ^3.6.0
+    secp256k1: ^4.0.2
+    tmp: ^0.2.1
+    utf-8-validate: ^5.0.5
+    ws: ^7.4.2
+  checksum: b51038c8d4574b2175ef297b2ed20a8d6818b885f4b21a48bf571c5ceb95af338004e50f0f38df27d46076cf5d55b334f1251e68b15851c799ed3f4933050756
   languageName: node
   linkType: hard
 
