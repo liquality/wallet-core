@@ -61,6 +61,7 @@
     "@liquality/terra-swap-provider": "1.13.10",
     "@liquality/terra-wallet-provider": "1.13.10",
     "@metamask/eth-sig-util": "^4.0.1",
+    "@terra-money/terra.js": "2.1.18",
     "@thorchain/asgardex-util": "^0.10.0",
     "@uniswap/sdk-core": "^3.0.1",
     "@uniswap/v2-core": "^1.0.1",
