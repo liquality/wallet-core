@@ -107,5 +107,3 @@ yarn test
 > Note: This is a manual process, you will need to manually tag & push to GitHub
 
 Releases will be listed here: [Releases](https://github.com/liquality/wallet-core/releases)
-
-test here
