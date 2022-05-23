@@ -8,7 +8,7 @@ test:
   - 'src/*.test.ts'
 
 ci-update:
-  - any: [ '.github/**/*.yml','.github/*.yml', 'configs/*.json']
+  - any: [ '.github/**/*.yml', '.github/*.yml', 'configs/*.json' ]
 
 dependencies:
   - any: [ 'package.json', 'yarn.lock' ]
