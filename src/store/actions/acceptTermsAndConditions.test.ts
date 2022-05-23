@@ -1,6 +1,7 @@
 import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
 
+// TODO: Add tests for acceptTermsAndConditions
 describe('acceptTermsAndConditions', () => {
   it('should be able to acceptTermsAndConditions', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
