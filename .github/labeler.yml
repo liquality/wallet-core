@@ -1,9 +1,6 @@
 feature:
   - any: [ 'src/*.ts','src/**/*.ts', '!src/docs/*' ]
 
-fix:
-  - any: [ 'src/*.ts', 'src/**/*.ts', '!src/docs/*' ]
-
 test:
   - 'src/factory/*.test.ts'
   - 'src/store/**/*.test.ts'
@@ -11,8 +8,7 @@ test:
   - 'src/*.test.ts'
 
 ci-update:
-  - any: [ '.github/**/*','.github/*', 'configs/*' ]
-  - all: [ '.github/**/*','.github/*', 'configs/*' ]
+  - any: [ '.github/**/*.yml','.github/*.yml', 'configs/*.json']
 
 dependencies:
   - any: [ 'package.json', 'yarn.lock' ]
