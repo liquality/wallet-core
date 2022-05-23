@@ -1,8 +1,8 @@
 feature:
-  - any: [ 'src/**/*', '!src/docs/*' ]
+  - any: [ 'src/*','src/**/*', '!src/docs/*' ]
 
 fix:
-  - any: [ 'src/**/*', '!src/docs/*' ]
+  - any: [ 'src/*', 'src/**/*', '!src/docs/*' ]
 
 test:
   - any: [ 'src/**/*.test.ts','src/**/*.spec.ts' ]
