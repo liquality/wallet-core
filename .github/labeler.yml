@@ -1,11 +1,11 @@
 feature:
-  - any: [ 'src/*','src/**/*', '!src/docs/*' ]
+  - any: [ 'src/*.ts','src/**/*.ts', '!src/docs/*' ]
 
 fix:
-  - any: [ 'src/*', 'src/**/*', '!src/docs/*' ]
+  - any: [ 'src/*.ts', 'src/**/*.ts', '!src/docs/*' ]
 
 test:
-  - any: [ 'src/**/*.test.ts','src/**/*.spec.ts','src/*.test.ts' ]
+  - all: [ 'src/**/*.test.ts','src/**/*.spec.ts','src/*.test.ts' ]
 
 ci-update:
   - any: [ '.github/**/*','.github/*', 'configs/*' ]
