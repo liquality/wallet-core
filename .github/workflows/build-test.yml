@@ -1,28 +1,28 @@
-name: Build Test
-
-on:
-  pull_request:
-    paths-ignore:
-      - '**/node_modules/**'
-      - '.github/**'
-      - '.github/*'
-    branches-ignore:
-      - renovate*
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 16
-      - run: yarn
-      - run: yarn lint
-      - run: yarn build
-      - name: Run __tests__ (coverage)
-        run: |
-          yarn rebuild
-          export FORCE_COLOR=true
-          export TEST_MNEMONIC=${{ secrets.TEST_MNEMONIC }}
-          yarn test:integration --coverage
+#name: Build Test
+#
+#on:
+#  pull_request:
+#    paths-ignore:
+#      - '**/node_modules/**'
+#      - '.github/**'
+#      - '.github/*'
+#    branches-ignore:
+#      - renovate*
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/setup-node@v2
+#        with:
+#          node-version: 16
+#      - run: yarn
+#      - run: yarn lint
+#      - run: yarn build
+#      - name: Run __tests__ (coverage)
+#        run: |
+#          yarn rebuild
+#          export FORCE_COLOR=true
+#          export TEST_MNEMONIC=${{ secrets.TEST_MNEMONIC }}
+#          yarn test:integration --coverage
