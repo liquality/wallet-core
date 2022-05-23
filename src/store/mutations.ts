@@ -13,7 +13,6 @@ import {
   MarketData,
   Network,
   NFTAsset,
-  NFTAssets,
   NFTSendHistoryItem,
   RootState,
   SendHistoryItem,
@@ -438,15 +437,12 @@ export default {
       ...payload,
     };
   },
-  SET_NFT_ASSETS(state: RootState, payload: NFTAssets) {
-    state.nftAssets = payload;
-  },
-  SET_NFT_ASSETS_NUMBER(state: RootState, payload: number) {
-    state.nftAssetsNumber = payload;
+  SET_NFT_ASSETS(state: RootState, payload: { nftAssets: NFTAsset[]; network: Network; walletId: WalletId }) {
+    // const walletHistory = state.history[payload.network]?.[payload.walletId];
+    state.nftAssets = payload.nftAssets;
   },
   SET_STARRED_NFTS(state: RootState, payload: NFTAsset) {
     const starredNFTs: NFTAsset[] = state.starredNFTs || [];
-
     const index = starredNFTs.findIndex(
       (nft: NFTAsset) => nft.asset_contract.address === payload.asset_contract.address && nft.id === payload.id
     );
@@ -456,13 +452,6 @@ export default {
     } else {
       starredNFTs.push(payload);
     }
-
-    const collectionName: any = payload.collection.name;
-    const collection = state.nftAssets[collectionName];
-    const sortedCollection: NFTAsset[] = collection.sort((a: NFTAsset, b: NFTAsset) => {
-      return a.starred === b.starred ? 0 : a.starred ? -1 : 1;
-    });
-    state.nftAssets[collectionName] = sortedCollection;
     state.starredNFTs = starredNFTs;
   },
   TOGGLE_EXPERIMENT(state: RootState, { name }: { name: ExperimentType }) {

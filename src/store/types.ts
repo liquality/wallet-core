@@ -220,8 +220,7 @@ export interface RootState {
   watsNewModalVersion: string;
   enabledChains: WalletIdNetworkMap<ChainId[]>;
 
-  nftAssets: NFTAssets;
-  nftAssetsNumber: number;
+  nftAssets: NFTAsset[];
   starredNFTs: NFTAsset[];
 }
 

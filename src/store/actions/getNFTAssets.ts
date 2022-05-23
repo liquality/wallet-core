@@ -1,5 +1,5 @@
 import { ActionContext, rootActionContext } from '..';
-import { Network, WalletId } from '../types';
+import { Network, NFTAsset, WalletId } from '../types';
 
 export const getNFTAssets = async (
   context: ActionContext,
@@ -17,10 +17,10 @@ export const getNFTAssets = async (
     walletId,
     asset: 'ETH',
   });
-  console.log('🚀 ~ file: getNFTAssets.ts ~ line 20 ~ fetch', await client.nft.fetch());
 
   const nft = await client.nft.fetch();
 
+  const nftAssets: NFTAsset[] = [];
   nft.assets.forEach((asset: any) => {
     if (state.starredNFTs) {
       asset['starred'] = state.starredNFTs.filter(
@@ -28,23 +28,15 @@ export const getNFTAssets = async (
       ).length
         ? true
         : false;
+      nftAssets.push(asset);
     } else {
       asset['starred'] = false;
+      nftAssets.push(asset);
     }
   });
+  console.log('🚀 ~ file: getNFTAssets.ts ~ line 34 ~ nftAssets ~ nftAssets', nftAssets);
 
-  commit.SET_NFT_ASSETS_NUMBER(nft.assets.length);
+  commit.SET_NFT_ASSETS({ nftAssets, network, walletId });
 
-  const result = nft.assets.reduce(function (r: any, a: any) {
-    r[a.collection.name] = r[a.collection.name] || [];
-    r[a.collection.name].push(a);
-    r[a.collection.name].sort(function (a: any, b: any) {
-      return a.starred === b.starred ? 0 : a.starred ? -1 : 1;
-    });
-    return r;
-  }, Object.create(null));
-
-  commit.SET_NFT_ASSETS(result);
-
-  return result;
+  return nftAssets;
 };

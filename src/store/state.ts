@@ -49,9 +49,8 @@ const initialState: RootState = {
   experiments: {},
   watsNewModalVersion: '',
   enabledChains: {},
-  nftAssets: {},
-  nftAssetsNumber: 0,
-  starredNFTs: []
+  nftAssets: [],
+  starredNFTs: [],
 };
 
 export default initialState;

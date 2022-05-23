@@ -7,7 +7,7 @@ import { createClient } from '../factory/client';
 import { cryptoToFiat } from '../utils/coinFormatter';
 import { getDerivationPath } from '../utils/derivationPath';
 import { Networks } from '../utils/networks';
-import { Account, AccountId, AccountType, Asset as AssetType, HistoryItem, Network, WalletId } from './types';
+import { Account, AccountId, AccountType, Asset as AssetType, HistoryItem, Network, NFTAsset, WalletId } from './types';
 
 const clientCache: { [key: string]: Client } = {};
 
@@ -281,5 +281,18 @@ export default {
       return true;
     }
     return false;
+  },
+  nftAssetsByCollection(...context: GetterContext): NFTAsset[] {
+    const { state } = rootGetterContext(context);
+    const { nftAssets } = state;
+    const result = nftAssets.reduce(function (assets: any, asset: any) {
+      assets[asset.collection.name] = assets[asset.collection.name] || [];
+      assets[asset.collection.name].push(asset);
+      assets[asset.collection.name].sort(function (assetA: any, assetB: any) {
+        return assetA.starred === assetB.starred ? 0 : assetA.starred ? -1 : 1;
+      });
+      return assets;
+    }, Object.create(null));
+    return result;
   },
 };
