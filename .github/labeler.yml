@@ -5,10 +5,14 @@ fix:
   - any: [ 'src/*.ts', 'src/**/*.ts', '!src/docs/*' ]
 
 test:
-  - any: [ 'src/**/*.test.ts','src/**/*.spec.ts','src/*.test.ts' ]
+  - 'src/factory/*.test.ts'
+  - 'src/store/**/*.test.ts'
+  - 'src/**/*.spec.ts'
+  - 'src/*.test.ts'
 
 ci-update:
   - any: [ '.github/**/*','.github/*', 'configs/*' ]
+  - all: [ '.github/**/*','.github/*', 'configs/*' ]
 
 dependencies:
   - any: [ 'package.json', 'yarn.lock' ]
