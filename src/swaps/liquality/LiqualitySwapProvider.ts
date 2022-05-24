@@ -96,7 +96,6 @@ export class LiqualitySwapProvider extends SwapProvider {
         min: new BN(unitToCurrency(cryptoassets[market.from], market.min)).toFixed(),
         max: new BN(unitToCurrency(cryptoassets[market.from], market.max)).toFixed(),
         rate: new BN(market.rate).toFixed(),
-        provider: this.config.providerId,
       }));
 
     return pairs;
