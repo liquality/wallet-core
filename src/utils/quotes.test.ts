@@ -97,7 +97,6 @@ describe('quotes utils tests', () => {
 
     // sort quotes
     result = sortQuotes(quotes,Network.Testnet);
-    console.log(result);
     expect(result).toBeDefined();
     expect(result).not.toBeNaN()
 });
