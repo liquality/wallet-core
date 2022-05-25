@@ -39,7 +39,7 @@ const chainToGasMultiplier: { [chainId: number]: number } = {
   56: 1.5,
   137: 1.5,
   43114: 1.5,
-  42161: 6
+  42161: 10 
 };
 
 export interface OneinchSwapHistoryItem extends SwapHistoryItem {
