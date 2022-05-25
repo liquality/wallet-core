@@ -439,14 +439,13 @@ export const createClient = (
   mnemonic: string,
   accountType: AccountType,
   derivationPath: string,
-  publicKey?: string,
-  chainCode?: string
+  bitcoinLedgerCache?: { publicKey: string, chainCode: string }
 ) => {
   const assetData = cryptoassets[asset];
 
   switch (assetData.chain) {
     case ChainId.Bitcoin:
-      return createBtcClient(network, mnemonic, accountType, derivationPath, publicKey, chainCode);
+      return createBtcClient(network, mnemonic, accountType, derivationPath, bitcoinLedgerCache?.publicKey, bitcoinLedgerCache?.chainCode);
     case ChainId.Rootstock:
       return createRskClient(asset, network, mnemonic, accountType, derivationPath);
     case ChainId.BinanceSmartChain:
