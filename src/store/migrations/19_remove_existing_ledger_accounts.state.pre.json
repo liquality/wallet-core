@@ -1,11 +1,9 @@
 {
     "accounts": {
-        "3fd31a98-d62e-4578-9860-6dc0aea03f36": {
+        "7bf8478a-5e46-4565-967f-3369f0537930": {
             "mainnet": [
                 {
-                    "addresses": [
-                        "bc1qhwkmtdk7af78yadz2s88tam6y0uw7nkvkwnswt"
-                    ],
+                    "addresses": [],
                     "alias": "",
                     "assets": [
                         "BTC"
@@ -15,19 +13,19 @@
                     },
                     "chain": "bitcoin",
                     "color": "#EAB300",
-                    "createdAt": 1653477962729,
+                    "createdAt": 1653480213781,
                     "derivationPath": "84'/0'/0'",
                     "enabled": true,
-                    "id": "9ad4d7d7-48f2-4041-b123-b706be9f8a67",
+                    "id": "7819f678-728c-4a9e-800c-9454bdfd0cea",
                     "index": 0,
                     "loadingInitialBalance": false,
                     "name": "Bitcoin 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
                     "addresses": [
-                        "b04b89fa7a44ab0e29ebab193e66a43ad5aeac9c"
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
                     ],
                     "alias": "",
                     "assets": [
@@ -48,19 +46,19 @@
                     },
                     "chain": "ethereum",
                     "color": "#4F67E4",
-                    "createdAt": 1653477962731,
+                    "createdAt": 1653480213782,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "97220523-5bfb-4b6b-be00-e1088bc35231",
+                    "id": "6e3a5da4-6657-4d73-83ba-74bf5fc6994d",
                     "index": 0,
                     "loadingInitialBalance": false,
                     "name": "Ethereum 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
                     "addresses": [
-                        "b04b89fa7a44ab0e29ebab193e66a43ad5aeac9c"
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
                     ],
                     "alias": "",
                     "assets": [
@@ -75,19 +73,19 @@
                     },
                     "chain": "rsk",
                     "color": "#3AB24D",
-                    "createdAt": 1653477962734,
+                    "createdAt": 1653480213784,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "4731f784-e35b-4e32-aff0-b2016ff333c0",
+                    "id": "fb4b00b0-e1fc-4055-a37c-05788d845b58",
                     "index": 0,
                     "loadingInitialBalance": false,
                     "name": "Rootstock 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
                     "addresses": [
-                        "b04b89fa7a44ab0e29ebab193e66a43ad5aeac9c"
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
                     ],
                     "alias": "",
                     "assets": [
@@ -98,19 +96,19 @@
                     },
                     "chain": "bsc",
                     "color": "#F7CA4F",
-                    "createdAt": 1653477962736,
+                    "createdAt": 1653480213785,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "1748a470-3a89-477e-8173-a17155569cbc",
+                    "id": "d05cc0ad-0b91-4613-990c-2be88f9c869c",
                     "index": 0,
                     "loadingInitialBalance": false,
                     "name": "Binance Smart Chain 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
                     "addresses": [
-                        "df1ab8ee65663a2bed9c91490b0506d12418b8e22ace2c42f37c6cd6c4865f97"
+                        "c1bebd838f5adce07575a5c6cadd5dcb79393443bee582bed5143407aed9eaf6"
                     ],
                     "alias": "",
                     "assets": [
@@ -121,19 +119,19 @@
                     },
                     "chain": "near",
                     "color": "#000000",
-                    "createdAt": 1653477962741,
+                    "createdAt": 1653480213788,
                     "derivationPath": "m/44'/397'/0'",
                     "enabled": true,
-                    "id": "b52bd9fc-285d-486f-90fb-343e172f2435",
+                    "id": "7ce6a85f-c32b-4b7e-bee5-432c9bb3c959",
                     "index": 0,
                     "loadingInitialBalance": false,
                     "name": "Near 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
                     "addresses": [
-                        "b04b89fa7a44ab0e29ebab193e66a43ad5aeac9c"
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
                     ],
                     "alias": "",
                     "assets": [
@@ -146,19 +144,19 @@
                     },
                     "chain": "polygon",
                     "color": "#8247E5",
-                    "createdAt": 1653477962745,
+                    "createdAt": 1653480213791,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "22fdf777-a657-4a2a-accb-7d2cde359122",
+                    "id": "b8416bcd-60f2-4283-bac9-fc16cef1fe6a",
                     "index": 0,
                     "loadingInitialBalance": false,
                     "name": "Polygon 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
                     "addresses": [
-                        "b04b89fa7a44ab0e29ebab193e66a43ad5aeac9c"
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
                     ],
                     "alias": "",
                     "assets": [
@@ -169,19 +167,19 @@
                     },
                     "chain": "arbitrum",
                     "color": "#28A0EF",
-                    "createdAt": 1653477962749,
+                    "createdAt": 1653480213793,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "def1acf3-81d8-489b-a291-bb9acf6d4aa9",
+                    "id": "33cb5b7b-0733-4381-babb-1bf41dbd158b",
                     "index": 0,
                     "loadingInitialBalance": false,
                     "name": "Arbitrum 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
                     "addresses": [
-                        "terra1936phdj5ry07tfm6lprm3nz8rwhe902cwkzc7d"
+                        "terra1yntwahp85gp4umxza0xjczrhukq7tc67kn3xpr"
                     ],
                     "alias": "",
                     "assets": [
@@ -194,15 +192,15 @@
                     },
                     "chain": "terra",
                     "color": "#008080",
-                    "createdAt": 1653477962760,
+                    "createdAt": 1653480213795,
                     "derivationPath": "'m/44'/370'/0'",
                     "enabled": true,
-                    "id": "e00d1489-478e-40d0-8f82-11805710d090",
+                    "id": "2835b624-f9b5-47a2-9c87-59f86903df1e",
                     "index": 0,
                     "loadingInitialBalance": false,
                     "name": "Terra 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
                     "addresses": [],
@@ -211,18 +209,18 @@
                     "balances": {},
                     "chain": "fuse",
                     "color": "#46e8b6",
-                    "createdAt": 1653477962764,
+                    "createdAt": 1653480213796,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "a9567720-68b8-4109-9b40-3e06be3ceb8f",
+                    "id": "9a234b80-23e6-4c9a-8c20-1ca639f5d8da",
                     "index": 0,
                     "name": "Fuse 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
                     "addresses": [
-                        "b04b89fa7a44ab0e29ebab193e66a43ad5aeac9c"
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
                     ],
                     "alias": "",
                     "assets": [
@@ -233,15 +231,15 @@
                     },
                     "chain": "avalanche",
                     "color": "#E84141",
-                    "createdAt": 1653477962767,
+                    "createdAt": 1653480213798,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "439cff0a-4bee-423e-bab5-330503444b78",
+                    "id": "ebd9eeb2-b4b4-466d-8a99-3a458101cc74",
                     "index": 0,
                     "loadingInitialBalance": false,
                     "name": "Avalanche 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 }
             ],
             "testnet": [
@@ -251,147 +249,189 @@
                     "assets": [
                         "BTC"
                     ],
-                    "balances": {},
+                    "balances": {
+                        "BTC": "0"
+                    },
                     "chain": "bitcoin",
                     "color": "#EAB300",
-                    "createdAt": 1653477962769,
+                    "createdAt": 1653480213799,
                     "derivationPath": "84'/1'/0'",
                     "enabled": true,
-                    "id": "0a5ecf62-4110-4fab-b375-5803dba29938",
+                    "id": "d2f806da-57a5-4eed-ad46-818f2befca39",
                     "index": 0,
+                    "loadingInitialBalance": false,
                     "name": "Bitcoin 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
-                    "addresses": [],
+                    "addresses": [
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
+                    ],
                     "alias": "",
                     "assets": [
                         "ETH",
                         "DAI"
                     ],
-                    "balances": {},
+                    "balances": {
+                        "DAI": "0",
+                        "ETH": "0"
+                    },
                     "chain": "ethereum",
                     "color": "#4F67E4",
-                    "createdAt": 1653477962772,
+                    "createdAt": 1653480213805,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "7f4dd886-1311-49e1-a401-ca69842d69e1",
+                    "id": "29d576d6-7a52-4a19-a06e-594cc4c7b631",
                     "index": 0,
+                    "loadingInitialBalance": false,
                     "name": "Ethereum 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
-                    "addresses": [],
+                    "addresses": [
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
+                    ],
                     "alias": "",
                     "assets": [
                         "RBTC",
                         "SOV"
                     ],
-                    "balances": {},
+                    "balances": {
+                        "RBTC": "0",
+                        "SOV": "0"
+                    },
                     "chain": "rsk",
                     "color": "#3AB24D",
-                    "createdAt": 1653477962777,
+                    "createdAt": 1653480213808,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "ba0ede22-4d12-440b-8b41-402faca65764",
+                    "id": "57939092-d650-45b8-80ce-efe1cf9cc45d",
                     "index": 0,
+                    "loadingInitialBalance": false,
                     "name": "Rootstock 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
-                    "addresses": [],
+                    "addresses": [
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
+                    ],
                     "alias": "",
                     "assets": [
                         "BNB"
                     ],
-                    "balances": {},
+                    "balances": {
+                        "BNB": "0"
+                    },
                     "chain": "bsc",
                     "color": "#F7CA4F",
-                    "createdAt": 1653477962780,
+                    "createdAt": 1653480213812,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "6113c320-e8d1-4770-9190-d4065dc36d07",
+                    "id": "893297a2-8576-4b98-8b99-b09198d2ac17",
                     "index": 0,
+                    "loadingInitialBalance": false,
                     "name": "Binance Smart Chain 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
-                    "addresses": [],
+                    "addresses": [
+                        "c1bebd838f5adce07575a5c6cadd5dcb79393443bee582bed5143407aed9eaf6"
+                    ],
                     "alias": "",
                     "assets": [
                         "NEAR"
                     ],
-                    "balances": {},
+                    "balances": {
+                        "NEAR": "0"
+                    },
                     "chain": "near",
                     "color": "#000000",
-                    "createdAt": 1653477962783,
+                    "createdAt": 1653480213815,
                     "derivationPath": "m/44'/397'/0'",
                     "enabled": true,
-                    "id": "1a082d48-832e-4172-a161-2562c7cf3500",
+                    "id": "4d4dc9a2-c60b-49a2-b660-be46b15ab29b",
                     "index": 0,
+                    "loadingInitialBalance": false,
                     "name": "Near 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
-                    "addresses": [],
+                    "addresses": [
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
+                    ],
                     "alias": "",
                     "assets": [
                         "MATIC",
                         "PWETH"
                     ],
-                    "balances": {},
+                    "balances": {
+                        "MATIC": "0",
+                        "PWETH": "0"
+                    },
                     "chain": "polygon",
                     "color": "#8247E5",
-                    "createdAt": 1653477962787,
+                    "createdAt": 1653480213817,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "5f0dc802-b938-4ca3-97f3-43f2746b6965",
+                    "id": "57eac31f-5041-45e5-81ac-8f6f5877163e",
                     "index": 0,
+                    "loadingInitialBalance": false,
                     "name": "Polygon 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
-                    "addresses": [],
+                    "addresses": [
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
+                    ],
                     "alias": "",
                     "assets": [
                         "ARBETH"
                     ],
-                    "balances": {},
+                    "balances": {
+                        "ARBETH": "0"
+                    },
                     "chain": "arbitrum",
                     "color": "#28A0EF",
-                    "createdAt": 1653477962791,
+                    "createdAt": 1653480213819,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "4a7f3426-9b56-4d8c-b740-42b779ce4b7d",
+                    "id": "9f1c9744-2ec2-41e6-b707-56ee7e59cc35",
                     "index": 0,
+                    "loadingInitialBalance": false,
                     "name": "Arbitrum 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
-                    "addresses": [],
+                    "addresses": [
+                        "terra1yntwahp85gp4umxza0xjczrhukq7tc67kn3xpr"
+                    ],
                     "alias": "",
                     "assets": [
                         "LUNA",
                         "UST"
                     ],
-                    "balances": {},
+                    "balances": {
+                        "LUNA": "0",
+                        "UST": "0"
+                    },
                     "chain": "terra",
                     "color": "#008080",
-                    "createdAt": 1653477962797,
+                    "createdAt": 1653480213821,
                     "derivationPath": "'m/44'/370'/0'",
                     "enabled": true,
-                    "id": "6267717d-c0e9-4f94-b4c6-0adb5f3da013",
+                    "id": "bd793d8c-cd88-4651-83be-39a061059eac",
                     "index": 0,
+                    "loadingInitialBalance": false,
                     "name": "Terra 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
                     "addresses": [],
@@ -400,50 +440,55 @@
                     "balances": {},
                     "chain": "fuse",
                     "color": "#46e8b6",
-                    "createdAt": 1653477962801,
+                    "createdAt": 1653480213823,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "f2a40478-b04f-44de-883d-c228caf21473",
+                    "id": "a61707ca-e732-4fc0-89d7-81508ae9f533",
                     "index": 0,
                     "name": "Fuse 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 },
                 {
-                    "addresses": [],
+                    "addresses": [
+                        "de924dfe76a7b8c4cac2c7bc4e25ad30148f2f03"
+                    ],
                     "alias": "",
                     "assets": [
                         "AVAX"
                     ],
-                    "balances": {},
+                    "balances": {
+                        "AVAX": "0"
+                    },
                     "chain": "avalanche",
                     "color": "#E84141",
-                    "createdAt": 1653477962804,
+                    "createdAt": 1653480213826,
                     "derivationPath": "m/44'/60'/0'/0/0",
                     "enabled": true,
-                    "id": "c4a3cf61-3dee-4524-bf06-2fb291211b2b",
+                    "id": "744079ee-1727-4177-81a1-820e96d94eb9",
                     "index": 0,
+                    "loadingInitialBalance": false,
                     "name": "Avalanche 1",
                     "type": "default",
-                    "walletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36"
+                    "walletId": "7bf8478a-5e46-4565-967f-3369f0537930"
                 }
             ]
         }
     },
-    "activeNetwork": "mainnet",
-    "activeWalletId": "3fd31a98-d62e-4578-9860-6dc0aea03f36",
+    "activeNetwork": "testnet",
+    "activeWalletId": "7bf8478a-5e46-4565-967f-3369f0537930",
     "analytics": {
-        "acceptedDate": 1653477945346,
-        "askedDate": 1653477944046,
+        "acceptedDate": 1653480198158,
+        "askedDate": 1653480196427,
         "askedTimes": 0,
         "notAskAgain": false,
-        "userId": "2003db02-185b-48c5-9246-2d12bd4fe5af"
+        "userId": "48038d81-298e-406e-831c-39e059263657"
     },
     "brokerReady": true,
     "customTokens": {},
     "enabledAssets": {
         "mainnet": {
-            "3fd31a98-d62e-4578-9860-6dc0aea03f36": [
+            "7bf8478a-5e46-4565-967f-3369f0537930": [
                 "BTC",
                 "ETH",
                 "DAI",
@@ -465,7 +510,7 @@
             ]
         },
         "testnet": {
-            "3fd31a98-d62e-4578-9860-6dc0aea03f36": [
+            "7bf8478a-5e46-4565-967f-3369f0537930": [
                 "BTC",
                 "ETH",
                 "DAI",
@@ -483,7 +528,7 @@
         }
     },
     "enabledChains": {
-        "3fd31a98-d62e-4578-9860-6dc0aea03f36": {
+        "7bf8478a-5e46-4565-967f-3369f0537930": {
             "mainnet": [
                 "bitcoin",
                 "ethereum",
@@ -510,1092 +555,756 @@
             ]
         }
     },
-    "encryptedWallets": "{\"ct\":\"1I3c+MKteb5YVlovv6Cif9cRmAuPXGAbTNjygGAasQAy/vOVEGryOvjhhLLrTElBeWojLPNyovqm7DZh9pRkKCpqhMBosGWK/0MG2GNImCo8D8tXeYGVTxBGAlsPKPBP8cBCUvD8FXmLOpoVPWDeQP3/JzgEyu03ZmAccYWjCWfLrLstVYFnDNlXC4oP8TEA8amqltW1Qfojcx89f01psO0mfdMpHRfOhOXxcl53M8OAkyyVZvcC+uAsecRTWqYe\",\"iv\":\"6af16e1608593cd889b3cc9ec2e30dbd\",\"s\":\"867b0e369a994198\"}",
+    "encryptedWallets": "{\"ct\":\"PhSTvGzf6MgQchPhAsgKFy7E1SiUG2tLv28H8eHcyw9o6GvEliHIIyPfkiUL5vR6K7KqjdTO0hTg5M/xDzFuLLr2M5w/BPs2yJJUBz1jTPLNQ7tBrtlDDcPQvnuwuN01bNRVWY7GssyPJiwWXx/lSBOGT0UHuoQ4CJECy6xgVYtTuw2pLH4Uua9uAvglWudu26B3BY6n0QRTafo5fi6r215h/Qog7al0vFI8AQj3eTzfAnuYiP6K3n/OMnT8IdBS\",\"iv\":\"626d3543c83c47922d959be4742e2536\",\"s\":\"b8ddf9ca16102efb\"}",
     "experiments": {},
     "externalConnections": {},
     "fees": {},
     "fiatRates": {
-        "ARBETH": 1945.87,
-        "AVAX": 27.72,
-        "BNB": 324.98,
-        "BTC": 29399,
+        "ARBETH": 1946.35,
+        "AVAX": 27.75,
+        "BNB": 325.23,
+        "BTC": 29397,
         "DAI": 1,
-        "ETH": 1945.87,
-        "LUNA": 0.00016904,
-        "MATIC": 0.631643,
-        "NEAR": 5.73,
-        "PWETH": 1945.31,
-        "RBTC": 29383,
+        "ETH": 1946.35,
+        "LUNA": 0.00016979,
+        "MATIC": 0.631543,
+        "NEAR": 5.72,
+        "PWETH": 1944.61,
+        "RBTC": 29397,
         "SOV": 1.87,
-        "UNI": 5.44,
-        "USDC": 1,
-        "USDT": 1.001,
-        "UST": 0.069399,
-        "WBTC": 29376,
-        "WETH": 1945.31
+        "UNI": 5.42,
+        "USDC": 1.001,
+        "USDT": 0.999769,
+        "UST": 0.071053,
+        "WBTC": 29392,
+        "WETH": 1944.61
     },
     "history": {},
     "injectEthereum": true,
     "injectEthereumChain": "ethereum",
-    "keySalt": "f13e97a6dc8cd8e397c273d5e22e6121",
-    "keyUpdatedAt": 1653477962719,
+    "keySalt": "70ec2bf509c32c33a996f266c17fef88",
+    "keyUpdatedAt": 1653480213769,
     "marketData": {
         "mainnet": [
             {
-                "from": "BTC",
-                "max": "0.0000199",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "29048.89221557",
-                "to": "USDC"
-            },
-            {
-                "from": "ETH",
-                "max": "0.00588297375995",
-                "min": "0.01",
-                "provider": "liquality",
-                "rate": "27721.68125036",
-                "to": "UST"
-            },
-            {
-                "from": "LUNA",
-                "max": "241513.154022",
-                "min": "0.0001",
-                "provider": "liquality",
-                "rate": "0.00016821",
-                "to": "USDT"
-            },
-            {
-                "from": "UNI",
-                "max": "0.000196787474746666",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "31696.78064858",
-                "to": "LUNA"
-            },
-            {
-                "from": "ETH",
-                "max": "0.021090589",
-                "min": "0.01",
-                "provider": "liquality",
-                "rate": "1926.2133",
-                "to": "USDT"
-            },
-            {
-                "from": "UST",
-                "max": "216.765413",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.01264507",
-                "to": "UNI"
-            },
-            {
                 "from": "RBTC",
-                "max": "0.004986534559597115",
-                "min": "0.00002",
+                "max": "1.272838009684932",
+                "min": "0.002",
                 "provider": "liquality",
-                "rate": "14.94914058",
-                "to": "ETH"
-            },
-            {
-                "from": "UST",
-                "max": "808.808238",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00000234",
-                "to": "RBTC"
-            },
-            {
-                "from": "DAI",
-                "max": "317.910696239671",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.0000337",
-                "to": "BTC"
-            },
-            {
-                "from": "DAI",
-                "max": "188.6993636795267",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "1.5671376",
-                "to": "MATIC"
-            },
-            {
-                "from": "UST",
-                "max": "2839.046225",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.0024771",
-                "to": "AVAX"
-            },
-            {
-                "from": "MATIC",
-                "max": "64.95785352",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.62540775",
-                "to": "USDT"
-            },
-            {
-                "from": "WBTC",
-                "max": "0.00642064",
-                "min": "0.005",
-                "provider": "liquality",
-                "rate": "46053.47263445",
-                "to": "MATIC"
-            },
-            {
-                "from": "USDC",
-                "max": "40.953592",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.99198",
-                "to": "USDT"
-            },
-            {
-                "from": "MATIC",
-                "max": "312.2692436476795",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.02252098",
-                "to": "AVAX"
-            },
-            {
-                "from": "DAI",
-                "max": "0.00107055695754",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "5826.61408981",
-                "to": "LUNA"
-            },
-            {
-                "from": "RBTC",
-                "max": "0.0000199184",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "29033.08383234",
-                "to": "USDC"
-            },
-            {
-                "from": "USDT",
-                "max": "188.699363",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "1.5671376",
-                "to": "MATIC"
-            },
-            {
-                "from": "BTC",
-                "max": "0.00670957",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "1048.14512063",
-                "to": "AVAX"
-            },
-            {
-                "from": "BTC",
-                "max": "0.00498436",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "14.95563597",
-                "to": "ETH"
-            },
-            {
-                "from": "AVAX",
-                "max": "0.0210755552",
-                "min": "0.001",
-                "provider": "liquality",
-                "rate": "27.43742515",
-                "to": "USDC"
-            },
-            {
-                "from": "LUNA",
-                "max": "1871615.375302",
-                "min": "0.0001",
-                "provider": "liquality",
-                "rate": "0.00000001",
-                "to": "BTC"
-            },
-            {
-                "from": "ETH",
-                "max": "0.003987401768",
-                "min": "0.01",
-                "provider": "liquality",
-                "rate": "0.06554644",
-                "to": "WBTC"
-            },
-            {
-                "from": "AVAX",
-                "max": "0.00003856830844",
-                "min": "0.001",
-                "provider": "liquality",
-                "rate": "161805.07327409",
-                "to": "LUNA"
-            },
-            {
-                "from": "RBTC",
-                "max": "0.00038942457138",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "418674.08324219",
-                "to": "UST"
-            },
-            {
-                "from": "USDT",
-                "max": "7.758168",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.00003369",
-                "to": "WBTC"
-            },
-            {
-                "from": "BTC",
-                "max": "0.00000006",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "171308280.85457006",
-                "to": "LUNA"
-            },
-            {
-                "from": "UNI",
-                "max": "2.581158029833333",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "5.3856",
+                "rate": "29103.03",
                 "to": "DAI"
             },
             {
+                "from": "MATIC",
+                "max": "26474.49064809184",
+                "min": "30",
+                "provider": "liquality",
+                "rate": "0.62559585",
+                "to": "USDT"
+            },
+            {
                 "from": "WBTC",
-                "max": "0.00498668",
-                "min": "0.005",
+                "max": "0.54532146",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "46039.62558255",
+                "to": "MATIC"
+            },
+            {
+                "from": "ETH",
+                "max": "17.038865658436606",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "1923.04041916",
+                "to": "USDC"
+            },
+            {
+                "from": "WBTC",
+                "max": "1.63722852",
+                "min": "0.002",
                 "provider": "liquality",
                 "rate": "14.94868122",
                 "to": "ETH"
             },
             {
+                "from": "BTC",
+                "max": "1.12798988",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "29044.94011976",
+                "to": "USDC"
+            },
+            {
                 "from": "MATIC",
-                "max": "18.12172098627943",
-                "min": "0.1",
+                "max": "7687.285424922072",
+                "min": "30",
                 "provider": "liquality",
-                "rate": "9.00074478",
-                "to": "UST"
+                "rate": "0.02252776",
+                "to": "AVAX"
             },
             {
                 "from": "AVAX",
-                "max": "6.795078243656794",
-                "min": "0.001",
-                "provider": "liquality",
-                "rate": "43.51941114",
-                "to": "MATIC"
-            },
-            {
-                "from": "AVAX",
-                "max": "1.477691671",
-                "min": "0.001",
+                "max": "602.4352485728048",
+                "min": "0.5",
                 "provider": "liquality",
                 "rate": "27.4923",
                 "to": "USDT"
             },
             {
-                "from": "LUNA",
-                "max": "862394.366263",
-                "min": "0.0001",
-                "provider": "liquality",
-                "rate": "0.00000009",
-                "to": "ETH"
-            },
-            {
-                "from": "USDT",
-                "max": "146.490101",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.00050887",
-                "to": "ETH"
-            },
-            {
-                "from": "USDT",
-                "max": "15.061728",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.18198529",
-                "to": "UNI"
-            },
-            {
-                "from": "UST",
-                "max": "8.423064",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.06865186",
-                "to": "USDC"
-            },
-            {
-                "from": "UNI",
-                "max": "0.1075860634",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "5.3748503",
-                "to": "USDC"
-            },
-            {
-                "from": "USDC",
-                "max": "14.013473",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.99198",
-                "to": "DAI"
-            },
-            {
-                "from": "UNI",
-                "max": "1.4261338235306665",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00018326",
-                "to": "WBTC"
-            },
-            {
-                "from": "UST",
-                "max": "202.082493",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.06878916",
-                "to": "DAI"
-            },
-            {
-                "from": "MATIC",
-                "max": "12.280926035853335",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00002128",
-                "to": "WBTC"
-            },
-            {
-                "from": "DAI",
-                "max": "41.0355",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.99",
-                "to": "USDT"
-            },
-            {
-                "from": "MATIC",
-                "max": "23.842222483533332",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.11496466",
-                "to": "UNI"
-            },
-            {
-                "from": "UST",
-                "max": "2715.723961",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.10889099",
-                "to": "MATIC"
-            },
-            {
-                "from": "UNI",
-                "max": "7.5432902705",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "5.3856",
-                "to": "USDT"
-            },
-            {
-                "from": "USDC",
-                "max": "196.874538",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.03572128",
-                "to": "AVAX"
-            },
-            {
-                "from": "DAI",
-                "max": "146.4530612427766",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.000509",
-                "to": "ETH"
-            },
-            {
                 "from": "RBTC",
-                "max": "0.006713233796396732",
-                "min": "0.00002",
+                "max": "1.63688841520772",
+                "min": "0.002",
                 "provider": "liquality",
-                "rate": "1047.57472092",
-                "to": "AVAX"
-            },
-            {
-                "from": "WBTC",
-                "max": "0.00047783",
-                "min": "0.005",
-                "provider": "liquality",
-                "rate": "29093.13",
-                "to": "DAI"
+                "rate": "14.95178685",
+                "to": "ETH"
             },
             {
                 "from": "BTC",
-                "max": "0.00047755",
-                "min": "0.00002",
+                "max": "0",
+                "min": "0.002",
                 "provider": "liquality",
-                "rate": "29106.99",
-                "to": "DAI"
-            },
-            {
-                "from": "LUNA",
-                "max": "45660.455535",
-                "min": "0.0001",
-                "provider": "liquality",
-                "rate": "0.00000001",
-                "to": "WBTC"
-            },
-            {
-                "from": "MATIC",
-                "max": "88.96154444909157",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00002128",
-                "to": "RBTC"
-            },
-            {
-                "from": "UST",
-                "max": "2108.579582",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00003535",
-                "to": "ETH"
-            },
-            {
-                "from": "MATIC",
-                "max": "231.95544608194164",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00032137",
-                "to": "ETH"
-            },
-            {
-                "from": "DAI",
-                "max": "15.061728",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.18198529",
+                "rate": "5359.67403315",
                 "to": "UNI"
             },
             {
-                "from": "WBTC",
-                "max": "0.00000006",
-                "min": "0.005",
-                "provider": "liquality",
-                "rate": "171226708.2573127",
-                "to": "LUNA"
-            },
-            {
-                "from": "AVAX",
-                "max": "11.456605157806778",
-                "min": "0.001",
-                "provider": "liquality",
-                "rate": "0.00093513",
-                "to": "BTC"
-            },
-            {
-                "from": "BTC",
-                "max": "0.00139562",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "29106.99",
-                "to": "USDT"
-            },
-            {
-                "from": "UNI",
-                "max": "58.50505541437001",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00018312",
-                "to": "BTC"
-            },
-            {
-                "from": "RBTC",
-                "max": "0.0108216801",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "0.99",
-                "to": "BTC"
-            },
-            {
-                "from": "LUNA",
-                "max": "67376.517454",
-                "min": "0.0001",
-                "provider": "liquality",
-                "rate": "0.00242086",
-                "to": "UST"
-            },
-            {
-                "from": "USDT",
-                "max": "0.585268",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.98802395",
-                "to": "USDC"
-            },
-            {
-                "from": "ETH",
-                "max": "0.10138835003660563",
-                "min": "0.01",
-                "provider": "liquality",
-                "rate": "69.36310047",
-                "to": "AVAX"
-            },
-            {
-                "from": "WBTC",
-                "max": "0.00051251",
-                "min": "0.005",
-                "provider": "liquality",
-                "rate": "5348.00183824",
-                "to": "UNI"
-            },
-            {
-                "from": "WBTC",
-                "max": "0.00038942",
-                "min": "0.005",
-                "provider": "liquality",
-                "rate": "418702.579011",
-                "to": "UST"
-            },
-            {
-                "from": "UNI",
-                "max": "36.26255294445517",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.1939359",
-                "to": "AVAX"
-            },
-            {
-                "from": "AVAX",
-                "max": "2.023738986928631",
-                "min": "0.001",
-                "provider": "liquality",
-                "rate": "0.00093559",
-                "to": "RBTC"
-            },
-            {
-                "from": "UST",
-                "max": "4585.457669",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00000234",
-                "to": "BTC"
-            },
-            {
                 "from": "USDC",
-                "max": "11.425094",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "14.27638017",
-                "to": "UST"
-            },
-            {
-                "from": "UNI",
-                "max": "26.95545818999384",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00276547",
-                "to": "ETH"
-            },
-            {
-                "from": "ETH",
-                "max": "0.09698556415578008",
-                "min": "0.01",
-                "provider": "liquality",
-                "rate": "3049.13261308",
-                "to": "MATIC"
-            },
-            {
-                "from": "USDC",
-                "max": "7.742682",
-                "min": "1",
+                "max": "0",
+                "min": "100",
                 "provider": "liquality",
                 "rate": "0.00003376",
                 "to": "WBTC"
             },
             {
-                "from": "MATIC",
-                "max": "503.3339581395679",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00002129",
-                "to": "BTC"
-            },
-            {
-                "from": "ETH",
-                "max": "0.00000057279666",
-                "min": "0.01",
-                "provider": "liquality",
-                "rate": "11336668.23612501",
-                "to": "LUNA"
-            },
-            {
-                "from": "UNI",
-                "max": "34.68738305151022",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "8.52522854",
-                "to": "MATIC"
-            },
-            {
-                "from": "DAI",
-                "max": "197.26828792599095",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.03564998",
-                "to": "AVAX"
-            },
-            {
-                "from": "AVAX",
-                "max": "0.5056355496666667",
-                "min": "0.001",
-                "provider": "liquality",
-                "rate": "27.4923",
-                "to": "DAI"
-            },
-            {
-                "from": "BTC",
-                "max": "0.00641762",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "46075.41256085",
-                "to": "MATIC"
-            },
-            {
-                "from": "USDT",
-                "max": "0.00107",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "5826.61408981",
-                "to": "LUNA"
-            },
-            {
-                "from": "USDT",
-                "max": "11.447944",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "14.24788441",
-                "to": "UST"
-            },
-            {
-                "from": "ETH",
-                "max": "0.1634558336938135",
-                "min": "0.01",
-                "provider": "liquality",
-                "rate": "0.06554347",
-                "to": "BTC"
-            },
-            {
-                "from": "RBTC",
-                "max": "0.000512573066666666",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "5347.63786765",
-                "to": "UNI"
-            },
-            {
                 "from": "WBTC",
-                "max": "0.00139645",
-                "min": "0.005",
-                "provider": "liquality",
-                "rate": "29093.13",
-                "to": "USDT"
-            },
-            {
-                "from": "LUNA",
-                "max": "88645.32988",
-                "min": "0.0001",
-                "provider": "liquality",
-                "rate": "0.00003092",
-                "to": "UNI"
-            },
-            {
-                "from": "ETH",
-                "max": "0.0003008056",
-                "min": "0.01",
-                "provider": "liquality",
-                "rate": "1922.36856287",
-                "to": "USDC"
-            },
-            {
-                "from": "RBTC",
-                "max": "0.000000063644073333",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "171215055.02913308",
-                "to": "LUNA"
-            },
-            {
-                "from": "RBTC",
-                "max": "0.000264017968",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "0.98993262",
-                "to": "WBTC"
-            },
-            {
-                "from": "DAI",
-                "max": "0.5852682",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.98802395",
-                "to": "USDC"
-            },
-            {
-                "from": "ETH",
-                "max": "0.007741145366666666",
-                "min": "0.01",
-                "provider": "liquality",
-                "rate": "354.08332721",
-                "to": "UNI"
-            },
-            {
-                "from": "RBTC",
-                "max": "0.0013964505",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "29091.15",
-                "to": "USDT"
-            },
-            {
-                "from": "USDC",
-                "max": "188.322717",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "1.57027187",
-                "to": "MATIC"
-            },
-            {
-                "from": "RBTC",
-                "max": "0.0004778365",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "29091.15",
-                "to": "DAI"
-            },
-            {
-                "from": "USDC",
-                "max": "146.319303",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.00050946",
-                "to": "ETH"
-            },
-            {
-                "from": "USDT",
-                "max": "197.268287",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.03564998",
-                "to": "AVAX"
-            },
-            {
-                "from": "LUNA",
-                "max": "3444.577717",
-                "min": "0.0001",
-                "provider": "liquality",
-                "rate": "0.00016788",
-                "to": "USDC"
-            },
-            {
-                "from": "UNI",
-                "max": "2.10440212171799",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "77.50849116",
-                "to": "UST"
-            },
-            {
-                "from": "UST",
-                "max": "111.654021",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00000234",
-                "to": "WBTC"
-            },
-            {
-                "from": "LUNA",
-                "max": "1161016.349396",
-                "min": "0.0001",
-                "provider": "liquality",
-                "rate": "0.00000606",
-                "to": "AVAX"
-            },
-            {
-                "from": "LUNA",
-                "max": "330758.823301",
-                "min": "0.0001",
-                "provider": "liquality",
-                "rate": "0.00000001",
-                "to": "RBTC"
-            },
-            {
-                "from": "MATIC",
-                "max": "0.001694650740646666",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "3680.81778589",
-                "to": "LUNA"
-            },
-            {
-                "from": "AVAX",
-                "max": "5.277600739528966",
-                "min": "0.001",
-                "provider": "liquality",
-                "rate": "0.01412468",
-                "to": "ETH"
-            },
-            {
-                "from": "BTC",
-                "max": "0.00051229",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "5350.54963235",
-                "to": "UNI"
-            },
-            {
-                "from": "UNI",
-                "max": "10.330741115282844",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.00018328",
-                "to": "RBTC"
-            },
-            {
-                "from": "ETH",
-                "max": "0.007216763666666666",
-                "min": "0.01",
-                "provider": "liquality",
-                "rate": "1926.2133",
-                "to": "DAI"
-            },
-            {
-                "from": "USDC",
-                "max": "15.031664",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.18234926",
-                "to": "UNI"
-            },
-            {
-                "from": "USDC",
-                "max": "317.630763",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.00003373",
-                "to": "BTC"
-            },
-            {
-                "from": "BTC",
-                "max": "0.00026387",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "0.99047164",
-                "to": "WBTC"
-            },
-            {
-                "from": "RBTC",
-                "max": "0.006420647104389622",
-                "min": "0.00002",
-                "provider": "liquality",
-                "rate": "46050.33835925",
-                "to": "MATIC"
-            },
-            {
-                "from": "AVAX",
-                "max": "0.4122408571647",
-                "min": "0.001",
-                "provider": "liquality",
-                "rate": "395.66374993",
-                "to": "UST"
-            },
-            {
-                "from": "DAI",
-                "max": "56.19923166710776",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.00003369",
-                "to": "RBTC"
-            },
-            {
-                "from": "USDT",
-                "max": "14.0415",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.99",
-                "to": "DAI"
-            },
-            {
-                "from": "MATIC",
-                "max": "0.9264604033",
-                "min": "0.1",
-                "provider": "liquality",
-                "rate": "0.62415943",
-                "to": "USDC"
-            },
-            {
-                "from": "WBTC",
-                "max": "0.00001991",
-                "min": "0.005",
+                "max": "1.12865852",
+                "min": "0.002",
                 "provider": "liquality",
                 "rate": "29035.05988024",
                 "to": "USDC"
             },
             {
-                "from": "DAI",
-                "max": "11.44794408059412",
-                "min": "1",
+                "from": "USDT",
+                "max": "4857.710969",
+                "min": "50",
                 "provider": "liquality",
-                "rate": "14.24788441",
-                "to": "UST"
+                "rate": "0.03564998",
+                "to": "AVAX"
             },
             {
-                "from": "MATIC",
-                "max": "22.22723496",
-                "min": "0.1",
+                "from": "RBTC",
+                "max": "0",
+                "min": "0.002",
                 "provider": "liquality",
-                "rate": "0.62540775",
-                "to": "DAI"
+                "rate": "0.99033688",
+                "to": "WBTC"
+            },
+            {
+                "from": "BTC",
+                "max": "1.63655704",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "14.95481427",
+                "to": "ETH"
             },
             {
                 "from": "AVAX",
-                "max": "0.542374067",
-                "min": "0.001",
+                "max": "1194.227702914489",
+                "min": "0.5",
                 "provider": "liquality",
-                "rate": "5.05373162",
-                "to": "UNI"
+                "rate": "27.43742515",
+                "to": "USDC"
+            },
+            {
+                "from": "DAI",
+                "max": "48083.44867969592",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.000509",
+                "to": "ETH"
+            },
+            {
+                "from": "USDC",
+                "max": "37339.502317",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.99198",
+                "to": "DAI"
             },
             {
                 "from": "WBTC",
-                "max": "0.0067128",
-                "min": "0.005",
+                "max": "0.16530207",
+                "min": "0.002",
                 "provider": "liquality",
                 "rate": "1047.64602089",
                 "to": "AVAX"
             },
             {
-                "from": "BTC",
-                "max": "0.00038942",
-                "min": "0.00002",
+                "from": "MATIC",
+                "max": "52481.27551800948",
+                "min": "30",
                 "provider": "liquality",
-                "rate": "418902.04939267",
-                "to": "UST"
+                "rate": "0.62434716",
+                "to": "USDC"
             },
             {
-                "from": "USDT",
-                "max": "56.199231",
-                "min": "1",
+                "from": "AVAX",
+                "max": "0",
+                "min": "0.5",
                 "provider": "liquality",
-                "rate": "0.00003369",
-                "to": "RBTC"
+                "rate": "5.06303867",
+                "to": "UNI"
             },
             {
-                "from": "USDT",
-                "max": "317.910696",
-                "min": "1",
+                "from": "ETH",
+                "max": "0.20520582771406237",
+                "min": "0.05",
                 "provider": "liquality",
-                "rate": "0.0000337",
+                "rate": "0.06553924",
                 "to": "BTC"
             },
             {
                 "from": "WBTC",
-                "max": "0.00191238",
-                "min": "0.005",
-                "provider": "liquality",
-                "rate": "0.99006738",
-                "to": "RBTC"
-            },
-            {
-                "from": "LUNA",
-                "max": "82640.80984",
-                "min": "0.0001",
-                "provider": "liquality",
-                "rate": "0.00016821",
-                "to": "DAI"
-            },
-            {
-                "from": "ETH",
-                "max": "0.028884256666551092",
-                "min": "0.01",
-                "provider": "liquality",
-                "rate": "0.0655509",
-                "to": "RBTC"
-            },
-            {
-                "from": "DAI",
-                "max": "7.758168",
-                "min": "1",
-                "provider": "liquality",
-                "rate": "0.00003369",
-                "to": "WBTC"
-            },
-            {
-                "from": "LUNA",
-                "max": "1110584.213287",
-                "min": "0.0001",
-                "provider": "liquality",
-                "rate": "0.00026627",
-                "to": "MATIC"
-            },
-            {
-                "from": "WBTC",
-                "max": "0.01082511",
-                "min": "0.005",
+                "max": "0.0135892",
+                "min": "0.002",
                 "provider": "liquality",
                 "rate": "0.98968543",
                 "to": "BTC"
             },
             {
-                "from": "USDC",
-                "max": "56.087057",
-                "min": "1",
+                "from": "WBTC",
+                "max": "0",
+                "min": "0.002",
                 "provider": "liquality",
-                "rate": "0.00003376",
+                "rate": "5357.85082873",
+                "to": "UNI"
+            },
+            {
+                "from": "BTC",
+                "max": "0.16524553",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "1048.00252071",
+                "to": "AVAX"
+            },
+            {
+                "from": "UNI",
+                "max": "18802.08103058267",
+                "min": "25",
+                "provider": "liquality",
+                "rate": "0.00018287",
+                "to": "RBTC"
+            },
+            {
+                "from": "UNI",
+                "max": "6107.496244399686",
+                "min": "25",
+                "provider": "liquality",
+                "rate": "5.36497006",
+                "to": "USDC"
+            },
+            {
+                "from": "USDT",
+                "max": "33163.705128",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.98802395",
+                "to": "USDC"
+            },
+            {
+                "from": "USDC",
+                "max": "0",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.18268508",
+                "to": "UNI"
+            },
+            {
+                "from": "ETH",
+                "max": "52.4547486131722",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "0.06554705",
+                "to": "RBTC"
+            },
+            {
+                "from": "DAI",
+                "max": "16729.62778905",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.99",
+                "to": "USDT"
+            },
+            {
+                "from": "ETH",
+                "max": "8.595310988507467",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "1926.8865",
+                "to": "USDT"
+            },
+            {
+                "from": "UNI",
+                "max": "3080.9627268038614",
+                "min": "25",
+                "provider": "liquality",
+                "rate": "5.3757",
+                "to": "USDT"
+            },
+            {
+                "from": "USDC",
+                "max": "4848.014939",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.03572128",
+                "to": "AVAX"
+            },
+            {
+                "from": "WBTC",
+                "max": "0.5693143",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "29093.13",
+                "to": "USDT"
+            },
+            {
+                "from": "USDT",
+                "max": "48095.609626",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.00050887",
+                "to": "ETH"
+            },
+            {
+                "from": "UNI",
+                "max": "8860.130350147376",
+                "min": "25",
+                "provider": "liquality",
+                "rate": "0.00276231",
+                "to": "ETH"
+            },
+            {
+                "from": "AVAX",
+                "max": "14.38284239610634",
+                "min": "0.5",
+                "provider": "liquality",
+                "rate": "0.00093507",
+                "to": "BTC"
+            },
+            {
+                "from": "UNI",
+                "max": "6890.272742710246",
+                "min": "25",
+                "provider": "liquality",
+                "rate": "5.3757",
+                "to": "DAI"
+            },
+            {
+                "from": "DAI",
+                "max": "33163.70512862682",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.98802395",
+                "to": "USDC"
+            },
+            {
+                "from": "RBTC",
+                "max": "0.5691453171062667",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "29103.03",
+                "to": "USDT"
+            },
+            {
+                "from": "UNI",
+                "max": "0",
+                "min": "25",
+                "provider": "liquality",
+                "rate": "0.00018293",
+                "to": "WBTC"
+            },
+            {
+                "from": "USDC",
+                "max": "398.734437",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.00003373",
+                "to": "BTC"
+            },
+            {
+                "from": "WBTC",
+                "max": "3.47416543",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "0.98966323",
+                "to": "RBTC"
+            },
+            {
+                "from": "RBTC",
+                "max": "1.1279898899573266",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "29044.94011976",
+                "to": "USDC"
+            },
+            {
+                "from": "USDC",
+                "max": "16696.235282",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.99198",
+                "to": "USDT"
+            },
+            {
+                "from": "MATIC",
+                "max": "76148.54244292166",
+                "min": "30",
+                "provider": "liquality",
+                "rate": "0.0003214",
+                "to": "ETH"
+            },
+            {
+                "from": "USDT",
+                "max": "0",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.00003369",
+                "to": "WBTC"
+            },
+            {
+                "from": "ETH",
+                "max": "8.232842855273935",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "3049.28115332",
+                "to": "MATIC"
+            },
+            {
+                "from": "MATIC",
+                "max": "161564.92565620325",
+                "min": "30",
+                "provider": "liquality",
+                "rate": "0.00002128",
+                "to": "RBTC"
+            },
+            {
+                "from": "USDT",
+                "max": "399.085849",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.0000337",
+                "to": "BTC"
+            },
+            {
+                "from": "RBTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "5359.67403315",
+                "to": "UNI"
+            },
+            {
+                "from": "MATIC",
+                "max": "0",
+                "min": "30",
+                "provider": "liquality",
+                "rate": "0.00002129",
+                "to": "WBTC"
+            },
+            {
+                "from": "USDT",
+                "max": "0",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.18232044",
+                "to": "UNI"
+            },
+            {
+                "from": "WBTC",
+                "max": "1.27321593",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "29093.13",
+                "to": "DAI"
+            },
+            {
+                "from": "AVAX",
+                "max": "1347.287695620773",
+                "min": "0.5",
+                "provider": "liquality",
+                "rate": "27.4923",
+                "to": "DAI"
+            },
+            {
+                "from": "USDT",
+                "max": "102095.299996",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.00003368",
                 "to": "RBTC"
             },
             {
                 "from": "USDC",
-                "max": "0.001068",
-                "min": "1",
+                "max": "48039.53344",
+                "min": "100",
                 "provider": "liquality",
-                "rate": "5838.26731799",
-                "to": "LUNA"
+                "rate": "0.00050946",
+                "to": "ETH"
             },
             {
                 "from": "BTC",
-                "max": "0.00191251",
-                "min": "0.00002",
+                "max": "3.47298363",
+                "min": "0.002",
                 "provider": "liquality",
                 "rate": "0.99",
                 "to": "RBTC"
             },
             {
-                "from": "UST",
-                "max": "0.015407",
-                "min": "0.1",
+                "from": "USDT",
+                "max": "37414.181401",
+                "min": "50",
                 "provider": "liquality",
-                "rate": "404.85645342",
-                "to": "LUNA"
+                "rate": "0.99",
+                "to": "DAI"
             },
             {
-                "from": "UST",
-                "max": "590.574808",
-                "min": "0.1",
+                "from": "MATIC",
+                "max": "0",
+                "min": "30",
                 "provider": "liquality",
-                "rate": "0.06878916",
-                "to": "USDT"
+                "rate": "0.11521102",
+                "to": "UNI"
+            },
+            {
+                "from": "ETH",
+                "max": "19.2225749776171",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "1926.8865",
+                "to": "DAI"
+            },
+            {
+                "from": "UNI",
+                "max": "73.53912358580709",
+                "min": "25",
+                "provider": "liquality",
+                "rate": "0.00018288",
+                "to": "BTC"
+            },
+            {
+                "from": "USDT",
+                "max": "16023.994536",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "1.5666664",
+                "to": "MATIC"
             },
             {
                 "from": "AVAX",
-                "max": "0.27937227223733334",
-                "min": "0.001",
+                "max": "577.0254121128926",
+                "min": "0.5",
+                "provider": "liquality",
+                "rate": "43.50632601",
+                "to": "MATIC"
+            },
+            {
+                "from": "BTC",
+                "max": "0.56914531",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "29103.03",
+                "to": "USDT"
+            },
+            {
+                "from": "BTC",
+                "max": "0.54506532",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "46055.29224658",
+                "to": "MATIC"
+            },
+            {
+                "from": "BTC",
+                "max": "1.272838",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "29103.03",
+                "to": "DAI"
+            },
+            {
+                "from": "ETH",
+                "max": "2.495804655312367",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "69.38734246",
+                "to": "AVAX"
+            },
+            {
+                "from": "DAI",
+                "max": "399.08584900111604",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.0000337",
+                "to": "BTC"
+            },
+            {
+                "from": "BTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "0.99033688",
+                "to": "WBTC"
+            },
+            {
+                "from": "USDC",
+                "max": "15992.010626",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "1.56979974",
+                "to": "MATIC"
+            },
+            {
+                "from": "RBTC",
+                "max": "0.0135848823",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "0.99",
+                "to": "BTC"
+            },
+            {
+                "from": "RBTC",
+                "max": "0.16524553694993498",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "1048.00252071",
+                "to": "AVAX"
+            },
+            {
+                "from": "DAI",
+                "max": "4857.710969181999",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.03564998",
+                "to": "AVAX"
+            },
+            {
+                "from": "UNI",
+                "max": "2951.011831422508",
+                "min": "25",
+                "provider": "liquality",
+                "rate": "8.50699857",
+                "to": "MATIC"
+            },
+            {
+                "from": "DAI",
+                "max": "0",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.18232044",
+                "to": "UNI"
+            },
+            {
+                "from": "DAI",
+                "max": "16023.994536623497",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "1.5666664",
+                "to": "MATIC"
+            },
+            {
+                "from": "USDC",
+                "max": "101891.516962",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.00003374",
+                "to": "RBTC"
+            },
+            {
+                "from": "RBTC",
+                "max": "0.5450653225070915",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "46055.29224658",
+                "to": "MATIC"
+            },
+            {
+                "from": "DAI",
+                "max": "102095.2999960481",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.00003368",
+                "to": "RBTC"
+            },
+            {
+                "from": "MATIC",
+                "max": "632.1490134946226",
+                "min": "30",
+                "provider": "liquality",
+                "rate": "0.00002128",
+                "to": "BTC"
+            },
+            {
+                "from": "ETH",
+                "max": "0",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "0.06556935",
+                "to": "WBTC"
+            },
+            {
+                "from": "AVAX",
+                "max": "3676.460208730915",
+                "min": "0.5",
+                "provider": "liquality",
+                "rate": "0.00093521",
+                "to": "RBTC"
+            },
+            {
+                "from": "ETH",
+                "max": "0",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "354.85939227",
+                "to": "UNI"
+            },
+            {
+                "from": "DAI",
+                "max": "0",
+                "min": "50",
+                "provider": "liquality",
+                "rate": "0.00003369",
+                "to": "WBTC"
+            },
+            {
+                "from": "AVAX",
+                "max": "1732.8528793592125",
+                "min": "0.5",
+                "provider": "liquality",
+                "rate": "0.01412377",
+                "to": "ETH"
+            },
+            {
+                "from": "AVAX",
+                "max": "0",
+                "min": "0.5",
                 "provider": "liquality",
                 "rate": "0.00093553",
                 "to": "WBTC"
+            },
+            {
+                "from": "UNI",
+                "max": "894.6060709599282",
+                "min": "25",
+                "provider": "liquality",
+                "rate": "0.1935794",
+                "to": "AVAX"
+            },
+            {
+                "from": "MATIC",
+                "max": "59207.61705511455",
+                "min": "30",
+                "provider": "liquality",
+                "rate": "0.62559585",
+                "to": "DAI"
             },
             {
                 "from": "BTC",
@@ -1605,12 +1314,734 @@
                 "rate": "0.998",
                 "to": "RBTC"
             }
+        ],
+        "testnet": [
+            {
+                "from": "MATIC",
+                "max": "0",
+                "min": "80",
+                "provider": "liquality",
+                "rate": "0.02253072",
+                "to": "AVAX"
+            },
+            {
+                "from": "ARBETH",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "69.43735135",
+                "to": "AVAX"
+            },
+            {
+                "from": "SOL",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "0.02426234",
+                "to": "ARBETH"
+            },
+            {
+                "from": "MATIC",
+                "max": "0",
+                "min": "80",
+                "provider": "liquality",
+                "rate": "0.62522757",
+                "to": "DAI"
+            },
+            {
+                "from": "SOL",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "0.00160639",
+                "to": "RBTC"
+            },
+            {
+                "from": "AVAX",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.00093453",
+                "to": "RBTC"
+            },
+            {
+                "from": "NEAR",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.00019297",
+                "to": "RBTC"
+            },
+            {
+                "from": "ARBETH",
+                "max": "0.000535383333333333",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "3051.07728215",
+                "to": "MATIC"
+            },
+            {
+                "from": "AVAX",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.01411565",
+                "to": "ETH"
+            },
+            {
+                "from": "RBTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "14.95178685",
+                "to": "ETH"
+            },
+            {
+                "from": "DAI",
+                "max": "0",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.52941176",
+                "to": "SOV"
+            },
+            {
+                "from": "SOL",
+                "max": "0.021845833",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "74.77400589",
+                "to": "MATIC"
+            },
+            {
+                "from": "SOV",
+                "max": "30.6368066998246",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "0.32308901",
+                "to": "NEAR"
+            },
+            {
+                "from": "DAI",
+                "max": "0",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.00050864",
+                "to": "ARBETH"
+            },
+            {
+                "from": "ETH",
+                "max": "0",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "40.3959434",
+                "to": "SOL"
+            },
+            {
+                "from": "BTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "610.12641509",
+                "to": "SOL"
+            },
+            {
+                "from": "SOV",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "0.06671351",
+                "to": "AVAX"
+            },
+            {
+                "from": "NEAR",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "3.03352941",
+                "to": "SOV"
+            },
+            {
+                "from": "AVAX",
+                "max": "2.0645343462172",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "4.79450262",
+                "to": "NEAR"
+            },
+            {
+                "from": "NEAR",
+                "max": "0.16941321423066666",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.00019284",
+                "to": "BTC"
+            },
+            {
+                "from": "MATIC",
+                "max": "0",
+                "min": "80",
+                "provider": "liquality",
+                "rate": "0.00032123",
+                "to": "ARBETH"
+            },
+            {
+                "from": "SOV",
+                "max": "0.5192761605036667",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "0.00006291",
+                "to": "BTC"
+            },
+            {
+                "from": "BTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "1048.75783784",
+                "to": "AVAX"
+            },
+            {
+                "from": "MATIC",
+                "max": "0",
+                "min": "80",
+                "provider": "liquality",
+                "rate": "0.0131075",
+                "to": "SOL"
+            },
+            {
+                "from": "AVAX",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "14.69117647",
+                "to": "SOV"
+            },
+            {
+                "from": "BTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "14.952619",
+                "to": "ARBETH"
+            },
+            {
+                "from": "SOL",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "1.70172973",
+                "to": "AVAX"
+            },
+            {
+                "from": "DAI",
+                "max": "0",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.02075472",
+                "to": "SOL"
+            },
+            {
+                "from": "ETH",
+                "max": "0.000498480013666666",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "0.06553924",
+                "to": "BTC"
+            },
+            {
+                "from": "RBTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "14.952619",
+                "to": "ARBETH"
+            },
+            {
+                "from": "SOL",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "25.25294118",
+                "to": "SOV"
+            },
+            {
+                "from": "ARBETH",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "40.3959434",
+                "to": "SOL"
+            },
+            {
+                "from": "NEAR",
+                "max": "0.18185793333333335",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "8.98228624",
+                "to": "MATIC"
+            },
+            {
+                "from": "BTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "0.99",
+                "to": "RBTC"
+            },
+            {
+                "from": "NEAR",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.20442162",
+                "to": "AVAX"
+            },
+            {
+                "from": "SOV",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "0.03881132",
+                "to": "SOL"
+            },
+            {
+                "from": "AVAX",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "27.4725",
+                "to": "DAI"
+            },
+            {
+                "from": "BTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "15563.11764706",
+                "to": "SOV"
+            },
+            {
+                "from": "ETH",
+                "max": "0.000535383333333333",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "3051.07728215",
+                "to": "MATIC"
+            },
+            {
+                "from": "RBTC",
+                "max": "0.001948879931533333",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "5079.06282723",
+                "to": "NEAR"
+            },
+            {
+                "from": "ETH",
+                "max": "0",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "69.43735135",
+                "to": "AVAX"
+            },
+            {
+                "from": "SOL",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "47.223",
+                "to": "DAI"
+            },
+            {
+                "from": "AVAX",
+                "max": "0.0375512",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "43.50060091",
+                "to": "MATIC"
+            },
+            {
+                "from": "MATIC",
+                "max": "0",
+                "min": "80",
+                "provider": "liquality",
+                "rate": "0.33434629",
+                "to": "SOV"
+            },
+            {
+                "from": "RBTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "15563.11764706",
+                "to": "SOV"
+            },
+            {
+                "from": "ARBETH",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.06554705",
+                "to": "RBTC"
+            },
+            {
+                "from": "DAI",
+                "max": "57.290828562",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.17277487",
+                "to": "NEAR"
+            },
+            {
+                "from": "AVAX",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.5759434",
+                "to": "SOL"
+            },
+            {
+                "from": "ETH",
+                "max": "0",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "0.99",
+                "to": "ARBETH"
+            },
+            {
+                "from": "ETH",
+                "max": "0",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "1030.42058824",
+                "to": "SOV"
+            },
+            {
+                "from": "SOV",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "1.8513",
+                "to": "DAI"
+            },
+            {
+                "from": "DAI",
+                "max": "0.9700176366843333",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.00003368",
+                "to": "BTC"
+            },
+            {
+                "from": "ARBETH",
+                "max": "0.000498480013666666",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.06553924",
+                "to": "BTC"
+            },
+            {
+                "from": "MATIC",
+                "max": "1.535597952536",
+                "min": "80",
+                "provider": "liquality",
+                "rate": "0.00002128",
+                "to": "BTC"
+            },
+            {
+                "from": "RBTC",
+                "max": "0.000032999999999999",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "0.99",
+                "to": "BTC"
+            },
+            {
+                "from": "ARBETH",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.99",
+                "to": "ETH"
+            },
+            {
+                "from": "SOL",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "0.02426337",
+                "to": "ETH"
+            },
+            {
+                "from": "SOL",
+                "max": "0.020339108",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "0.00160627",
+                "to": "BTC"
+            },
+            {
+                "from": "BTC",
+                "max": "0.00003545",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "46082.42035776",
+                "to": "MATIC"
+            },
+            {
+                "from": "NEAR",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.00291453",
+                "to": "ARBETH"
+            },
+            {
+                "from": "RBTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "1048.75783784",
+                "to": "AVAX"
+            },
+            {
+                "from": "SOV",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "0.00095117",
+                "to": "ARBETH"
+            },
+            {
+                "from": "NEAR",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.11892453",
+                "to": "SOL"
+            },
+            {
+                "from": "ARBETH",
+                "max": "0.0294349848518",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "336.28036649",
+                "to": "NEAR"
+            },
+            {
+                "from": "ETH",
+                "max": "0.0294349848518",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "336.28036649",
+                "to": "NEAR"
+            },
+            {
+                "from": "NEAR",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.00291304",
+                "to": "ETH"
+            },
+            {
+                "from": "ARBETH",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "1030.42058824",
+                "to": "SOV"
+            },
+            {
+                "from": "SOL",
+                "max": "1.201065605",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "8.24136126",
+                "to": "NEAR"
+            },
+            {
+                "from": "MATIC",
+                "max": "0",
+                "min": "80",
+                "provider": "liquality",
+                "rate": "0.00002127",
+                "to": "RBTC"
+            },
+            {
+                "from": "MATIC",
+                "max": "90.71564177034772",
+                "min": "80",
+                "provider": "liquality",
+                "rate": "0.10911476",
+                "to": "NEAR"
+            },
+            {
+                "from": "MATIC",
+                "max": "0",
+                "min": "80",
+                "provider": "liquality",
+                "rate": "0.00032129",
+                "to": "ETH"
+            },
+            {
+                "from": "RBTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "610.12641509",
+                "to": "SOL"
+            },
+            {
+                "from": "ETH",
+                "max": "0",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "1926.8865",
+                "to": "DAI"
+            },
+            {
+                "from": "DAI",
+                "max": "1.04204595",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "1.56758922",
+                "to": "MATIC"
+            },
+            {
+                "from": "DAI",
+                "max": "0",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.00003368",
+                "to": "RBTC"
+            },
+            {
+                "from": "BTC",
+                "max": "0.00194887",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "5079.06282723",
+                "to": "NEAR"
+            },
+            {
+                "from": "BTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "14.95481427",
+                "to": "ETH"
+            },
+            {
+                "from": "ETH",
+                "max": "0",
+                "min": "0.05",
+                "provider": "liquality",
+                "rate": "0.06554705",
+                "to": "RBTC"
+            },
+            {
+                "from": "DAI",
+                "max": "0",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.03567568",
+                "to": "AVAX"
+            },
+            {
+                "from": "NEAR",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "5.6727",
+                "to": "DAI"
+            },
+            {
+                "from": "RBTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "29103.03",
+                "to": "DAI"
+            },
+            {
+                "from": "SOV",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "0.00006298",
+                "to": "RBTC"
+            },
+            {
+                "from": "AVAX",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.01411488",
+                "to": "ARBETH"
+            },
+            {
+                "from": "AVAX",
+                "max": "0.034960960261",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "0.00093447",
+                "to": "BTC"
+            },
+            {
+                "from": "DAI",
+                "max": "0",
+                "min": "100",
+                "provider": "liquality",
+                "rate": "0.00050881",
+                "to": "ETH"
+            },
+            {
+                "from": "BTC",
+                "max": "0",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "29103.03",
+                "to": "DAI"
+            },
+            {
+                "from": "ARBETH",
+                "max": "0",
+                "min": "10",
+                "provider": "liquality",
+                "rate": "1926.8865",
+                "to": "DAI"
+            },
+            {
+                "from": "RBTC",
+                "max": "0.00003545",
+                "min": "0.002",
+                "provider": "liquality",
+                "rate": "46082.42035776",
+                "to": "MATIC"
+            },
+            {
+                "from": "SOV",
+                "max": "0.5572438166666667",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "2.93139185",
+                "to": "MATIC"
+            },
+            {
+                "from": "SOV",
+                "max": "0",
+                "min": "0.1",
+                "provider": "liquality",
+                "rate": "0.00095036",
+                "to": "ETH"
+            }
         ]
     },
     "rskLegacyDerivation": false,
-    "setupAt": 1653477962719,
-    "termsAcceptedAt": 1653477944044,
+    "setupAt": 1653480213769,
+    "termsAcceptedAt": 1653480196426,
     "usbBridgeWindowsId": 0,
-    "version": 19,
-    "watsNewModalVersion": ""
+    "version": 18,
+    "watsNewModalVersion": "0.62.2"
 }

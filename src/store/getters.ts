@@ -63,8 +63,7 @@ export default {
       accountId,
       useCache = true,
       accountType = AccountType.Default,
-      accountIndex = 0,
-      bitcoinLedgerCache
+      accountIndex = 0
     }: {
       network: Network;
       walletId: WalletId;
@@ -73,7 +72,6 @@ export default {
       useCache?: boolean;
       accountType?: AccountType;
       accountIndex?: number;
-      bitcoinLedgerCache?: { publicKey: string, chainCode: string }
     }): Client => {
       const account = accountId ? getters.accountItem(accountId) : null;
       const _accountType = account?.type || accountType;
@@ -106,6 +104,15 @@ export default {
       }
 
       const { mnemonic } = wallet;
+      
+      let bitcoinLedgerCache;
+      if (account?.chain === ChainId.Bitcoin) {
+        bitcoinLedgerCache = {
+          publicKey: account?.publicKey,
+          chainCode: account?.chainCode
+        };
+      }
+      
       const client = createClient(
         asset,
         network,

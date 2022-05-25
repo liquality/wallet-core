@@ -5,7 +5,10 @@ import { Network } from '../types';
 
 describe('updateBalances tests', () => {
   jest.setTimeout(90000);
-  const wallet = setupWallet(defaultWalletOptions);
+  
+  const createNotification = jest.fn();
+  const wallet = setupWallet({...defaultWalletOptions, createNotification });
+
   beforeEach(async () => {
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',

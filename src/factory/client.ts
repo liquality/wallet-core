@@ -439,10 +439,12 @@ export const createClient = (
   mnemonic: string,
   accountType: AccountType,
   derivationPath: string,
-  bitcoinLedgerCache?: { publicKey: string, chainCode: string }
+  bitcoinLedgerCache?: { publicKey?: string, chainCode?: string }
 ) => {
   const assetData = cryptoassets[asset];
-
+  if (bitcoinLedgerCache && assetData.chain !== ChainId.Bitcoin) {
+    throw new Error(`bitcoinLedgerCache is only supported by Bitcoin client.`);
+  }
   switch (assetData.chain) {
     case ChainId.Bitcoin:
       return createBtcClient(network, mnemonic, accountType, derivationPath, bitcoinLedgerCache?.publicKey, bitcoinLedgerCache?.chainCode);
