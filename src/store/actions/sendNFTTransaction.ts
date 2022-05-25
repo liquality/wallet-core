@@ -1,5 +1,3 @@
-import { Address } from '@liquality/types';
-import BN from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
 import { createHistoryNotification } from '../broker/notification';
@@ -20,28 +18,22 @@ export const sendNFTTransaction = async (
     network,
     accountId,
     walletId,
-    contract,
     receiver,
-    tokenIDs,
     values,
     fee,
     feeLabel,
     fiatRate,
     nft,
-  }: // data,
-  {
+  }: {
     network: Network;
     accountId: AccountId;
     walletId: WalletId;
-    contract: Address | string;
     receiver: string;
-    tokenIDs: number[];
     values: number[];
     fee: number;
     feeLabel: FeeLabel;
     fiatRate: number;
     nft: NFTAsset;
-    // data: string;
   }
 ): Promise<any> => {
   const asset = 'ETH';
@@ -51,7 +43,7 @@ export const sendNFTTransaction = async (
     walletId,
     asset,
   });
-  const tx = await client.nft.transfer(contract, receiver, tokenIDs, values);
+  const tx = await client.nft.transfer(nft.asset_contract.address, receiver, [nft.token_id], values);
 
   const transaction: NFTSendHistoryItem = {
     id: uuidv4(),
@@ -61,7 +53,6 @@ export const sendNFTTransaction = async (
     to: asset,
     from: asset,
     toAddress: receiver,
-    amount: new BN(0).toFixed(),
     fee,
     tx,
     nft,

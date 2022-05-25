@@ -18,7 +18,7 @@ async function waitForConfirmations(
   context: ActionContext,
   { transaction, network, walletId }: { transaction: NFTSendHistoryItem; network: Network; walletId: WalletId }
 ): Promise<Partial<NFTSendHistoryItem> | undefined> {
-  const { getters, dispatch } = rootActionContext(context);
+  const { getters } = rootActionContext(context);
   const client = getters.client({
     network,
     walletId,
@@ -29,12 +29,6 @@ async function waitForConfirmations(
     const tx = await client.chain.getTransactionByHash(transaction.txHash);
     console.log('🚀 ~ file: sendNFT.ts ~ line 30 ~ tx', tx);
     if (tx && tx.confirmations && tx.confirmations > 0) {
-      dispatch.updateBalances({
-        network,
-        walletId,
-        assets: [transaction.from],
-      });
-
       return {
         endTime: Date.now(),
         status: txStatusToSendStatus(tx.status!),

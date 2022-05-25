@@ -139,7 +139,6 @@ export interface SendHistoryItem extends BaseHistoryItem {
 export interface NFTSendHistoryItem extends BaseHistoryItem {
   type: TransactionType.NFT;
   toAddress: string;
-  amount: string;
   tx: Transaction;
   nft: NFTAsset;
   txHash: string;
@@ -323,7 +322,7 @@ export type NFTAsset = {
   permalink: string;
   sell_orders: number | string;
   starred: false;
-  token_id: string;
+  token_id: number;
   token_metadata: string;
   top_bid: number | string;
   traits: {
