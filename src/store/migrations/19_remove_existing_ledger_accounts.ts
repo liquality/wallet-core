@@ -16,10 +16,13 @@ export const removeExistingLedgerAccounts = {
         })
       }
     }
-
-    return {
+    
+    const newState = {
       ...state,
+      whatsNewModalVersion: state.watsNewModalVersion || '',
       accounts
     }
+    delete newState.watsNewModalVersion;
+    return newState;
   },
 };

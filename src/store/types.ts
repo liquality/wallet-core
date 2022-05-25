@@ -102,6 +102,7 @@ export enum SwapProviderType {
   Sovryn = 'sovryn',
   Thorchain = 'thorchain',
   Astroport = 'astroport',
+  Hop = 'hop'
 }
 
 export interface BaseHistoryItem {

@@ -31,6 +31,7 @@ const chainToRpcProviders: { [chainId: number]: string } = {
   56: 'https://bsc-dataseed.binance.org',
   137: 'https://polygon-rpc.com',
   43114: 'https://api.avax.network/ext/bc/C/rpc',
+  42161: `https://arbitrum-mainnet.infura.io/v3/${buildConfig.infuraApiKey}`,
 };
 
 export interface OneinchSwapHistoryItem extends SwapHistoryItem {
@@ -101,7 +102,7 @@ class OneinchSwapProvider extends SwapProvider {
 
     const api = new ethers.providers.StaticJsonRpcProvider(chainToRpcProviders[chainId]);
     const erc20 = new ethers.Contract(cryptoassets[quote.from].contractAddress!, ERC20.abi, api);
-    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.toAccountId);
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     const fromAddress = chains[fromChain].formatAddress(fromAddressRaw, network);
     const allowance = await erc20.allowance(fromAddress, this.config.routerAddress);
     const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
@@ -276,12 +277,6 @@ class OneinchSwapProvider extends SwapProvider {
     }
   }
 
-  protected _txTypes() {
-    return {
-      SWAP: 'SWAP',
-    };
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       WAITING_FOR_APPROVE_CONFIRMATIONS: {
@@ -329,6 +324,12 @@ class OneinchSwapProvider extends SwapProvider {
           };
         },
       },
+    };
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
     };
   }
 
