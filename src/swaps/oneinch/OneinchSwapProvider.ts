@@ -31,7 +31,15 @@ const chainToRpcProviders: { [chainId: number]: string } = {
   56: 'https://bsc-dataseed.binance.org',
   137: 'https://polygon-rpc.com',
   43114: 'https://api.avax.network/ext/bc/C/rpc',
-  42161: `https://arbitrum-mainnet.infura.io/v3/${buildConfig.infuraApiKey}`,
+  42161: `https://arbitrum-mainnet.infura.io/v3/${buildConfig.infuraApiKey}`
+};
+
+const chainToGasMultiplier: { [chainId: number]: number } = {
+  1: 1.5,
+  56: 1.5,
+  137: 1.5,
+  43114: 1.5,
+  42161: 10 
 };
 
 export interface OneinchSwapHistoryItem extends SwapHistoryItem {
@@ -215,7 +223,7 @@ class OneinchSwapProvider extends SwapProvider {
       const tradeData = await this._getQuote(chainId, quote.from, quote.to, new BigNumber(quote.fromAmount).toNumber());
       for (const feePrice of feePrices) {
         const gasPrice = new BN(feePrice).times(1e9); // ETH fee price is in gwei
-        const fee = new BN(tradeData.data?.estimatedGas).times(1.5).times(gasPrice);
+        const fee = new BN(tradeData.data?.estimatedGas).times(chainToGasMultiplier[chainId] || 1.5).times(gasPrice);
         fees[feePrice] = unitToCurrency(cryptoassets[nativeAsset], fee);
       }
       return fees;
