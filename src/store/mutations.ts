@@ -135,7 +135,9 @@ export default {
     }
   ) {
     const item = state.history[network]![walletId].find((i) => i.id === id);
-    Object.assign(item, updates);
+    if (item) {
+      Object.assign(item, updates);
+    }
   },
   REMOVE_ORDER(state: RootState, { network, walletId, id }: { network: Network; walletId: WalletId; id: string }) {
     Vue.set(

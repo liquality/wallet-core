@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { ActionContext, rootActionContext } from '..';
 import buildConfig from '../../build.config';
 import { getSwapProvider } from '../../factory/swap';
@@ -9,13 +8,21 @@ export const updateMarketData = async (
   { network }: { network: Network }
 ): Promise<{ network: Network; marketData: MarketData[] }> => {
   const { commit } = rootActionContext(context);
-  const supportedPairResponses = await Promise.all(
+  const supportedPairResponses = await Promise.allSettled(
     Object.keys(buildConfig.swapProviders[network]).map((provider) => {
       const swapProvider = getSwapProvider(network, provider);
       return swapProvider.getSupportedPairs({ network }).then((pairs) => pairs.map((pair) => ({ ...pair, provider })));
     })
   );
-  const supportedPairs = _.flatten(supportedPairResponses);
+
+  let supportedPairs: MarketData[] = [];
+  supportedPairResponses.forEach((response) => {
+    if (response.status === 'fulfilled') {
+      supportedPairs = [...supportedPairs, ...response.value];
+    } else {
+      console.error('Fetching market data failed', response.reason);
+    }
+  });
 
   const marketData = supportedPairs;
 
