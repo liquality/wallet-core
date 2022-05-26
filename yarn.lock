@@ -459,30 +459,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/bitcoin-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/bitcoin-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/bitcoin-ledger@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/bitcoin-ledger@npm:1.0.4"
   dependencies:
-    "@chainify/bitcoin": "workspace:*"
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/hw-ledger": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/bitcoin": 1.0.4
+    "@chainify/client": 1.0.4
+    "@chainify/errors": 1.0.4
+    "@chainify/hw-ledger": 1.0.4
+    "@chainify/types": 1.0.4
+    "@chainify/utils": 1.0.4
     "@ledgerhq/hw-app-btc": 6.7.0
     bip32: 2.0.6
     bitcoinjs-lib: 5.2.0
+  checksum: 1901c8d0c353ca0ea2ebbf245a1a7bc382ea2c15c9dbe56f694df6bc834f505f230cbb20cd1d7ecb26867cf6b14a8c2eab32cefc192917da615c9d4cf69a960c
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/bitcoin@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/bitcoin@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/bitcoin::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/bitcoin@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/bitcoin@npm:1.0.4"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.4
+    "@chainify/errors": 1.0.4
+    "@chainify/types": 1.0.4
+    "@chainify/utils": 1.0.4
     "@types/bip32": ^2.0.0
     "@types/bip39": ^3.0.0
     "@types/bitcoinjs-lib": ^5.0.0
@@ -496,54 +497,59 @@ __metadata:
     coinselect: ^3.1.12
     lodash: ^4.17.21
     memoizee: ^0.4.15
+  checksum: b16aa5f77fef6c53abf50d3785f8fe198e1def88eb79b3ae178156e4c60373a86184901dd47d059f150d455cced1228cd5a04df56e6dd701b4d84782536a90bd
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/client@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/client::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/client@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/client::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/client@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/client@npm:1.0.4"
   dependencies:
-    "@chainify/errors": "workspace:*"
-    "@chainify/logger": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/errors": 1.0.4
+    "@chainify/logger": 1.0.4
+    "@chainify/types": 1.0.4
+    "@chainify/utils": 1.0.4
     axios: ^0.25.0
+  checksum: e320a9ad2319e87a391bcf1f59901bc08b3be96790a2e1bc4bae49f053441da2bd70ec6bedea394fa3d101148f283fd24fd7370e84650221fe5b2c7078835a1a
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/errors@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/errors::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/errors@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/errors::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/errors@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/errors@npm:1.0.4"
   dependencies:
     standard-error: ^1.1.0
+  checksum: 74846ddc29535f157065670ac28df309f2cc1272c8357fad3fd62170fb701f069ca2bfba88ec67b6c17f9904903f05adf82becfdfd95c044643860b24e6ae404
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/evm-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/evm-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/evm-ledger@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/evm-ledger@npm:1.0.4"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/evm": "workspace:*"
-    "@chainify/hw-ledger": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.4
+    "@chainify/errors": 1.0.4
+    "@chainify/evm": 1.0.4
+    "@chainify/hw-ledger": 1.0.4
+    "@chainify/types": 1.0.4
+    "@chainify/utils": 1.0.4
     "@ethersproject/abstract-provider": 5.6.0
     "@ethersproject/abstract-signer": 5.6.0
     "@ethersproject/providers": 5.6.0
     "@ledgerhq/hw-app-eth": ^6.26.0
+  checksum: 9a206d8ec37d134a8dc3f26aecbac4200cbd302d2419b883bee867c0d6c12dc609ba35ffb9c17432376520537f9667c9cd3979acce0efdcb6888ec2127da2df2
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/evm@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/evm@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/evm::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/evm@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/evm@npm:1.0.4"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.4
+    "@chainify/errors": 1.0.4
+    "@chainify/types": 1.0.4
+    "@chainify/utils": 1.0.4
+    "@eth-optimism/sdk": ^1.1.5
     "@ethersproject/abi": 5.6.0
     "@ethersproject/abstract-provider": 5.6.0
     "@ethersproject/abstract-signer": 5.6.0
@@ -553,95 +559,105 @@ __metadata:
     "@ethersproject/solidity": 5.6.0
     "@ethersproject/transactions": 5.6.0
     "@ethersproject/wallet": 5.6.0
+    "@metamask/eth-sig-util": ^4.0.1
     "@rainbow-me/fee-suggestions": ^2.0.0
+  checksum: 6fe7825d5c23f079f48ea6df8c9d195ef64106c9306c5e629e9b5f3e32f253d4e491d6ab38bdcff78f73ee7b49ac017c133194214c49997b578308e4f19a52e4
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/hw-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/hw-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/hw-ledger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/hw-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/hw-ledger@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/hw-ledger@npm:1.0.4"
   dependencies:
-    "@chainify/errors": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/errors": 1.0.4
+    "@chainify/types": 1.0.4
+    "@chainify/utils": 1.0.4
     "@ledgerhq/hw-transport": ^6.24.1
+  checksum: 033b2140ed432c201039bdaa2bcfb0715b3e1da0c64bf6e80c216a5ecce966540ca1a37827d8ce10e3083796fcfdc5c593622efcb6555df009610b0b03cdebfe
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/logger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/logger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/logger@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/logger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/logger@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/logger@npm:1.0.4"
+  checksum: d23dbe28729f6cefe075c5416ecd2a8b3e555fdb669c9ed7ace17b744373fdb849b8d6ec6f368b5a449608ff4e08ceddf166313b56ca6b961b9354a809afedea
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/near@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/near::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/near@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/near::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/near@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/near@npm:1.0.4"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.4
+    "@chainify/errors": 1.0.4
+    "@chainify/types": 1.0.4
+    "@chainify/utils": 1.0.4
     bn.js: ^5.2.0
     near-api-js: ^0.44.2
     near-seed-phrase: ^0.2.0
+  checksum: 7fc91b2e0a80b20b96bc05b9bc0d0e3f60061de8facf431892448c5e77c95fe2f9302317943436c4dffd7b42bb5ab7b8c675216f6e21f2c583f81c48c122ba2f
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/solana@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/solana::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/solana@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/solana::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/solana@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/solana@npm:1.0.4"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/logger": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.4
+    "@chainify/errors": 1.0.4
+    "@chainify/logger": 1.0.4
+    "@chainify/types": 1.0.4
+    "@chainify/utils": 1.0.4
     "@solana/spl-token": ^0.2.0
     "@solana/web3.js": ^1.37.2
     bip39: ^3.0.4
     ed25519-hd-key: ^1.2.0
     tweetnacl: ^1.0.3
+  checksum: c17fdc1f47b22336a28a8de5f5d27784ca928342fa423c3f17e9fef25301044cf73518a1994db738ae4eed3264c178e4e2a932c20e45affb59db258772f0446c
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/terra@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/terra::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/terra@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/terra::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/terra@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/terra@npm:1.0.4"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.4
+    "@chainify/errors": 1.0.4
+    "@chainify/types": 1.0.4
+    "@chainify/utils": 1.0.4
     "@terra-money/terra.js": 2.1.18
     "@types/luxon": ^2.0.9
     lodash: ^4.17.21
     luxon: ^2.3.1
+  checksum: b5574609ba570d8b47a2a10b9458f206e02654f458129739bd11c17a382f8c7fabc3e591b1ee11a036d9a8e1c7acbef1ca7437b16a3a0c314c5061129fc3d59f
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/types@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/types::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/types@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/types::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/types@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/types@npm:1.0.4"
   dependencies:
     "@ethersproject/bignumber": 5.6.0
+    "@liquality/cryptoassets": ^1.13.2
     bignumber.js: ^9.0.2
+  checksum: 42b97953c0295c78a620755bdd1691d0cf1a3327730df54d3000f91b123984dd79409e27d0ac11a180b5d805a4db6a23e9141607d4fc242418518b2b878d4a39
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/utils@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/utils::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/utils@portal:/Users/kraykov/Documents/workspaces/liquality/chainabstractionlayer-2/packages/utils::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/utils@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@chainify/utils@npm:1.0.4"
   dependencies:
-    "@chainify/errors": "workspace:*"
-    "@chainify/types": "workspace:*"
+    "@chainify/errors": 1.0.4
+    "@chainify/types": 1.0.4
     "@ethersproject/sha2": 5.6.0
     bech32: ^2.0.0
     bs58: ^5.0.0
     crypto-hashing: ^1.0.0
     setimmediate: ^1.0.5
+  checksum: eaaec4f25d477e3a847c44cc5f0d075d0a5bf46cb6aa254f0ad8b9b4196b799ed262877650d253fcde818406490382c85095fb84eebfffd3bc826332ca6b9827
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@commitlint/cli@npm:^16.2.3":
   version: 16.3.0
@@ -864,7 +880,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eth-optimism/contracts@npm:^0.5.2":
+"@eth-optimism/contracts@npm:0.5.24, @eth-optimism/contracts@npm:^0.5.2":
   version: 0.5.24
   resolution: "@eth-optimism/contracts@npm:0.5.24"
   dependencies:
@@ -891,6 +907,21 @@ __metadata:
     chai: ^4.3.4
     ethers: ^5.5.4
   checksum: 46ab4af605083cc3fed8bc3905ea3679ec263d684ea7fef9d996bc4eba2efdf6180daf2f58c7742f0b4b1704279c6e864dd39ceff1e28954674713eb9c09e8d8
+  languageName: node
+  linkType: hard
+
+"@eth-optimism/sdk@npm:^1.1.5":
+  version: 1.1.5
+  resolution: "@eth-optimism/sdk@npm:1.1.5"
+  dependencies:
+    "@eth-optimism/contracts": 0.5.24
+    "@eth-optimism/core-utils": 0.8.4
+    lodash: ^4.17.21
+    merkletreejs: ^0.2.27
+    rlp: ^2.2.7
+  peerDependencies:
+    ethers: ^5
+  checksum: a65615f13dcb4140454055525a3b5db3ef30f810bb17704cdd64cb2d9647d46b225a3cd54e724734ede1bf6ed0a3b462f3c83b7a979760e73308906396e09c8b
   languageName: node
   linkType: hard
 
@@ -1997,9 +2028,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@liquality/cryptoassets@npm:1.13.0":
-  version: 1.13.0
-  resolution: "@liquality/cryptoassets@npm:1.13.0"
+"@liquality/cryptoassets@npm:^1.13.2":
+  version: 1.13.2
+  resolution: "@liquality/cryptoassets@npm:1.13.2"
   dependencies:
     bignumber.js: ^9.0.2
     bitcoin-address-validation: ^2.2.1
@@ -2007,7 +2038,7 @@ __metadata:
     cashaddrjs: ^0.4.4
     ethereumjs-util: ^7.1.4
     lodash: ^4.17.11
-  checksum: 5ff1dc3e2fdd8a776cfe69a48a66283a9b9d396f695eac9b4275e6d2f1ba039c6d43ea31c80f9590eef6e1e85142d37dc81bc48ce1ff941f387ae2f8356b08f6
+  checksum: 36a350191429793447707fb712c19f8a122a7eca7e1bba6afc261414e54b3667ef1292b6c9b5bb872ae4ee6b20b8c01c8332dce91eeed0bcc67cacd7f3f1d5f9
   languageName: node
   linkType: hard
 
@@ -2017,22 +2048,22 @@ __metadata:
   dependencies:
     "@babel/types": ^7.17.0
     "@blobfishkate/sovryncontracts": 1.3.27
-    "@chainify/bitcoin": 1.0.3
-    "@chainify/bitcoin-ledger": 1.0.3
-    "@chainify/client": 1.0.3
-    "@chainify/errors": 1.0.3
-    "@chainify/evm": 1.0.3
-    "@chainify/evm-ledger": 1.0.3
-    "@chainify/near": 1.0.3
-    "@chainify/solana": 1.0.3
-    "@chainify/terra": 1.0.3
-    "@chainify/types": 1.0.3
-    "@chainify/utils": 1.0.3
+    "@chainify/bitcoin": 1.0.4
+    "@chainify/bitcoin-ledger": 1.0.4
+    "@chainify/client": 1.0.4
+    "@chainify/errors": 1.0.4
+    "@chainify/evm": 1.0.4
+    "@chainify/evm-ledger": 1.0.4
+    "@chainify/near": 1.0.4
+    "@chainify/solana": 1.0.4
+    "@chainify/terra": 1.0.4
+    "@chainify/types": 1.0.4
+    "@chainify/utils": 1.0.4
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
     "@ethersproject/address": ^5.6.0
     "@hop-protocol/sdk": 0.0.1-beta.314
-    "@liquality/cryptoassets": 1.13.0
+    "@liquality/cryptoassets": ^1.13.2
     "@metamask/eth-sig-util": ^4.0.1
     "@thorchain/asgardex-util": ^0.10.0
     "@types/amplitude-js": ^8.16.0
@@ -2060,7 +2091,7 @@ __metadata:
     eslint-plugin-jest: ^26.1.1
     graphql: ^16.4.0
     human-standard-token-abi: ^2.0.0
-    husky: ^8.0.0
+    husky: ^8.0.1
     jest: ^27.5.1
     moment: ^2.29.1
     pinst: ^3.0.0
@@ -4201,6 +4232,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"buffer-reverse@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "buffer-reverse@npm:1.0.1"
+  checksum: e350872a89b17af0a7e1bd7a73239a535164f3f010b0800add44f2e52bd0511548dc5b96c20309effba969868c385023d2d02a0add6155f6a76da7b3073b77bd
+  languageName: node
+  linkType: hard
+
 "buffer-to-arraybuffer@npm:^0.0.5":
   version: 0.0.5
   resolution: "buffer-to-arraybuffer@npm:0.0.5"
@@ -4921,6 +4959,13 @@ __metadata:
   dependencies:
     create-hash: ^1.1.2
   checksum: f000f9acbfe2312ce0542b122619f0dce93422ded002f67c14a25a3dc5a7193361976e4bb3aa999fd8242cf4cdbc8674374ecbd6c96f6f2a84d5fcaea5e69ca3
+  languageName: node
+  linkType: hard
+
+"crypto-js@npm:^3.1.9-1":
+  version: 3.3.0
+  resolution: "crypto-js@npm:3.3.0"
+  checksum: 193923143a4784b2f974366068d96fe8280168fd3fef2bfea9551a5c3e32096f5a8fa49ff4eeb5bd0b9716d325618d38cfbe6125e359a4ef488fbca93e600824
   languageName: node
   linkType: hard
 
@@ -7177,7 +7222,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"husky@npm:^8.0.0":
+"husky@npm:^8.0.1":
   version: 8.0.1
   resolution: "husky@npm:8.0.1"
   bin:
@@ -8954,6 +8999,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"merkletreejs@npm:^0.2.27":
+  version: 0.2.31
+  resolution: "merkletreejs@npm:0.2.31"
+  dependencies:
+    bignumber.js: ^9.0.1
+    buffer-reverse: ^1.0.1
+    crypto-js: ^3.1.9-1
+    treeify: ^1.1.0
+    web3-utils: ^1.3.4
+  checksum: d84a7d8b07b6ec37f8de8e6b9d1cfb361e49d75e30be1e1e9e269e8847408535265df1bb99be88b8d260362e6513491cdf07a5a5a03d4980faa5f23341ae3909
+  languageName: node
+  linkType: hard
+
 "methods@npm:~1.1.2":
   version: 1.1.2
   resolution: "methods@npm:1.1.2"
@@ -10689,7 +10747,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rlp@npm:^2.0.0, rlp@npm:^2.2.3, rlp@npm:^2.2.4, rlp@npm:^2.2.6":
+"rlp@npm:^2.0.0, rlp@npm:^2.2.3, rlp@npm:^2.2.4, rlp@npm:^2.2.6, rlp@npm:^2.2.7":
   version: 2.2.7
   resolution: "rlp@npm:2.2.7"
   dependencies:
@@ -11759,6 +11817,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"treeify@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "treeify@npm:1.1.0"
+  checksum: aa00dded220c1dd052573bd6fc2c52862f09870851a284f0d3650d72bf913ba9b4f6b824f4f1ab81899bae29375f4266b07fe47cbf82343a1efa13cc09ce87af
+  languageName: node
+  linkType: hard
+
 "trim-newlines@npm:^3.0.0":
   version: 3.0.1
   resolution: "trim-newlines@npm:3.0.1"
@@ -12588,7 +12653,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web3-utils@npm:1.7.3":
+"web3-utils@npm:1.7.3, web3-utils@npm:^1.3.4":
   version: 1.7.3
   resolution: "web3-utils@npm:1.7.3"
   dependencies:
