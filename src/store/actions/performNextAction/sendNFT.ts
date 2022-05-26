@@ -27,7 +27,6 @@ async function waitForConfirmations(
   });
   try {
     const tx = await client.chain.getTransactionByHash(transaction.txHash);
-    console.log('🚀 ~ file: sendNFT.ts ~ line 30 ~ tx', tx);
     if (tx && tx.confirmations && tx.confirmations > 0) {
       return {
         endTime: Date.now(),

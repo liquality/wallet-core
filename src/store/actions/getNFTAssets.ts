@@ -1,21 +1,23 @@
 import { ActionContext, rootActionContext } from '..';
-import { Network, NFTAsset, WalletId } from '../types';
+import { Asset, Network, NFTAsset, WalletId } from '../types';
 
 export const getNFTAssets = async (
   context: ActionContext,
   {
     network,
     walletId,
+    asset,
   }: {
     network: Network;
     walletId: WalletId;
+    asset: Asset;
   }
 ): Promise<any> => {
   const { state, commit, getters } = rootActionContext(context);
   const client = getters.client({
     network,
     walletId,
-    asset: 'ETH',
+    asset,
   });
 
   const nft = await client.nft.fetch();
@@ -34,7 +36,6 @@ export const getNFTAssets = async (
       nftAssets.push(asset);
     }
   });
-  console.log('🚀 ~ file: getNFTAssets.ts ~ line 34 ~ nftAssets ~ nftAssets', nftAssets);
 
   commit.SET_NFT_ASSETS({ nftAssets, network, walletId });
 

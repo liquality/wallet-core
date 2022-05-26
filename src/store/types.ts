@@ -143,7 +143,6 @@ export interface NFTSendHistoryItem extends BaseHistoryItem {
   nft: NFTAsset;
   txHash: string;
   accountId: AccountId;
-  fiatRate: number;
   status: SendStatus;
 }
 

@@ -22,7 +22,6 @@ export const sendNFTTransaction = async (
     values,
     fee,
     feeLabel,
-    fiatRate,
     nft,
   }: {
     network: Network;
@@ -32,7 +31,6 @@ export const sendNFTTransaction = async (
     values: number[];
     fee: number;
     feeLabel: FeeLabel;
-    fiatRate: number;
     nft: NFTAsset;
   }
 ): Promise<any> => {
@@ -61,7 +59,6 @@ export const sendNFTTransaction = async (
     status: SendStatus.WAITING_FOR_CONFIRMATIONS,
     accountId,
     feeLabel,
-    fiatRate,
   };
   console.log('🚀 ~ file: sendNFTTransaction.ts ~ line 64 ~ transaction', transaction);
 
