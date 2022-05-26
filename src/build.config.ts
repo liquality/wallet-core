@@ -57,8 +57,26 @@ const config: WalletCoreConfig = {
       'FISH',
       'LUNA',
       'UST',
+      'OPTETH',
+      'OPTUSDC'
     ],
-    testnet: ['BTC', 'ETH', 'DAI', 'RBTC', 'BNB', 'NEAR', 'SOV', 'MATIC', 'PWETH', 'ARBETH', 'AVAX', 'LUNA', 'UST'],
+    testnet: [
+      'BTC',
+      'ETH',
+      'DAI',
+      'RBTC',
+      'BNB',
+      'NEAR',
+      'SOV',
+      'MATIC',
+      'PWETH',
+      'ARBETH',
+      'AVAX',
+      'LUNA',
+      'UST',
+      'OPTETH',
+      'OPTUSDC'
+    ],
   },
   infuraApiKey: 'da99ebc8c0964bb8bb757b6f8cc40f1f',
   exploraApis: {
@@ -206,6 +224,7 @@ const config: WalletCoreConfig = {
     ChainId.Terra,
     ChainId.Fuse,
     ChainId.Avalanche,
+    ChainId.Optimism,
   ],
   supportedBridgeAssets: ['MATIC', 'RBTC', 'AVAX'],
 };

@@ -76,6 +76,10 @@ const derivationPaths: DerivationPathCreator = {
     const ethNetwork = ChainNetworks[ChainId.Fuse][network];
     return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
   },
+  [ChainId.Optimism]: (network: Network, index: number) => {
+    const ethNetwork = ChainNetworks[ChainId.Optimism][network];
+    return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
+  },
 };
 
 export const getDerivationPath = (chainId: ChainId, network: Network, index: number, accountType: AccountType) => {

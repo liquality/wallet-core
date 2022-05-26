@@ -1,4 +1,6 @@
-import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
+import { EIP1559FeeProvider, OptimismChainProvider, RpcFeeProvider } from '@chainify/evm';
+import { asL2Provider } from '@eth-optimism/sdk';
+import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { AccountType, Asset, Network } from '../../store/types';
 import { ChainNetworks } from '../../utils/networks';
 import { createEVMClient } from './clients';
@@ -12,7 +14,7 @@ export function createEthClient(
 ) {
   const ethNetwork = ChainNetworks.ethereum[network];
   const feeProvider = new EIP1559FeeProvider(ethNetwork.rpcUrl as string);
-  return createEVMClient(asset, network, ethNetwork, feeProvider, mnemonic, accountType, derivationPath);
+  return createEVMClient(asset, network, ethNetwork, mnemonic, accountType, derivationPath, feeProvider);
 }
 
 export function createRskClient(
@@ -29,7 +31,7 @@ export function createRskClient(
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(asset, network, rskNetwork, feeProvider, mnemonic, accountType, derivationPath);
+  return createEVMClient(asset, network, rskNetwork, mnemonic, accountType, derivationPath, feeProvider);
 }
 
 export function createBSCClient(asset: Asset, network: Network, mnemonic: string, derivationPath: string) {
@@ -41,7 +43,7 @@ export function createBSCClient(asset: Asset, network: Network, mnemonic: string
     fastMultiplier: 2.2,
   });
 
-  return createEVMClient(asset, network, bscNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(asset, network, bscNetwork, mnemonic, AccountType.Default, derivationPath, feeProvider);
 }
 
 export function createPolygonClient(asset: Asset, network: Network, mnemonic: string, derivationPath: string) {
@@ -56,7 +58,7 @@ export function createPolygonClient(asset: Asset, network: Network, mnemonic: st
           fastMultiplier: 2.2,
         });
 
-  return createEVMClient(asset, network, polygonNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(asset, network, polygonNetwork, mnemonic, AccountType.Default, derivationPath, feeProvider);
 }
 
 export function createArbitrumClient(asset: Asset, network: Network, mnemonic: string, derivationPath: string) {
@@ -68,7 +70,7 @@ export function createArbitrumClient(asset: Asset, network: Network, mnemonic: s
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(asset, network, arbitrumNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(asset, network, arbitrumNetwork, mnemonic, AccountType.Default, derivationPath, feeProvider);
 }
 
 export function createAvalancheClient(asset: Asset, network: Network, mnemonic: string, derivationPath: string) {
@@ -80,7 +82,7 @@ export function createAvalancheClient(asset: Asset, network: Network, mnemonic: 
     fastMultiplier: 2.2,
   });
 
-  return createEVMClient(asset, network, avalancheNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(asset, network, avalancheNetwork, mnemonic, AccountType.Default, derivationPath, feeProvider);
 }
 
 export function createFuseClient(asset: Asset, network: Network, mnemonic: string, derivationPath: string) {
@@ -92,5 +94,27 @@ export function createFuseClient(asset: Asset, network: Network, mnemonic: strin
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(asset, network, fuseNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(asset, network, fuseNetwork, mnemonic, AccountType.Default, derivationPath, feeProvider);
+}
+
+export function createOptimismClient(asset: Asset, network: Network, mnemonic: string, derivationPath: string) {
+  const optimismNetwork = ChainNetworks.optimism[network];
+  const jsonRpcProvider = asL2Provider(new StaticJsonRpcProvider(optimismNetwork.rpcUrl));
+  const chainProvider = new OptimismChainProvider(optimismNetwork, jsonRpcProvider, {
+    slowMultiplier: 1,
+    averageMultiplier: 1,
+    fastMultiplier: 1,
+  });
+
+  return createEVMClient(
+    asset,
+    network,
+    optimismNetwork,
+    mnemonic,
+    AccountType.Default,
+    derivationPath,
+    undefined,
+    undefined,
+    chainProvider
+  );
 }

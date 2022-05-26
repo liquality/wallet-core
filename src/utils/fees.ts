@@ -1,6 +1,7 @@
-import { chains, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId } from '@chainify/types';
+import { chains, isMultiLayeredChain, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
-import { Asset } from '../store/types';
+import { Asset, Network } from '../store/types';
 import { isERC20, isEthereumChain } from './asset';
 import cryptoassets from './cryptoassets';
 
@@ -17,10 +18,23 @@ const feePriceInUnit = (asset: Asset, feePrice: number) => {
   return isEthereumChain(asset) ? new BN(feePrice).times(1e9) : feePrice; // ETH fee price is in gwei
 };
 
-function getSendFee(asset: Asset, feePrice: number) {
+function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number, network?: Network) {
   const assetInfo = cryptoassets[asset];
-  const fee = new BN(assetInfo.sendGasLimit).times(feePriceInUnit(asset, feePrice));
-  return unitToCurrency(assetInfo, fee);
+
+  if (l1FeePrice && isMultiLayeredChain(assetInfo.chain)) {
+    if (assetInfo.chain === ChainId.Optimism) {
+      let l1Fee = new BN(assetInfo.sendGasLimitL1 as number).times(feePriceInUnit(asset, l1FeePrice));
+
+      // default scalar for L1 fee in Optimism mainnet -> 1, testnet 1.5
+      if (network && network === 'testnet') l1Fee = l1Fee.times(new BN(1.5));
+
+      const l2Fee = new BN(assetInfo.sendGasLimit).times(feePriceInUnit(asset, feePrice));
+      return unitToCurrency(assetInfo, l1Fee.plus(l2Fee));
+    }
+  } else {
+    const fee = new BN(assetInfo.sendGasLimit).times(feePriceInUnit(asset, feePrice));
+    return unitToCurrency(assetInfo, fee);
+  }
 }
 
 function getTxFee(units: FeeUnits, _asset: Asset, _feePrice: number) {

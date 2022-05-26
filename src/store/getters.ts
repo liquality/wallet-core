@@ -37,6 +37,8 @@ const TESTNET_ASSETS: { [asset: string]: Asset } = [
   'UST',
   'ANC',
   'FUSE',
+  'OPTETH',
+  'OPTUSDC'
 ].reduce((assets, asset) => {
   const contractAddress = TESTNET_CONTRACT_ADDRESSES[asset];
   return Object.assign(assets, {

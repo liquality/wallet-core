@@ -10,6 +10,7 @@ import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } fr
 import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
 import { Network as ChainifyNetwork } from '@chainify/types';
+import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { ChainId } from '@liquality/cryptoassets';
 import buildConfig from '../../build.config';
 import { AccountType, Asset, Network } from '../../store/types';
@@ -81,12 +82,14 @@ export function createEVMClient(
   asset: Asset,
   network: Network,
   ethereumNetwork: ChainifyNetwork,
-  feeProvider: Fee,
   mnemonic: string,
   accountType: AccountType,
-  derivationPath: string
+  derivationPath: string,
+  feeProvider?: Fee,
+  provider?: StaticJsonRpcProvider,
+  chainProvider?: EvmChainProvider
 ) {
-  const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider);
+  const _chainProvider = chainProvider ?? new EvmChainProvider(ethereumNetwork, provider, feeProvider);
   const swapProvider = new EvmSwapProvider({ contractAddress: HTLC_CONTRACT_ADDRESS });
 
   if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
@@ -104,7 +107,7 @@ export function createEVMClient(
     swapProvider.setWallet(ledgerProvider);
   } else {
     const walletOptions = { derivationPath, mnemonic };
-    const walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
+    const walletProvider = new EvmWalletProvider(walletOptions, _chainProvider);
     swapProvider.setWallet(walletProvider);
   }
 
