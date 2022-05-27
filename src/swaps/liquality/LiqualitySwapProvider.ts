@@ -97,7 +97,6 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         min: new BN(unitToCurrency(cryptoassets[market.from], market.min)).toFixed(),
         max: new BN(unitToCurrency(cryptoassets[market.from], market.max)).toFixed(),
         rate: new BN(market.rate).toFixed(),
-        provider: this.config.providerId,
       }));
 
     return pairs;
@@ -130,7 +129,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
 
   public async newSwap(swapRequest: SwapRequest<LiqualitySwapHistoryItem>) {
     const approveTx = await this.approve(swapRequest, true);
-    const updates = approveTx !== null ? approveTx : await this.initiateSwap(swapRequest);
+    const updates = approveTx || (await this.initiateSwap(swapRequest));
     return { id: uuidv4(), ...updates };
   }
 

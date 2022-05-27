@@ -133,7 +133,7 @@ const config: WalletCoreConfig = {
         routerAddress: SovrynTestnetAddresses.swapNetwork,
         routerAddressRBTC: SovrynTestnetAddresses.proxy3,
         rpcURL: 'https://testnet.sovryn.app/rpc',
-      }
+      },
     },
     mainnet: {
       liquality: {
@@ -208,7 +208,7 @@ const config: WalletCoreConfig = {
         icon: 'hop.svg',
         type: SwapProviderType.Hop,
         graphqlBaseURL: 'https://api.thegraph.com/subgraphs/name/hop-protocol',
-      }
+      },
     },
   },
   discordUrl: 'https://discord.gg/Xsqw7PW8wk',
