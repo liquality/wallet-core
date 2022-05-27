@@ -38,7 +38,7 @@ import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
 import { ChainNetworks } from '../utils/networks';
 import { walletOptionsStore } from '../walletOptions';
 
-function createBtcClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
+function createBtcClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string, publicKey?: string, chainCode?: string) {
   const isTestnet = network === 'testnet';
   const bitcoinNetwork = ChainNetworks.bitcoin[network];
   const esploraApi = buildConfig.exploraApis[network];
@@ -67,7 +67,9 @@ function createBtcClient(network: Network, mnemonic: string, accountType: Accoun
       network,
       bitcoinNetwork,
       addressType,
-      derivationPath
+      derivationPath,
+      publicKey,
+      chainCode
     );
     // @ts-ignore
     btcClient.addProvider(ledgerProvider);
@@ -286,10 +288,10 @@ function createPolygonClient(asset: Asset, network: Network, mnemonic: string, d
   const feeProvider = isTestnet
     ? new EthereumEIP1559FeeProvider({ uri: rpcApi })
     : new EthereumRpcFeeProvider({
-        slowMultiplier: 1,
-        averageMultiplier: 2,
-        fastMultiplier: 2.2,
-      });
+      slowMultiplier: 1,
+      averageMultiplier: 2,
+      fastMultiplier: 2.2,
+    });
 
   return createEthereumClient(
     asset,
@@ -436,21 +438,35 @@ export const createClient = (
   network: Network,
   mnemonic: string,
   accountType: AccountType,
-  derivationPath: string
+  derivationPath: string,
+  bitcoinLedgerCache?: { publicKey?: string, chainCode?: string }
 ) => {
   const assetData = cryptoassets[asset];
-
-  if (assetData.chain === ChainId.Bitcoin) return createBtcClient(network, mnemonic, accountType, derivationPath);
-  if (assetData.chain === ChainId.Rootstock)
-    return createRskClient(asset, network, mnemonic, accountType, derivationPath);
-  if (assetData.chain === ChainId.BinanceSmartChain) return createBSCClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === ChainId.Polygon) return createPolygonClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === ChainId.Arbitrum) return createArbitrumClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === ChainId.Near) return createNearClient(network, mnemonic, derivationPath);
-  if (assetData?.chain === ChainId.Solana) return createSolanaClient(network, mnemonic, derivationPath);
-  if (assetData.chain === ChainId.Terra) return createTerraClient(network, mnemonic, derivationPath, asset);
-  if (assetData.chain === ChainId.Avalanche) return createAvalancheClient(asset, network, mnemonic, derivationPath);
-  if (assetData.chain === ChainId.Fuse) return createFuseClient(asset, network, mnemonic, derivationPath);
-
-  return createEthClient(asset, network, mnemonic, accountType, derivationPath);
+  if (bitcoinLedgerCache && assetData.chain !== ChainId.Bitcoin) {
+    throw new Error(`bitcoinLedgerCache is only supported by Bitcoin client.`);
+  }
+  switch (assetData.chain) {
+    case ChainId.Bitcoin:
+      return createBtcClient(network, mnemonic, accountType, derivationPath, bitcoinLedgerCache?.publicKey, bitcoinLedgerCache?.chainCode);
+    case ChainId.Rootstock:
+      return createRskClient(asset, network, mnemonic, accountType, derivationPath);
+    case ChainId.BinanceSmartChain:
+      return createBSCClient(asset, network, mnemonic, derivationPath);
+    case ChainId.Polygon:
+      return createPolygonClient(asset, network, mnemonic, derivationPath);
+    case ChainId.Arbitrum:
+      return createArbitrumClient(asset, network, mnemonic, derivationPath);
+    case ChainId.Near:
+      return createNearClient(network, mnemonic, derivationPath);
+    case ChainId.Solana:
+      return createSolanaClient(network, mnemonic, derivationPath);
+    case ChainId.Terra:
+      return createTerraClient(network, mnemonic, derivationPath, asset);
+    case ChainId.Avalanche:
+      return createAvalancheClient(asset, network, mnemonic, derivationPath);
+    case ChainId.Fuse:
+      return createFuseClient(asset, network, mnemonic, derivationPath);
+    default:
+      return createEthClient(asset, network, mnemonic, accountType, derivationPath);
+  }
 };

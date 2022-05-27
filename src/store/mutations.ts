@@ -134,8 +134,10 @@ export default {
       updates: Partial<HistoryItem>;
     }
   ) {
-    const item = state.history[network]![walletId].find((i) => i.id === id);
-    Object.assign(item, updates);
+    const item = state.history[network]?.[walletId].find((i) => i.id === id);
+    if (item) {
+      Object.assign(item, updates);
+    }
   },
   REMOVE_ORDER(state: RootState, { network, walletId, id }: { network: Network; walletId: WalletId; id: string }) {
     Vue.set(
@@ -434,8 +436,8 @@ export default {
       [name]: experiments && experiments[name] ? !experiments[name] : true,
     };
   },
-  SET_WATS_NEW_MODAL_VERSION(state: RootState, { version }: { version: string }) {
-    state.watsNewModalVersion = version;
+  SET_WHATS_NEW_MODAL_VERSION(state: RootState, { version }: { version: string }) {
+    state.whatsNewModalVersion = version;
   },
   TOGGLE_BLOCKCHAIN(
     state: RootState,

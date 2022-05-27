@@ -1,6 +1,9 @@
-import { assets } from '@liquality/cryptoassets';
+import { LedgerProvider } from '@liquality/ledger-provider'
+import { assets, ChainId, chains } from '@liquality/cryptoassets';
 import { ActionContext, rootActionContext } from '../..';
+import { getDerivationPath } from '../../../utils/derivationPath';
 import { AccountType, Asset, Network, WalletId } from '../../types';
+import BN from 'bignumber.js';
 
 type LedgerAccountEntry = {
   account: string;
@@ -27,7 +30,7 @@ export const getLedgerAccounts = async (
   }
 ) => {
   const { getters } = rootActionContext(context);
-  const { client, networkAccounts } = getters;
+  const { client, networkAccounts, assetFiatBalance } = getters;
   const { chain } = assets[asset];
   const results: LedgerAccountEntry[] = [];
   const existingAccounts = networkAccounts.filter((account) => {
@@ -36,6 +39,10 @@ export const getLedgerAccounts = async (
 
   const pageIndexes = [...Array(numAccounts || 5).keys()].map((i) => i + startingIndex);
   for (const index of pageIndexes) {
+    const derivationPath = getDerivationPath(chain, network, index, accountType);
+    let _chainCode = null;
+    let _publicKey = null;
+
     const _client = client({
       network,
       walletId,
@@ -44,37 +51,52 @@ export const getLedgerAccounts = async (
       accountIndex: index,
       useCache: false,
     });
+
+    // we need to get the chain code and public key for btc
+    if (chain === ChainId.Bitcoin) {
+      const provider = _client._providers.find((p) => {
+        // Ledger provider as a IApp not exported so we should use Any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const _p = p as LedgerProvider<any>;
+        return _p._App && _p._App?.name === 'Btc';
+      });
+      if (provider) {
+        // Ledger provider as a IApp not exported so we should use Any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const app = await (provider as LedgerProvider<any>).getApp()
+        const btcAccount = await app.getWalletPublicKey(derivationPath)
+        _chainCode = btcAccount.chainCode
+        _publicKey = btcAccount.publicKey
+      }
+    }
+    
     const addresses = await _client.wallet.getAddresses();
     if (addresses && addresses.length > 0) {
-      const account = addresses[0];
-      const exists =
-        existingAccounts.findIndex((a) => {
-          if (a.addresses.length <= 0) {
-            if (a.type.includes('ledger')) {
-              const accountClient = client({
-                network,
-                walletId,
-                asset,
-                accountType,
-                accountIndex: index,
-                useCache: false,
-              });
+      const [account] = addresses;
+      const normalizedAddress = chains[chain].formatAddress(account.address, network);
+      
+      // verify if the account exists
+      const existingIndex = existingAccounts.findIndex((a) => {
+          const addresses = a.addresses.map((a) => chains[chain].formatAddress(a, network))
+          return addresses.includes(normalizedAddress)
+      });
+      const exists = existingIndex >= 0;
 
-              // @ts-ignore TODO: This is broken, it should await
-              const [address] = accountClient.wallet.getAddresses(0, 1);
-              return address === account.address;
-            }
+      // Get the account balance
+      const balance = addresses.length === 0 ? 0 : await _client.chain.getBalance(addresses)
+      const fiatBalance = assetFiatBalance(asset, balance as BN) || new BN(0);
 
-            return false;
-          }
-          return a.addresses[0] === account.address;
-        }) >= 0;
-
-      results.push({
+      const result = {
         account: account.address,
+        balance,
+        fiatBalance,
         index,
         exists,
-      });
+        chainCode: _chainCode,
+        publicKey: _publicKey,
+        derivationPath
+      }
+      results.push(result);
     }
   }
   return results;

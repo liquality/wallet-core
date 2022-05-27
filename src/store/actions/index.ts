@@ -28,7 +28,7 @@ export * from './removeCustomToken';
 export * from './retrySwap';
 export * from './sendTransaction';
 export * from './setEthereumInjectionChain';
-export * from './setWatsNewModalVersion';
+export * from './setWhatsNewModalVersion';
 export * from './showNotification';
 export * from './toggleExperiment';
 export * from './unlockWallet';
