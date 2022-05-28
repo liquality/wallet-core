@@ -438,21 +438,16 @@ export default {
     };
   },
   SET_NFT_ASSETS(state: RootState, payload: { nftAssets: NFTAsset[]; network: Network; walletId: WalletId }) {
-    // const walletHistory = state.history[payload.network]?.[payload.walletId];
     state.nftAssets = payload.nftAssets;
   },
   SET_STARRED_NFTS(state: RootState, payload: NFTAsset) {
-    const starredNFTs: NFTAsset[] = state.starredNFTs || [];
-    const index = starredNFTs.findIndex(
-      (nft: NFTAsset) => nft.asset_contract.address === payload.asset_contract.address && nft.id === payload.id
+    const nftAsset = state.nftAssets.find(
+      (nft) => nft.asset_contract.address === payload.asset_contract.address && nft.id === payload.id
     );
 
-    if (index !== -1) {
-      starredNFTs.splice(index, 1);
-    } else {
-      starredNFTs.push(payload);
+    if (nftAsset) {
+      nftAsset.starred = payload.starred;
     }
-    state.starredNFTs = starredNFTs;
   },
   TOGGLE_EXPERIMENT(state: RootState, { name }: { name: ExperimentType }) {
     const { experiments } = state;

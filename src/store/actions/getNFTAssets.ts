@@ -22,20 +22,50 @@ export const getNFTAssets = async (
 
   const nft = await client.nft.fetch();
 
-  const nftAssets: NFTAsset[] = [];
-  nft.assets.forEach((asset: any) => {
-    if (state.starredNFTs) {
-      asset['starred'] = state.starredNFTs.filter(
-        (item) => item.asset_contract.address === asset.asset_contract.address && item.id === asset.id
-      ).length
-        ? true
-        : false;
-      nftAssets.push(asset);
+  const oldAssets: NFTAsset[] = state.nftAssets;
+  const newAssets: NFTAsset[] = nft.assets;
+
+  const newAssetMap: {
+    [id: string]: NFTAsset;
+  } = {};
+  for (const asset of newAssets) {
+    newAssetMap[asset.id] = asset;
+  }
+
+  const arrayToBeReturned: NFTAsset[] = [];
+
+  for (const asset of oldAssets) {
+    if (newAssetMap[asset.id]) {
+      arrayToBeReturned.push(asset);
     } else {
-      asset['starred'] = false;
-      nftAssets.push(asset);
+      continue;
     }
-  });
+  }
+
+  const objToBeRetured: {
+    [id: string]: NFTAsset;
+  } = {};
+
+  for (const asset of arrayToBeReturned) {
+    objToBeRetured[asset.id] = asset;
+  }
+
+  for (const [key, value] of Object.entries(newAssetMap)) {
+    if (objToBeRetured[key]) {
+      newAssetMap[key] = objToBeRetured[key];
+    } else {
+      newAssetMap[key] = { ...value, starred: false };
+    }
+  }
+
+  const nftAssets: NFTAsset[] = [];
+
+  for (const [key, value] of Object.entries(newAssetMap)) {
+    console.log(key);
+    nftAssets.push(value);
+  }
+
+  nftAssets.reverse();
 
   commit.SET_NFT_ASSETS({ nftAssets, network, walletId });
 

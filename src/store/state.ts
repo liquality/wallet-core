@@ -50,7 +50,6 @@ const initialState: RootState = {
   watsNewModalVersion: '',
   enabledChains: {},
   nftAssets: [],
-  starredNFTs: [],
 };
 
 export default initialState;

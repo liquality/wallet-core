@@ -219,7 +219,6 @@ export interface RootState {
   enabledChains: WalletIdNetworkMap<ChainId[]>;
 
   nftAssets: NFTAsset[];
-  starredNFTs: NFTAsset[];
 }
 
 export type NFTAsset = {
