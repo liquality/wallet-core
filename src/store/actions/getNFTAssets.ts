@@ -24,7 +24,9 @@ export const getNFTAssets = async (
 
   const nft = await client.nft.fetch();
 
-  const oldAssets: NFTAsset[] = state.nftAssets;
+  const account =  state.accounts[walletId]![network].find((a) => a.id === accountId);
+
+  const oldAssets: NFTAsset[] = account?.nftAssets || [];
   const newAssets: NFTAsset[] = nft.assets;
 
   const newAssetMap: {

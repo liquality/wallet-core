@@ -57,6 +57,7 @@ export interface AccountDefinition {
   updatedAt?: number;
   color: string;
   enabled?: boolean;
+  nftAssets?: NFTAsset[];
 }
 
 export interface Account extends AccountDefinition {
@@ -217,8 +218,6 @@ export interface RootState {
   experiments: Partial<Record<ExperimentType, boolean>>;
   watsNewModalVersion: string;
   enabledChains: WalletIdNetworkMap<ChainId[]>;
-
-  nftAssets: NFTAsset[];
 }
 
 export type NFTAsset = {

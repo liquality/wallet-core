@@ -292,17 +292,23 @@ export default {
     }
     return false;
   },
-  nftAssetsByCollection(...context: GetterContext): NFTAsset[] {
-    const { state } = rootGetterContext(context);
-    const { nftAssets } = state;
-    const result = nftAssets.reduce(function (assets: NFTAssets, asset: NFTAsset) {
-      assets[asset.collection.name] = assets[asset.collection.name] || [];
-      assets[asset.collection.name].push(asset);
-      assets[asset.collection.name].sort(function (assetA: NFTAsset, assetB: NFTAsset) {
-        return assetA.starred === assetB.starred ? 0 : assetA.starred ? -1 : 1;
-      });
-      return assets;
-    }, Object.create({}));
-    return result;
+  nftAssetsByCollection(...context: GetterContext): NFTAssets {
+    const { getters } = rootGetterContext(context);
+    const { accountsData } = getters;
+    const nftAssetsByCollection: NFTAssets = {};
+    accountsData.forEach((account) => {
+      if(account.nftAssets) {
+       const result = account.nftAssets.reduce(function (assets: NFTAssets, asset: NFTAsset) {
+            assets[asset.collection.name] = assets[asset.collection.name] || [];
+            assets[asset.collection.name].push(asset);
+            assets[asset.collection.name].sort(function (assetA: NFTAsset, assetB: NFTAsset) {
+              return assetA.starred === assetB.starred ? 0 : assetA.starred ? -1 : 1;
+            });
+            return assets;
+          }, Object.create({}));
+        nftAssetsByCollection[account.chain] = result;
+      }
+    });
+    return nftAssetsByCollection;
   },
 };

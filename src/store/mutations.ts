@@ -443,13 +443,18 @@ export default {
       Vue.set(account, 'nftAssets', payload.nftAssets);
     }    
   },
-  SET_STARRED_NFTS(state: RootState, payload: NFTAsset) {
-    const nftAsset = state.nftAssets.find(
-      (nft) => nft.asset_contract.address === payload.asset_contract.address && nft.id === payload.id
-    );
-
-    if (nftAsset) {
-      nftAsset.starred = payload.starred;
+  SET_STARRED_NFTS(state: RootState, payload: { nftAsset: NFTAsset; network: Network; walletId: WalletId, accountId: AccountId }) {
+    const account =  state.accounts[payload.walletId]![payload.network].find((a) => a.id === payload.accountId);
+    if (account?.nftAssets) {
+      const nftAsset = account?.nftAssets.find(
+        (nft) => {
+          return nft.asset_contract.address === payload.nftAsset.asset_contract.address && nft.id === payload.nftAsset.id
+        }
+        );
+        
+        if (nftAsset) {
+          nftAsset.starred = payload.nftAsset.starred;
+        }
     }
   },
   TOGGLE_EXPERIMENT(state: RootState, { name }: { name: ExperimentType }) {
