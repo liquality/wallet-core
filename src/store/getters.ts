@@ -292,10 +292,23 @@ export default {
     }
     return false;
   },
-  nftAssetsByCollection(...context: GetterContext): NFTAssets {
+  nftAssetsByCollection(...context: GetterContext): NFTAsset[] {
+    const { getters } = rootGetterContext(context);
+    const { nftAssetsByAccount } = getters;
+    let nftAssetsByCollection: NFTAsset[] = [];
+    // spread all nfts into one array
+    Object.values(nftAssetsByAccount).forEach((nftAssets) => {
+      nftAssetsByCollection = {
+        ...nftAssetsByCollection,
+        ...nftAssets,
+      };
+    });
+    return nftAssetsByCollection;
+  },
+  nftAssetsByAccount(...context: GetterContext): NFTAssets {
     const { getters } = rootGetterContext(context);
     const { accountsData } = getters;
-    const nftAssetsByCollection: NFTAssets = {};
+    const nftAssetsByAccount: NFTAssets = {};
     accountsData.forEach((account) => {
       if(account.nftAssets) {
        const result = account.nftAssets.reduce(function (assets: NFTAssets, asset: NFTAsset) {
@@ -306,9 +319,9 @@ export default {
             });
             return assets;
           }, Object.create({}));
-        nftAssetsByCollection[account.chain] = result;
-      }
-    });
-    return nftAssetsByCollection;
+          nftAssetsByAccount[account.chain] = result;
+        }
+      });
+    return nftAssetsByAccount;
   },
 };
