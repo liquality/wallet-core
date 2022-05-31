@@ -1,8 +1,8 @@
 import buildConfig from '../build.config';
 import { Network, SwapProviderType } from '../store/types';
-import hopInfo from '../swaps/hop/info.json';
 import astroportInfo from '../swaps/astroport/info.json';
 import fastbtcInfo from '../swaps/fastbtc/info.json';
+import hopInfo from '../swaps/hop/info.json';
 import liqualityInfo from '../swaps/liquality/info.json';
 import liqualityBoostERC20toNativeInfo from '../swaps/liqualityboost/liqualityBoostERC20toNative/info.json';
 import liqualityBoostNativeToERC20Info from '../swaps/liqualityboost/liqualityBoostNativeToERC20/info.json';

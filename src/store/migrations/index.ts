@@ -9,7 +9,6 @@ import { enableTerraChain } from './16_enable_terra_chain';
 import { removeInjectionEnabled } from './17_remove_injection_enabled';
 import { enableAvalancheChain } from './18_enable_avalanche_chain';
 import { removeExistingLedgerAccounts } from './19_remove_existing_ledger_accounts';
-
 // Migrations
 import { firstMigration } from './1_first_migration';
 import { setDefaultAssets } from './2_set_default_assets';

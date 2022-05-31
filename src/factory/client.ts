@@ -38,7 +38,14 @@ import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
 import { ChainNetworks } from '../utils/networks';
 import { walletOptionsStore } from '../walletOptions';
 
-function createBtcClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string, publicKey?: string, chainCode?: string) {
+function createBtcClient(
+  network: Network,
+  mnemonic: string,
+  accountType: AccountType,
+  derivationPath: string,
+  publicKey?: string,
+  chainCode?: string
+) {
   const isTestnet = network === 'testnet';
   const bitcoinNetwork = ChainNetworks.bitcoin[network];
   const esploraApi = buildConfig.exploraApis[network];
@@ -288,10 +295,10 @@ function createPolygonClient(asset: Asset, network: Network, mnemonic: string, d
   const feeProvider = isTestnet
     ? new EthereumEIP1559FeeProvider({ uri: rpcApi })
     : new EthereumRpcFeeProvider({
-      slowMultiplier: 1,
-      averageMultiplier: 2,
-      fastMultiplier: 2.2,
-    });
+        slowMultiplier: 1,
+        averageMultiplier: 2,
+        fastMultiplier: 2.2,
+      });
 
   return createEthereumClient(
     asset,
@@ -369,7 +376,9 @@ function createTerraClient(network: Network, mnemonic: string, baseDerivationPat
 
   let _asset, feeAsset, tokenAddress, stableFee;
 
-  const nodeUrl = isTestnet ? terraNetwork.nodeUrl : process.env.VUE_APP_TERRA_MAINNET_URL || terraNetwork.nodeUrl;
+  const nodeUrl = isTestnet
+    ? process.env.VUE_APP_TERRA_TESTNET_URL || terraNetwork.nodeUrl
+    : process.env.VUE_APP_TERRA_MAINNET_URL || terraNetwork.nodeUrl;
 
   switch (asset) {
     case 'LUNA': {
@@ -439,7 +448,7 @@ export const createClient = (
   mnemonic: string,
   accountType: AccountType,
   derivationPath: string,
-  bitcoinLedgerCache?: { publicKey?: string, chainCode?: string }
+  bitcoinLedgerCache?: { publicKey?: string; chainCode?: string }
 ) => {
   const assetData = cryptoassets[asset];
   if (bitcoinLedgerCache && assetData.chain !== ChainId.Bitcoin) {
@@ -447,7 +456,14 @@ export const createClient = (
   }
   switch (assetData.chain) {
     case ChainId.Bitcoin:
-      return createBtcClient(network, mnemonic, accountType, derivationPath, bitcoinLedgerCache?.publicKey, bitcoinLedgerCache?.chainCode);
+      return createBtcClient(
+        network,
+        mnemonic,
+        accountType,
+        derivationPath,
+        bitcoinLedgerCache?.publicKey,
+        bitcoinLedgerCache?.chainCode
+      );
     case ChainId.Rootstock:
       return createRskClient(asset, network, mnemonic, accountType, derivationPath);
     case ChainId.BinanceSmartChain:

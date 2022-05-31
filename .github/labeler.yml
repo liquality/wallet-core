@@ -1,5 +1,5 @@
 feature:
-  - any: [ 'src/*.ts','src/**/*.ts', '!src/docs/*' ]
+  - any: ['src/*.ts', 'src/**/*.ts', '!src/docs/*']
 
 test:
   - 'src/factory/*.test.ts'
@@ -9,11 +9,10 @@ test:
   - 'src/*.test.ts'
 
 ci-update:
-  - any: [ '.github/**/*.yml', '.github/workflows/*.yml' ,.github/*.yml', 'configs/*.json' ]
+  - any: ['.github/**/*.yml', '.github/workflows/*.yml', .github/*.yml', 'configs/*.json']
 
 dependencies:
-  - any: [ 'package.json', 'yarn.lock' ]
+  - any: ['package.json', 'yarn.lock']
 
 documentation:
-  - any: [ 'README.md' ]
-
+  - any: ['README.md']

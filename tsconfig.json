@@ -10,7 +10,7 @@
     "outDir": ".",
     "removeComments": true,
     "resolveJsonModule": true,
-    "composite": true,
+    "composite": true
   },
   "files": ["package.json"]
 }
