@@ -37,7 +37,7 @@ export const getNFTAssets = async (
     newNftAssetsMap[asset.id] = asset;
   }
 
-  // remove nft assets that are not in the fetched list
+  // remove nft assets in state that are not in the fetched list
   const arrayToBeReturned: NFTAsset[] = [];
   for (const asset of nftAssetsStoredInState) {
     if (newNftAssetsMap[asset.id]) {
