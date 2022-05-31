@@ -9,10 +9,10 @@ import { EvmChainProvider, EvmSwapProvider, EvmWalletProvider } from '@chainify/
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
 import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
-import { Network as ChainifyNetwork } from '@chainify/types';
+import { Network as ChainifyNetwork, Nullable } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
 import buildConfig from '../../build.config';
-import { AccountType, Asset, Network } from '../../store/types';
+import { Account, AccountType, Asset, Network } from '../../store/types';
 import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
 import cryptoassets from '../../utils/cryptoassets';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
@@ -23,7 +23,8 @@ export function createBtcClient(
   network: Network,
   mnemonic: string,
   accountType: AccountType,
-  baseDerivationPath: string
+  baseDerivationPath: string,
+  account?: Nullable<Account>
 ) {
   const isMainnet = network === 'mainnet';
   const bitcoinNetwork = ChainNetworks.bitcoin[network];
@@ -61,7 +62,9 @@ export function createBtcClient(
       network,
       bitcoinNetwork,
       addressType,
-      baseDerivationPath
+      baseDerivationPath,
+      account?.publicKey,
+      account?.chainCode
     );
     swapProvider.setWallet(ledgerProvider);
   } else {

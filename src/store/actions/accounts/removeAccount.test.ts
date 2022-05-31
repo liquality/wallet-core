@@ -14,7 +14,7 @@ describe('Remove account', () => {
       key: '0x1234567890123456789012345678901234567890',
     });
 
-    await wallet.dispatch.setWatsNewModalShowed({
+    await wallet.dispatch.setWhatsNewModalVersion({
       version: '1.0.0',
     });
 

@@ -31,7 +31,9 @@ export interface WalletOptions {
     network: Network,
     bitcoinNetwork: BitcoinTypes.BitcoinNetwork,
     addressType: string,
-    baseDerivationPath: string
+    baseDerivationPath: string,
+    publicKey?: string,
+    chainCode?: string
   ): BitcoinLedgerProvider;
 
   createEthereumLedgerProvider?(

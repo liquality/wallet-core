@@ -134,7 +134,7 @@ export default {
       updates: Partial<HistoryItem>;
     }
   ) {
-    const item = state.history[network]![walletId].find((i) => i.id === id);
+    const item = state.history[network]?.[walletId].find((i) => i.id === id);
     if (item) {
       Object.assign(item, updates);
     }
@@ -436,8 +436,8 @@ export default {
       [name]: experiments && experiments[name] ? !experiments[name] : true,
     };
   },
-  SET_WATS_NEW_MODAL_VERSION(state: RootState, { version }: { version: string }) {
-    state.watsNewModalVersion = version;
+  SET_WHATS_NEW_MODAL_VERSION(state: RootState, { version }: { version: string }) {
+    state.whatsNewModalVersion = version;
   },
   TOGGLE_BLOCKCHAIN(
     state: RootState,

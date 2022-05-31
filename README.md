@@ -86,24 +86,5 @@ yarn test
 
 ## Publish to npm
 
-- Only publishes if the version number in package.json differs from the latest on NPM
-
-- Change version number in package.json and run `yarn upgrade`
-
-- Commit and push to master
-
-- Do [Git Tagging](https://git-scm.com/book/en/v2/Git-Basics-Tagging)
-
-```shell
- git tag v1.0.0 -m "Release v1.0.0"
-```
-
-```shell
- git push origin v1.0.0
-```
-
-- GitHub actions will publish to NPM, Git tag & Release on GitHub
-
-> Note: This is a manual process, you will need to manually tag & push to GitHub
-
+- GitHub actions will publish to NPM automatically after a successful pull request merge.
 Releases will be listed here: [Releases](https://github.com/liquality/wallet-core/releases)

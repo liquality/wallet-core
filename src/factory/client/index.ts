@@ -1,5 +1,6 @@
+import { Nullable } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
-import { AccountType, Asset, Network } from '../../store/types';
+import { Account, AccountType, Asset, Network } from '../../store/types';
 import cryptoassets from '../../utils/cryptoassets';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import {
@@ -17,13 +18,14 @@ export const createClient = (
   network: Network,
   mnemonic: string,
   accountType: AccountType,
-  derivationPath: string
+  derivationPath: string,
+  account?: Nullable<Account>
 ) => {
   const assetData = cryptoassets[asset];
 
   switch (assetData.chain) {
     case ChainId.Bitcoin:
-      return createBtcClient(network, mnemonic, accountType, derivationPath);
+      return createBtcClient(network, mnemonic, accountType, derivationPath, account);
     case ChainId.Rootstock:
       return createRskClient(asset, network, mnemonic, accountType, derivationPath);
     case ChainId.BinanceSmartChain:
