@@ -26,20 +26,21 @@ export const getNFTAssets = async (
 
   const account =  state.accounts[walletId]![network].find((a) => a.id === accountId);
 
-  const oldAssets: NFTAsset[] = account?.nftAssets || [];
-  const newAssets: NFTAsset[] = nft.assets;
+  const nftAssetsStoredInState: NFTAsset[] = account?.nftAssets || [];
+  const nftAssetsFetched: NFTAsset[] = nft.assets;
 
-  const newAssetMap: {
+  // set new nft assets to a new map
+  const newNftAssetsMap: {
     [id: string]: NFTAsset;
   } = {};
-  for (const asset of newAssets) {
-    newAssetMap[asset.id] = asset;
+  for (const asset of nftAssetsFetched) {
+    newNftAssetsMap[asset.id] = asset;
   }
 
+  // remove nft assets that are not in the fetched list
   const arrayToBeReturned: NFTAsset[] = [];
-
-  for (const asset of oldAssets) {
-    if (newAssetMap[asset.id]) {
+  for (const asset of nftAssetsStoredInState) {
+    if (newNftAssetsMap[asset.id]) {
       arrayToBeReturned.push(asset);
     } else {
       continue;
@@ -49,28 +50,32 @@ export const getNFTAssets = async (
   const objToBeRetured: {
     [id: string]: NFTAsset;
   } = {};
-
+  
+  // add new nft assets to the map
   for (const asset of arrayToBeReturned) {
     objToBeRetured[asset.id] = asset;
   }
 
-  for (const [key, value] of Object.entries(newAssetMap)) {
+  // add new nft assets to the map and set the 'starred' property to false by default
+  for (const [key, value] of Object.entries(newNftAssetsMap)) {
     if (objToBeRetured[key]) {
-      newAssetMap[key] = objToBeRetured[key];
+      newNftAssetsMap[key] = objToBeRetured[key];
     } else {
-      newAssetMap[key] = { ...value, starred: false };
+      newNftAssetsMap[key] = { ...value, starred: false };
     }
   }
 
   const nftAssets: NFTAsset[] = [];
 
-  for (const [key, value] of Object.entries(newAssetMap)) {
+  // add new nft assets to the array
+  for (const [key, value] of Object.entries(newNftAssetsMap)) {
     console.log(key);
     nftAssets.push(value);
   }
 
   nftAssets.reverse();
 
+  // update the account with the new nft assets
   commit.SET_NFT_ASSETS({ nftAssets, network, walletId, accountId });
 
   return nftAssets;
