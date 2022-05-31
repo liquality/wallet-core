@@ -7,10 +7,12 @@ export const getNFTAssets = async (
     network,
     walletId,
     asset,
+    accountId
   }: {
     network: Network;
     walletId: WalletId;
     asset: Asset;
+    accountId: string;
   }
 ): Promise<any> => {
   const { state, commit, getters } = rootActionContext(context);
@@ -67,7 +69,7 @@ export const getNFTAssets = async (
 
   nftAssets.reverse();
 
-  commit.SET_NFT_ASSETS({ nftAssets, network, walletId });
+  commit.SET_NFT_ASSETS({ nftAssets, network, walletId, accountId });
 
   return nftAssets;
 };

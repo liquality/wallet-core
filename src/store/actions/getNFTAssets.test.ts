@@ -25,6 +25,7 @@ describe('getNFTAssets tests', () => {
       network: Network.Testnet,
       walletId: walletId,
       asset: 'ETH',
+      accountId: '0x1234567890123456789012345678901234567890',
     });
     expect(assets).toEqual([]);
   });

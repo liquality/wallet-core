@@ -437,8 +437,11 @@ export default {
       ...payload,
     };
   },
-  SET_NFT_ASSETS(state: RootState, payload: { nftAssets: NFTAsset[]; network: Network; walletId: WalletId }) {
-    state.nftAssets = payload.nftAssets;
+  SET_NFT_ASSETS(state: RootState, payload: { nftAssets: NFTAsset[]; network: Network; walletId: WalletId, accountId: AccountId }) {
+    const account =  state.accounts[payload.walletId]![payload.network].find((a) => a.id === payload.accountId);
+    if (account) {
+      Vue.set(account, 'nftAssets', payload.nftAssets);
+    }    
   },
   SET_STARRED_NFTS(state: RootState, payload: NFTAsset) {
     const nftAsset = state.nftAssets.find(
