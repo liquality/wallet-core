@@ -9,6 +9,7 @@ import { enableTerraChain } from './16_enable_terra_chain';
 import { removeInjectionEnabled } from './17_remove_injection_enabled';
 import { enableAvalancheChain } from './18_enable_avalanche_chain';
 import { removeExistingLedgerAccounts } from './19_remove_existing_ledger_accounts';
+import { addMissingAccounts } from './20_fix_accounts';
 
 // Migrations
 import { firstMigration } from './1_first_migration';
@@ -41,6 +42,7 @@ const migrations = [
   removeInjectionEnabled, // v17
   enableAvalancheChain, // v18
   removeExistingLedgerAccounts, // v19
+  addMissingAccounts, // v20
 ];
 
 const LATEST_VERSION = migrations[migrations.length - 1].version;
