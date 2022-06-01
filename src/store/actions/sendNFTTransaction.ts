@@ -36,6 +36,8 @@ export const sendNFTTransaction = async (
     type: TransactionType.NFT,
     network,
     walletId,
+    to: '',
+    from: '', 
     toAddress: receiver,
     fee,
     tx,

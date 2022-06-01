@@ -110,13 +110,13 @@ export enum SwapProviderType {
 export interface BaseHistoryItem {
   fee: number;
   feeLabel: FeeLabel;
-  from?: Asset;
+  from: Asset;
   id: string;
   network: Network;
   startTime: number;
   endTime?: number;
   status: string; // TODO: actual types?
-  to?: Asset;
+  to: Asset;
   type: TransactionType;
   walletId: WalletId;
   error?: string;
