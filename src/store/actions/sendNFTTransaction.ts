@@ -3,14 +3,10 @@ import { ActionContext, rootActionContext } from '..';
 import { createHistoryNotification } from '../broker/notification';
 import { Transaction } from '@liquality/types';
 import {
-  AccountId,
-  FeeLabel,
-  Network,
-  NFTAsset,
   NFTSendHistoryItem,
+  NFTSendTransactionParams,
   SendStatus,
   TransactionType,
-  WalletId,
 } from '../types';
 
 export const sendNFTTransaction = async (
@@ -24,16 +20,7 @@ export const sendNFTTransaction = async (
     fee,
     feeLabel,
     nft,
-  }: {
-    network: Network;
-    accountId: AccountId;
-    walletId: WalletId;
-    receiver: string;
-    values: number[];
-    fee: number;
-    feeLabel: FeeLabel;
-    nft: NFTAsset;
-  }
+  }: NFTSendTransactionParams
 ): Promise<Transaction> => {
   const asset = 'ETH';
   const { getters, commit, dispatch } = rootActionContext(context);
@@ -49,8 +36,6 @@ export const sendNFTTransaction = async (
     type: TransactionType.NFT,
     network,
     walletId,
-    to: asset,
-    from: asset,
     toAddress: receiver,
     fee,
     tx,
