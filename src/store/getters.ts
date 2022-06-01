@@ -296,12 +296,12 @@ export default {
     const { getters } = rootGetterContext(context);
     const { nftAssetsByAccount } = getters;
     let nftAssetsByCollection: NFTAsset[] = [];
-    Object.values(nftAssetsByAccount).forEach((nftAssets) => {
-      nftAssetsByCollection = {
-        ...nftAssetsByCollection,
+    nftAssetsByCollection = Object.values(nftAssetsByAccount).reduce((accum, nftAssets) => {
+      return {
+        ...accum,
         ...nftAssets,
       };
-    });
+    }, nftAssetsByCollection);
     return nftAssetsByCollection;
   },
   nftAssetsByAccount(...context: GetterContext): NFTAssets {
