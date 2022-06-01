@@ -31,7 +31,7 @@ export const getNFTAssets = async (
 
   const nftAssets: NFTAsset[] = [];
 
-  nftAssetsFetched.forEach((nftAsset) => {
+  nftAssetsFetched.map((nftAsset) => {
     const nftAssetStoredInState = nftAssetsStoredInState.find((a) => a.id === nftAsset.id);
     if (nftAssetStoredInState) {
       nftAsset.starred = nftAssetStoredInState.starred;

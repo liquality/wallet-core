@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
 import { createHistoryNotification } from '../broker/notification';
+import { Transaction } from '@liquality/types';
 import {
   AccountId,
   FeeLabel,
@@ -33,7 +34,7 @@ export const sendNFTTransaction = async (
     feeLabel: FeeLabel;
     nft: NFTAsset;
   }
-): Promise<any> => {
+): Promise<Transaction> => {
   const asset = 'ETH';
   const { getters, commit, dispatch } = rootActionContext(context);
   const client = getters.client({
@@ -60,7 +61,6 @@ export const sendNFTTransaction = async (
     accountId,
     feeLabel,
   };
-  console.log('🚀 ~ file: sendNFTTransaction.ts ~ line 64 ~ transaction', transaction);
 
   commit.NEW_NFT_TRASACTION({
     network,

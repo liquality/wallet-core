@@ -296,7 +296,6 @@ export default {
     const { getters } = rootGetterContext(context);
     const { nftAssetsByAccount } = getters;
     let nftAssetsByCollection: NFTAsset[] = [];
-    // spread all nfts into one array
     Object.values(nftAssetsByAccount).forEach((nftAssets) => {
       nftAssetsByCollection = {
         ...nftAssetsByCollection,
@@ -312,8 +311,7 @@ export default {
     accountsData.forEach((account) => {
       if(account.nftAssets) {
        const result = account.nftAssets.reduce(function (assets: NFTAssets, asset: NFTAsset) {
-            assets[asset.collection.name] = assets[asset.collection.name] || [];
-            assets[asset.collection.name].push(asset);
+        (assets[asset.collection.name] ||= []).push(asset)
             assets[asset.collection.name].sort(function (assetA: NFTAsset, assetB: NFTAsset) {
               return assetA.starred === assetB.starred ? 0 : assetA.starred ? -1 : 1;
             });
