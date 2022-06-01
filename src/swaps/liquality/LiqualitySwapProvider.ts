@@ -105,12 +105,7 @@ export class LiqualitySwapProvider extends SwapProvider {
     const marketData = this.getMarketData(network);
     // Quotes are retrieved using market data because direct quotes take a long time for BTC swaps (agent takes long to generate new address)
     const market = marketData.find(
-      (market) =>
-        market.provider === this.config.providerId &&
-        market.to === to &&
-        market.from === from &&
-        new BN(amount).gte(new BN(market.min)) &&
-        new BN(amount).lte(new BN(market.max))
+      (market) => market.provider === this.config.providerId && market.to === to && market.from === from
     );
 
     if (!market) return null;
@@ -123,6 +118,8 @@ export class LiqualitySwapProvider extends SwapProvider {
       to,
       fromAmount: fromAmount.toFixed(),
       toAmount: toAmount.toFixed(),
+      min: new BN(market.min),
+      max: new BN(market.max),
     };
   }
 
