@@ -599,10 +599,6 @@ class ThorchainSwapProvider extends SwapProvider {
     }
   }
 
-  protected _txTypes() {
-    return ThorchainTxTypes;
-  }
-
   private feeUnits = {
     [ThorchainTxTypes.SWAP]: {
       ETH: 200000,
@@ -665,6 +661,10 @@ class ThorchainSwapProvider extends SwapProvider {
         },
       },
     };
+  }
+
+  protected _txTypes() {
+    return ThorchainTxTypes;
   }
 
   protected _fromTxType(): string | null {

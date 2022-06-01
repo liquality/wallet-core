@@ -96,7 +96,6 @@ export class LiqualitySwapProvider extends SwapProvider {
         min: new BN(unitToCurrency(cryptoassets[market.from], market.min)).toFixed(),
         max: new BN(unitToCurrency(cryptoassets[market.from], market.max)).toFixed(),
         rate: new BN(market.rate).toFixed(),
-        provider: this.config.providerId,
       }));
 
     return pairs;
@@ -320,10 +319,6 @@ export class LiqualitySwapProvider extends SwapProvider {
     }
   }
 
-  protected _txTypes() {
-    return LiqualityTxTypes;
-  }
-
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       INITIATED: {
@@ -420,6 +415,10 @@ export class LiqualitySwapProvider extends SwapProvider {
         filterStatus: 'REFUNDED',
       },
     };
+  }
+
+  protected _txTypes() {
+    return LiqualityTxTypes;
   }
 
   protected _fromTxType(): LiqualityTxTypes | null {

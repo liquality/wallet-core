@@ -66,6 +66,8 @@ export interface Account extends AccountDefinition {
   createdAt: number;
   enabled: boolean;
   derivationPath: string;
+  chainCode?: string;
+  publicKey?: string;
 }
 
 export interface PairData {
@@ -102,6 +104,7 @@ export enum SwapProviderType {
   Sovryn = 'sovryn',
   Thorchain = 'thorchain',
   Astroport = 'astroport',
+  Hop = 'hop'
 }
 
 export interface BaseHistoryItem {
@@ -227,7 +230,7 @@ export interface RootState {
   rskLegacyDerivation: boolean;
   analytics: AnalyticsState;
   experiments: Partial<Record<ExperimentType, boolean>>;
-  watsNewModalVersion: string;
+  whatsNewModalVersion: string;
   enabledChains: WalletIdNetworkMap<ChainId[]>;
 }
 

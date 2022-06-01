@@ -30,7 +30,7 @@ export * from './retrySwap';
 export * from './sendNFTTransaction';
 export * from './sendTransaction';
 export * from './setEthereumInjectionChain';
-export * from './setWatsNewModalVersion';
+export * from './setWhatsNewModalVersion';
 export * from './showNotification';
 export * from './toggleExperiment';
 export * from './unlockWallet';
