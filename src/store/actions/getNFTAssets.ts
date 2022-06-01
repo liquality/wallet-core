@@ -29,53 +29,16 @@ export const getNFTAssets = async (
   const nftAssetsStoredInState: NFTAsset[] = account?.nftAssets || [];
   const nftAssetsFetched: NFTAsset[] = nft.assets;
 
-  // set new nft assets to a new map
-  const newNftAssetsMap: {
-    [id: string]: NFTAsset;
-  } = {};
-  for (const asset of nftAssetsFetched) {
-    newNftAssetsMap[asset.id] = asset;
-  }
-
-  // remove nft assets in state that are not in the fetched list
-  const arrayToBeReturned: NFTAsset[] = [];
-  for (const asset of nftAssetsStoredInState) {
-    if (newNftAssetsMap[asset.id]) {
-      arrayToBeReturned.push(asset);
-    } else {
-      continue;
-    }
-  }
-
-  const objToBeRetured: {
-    [id: string]: NFTAsset;
-  } = {};
-  
-  // add new nft assets to the map
-  for (const asset of arrayToBeReturned) {
-    objToBeRetured[asset.id] = asset;
-  }
-
-  // add new nft assets to the map and set the 'starred' property to false by default
-  for (const [key, value] of Object.entries(newNftAssetsMap)) {
-    if (objToBeRetured[key]) {
-      newNftAssetsMap[key] = objToBeRetured[key];
-    } else {
-      newNftAssetsMap[key] = { ...value, starred: false };
-    }
-  }
-
   const nftAssets: NFTAsset[] = [];
 
-  // add new nft assets to the array
-  for (const [key, value] of Object.entries(newNftAssetsMap)) {
-    console.log(key);
-    nftAssets.push(value);
-  }
+  nftAssetsFetched.forEach((nftAsset) => {
+    const nftAssetStoredInState = nftAssetsStoredInState.find((a) => a.id === nftAsset.id);
+    if (nftAssetStoredInState) {
+      nftAsset.starred = nftAssetStoredInState.starred;
+    }
+    nftAssets.push(nftAsset);
+  });
 
-  nftAssets.reverse();
-
-  // update the account with the new nft assets
   commit.SET_NFT_ASSETS({ nftAssets, network, walletId, accountId });
 
   return nftAssets;
