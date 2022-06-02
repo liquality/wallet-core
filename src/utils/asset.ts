@@ -242,6 +242,11 @@ export const tokenDetailProviders: {
       return await fetchTokenDetails(contractAddress, 'https://rpc.fuse.io');
     },
   },
+  solana: {
+    async getDetails(contractAddress) {
+      return await fetchSolanaTokens(contractAddress);
+    },
+  },
 };
 
 const fetchTokenDetails = async (contractAddress: string, rpcUrl: string) => {
@@ -276,5 +281,22 @@ export const fetchTerraToken = async (address: string) => {
     name: symbol,
     symbol,
     decimals: 6,
+  };
+};
+
+export const fetchSolanaTokens = async (address: string) => {
+  const {
+    data: { tokens },
+  } = await axios.get('https://token-list.solana.com/solana.tokenlist.json');
+  const token = tokens.filter(
+    (t: { address: string; decimals: number; name: string; symbol: string }) => t.address === address
+  )[0];
+
+  const { name, symbol, decimals } = token;
+
+  return {
+    name,
+    symbol,
+    decimals,
   };
 };
