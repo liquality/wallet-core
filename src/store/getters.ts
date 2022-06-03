@@ -73,7 +73,7 @@ export default {
       accountId,
       useCache = true,
       accountType = AccountType.Default,
-      accountIndex = 0
+      accountIndex = 0,
     }: {
       network: Network;
       walletId: WalletId;
@@ -114,23 +114,7 @@ export default {
       }
 
       const { mnemonic } = wallet;
-      
-      let bitcoinLedgerCache;
-      if (account?.chain === ChainId.Bitcoin) {
-        bitcoinLedgerCache = {
-          publicKey: account?.publicKey,
-          chainCode: account?.chainCode
-        };
-      }
-      
-      const client = createClient(
-        asset,
-        network,
-        mnemonic,
-        _accountType,
-        derivationPath,
-        bitcoinLedgerCache
-      );
+      const client = createClient(asset, network, mnemonic, _accountType, derivationPath);
       clientCache[cacheKey] = client;
 
       return client;
@@ -308,31 +292,28 @@ export default {
     }
     return false;
   },
-  nftAssetsByCollection(...context: GetterContext): NFTAsset[] {
+  nftAssetsByCollection(...context: GetterContext): NFTAssets {
     const { getters } = rootGetterContext(context);
     const { nftAssetsByAccount } = getters;
-    let nftAssetsByCollection: NFTAsset[] = [];
-    nftAssetsByCollection = Object.values(nftAssetsByAccount).reduce((accum, nftAssets) => {
-      return {
-        ...accum,
-        ...nftAssets,
-      };
-    }, nftAssetsByCollection);
+    let nftAssetsByCollection: NFTAssets = Object.values(nftAssetsByAccount).reduce((accum, nftAssets) => {
+      const mergedCollectionAssets = Object.assign({}, accum, nftAssets);
+      return mergedCollectionAssets;
+    }, {});
     return nftAssetsByCollection;
   },
-  nftAssetsByAccount(...context: GetterContext): NFTAssets {
+  nftAssetsByAccount(...context: GetterContext): {[id: string]: NFTAssets} {
     const { getters } = rootGetterContext(context);
     const { accountsData } = getters;
-    const nftAssetsByAccount: NFTAssets = {};
+    const nftAssetsByAccount: {[id: string]: NFTAssets} = {};
     accountsData.forEach((account) => {
       if(account.nftAssets) {
-       const result = account.nftAssets.reduce(function (assets: NFTAssets, asset: NFTAsset) {
-        (assets[asset.collection.name] ||= []).push(asset)
-            assets[asset.collection.name].sort(function (assetA: NFTAsset, assetB: NFTAsset) {
-              return assetA.starred === assetB.starred ? 0 : assetA.starred ? -1 : 1;
-            });
-            return assets;
-          }, Object.create({}));
+        const result = account.nftAssets.reduce((assets: NFTAssets, asset: NFTAsset) => {
+          (assets[asset.collection.name] ||= []).push(asset)
+          assets[asset.collection.name].sort((assetA: NFTAsset, assetB: NFTAsset) => {
+            return assetA.starred === assetB.starred ? 0 : assetA.starred ? -1 : 1;
+          });
+          return assets;
+        }, {});
           nftAssetsByAccount[account.chain] = result;
         }
       });

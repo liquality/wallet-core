@@ -451,9 +451,7 @@ export default {
       const nftAsset = account?.nftAssets.find(
         (nft) => {
           return nft.asset_contract.address === payload.nftAsset.asset_contract.address && nft.id === payload.nftAsset.id
-        }
-        );
-        
+        });
         if (nftAsset) {
           nftAsset.starred = payload.nftAsset.starred;
         }

@@ -29,15 +29,16 @@ export const getNFTAssets = async (
   const nftAssetsStoredInState: NFTAsset[] = account?.nftAssets || [];
   const nftAssetsFetched: NFTAsset[] = nft.assets;
 
-  const nftAssets: NFTAsset[] = [];
-
-  nftAssetsFetched.map((nftAsset) => {
-    const nftAssetStoredInState = nftAssetsStoredInState.find((a) => a.id === nftAsset.id);
-    if (nftAssetStoredInState) {
-      nftAsset.starred = nftAssetStoredInState.starred;
-    }
-    nftAssets.push(nftAsset);
+  const nftAssets: NFTAsset[]  = nftAssetsFetched.map((nftAsset) => {
+    nftAssetsFetched.map((nftAsset) => {
+      const nftAssetStoredInState = nftAssetsStoredInState.find((a) => a.id === nftAsset.id);
+      if (nftAssetStoredInState) {
+        nftAsset.starred = nftAssetStoredInState.starred;
+      }
+    });
+    return nftAsset
   });
+
 
   commit.SET_NFT_ASSETS({ nftAssets, network, walletId, accountId });
 

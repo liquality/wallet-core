@@ -20,9 +20,9 @@ export const sendNFTTransaction = async (
     fee,
     feeLabel,
     nft,
+    asset
   }: NFTSendTransactionParams
 ): Promise<Transaction> => {
-  const asset = 'ETH';
   const { getters, commit, dispatch } = rootActionContext(context);
   const client = getters.client({
     network,
