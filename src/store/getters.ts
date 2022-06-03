@@ -301,10 +301,10 @@ export default {
     }, {});
     return nftAssetsByCollection;
   },
-  nftAssetsByAccount(...context: GetterContext): {[id: string]: NFTAssets} {
+  nftAssetsByAccount(...context: GetterContext): {[accountName: string]: NFTAssets} {
     const { getters } = rootGetterContext(context);
     const { accountsData } = getters;
-    const nftAssetsByAccount: {[id: string]: NFTAssets} = {};
+    const nftAssetsByAccount: {[accountName: string]: NFTAssets} = {};
     accountsData.forEach((account) => {
       if(account.nftAssets) {
         const result = account.nftAssets.reduce((assets: NFTAssets, asset: NFTAsset) => {
