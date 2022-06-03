@@ -5,9 +5,7 @@ import {LATEST_VERSION} from "./index";
 import {Network} from "../types";
 
 describe('migrations scripts tests', () => {
-  jest.setTimeout(90000);
-  const createNotification = jest.fn();
-  const wallet = setupWallet({...defaultWalletOptions, createNotification });
+  const wallet = setupWallet({...defaultWalletOptions });
   let TEST_MNEMONIC = Process.env.TEST_MNEMONIC;
   if (!TEST_MNEMONIC) {
     throw new Error('Please set the TEST_MNEMONIC environment variable');
@@ -49,6 +47,7 @@ describe('migrations scripts tests', () => {
     const walletId = wallet.state.activeWalletId;
     expect(wallet.state.version).toBe(LATEST_VERSION)
     const testnetAccountsLength = wallet.state.accounts?.[walletId]?.testnet.length;
+    expect(testnetAccountsLength).not.toBeNull();
     expect(testnetAccountsLength).toBeGreaterThan(0);
     for(let i = 0; i < testnetAccountsLength!; i++){
       expect(wallet.state.accounts?.[walletId]?.testnet[i].enabled).toBeTruthy();
