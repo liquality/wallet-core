@@ -4,20 +4,22 @@ import {
   BitcoinHDWalletProvider,
   BitcoinSwapEsploraProvider,
 } from '@chainify/bitcoin';
+import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
 import { Client, Fee } from '@chainify/client';
 import { EvmChainProvider, EvmSwapProvider, EvmWalletProvider } from '@chainify/evm';
+import { EvmLedgerProvider } from '@chainify/evm-ledger';
+import { WebHidTransportCreator } from '@chainify/hw-ledger';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
 import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
 import { Network as ChainifyNetwork, Nullable } from '@chainify/types';
-import { ChainId } from '@liquality/cryptoassets';
 import buildConfig from '../../build.config';
-import { Account, AccountType, Asset, Network } from '../../store/types';
+import { Account, AccountType, Network } from '../../store/types';
 import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
-import cryptoassets from '../../utils/cryptoassets';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
-import { walletOptionsStore } from '../../walletOptions';
+
+const ledgerTransportCreator = new WebHidTransportCreator();
 
 export function createBtcClient(
   network: Network,
@@ -55,16 +57,17 @@ export function createBtcClient(
       throw new Error(`Account type ${accountType} not an option`);
     }
     const { addressType } = option;
-    if (!walletOptionsStore.walletOptions.createBitcoinLedgerProvider) {
-      throw new Error('Wallet Options: createBitcoinLedgerProvider is not defined - unable to build ledger client');
-    }
-    const ledgerProvider = walletOptionsStore.walletOptions.createBitcoinLedgerProvider(
-      network,
-      bitcoinNetwork,
-      addressType,
-      baseDerivationPath,
-      account?.publicKey,
-      account?.chainCode
+    const ledgerProvider = new BitcoinLedgerProvider(
+      {
+        scrambleKey: 'BTC',
+        network: bitcoinNetwork,
+        addressType,
+        baseDerivationPath,
+        basePublicKey: account?.publicKey,
+        baseChainCode: account?.chainCode,
+        transportCreator: ledgerTransportCreator,
+      },
+      chainProvider
     );
     swapProvider.setWallet(ledgerProvider);
   } else {
@@ -81,8 +84,6 @@ export function createBtcClient(
 }
 
 export function createEVMClient(
-  asset: Asset,
-  network: Network,
   ethereumNetwork: ChainifyNetwork,
   feeProvider: Fee,
   mnemonic: string,
@@ -93,17 +94,16 @@ export function createEVMClient(
   const swapProvider = new EvmSwapProvider({ contractAddress: HTLC_CONTRACT_ADDRESS });
 
   if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
-    const assetData = cryptoassets[asset];
-    const chainId = assetData.chain || ChainId.Ethereum;
-    if (!walletOptionsStore.walletOptions.createEthereumLedgerProvider) {
-      throw new Error('Wallet Options: createEthereumLedgerProvider is not defined - unable to build ledger client');
-    }
-    const ledgerProvider = walletOptionsStore.walletOptions.createEthereumLedgerProvider(
-      network,
-      ethereumNetwork,
-      chainId,
-      derivationPath
+    const ledgerProvider = new EvmLedgerProvider(
+      {
+        scrambleKey: 'w0w',
+        network: ethereumNetwork,
+        derivationPath,
+        transportCreator: ledgerTransportCreator,
+      },
+      chainProvider
     );
+
     swapProvider.setWallet(ledgerProvider);
   } else {
     const walletOptions = { derivationPath, mnemonic };
