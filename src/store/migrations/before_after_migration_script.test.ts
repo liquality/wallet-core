@@ -1,7 +1,7 @@
 import * as Process from 'process';
 import {setupWallet} from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
-import {LATEST_VERSION, processMigrations} from "./index";
+import {isMigrationNeeded, LATEST_VERSION, processMigrations} from "./index";
 
 describe('migrations scripts tests', () => {
     test('Upgrade migrations from wallet versions-2 test, should be able validate accounts-mainnet', async () => {
@@ -29,6 +29,7 @@ describe('migrations scripts tests', () => {
             key: '0x1234567890123456789012345678901234567890',
         });
 
+        expect(isMigrationNeeded(wallet.state)).toBeTruthy()
         expect(wallet.state.activeNetwork).toBe('mainnet');
         let walletId = wallet.state.activeWalletId;
         expect(wallet.state.version).toBe(LATEST_VERSION - 2)
@@ -85,6 +86,7 @@ describe('migrations scripts tests', () => {
         expect(wallet.state.activeNetwork).toBe('mainnet');
         let walletId = wallet.state.activeWalletId;
         expect(wallet.state.version).toBe(LATEST_VERSION - 1)
+        expect(isMigrationNeeded(wallet.state)).toBeTruthy()
         // validate accounts object
         let accounts = wallet.state.accounts;
         expect(accounts).not.toBeNull();

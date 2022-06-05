@@ -1,7 +1,7 @@
 import * as Process from 'process';
 import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
-import {LATEST_VERSION} from "./index";
+import {isMigrationNeeded, LATEST_VERSION} from "./index";
 import {Network} from "../types";
 
 describe('migrations scripts tests', () => {
@@ -30,6 +30,7 @@ describe('migrations scripts tests', () => {
     // validate accounts object
     const accounts = wallet.state.accounts;
     expect(accounts).not.toBeNull();
+    expect(isMigrationNeeded(wallet.state)).toBeFalsy();
 
     const maninNetAccountsLength = wallet.state.accounts?.[walletId]?.mainnet.length;
     expect(maninNetAccountsLength).toBeGreaterThan(0);
@@ -48,6 +49,7 @@ describe('migrations scripts tests', () => {
     expect(wallet.state.version).toBe(LATEST_VERSION)
     const testnetAccountsLength = wallet.state.accounts?.[walletId]?.testnet.length;
     expect(testnetAccountsLength).not.toBeNull();
+    expect(isMigrationNeeded(wallet.state)).toBeFalsy();
     expect(testnetAccountsLength).toBeGreaterThan(0);
     for(let i = 0; i < testnetAccountsLength!; i++){
       expect(wallet.state.accounts?.[walletId]?.testnet[i].enabled).toBeTruthy();
