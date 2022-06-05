@@ -59,12 +59,13 @@ export function createBtcClient(
     const { addressType } = option;
     const ledgerProvider = new BitcoinLedgerProvider(
       {
+        scrambleKey: 'BTC',
         network: bitcoinNetwork,
         addressType,
         baseDerivationPath,
         basePublicKey: account?.publicKey,
         baseChainCode: account?.chainCode,
-        transportCreator: ledgerTransportCreator
+        transportCreator: ledgerTransportCreator,
       },
       chainProvider
     );
@@ -93,11 +94,15 @@ export function createEVMClient(
   const swapProvider = new EvmSwapProvider({ contractAddress: HTLC_CONTRACT_ADDRESS });
 
   if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
-    const ledgerProvider = new EvmLedgerProvider({
-      network: ethereumNetwork,
-      derivationPath,
-      transportCreator: ledgerTransportCreator
-    }, chainProvider);
+    const ledgerProvider = new EvmLedgerProvider(
+      {
+        scrambleKey: 'w0w',
+        network: ethereumNetwork,
+        derivationPath,
+        transportCreator: ledgerTransportCreator,
+      },
+      chainProvider
+    );
 
     swapProvider.setWallet(ledgerProvider);
   } else {
