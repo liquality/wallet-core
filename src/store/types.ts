@@ -104,7 +104,7 @@ export enum SwapProviderType {
   Sovryn = 'sovryn',
   Thorchain = 'thorchain',
   Astroport = 'astroport',
-  Hop = 'hop'
+  Hop = 'hop',
 }
 
 export interface BaseHistoryItem {
@@ -238,6 +238,7 @@ export interface RootState {
 export type NFTAsset = {
   animation_original_url: string;
   animation_url: string;
+  asset: Asset;
   asset_contract: {
     address: string;
     asset_contract_type: string;
@@ -263,6 +264,7 @@ export type NFTAsset = {
     total_supply: string | number;
   };
   background_color: string;
+  chain?: ChainId;
   collection: {
     banner_image_url: string;
     chat_url: string;
