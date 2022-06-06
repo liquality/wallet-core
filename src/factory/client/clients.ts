@@ -59,7 +59,6 @@ export function createBtcClient(
     const { addressType } = option;
     const ledgerProvider = new BitcoinLedgerProvider(
       {
-        scrambleKey: 'BTC',
         network: bitcoinNetwork,
         addressType,
         baseDerivationPath,
@@ -96,7 +95,6 @@ export function createEVMClient(
   if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
     const ledgerProvider = new EvmLedgerProvider(
       {
-        scrambleKey: 'w0w',
         network: ethereumNetwork,
         derivationPath,
         transportCreator: ledgerTransportCreator,
