@@ -3,11 +3,12 @@ import buildConfig from './build.config';
 import { setupWallet } from './index';
 import { ExperimentType, Network } from './store/types';
 import defaultWalletOptions from './walletOptions/defaultOptions';
+import {LATEST_VERSION} from "./store/migrations";
 
 test('Initial State of wallet setup', async () => {
   let wallet = await setupWallet(defaultWalletOptions);
   expect(wallet.state.rskLegacyDerivation).toBe(false);
-  expect(wallet.state.version).toBe(19);
+  expect(wallet.state.version).toBe(LATEST_VERSION);
   expect(wallet.state.activeNetwork).toBe('mainnet');
   expect(wallet.state.injectEthereumChain).toBe('ethereum');
   expect(wallet.state.injectEthereum).toBe(true);
