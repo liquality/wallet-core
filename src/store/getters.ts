@@ -295,28 +295,28 @@ export default {
   nftAssetsByCollection(...context: GetterContext): NFTAssets {
     const { getters } = rootGetterContext(context);
     const { nftAssetsByAccount } = getters;
-    let nftAssetsByCollection: NFTAssets = Object.values(nftAssetsByAccount).reduce((accum, nftAssets) => {
+    const nftAssetsByCollection: NFTAssets = Object.values(nftAssetsByAccount).reduce((accum, nftAssets) => {
       const mergedCollectionAssets = Object.assign({}, accum, nftAssets);
       return mergedCollectionAssets;
     }, {});
     return nftAssetsByCollection;
   },
-  nftAssetsByAccount(...context: GetterContext): {[id: string]: NFTAssets} {
+  nftAssetsByAccount(...context: GetterContext): { [id: string]: NFTAssets } {
     const { getters } = rootGetterContext(context);
     const { accountsData } = getters;
-    const nftAssetsByAccount: {[id: string]: NFTAssets} = {};
+    const nftAssetsByAccount: { [id: string]: NFTAssets } = {};
     accountsData.forEach((account) => {
-      if(account.nftAssets) {
+      if (account.nftAssets) {
         const result = account.nftAssets.reduce((assets: NFTAssets, asset: NFTAsset) => {
-          (assets[asset.collection.name] ||= []).push(asset)
+          (assets[asset.collection.name] ||= []).push(asset);
           assets[asset.collection.name].sort((assetA: NFTAsset, assetB: NFTAsset) => {
             return assetA.starred === assetB.starred ? 0 : assetA.starred ? -1 : 1;
           });
           return assets;
         }, {});
-          nftAssetsByAccount[account.chain] = result;
-        }
-      });
+        nftAssetsByAccount[account.chain] = result;
+      }
+    });
     return nftAssetsByAccount;
   },
 };

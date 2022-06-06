@@ -14,6 +14,9 @@ export interface WalletCoreConfig {
   defaultAssets: {
     [key in Network]: Asset[];
   };
+  nftAssets: {
+    [key in Network]: ChainId[];
+  };
   swapProviders: {
     [key in Network]: {
       [providerId: string]: SwapProviderDefinition;
@@ -58,6 +61,10 @@ const config: WalletCoreConfig = {
       'UST',
     ],
     testnet: ['BTC', 'ETH', 'DAI', 'RBTC', 'BNB', 'NEAR', 'SOV', 'MATIC', 'PWETH', 'ARBETH', 'AVAX', 'LUNA', 'UST'],
+  },
+  nftAssets: {
+    mainnet: [ChainId.Ethereum, ChainId.Polygon],
+    testnet: [ChainId.Ethereum, ChainId.Polygon],
   },
   infuraApiKey: 'da99ebc8c0964bb8bb757b6f8cc40f1f',
   exploraApis: {
@@ -113,7 +120,7 @@ const config: WalletCoreConfig = {
         routerAddress: SovrynTestnetAddresses.swapNetwork,
         routerAddressRBTC: SovrynTestnetAddresses.proxy3,
         rpcURL: 'https://testnet.sovryn.app/rpc',
-      }
+      },
     },
     mainnet: {
       liquality: {
@@ -188,7 +195,7 @@ const config: WalletCoreConfig = {
         icon: 'hop.svg',
         type: SwapProviderType.Hop,
         graphqlBaseURL: 'https://api.thegraph.com/subgraphs/name/hop-protocol',
-      }
+      },
     },
   },
   discordUrl: 'https://discord.gg/Xsqw7PW8wk',
