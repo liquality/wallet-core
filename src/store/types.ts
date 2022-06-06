@@ -352,5 +352,5 @@ export type NFTAsset = {
 };
 
 export type NFTAssets = {
-  [key: string]: NFTAsset[];
+  [collectionName: string]: NFTAsset[];
 };
