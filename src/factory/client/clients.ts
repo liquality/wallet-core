@@ -89,7 +89,8 @@ export function createEVMClient(
   accountType: AccountType,
   derivationPath: string
 ) {
-  const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider);
+  // disable multicall for Testnets
+  const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider, !ethereumNetwork.isTestnet);
   const swapProvider = new EvmSwapProvider({ contractAddress: HTLC_CONTRACT_ADDRESS });
 
   if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
