@@ -52,7 +52,9 @@ export const updateBalances = async (
               addresses.length === 0 ? '0' : (await _client.chain.getBalance(addresses, _assets)).toString();
             commit.UPDATE_BALANCE({ network, accountId: account.id, walletId, asset, balance });
           } catch (err) {
-            console.error(err);
+            console.error(`Asset: ${asset} Balance update error:  `, err.message);
+            console.info('Asset: ', assetsAdapter(asset));
+            console.info('Connected network ', _client.chain.getNetwork());
           }
 
           // Commit to the state the addresses

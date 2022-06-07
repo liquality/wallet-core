@@ -1,25 +1,20 @@
 import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
 import { AccountType, Network } from '../../store/types';
+import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
 import { ChainNetworks } from '../../utils/networks';
 import { createEVMClient } from './clients';
 
-export function createEthClient(
-  network: Network,
-  mnemonic: string,
-  accountType: AccountType,
-  derivationPath: string
-) {
+const defaultSwapOptions = {
+  contractAddress: HTLC_CONTRACT_ADDRESS,
+};
+
+export function createEthClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
   const ethNetwork = ChainNetworks.ethereum[network];
   const feeProvider = new EIP1559FeeProvider(ethNetwork.rpcUrl as string);
-  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountType, derivationPath);
+  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountType, derivationPath, defaultSwapOptions);
 }
 
-export function createRskClient(
-  network: Network,
-  mnemonic: string,
-  accountType: AccountType,
-  derivationPath: string
-) {
+export function createRskClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
   const rskNetwork = ChainNetworks.rsk[network];
   const feeProvider = new RpcFeeProvider(rskNetwork.rpcUrl, {
     slowMultiplier: 1,
@@ -27,7 +22,12 @@ export function createRskClient(
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(rskNetwork, feeProvider, mnemonic, accountType, derivationPath);
+  const swapOptions = {
+    ...defaultSwapOptions,
+    gasLimitMargin: 3000, // 30%;
+  };
+
+  return createEVMClient(rskNetwork, feeProvider, mnemonic, accountType, derivationPath, swapOptions);
 }
 
 export function createBSCClient(network: Network, mnemonic: string, derivationPath: string) {
@@ -39,7 +39,7 @@ export function createBSCClient(network: Network, mnemonic: string, derivationPa
     fastMultiplier: 2.2,
   });
 
-  return createEVMClient(bscNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(bscNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath, defaultSwapOptions);
 }
 
 export function createPolygonClient(network: Network, mnemonic: string, derivationPath: string) {
@@ -54,7 +54,14 @@ export function createPolygonClient(network: Network, mnemonic: string, derivati
           fastMultiplier: 2.2,
         });
 
-  return createEVMClient(polygonNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(
+    polygonNetwork,
+    feeProvider,
+    mnemonic,
+    AccountType.Default,
+    derivationPath,
+    defaultSwapOptions
+  );
 }
 
 export function createArbitrumClient(network: Network, mnemonic: string, derivationPath: string) {
@@ -66,7 +73,14 @@ export function createArbitrumClient(network: Network, mnemonic: string, derivat
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(arbitrumNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(
+    arbitrumNetwork,
+    feeProvider,
+    mnemonic,
+    AccountType.Default,
+    derivationPath,
+    defaultSwapOptions
+  );
 }
 
 export function createAvalancheClient(network: Network, mnemonic: string, derivationPath: string) {
@@ -78,7 +92,14 @@ export function createAvalancheClient(network: Network, mnemonic: string, deriva
     fastMultiplier: 2.2,
   });
 
-  return createEVMClient(avalancheNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(
+    avalancheNetwork,
+    feeProvider,
+    mnemonic,
+    AccountType.Default,
+    derivationPath,
+    defaultSwapOptions
+  );
 }
 
 export function createFuseClient(network: Network, mnemonic: string, derivationPath: string) {
@@ -90,5 +111,5 @@ export function createFuseClient(network: Network, mnemonic: string, derivationP
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(fuseNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(fuseNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath, defaultSwapOptions);
 }
