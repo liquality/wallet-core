@@ -1,5 +1,5 @@
+import { FeeDetails, Transaction } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
-import { FeeDetails, Transaction } from '@liquality/types';
 
 export type NetworkWalletIdMap<T> = Partial<Record<Network, Record<WalletId, T>>>;
 export type WalletIdNetworkMap<T> = Partial<Record<WalletId, Record<Network, T>>>;

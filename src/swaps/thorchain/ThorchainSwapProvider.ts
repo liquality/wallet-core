@@ -1,6 +1,7 @@
+import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
+import { Client } from '@chainify/client';
+import { Transaction } from '@chainify/types';
 import { ChainId, chains, currencyToUnit, isEthereumChain, unitToCurrency } from '@liquality/cryptoassets';
-import { EthereumNetwork } from '@liquality/ethereum-networks';
-import { Transaction } from '@liquality/types';
 import {
   getDoubleSwapOutput,
   getDoubleSwapSlip,
@@ -283,7 +284,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const fromChain = cryptoassets[swap.from].chain;
     // @ts-ignore
     const chainNetwork = ChainNetworks[fromChain];
-    const chainId = (chainNetwork[network] as EthereumNetwork).chainId;
+    const chainId = chainNetwork[network].chainId;
 
     const api = new ethers.providers.InfuraProvider(chainId, buildConfig.infuraApiKey);
     const erc20 = new ethers.Contract(cryptoassets[swap.from].contractAddress!, ERC20.abi, api);
@@ -309,7 +310,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const encodedData = erc20.interface.encodeFunctionData('approve', [routerAddress, inputAmountHex]);
 
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
-    const approveTx = await client.chain.sendTransaction({
+    const approveTx = await client.wallet.sendTransaction({
       to: cryptoassets[swap.from].contractAddress!,
       value: new BigNumber(0),
       data: encodedData,
@@ -345,7 +346,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const encodedMemo = Buffer.from(memo, 'utf-8').toString('hex');
 
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-    const fromFundTx = await client.chain.sendTransaction({
+    const fromFundTx = await client.wallet.sendTransaction({
       to: to,
       value,
       data: encodedMemo,
@@ -374,7 +375,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const routerAddress = await this.getRouterAddress(fromThorchainAsset.chain);
     // @ts-ignore
     const chainNetwork = ChainNetworks[cryptoassets[quote.from].chain];
-    const chainId = (chainNetwork[network] as EthereumNetwork).chainId;
+    const chainId = chainNetwork[network].chainId;
     const api = new ethers.providers.InfuraProvider(chainId, buildConfig.infuraApiKey);
     const tokenAddress = isERC20(quote.from)
       ? cryptoassets[quote.from].contractAddress
@@ -391,7 +392,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const value = isERC20(quote.from) ? new BigNumber(0) : new BN(quote.fromAmount);
 
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-    const fromFundTx = await client.chain.sendTransaction({
+    const fromFundTx = await client.wallet.sendTransaction({
       to: routerAddress,
       value,
       data: encodedData,
@@ -474,17 +475,15 @@ class ThorchainSwapProvider extends SwapProvider {
     max,
   }: EstimateFeeRequest<ThorchainTxTypes, ThorchainSwapQuote>) {
     if (txType === this._txTypes().SWAP && asset === 'BTC') {
-      const client = this.getClient(network, walletId, asset, quote.fromAccountId);
+      const client = this.getClient(network, walletId, asset, quote.fromAccountId) as Client<
+        BitcoinEsploraApiProvider,
+        BitcoinBaseWalletProvider
+      >;
       const value = max ? undefined : new BN(quote.fromAmount);
       const memo = await this.makeMemo({ network, walletId, swap: quote });
       const encodedMemo = Buffer.from(memo, 'utf-8').toString('hex');
-      const txs = feePrices.map((fee) => ({
-        to: '',
-        value,
-        data: encodedMemo,
-        fee,
-      }));
-      const totalFees = await client.getMethod('getTotalFees')(txs, max);
+      const txs = feePrices.map((fee) => ({ to: '', value, data: encodedMemo, fee }));
+      const totalFees = await client.wallet.getTotalFees(txs, max);
       return mapValues(totalFees, (f) => unitToCurrency(cryptoassets[asset], f));
     }
 

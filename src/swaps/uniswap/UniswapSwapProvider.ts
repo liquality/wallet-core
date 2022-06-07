@@ -1,5 +1,7 @@
+import { Client } from '@chainify/client';
+import { EvmChainProvider, EvmTypes } from '@chainify/evm';
+import { Transaction, TxStatus } from '@chainify/types';
 import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { ethereum, Transaction } from '@liquality/types';
 import { CurrencyAmount, Fraction, Percent, Token, TradeType, WETH9 } from '@uniswap/sdk-core';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import UniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json';
@@ -39,8 +41,8 @@ export interface UniswapSwapProviderConfig extends BaseSwapProviderConfig {
 export interface UniswapSwapHistoryItem extends SwapHistoryItem {
   approveTxHash: string;
   swapTxHash: string;
-  approveTx: Transaction<ethereum.Transaction>;
-  swapTx: Transaction<ethereum.Transaction>;
+  approveTx: Transaction<EvmTypes.EthersTransactionResponse>;
+  swapTx: Transaction<EvmTypes.EthersTransactionResponse>;
 }
 
 interface BuildSwapQuote extends SwapQuote {
@@ -59,6 +61,10 @@ class UniswapSwapProvider extends SwapProvider {
   constructor(config: UniswapSwapProviderConfig) {
     super(config);
     this._apiCache = {};
+  }
+
+  public getClient(network: Network, walletId: string, asset: string, accountId: string) {
+    return super.getClient(network, walletId, asset, accountId) as Client<EvmChainProvider>;
   }
 
   async getSupportedPairs() {
@@ -100,7 +106,7 @@ class UniswapSwapProvider extends SwapProvider {
     if (chain !== ChainId.Ethereum) {
       throw new Error('UniswapSwapProvider: chain not supported');
     }
-    return ChainNetworks.ethereum[network].chainId;
+    return Number(ChainNetworks.ethereum[network].chainId);
   }
 
   async getQuote({ network, from, to, amount }: QuoteRequest) {
@@ -206,7 +212,7 @@ class UniswapSwapProvider extends SwapProvider {
     const txData = await this.buildApprovalTx({ network, walletId, quote });
 
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-    const approveTx = await client.chain.sendTransaction(txData);
+    const approveTx = await client.wallet.sendTransaction(txData);
 
     return {
       status: 'WAITING_FOR_APPROVE_CONFIRMATIONS',
@@ -280,7 +286,7 @@ class UniswapSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 
     await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
-    const swapTx = await client.chain.sendTransaction(txData);
+    const swapTx = await client.wallet.sendTransaction(txData);
 
     return {
       status: 'WAITING_FOR_SWAP_CONFIRMATIONS',
@@ -329,7 +335,7 @@ class UniswapSwapProvider extends SwapProvider {
         value: '0x' + approvalTx.value.toString(16),
       };
 
-      gasLimit += await client.getMethod('estimateGas')(rawApprovalTx);
+      gasLimit += (await client.chain.getProvider().estimateGas(rawApprovalTx)).toNumber();
     }
 
     const swapTx = await this.buildSwapTx({ network, walletId, quote });
@@ -339,9 +345,9 @@ class UniswapSwapProvider extends SwapProvider {
       data: swapTx.data,
       value: '0x' + swapTx.value.toString(16),
     };
-
+    
     try {
-      gasLimit += await client.getMethod('estimateGas')(rawSwapTx);
+      gasLimit += (await client.chain.getProvider().estimateGas(rawSwapTx)).toNumber();
     } catch {
       gasLimit += 350_000; // estimateGas is failing if token that we are swapping is not approved
     }
@@ -379,11 +385,11 @@ class UniswapSwapProvider extends SwapProvider {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
-        const { status } = await client.getMethod('getTransactionReceipt')(swap.swapTxHash);
+        const { status } = tx;
         this.updateBalances(network, walletId, [swap.from]);
         return {
           endTime: Date.now(),
-          status: Number(status) === 1 ? 'SUCCESS' : 'FAILED',
+          status: status === TxStatus.Success ? 'SUCCESS' : 'FAILED',
         } as ActionStatus;
       }
     } catch (e) {

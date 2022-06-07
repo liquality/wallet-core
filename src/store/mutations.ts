@@ -1,5 +1,5 @@
+import { FeeDetails } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
-import { FeeDetails } from '@liquality/types';
 import Vue from 'vue';
 import {
   Account,

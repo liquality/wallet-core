@@ -1,8 +1,9 @@
-import { EthereumRpcProvider } from '@liquality/ethereum-rpc-provider';
-import { Transaction } from '@liquality/types';
+import { Transaction } from '@chainify/types';
+import { chains } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
+import { assetsAdapter } from '../../utils/chainify';
 import { createHistoryNotification } from '../broker/notification';
 import { AccountId, Asset, FeeLabel, Network, SendHistoryItem, SendStatus, TransactionType, WalletId } from '../types';
 
@@ -35,31 +36,18 @@ export const sendTransaction = async (
   }
 ): Promise<Transaction> => {
   const { dispatch, commit, getters } = rootActionContext(context);
-  const client = getters.client({
-    network,
-    walletId,
-    asset,
-    accountId,
+  const client = getters.client({ network, walletId, asset, accountId });
+
+  const _asset = assetsAdapter(asset)[0];
+  const tx = await client.wallet.sendTransaction({
+    to: chains[_asset.chain].formatAddress(to),
+    value: new BN(amount),
+    data,
+    gasLimit: gas,
+    fee,
+    asset: _asset,
+    feeAsset: _asset,
   });
-
-  const originalEstimateGas = (client._providers[0] as EthereumRpcProvider).estimateGas;
-  if (gas) {
-    (client._providers[0] as EthereumRpcProvider).estimateGas = async () => {
-      return gas;
-    };
-  }
-
-  let tx;
-  try {
-    tx = await client.chain.sendTransaction({
-      to,
-      value: new BN(amount),
-      data,
-      fee,
-    });
-  } finally {
-    (client._providers[0] as EthereumRpcProvider).estimateGas = originalEstimateGas;
-  }
 
   const transaction: SendHistoryItem = {
     id: uuidv4(),
@@ -80,17 +68,9 @@ export const sendTransaction = async (
     fiatRate,
   };
 
-  commit.NEW_TRASACTION({
-    network,
-    walletId,
-    transaction,
-  });
+  commit.NEW_TRASACTION({ network, walletId, transaction });
 
-  dispatch.performNextAction({
-    network,
-    walletId,
-    id: transaction.id,
-  });
+  dispatch.performNextAction({ network, walletId, id: transaction.id });
 
   createHistoryNotification(transaction);
 

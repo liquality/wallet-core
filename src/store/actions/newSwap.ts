@@ -1,5 +1,5 @@
 import { ActionContext, rootActionContext } from '..';
-import { getSwapProvider } from '../../factory/swapProvider';
+import { getSwapProvider } from '../../factory/swap';
 import { SwapQuote } from '../../swaps/types';
 import { FeeLabel, Network, SwapHistoryItem, TransactionType, WalletId } from '../types';
 

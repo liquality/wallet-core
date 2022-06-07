@@ -1,5 +1,7 @@
+import { Client } from '@chainify/client';
+import { EvmChainProvider, EvmTypes } from '@chainify/evm';
+import { Transaction, TxStatus } from '@chainify/types';
 import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { ethereum, Transaction } from '@liquality/types';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
@@ -8,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import buildConfig from '../../build.config';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
-import { Asset, SwapHistoryItem } from '../../store/types';
+import { Asset, Network, SwapHistoryItem } from '../../store/types';
 import { isERC20, isEthereumChain } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
@@ -45,8 +47,8 @@ const chainToGasMultiplier: { [chainId: number]: number } = {
 export interface OneinchSwapHistoryItem extends SwapHistoryItem {
   approveTxHash: string;
   swapTxHash: string;
-  approveTx: Transaction<ethereum.Transaction>;
-  swapTx: Transaction<ethereum.Transaction>;
+  approveTx: Transaction<EvmTypes.EthersTransactionResponse>;
+  swapTx: Transaction<EvmTypes.EthersTransactionResponse>;
   slippagePercentage: number;
 }
 
@@ -62,6 +64,10 @@ class OneinchSwapProvider extends SwapProvider {
 
   async getSupportedPairs() {
     return [];
+  }
+
+  public getClient(network: Network, walletId: string, asset: string, accountId: string) {
+    return super.getClient(network, walletId, asset, accountId) as Client<EvmChainProvider>;
   }
 
   async _getQuote(chainIdFrom: number, from: Asset, to: Asset, amount: number) {
@@ -130,7 +136,7 @@ class OneinchSwapProvider extends SwapProvider {
     });
 
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-    const approveTx = await client.chain.sendTransaction({
+    const approveTx = await client.wallet.sendTransaction({
       to: callData.data?.to,
       value: callData.data?.value,
       data: callData.data?.data,
@@ -184,7 +190,7 @@ class OneinchSwapProvider extends SwapProvider {
     }
 
     await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
-    const swapTx = await client.chain.sendTransaction({
+    const swapTx = await client.wallet.sendTransaction({
       to: trade.data.tx?.to,
       value: trade.data.tx?.value,
       data: trade.data.tx?.data,
@@ -256,11 +262,11 @@ class OneinchSwapProvider extends SwapProvider {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
-        const { status } = await client.getMethod('getTransactionReceipt')(swap.swapTxHash);
+        const { status } = tx;
         this.updateBalances(network, walletId, [swap.from]);
         return {
           endTime: Date.now(),
-          status: Number(status) === 1 ? 'SUCCESS' : 'FAILED',
+          status: status === TxStatus.Success ? 'SUCCESS' : 'FAILED',
         };
       }
     } catch (e) {

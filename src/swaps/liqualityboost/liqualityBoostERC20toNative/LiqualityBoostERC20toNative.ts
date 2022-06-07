@@ -1,6 +1,6 @@
 import { assets, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
-import { getSwapProvider } from '../../../factory/swapProvider';
+import { getSwapProvider } from '../../../factory';
 import { ActionContext } from '../../../store';
 import { withInterval } from '../../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem, WalletId } from '../../../store/types';
@@ -294,11 +294,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
         step: 2,
         label: 'Locking {bridgeAsset}',
       },
-      FUNDED: {
-        ...this.liqualitySwapProvider.statuses.FUNDED,
-        step: 3,
-        label: 'Locking {bridgeAsset}',
-      },
+
       CONFIRM_COUNTER_PARTY_INITIATION: {
         ...this.liqualitySwapProvider.statuses.CONFIRM_COUNTER_PARTY_INITIATION,
         label: 'Locking {bridgeAsset}',

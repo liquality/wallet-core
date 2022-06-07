@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { getSwapProvider } from '../factory/swapProvider';
+import { getSwapProvider } from '../factory/swap';
 import { HistoryItem, SendStatus, TransactionType } from '../store/types';
 
 export const SEND_STATUS_STEP_MAP = {

@@ -1,5 +1,5 @@
+import { EvmWalletProvider } from '@chainify/evm';
 import { isAddress } from '@ethersproject/address';
-import { EthereumJsWalletProvider } from '@liquality/ethereum-js-wallet-provider';
 import { MessageTypes, signTypedData, SignTypedDataVersion, TypedDataV1, TypedMessage } from '@metamask/eth-sig-util';
 
 export interface SignTypedMessageType<V extends SignTypedDataVersion, T extends MessageTypes> {
@@ -16,15 +16,14 @@ const methodToVersion: Record<string, SignTypedDataVersion> = {
 };
 
 // move to Chainify when integrated
-export async function signTypedMessage(this: EthereumJsWalletProvider, payload: any): Promise<string> {
-  const hdKey = await this.client.getMethod('hdKey')();
-  const privateKey = hdKey.privateKey;
+export async function signTypedMessage(this: EvmWalletProvider, payload: any): Promise<string> {
+  const privateKey = this.getSigner().privateKey;
 
   const method = payload.method;
   const first = payload.params[0];
   const second = payload.params[1];
 
-  const msgParams = { privateKey, version: methodToVersion[method] } as SignTypedMessageType<
+  const msgParams = { privateKey: Buffer.from(privateKey), version: methodToVersion[method] } as SignTypedMessageType<
     SignTypedDataVersion,
     MessageTypes
   >;

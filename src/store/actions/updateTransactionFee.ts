@@ -1,7 +1,7 @@
-import { Transaction } from '@liquality/types';
+import { Transaction } from '@chainify/types';
 import { isObject } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
-import { getSwapProvider } from '../../factory/swapProvider';
+import { getSwapProvider } from '../../factory/swap';
 import { LiqualitySwapHistoryItem, LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
 import { Asset, HistoryItem, Network, TransactionType, WalletId } from '../types';
 import { unlockAsset } from '../utils';
@@ -57,7 +57,11 @@ export const updateTransactionFee = async (
     asset,
   });
   try {
-    newTx = await client.chain.updateTransactionFee(oldTx, newFee);
+    if (client.swap.canUpdateFee()) {
+      newTx = await client.swap.updateTransactionFee(oldTx, newFee);
+    } else {
+      newTx = await client.wallet.updateTransactionFee(oldTx, newFee);
+    }
   } catch (e) {
     console.warn(e);
     throw e;
