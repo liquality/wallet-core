@@ -1,23 +1,20 @@
 import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
 import { AccountInfo, Network } from '../../store/types';
+import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
 import { ChainNetworks } from '../../utils/networks';
 import { createEVMClient } from './clients';
 
-export function createEthClient(
-  network: Network,
-  mnemonic: string,
-  accountInfo: AccountInfo
-) {
+const defaultSwapOptions = {
+  contractAddress: HTLC_CONTRACT_ADDRESS,
+};
+
+export function createEthClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const ethNetwork = ChainNetworks.ethereum[network];
   const feeProvider = new EIP1559FeeProvider(ethNetwork.rpcUrl as string);
-  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountInfo);
+  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountInfo, defaultSwapOptions);
 }
 
-export function createRskClient(
-  network: Network,
-  mnemonic: string,
-  accountInfo: AccountInfo
-) {
+export function createRskClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const rskNetwork = ChainNetworks.rsk[network];
   const feeProvider = new RpcFeeProvider(rskNetwork.rpcUrl, {
     slowMultiplier: 1,
@@ -25,7 +22,12 @@ export function createRskClient(
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(rskNetwork, feeProvider, mnemonic, accountInfo);
+  const swapOptions = {
+    ...defaultSwapOptions,
+    gasLimitMargin: 3000, // 30%;
+  };
+
+  return createEVMClient(rskNetwork, feeProvider, mnemonic, accountInfo, swapOptions);
 }
 
 export function createBSCClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
@@ -37,7 +39,7 @@ export function createBSCClient(network: Network, mnemonic: string, accountInfo:
     fastMultiplier: 2.2,
   });
 
-  return createEVMClient(bscNetwork, feeProvider, mnemonic, accountInfo);
+  return createEVMClient(bscNetwork, feeProvider, mnemonic, accountInfo, defaultSwapOptions);
 }
 
 export function createPolygonClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
@@ -52,7 +54,13 @@ export function createPolygonClient(network: Network, mnemonic: string, accountI
           fastMultiplier: 2.2,
         });
 
-  return createEVMClient(polygonNetwork, feeProvider, mnemonic, accountInfo);
+  return createEVMClient(
+    polygonNetwork,
+    feeProvider,
+    mnemonic,
+    accountInfo,
+    defaultSwapOptions
+  );
 }
 
 export function createArbitrumClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
@@ -64,7 +72,13 @@ export function createArbitrumClient(network: Network, mnemonic: string, account
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(arbitrumNetwork, feeProvider, mnemonic, accountInfo);
+  return createEVMClient(
+    arbitrumNetwork,
+    feeProvider,
+    mnemonic,
+    accountInfo,
+    defaultSwapOptions
+  );
 }
 
 export function createAvalancheClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
@@ -76,7 +90,13 @@ export function createAvalancheClient(network: Network, mnemonic: string, accoun
     fastMultiplier: 2.2,
   });
 
-  return createEVMClient(avalancheNetwork, feeProvider, mnemonic, accountInfo);
+  return createEVMClient(
+    avalancheNetwork,
+    feeProvider,
+    mnemonic,
+    accountInfo,
+    defaultSwapOptions
+  );
 }
 
 export function createFuseClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
@@ -88,5 +108,5 @@ export function createFuseClient(network: Network, mnemonic: string, accountInfo
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(fuseNetwork, feeProvider, mnemonic, accountInfo);
+  return createEVMClient(fuseNetwork, feeProvider, mnemonic, accountInfo, defaultSwapOptions);
 }

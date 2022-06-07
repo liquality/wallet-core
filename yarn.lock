@@ -457,30 +457,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/bitcoin-ledger@portal:/Users/bradley/Code/liquality/chainify/packages/bitcoin-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/bitcoin-ledger@portal:/Users/bradley/Code/liquality/chainify/packages/bitcoin-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/bitcoin-ledger@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/bitcoin-ledger@npm:1.0.10"
   dependencies:
-    "@chainify/bitcoin": "workspace:*"
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/hw-ledger": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/bitcoin": 1.0.10
+    "@chainify/client": 1.0.10
+    "@chainify/errors": 1.0.10
+    "@chainify/hw-ledger": 1.0.10
+    "@chainify/types": 1.0.10
+    "@chainify/utils": 1.0.10
     "@ledgerhq/hw-app-btc": 6.7.0
     bip32: 2.0.6
     bitcoinjs-lib: 5.2.0
+  checksum: fe42c9be3a4626abfa51326bbb5d41f3b6ae3ec71262c8d139ab73455c9c56c2abe015a0aff0c679394ac30e2952c31c6972595c15adcc87e3274e909ec0da1c
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/bitcoin@portal:/Users/bradley/Code/liquality/chainify/packages/bitcoin::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/bitcoin@portal:/Users/bradley/Code/liquality/chainify/packages/bitcoin::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/bitcoin@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/bitcoin@npm:1.0.10"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.10
+    "@chainify/errors": 1.0.10
+    "@chainify/types": 1.0.10
+    "@chainify/utils": 1.0.10
     "@types/bip32": ^2.0.0
     "@types/bip39": ^3.0.0
     "@types/bitcoinjs-lib": ^5.0.0
@@ -494,39 +495,42 @@ __metadata:
     coinselect: ^3.1.12
     lodash: ^4.17.21
     memoizee: ^0.4.15
+  checksum: de88ace99812b2342b292ab3dbc76941c9d05f5c7c45eea26cc01ea59a95e155abaae8ee501d5102a9ee6a1b2488fded6718359099d62beacd100a6ba48e37e8
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/client@portal:/Users/bradley/Code/liquality/chainify/packages/client::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/client@portal:/Users/bradley/Code/liquality/chainify/packages/client::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/client@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/client@npm:1.0.10"
   dependencies:
-    "@chainify/errors": "workspace:*"
-    "@chainify/logger": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/errors": 1.0.10
+    "@chainify/logger": 1.0.10
+    "@chainify/types": 1.0.10
+    "@chainify/utils": 1.0.10
     axios: ^0.25.0
+  checksum: d5bb2e0535347848dcb193acc1d43edf0f1db135c64492ad280d201a0a05e2c3245948c94b4fef59a75af700b475588a662993169b5e23c8689fd23d80676ab2
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/errors@portal:/Users/bradley/Code/liquality/chainify/packages/errors::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/errors@portal:/Users/bradley/Code/liquality/chainify/packages/errors::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/errors@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/errors@npm:1.0.10"
   dependencies:
     standard-error: ^1.1.0
+  checksum: 69969c459500b7e305962a4df85b2f3c0d362701b01457f4ec660dd8f2fb6acaec3a0b1ab1ce32f5a9cc7fe8423dacd7961747e0249b7f6b06752a1539a237a6
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/evm-ledger@portal:/Users/bradley/Code/liquality/chainify/packages/evm-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/evm-ledger@portal:/Users/bradley/Code/liquality/chainify/packages/evm-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/evm-ledger@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/evm-ledger@npm:1.0.10"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/evm": "workspace:*"
-    "@chainify/hw-ledger": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.10
+    "@chainify/errors": 1.0.10
+    "@chainify/evm": 1.0.10
+    "@chainify/hw-ledger": 1.0.10
+    "@chainify/types": 1.0.10
+    "@chainify/utils": 1.0.10
     "@ethersproject/abstract-provider": 5.6.0
     "@ethersproject/abstract-signer": 5.6.0
     "@ethersproject/address": 5.6.0
@@ -537,17 +541,18 @@ __metadata:
     "@ethersproject/strings": 5.6.0
     "@ethersproject/transactions": 5.6.0
     "@ledgerhq/hw-app-eth": ^6.26.0
+  checksum: 8ae1a7515be05b050347485d83b79bdc37b9234159718d0cf5d9b798e49a26ab6803735b5054cb24bf3ee31fc6ed28f43a27bbfd6089561ce582677ff52ebe32
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/evm@portal:/Users/bradley/Code/liquality/chainify/packages/evm::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/evm@portal:/Users/bradley/Code/liquality/chainify/packages/evm::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/evm@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/evm@npm:1.0.10"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.10
+    "@chainify/errors": 1.0.10
+    "@chainify/types": 1.0.10
+    "@chainify/utils": 1.0.10
     "@eth-optimism/sdk": ^1.1.5
     "@ethersproject/abi": 5.6.0
     "@ethersproject/abstract-provider": 5.6.0
@@ -560,97 +565,105 @@ __metadata:
     "@ethersproject/wallet": 5.6.0
     "@metamask/eth-sig-util": ^4.0.1
     "@rainbow-me/fee-suggestions": ^2.0.0
+  checksum: e3cadc706537d767b7624dfcc37fdc3debcdcca81aef31958ae7a3ee6a33c1a31f6c876386bfa7b8fc24b134ce3e31283e2eda1e7f909f49a5453d939efdc302
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/hw-ledger@portal:/Users/bradley/Code/liquality/chainify/packages/hw-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/hw-ledger@portal:/Users/bradley/Code/liquality/chainify/packages/hw-ledger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/hw-ledger@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/hw-ledger@npm:1.0.10"
   dependencies:
-    "@chainify/errors": "workspace:*"
-    "@chainify/logger": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/errors": 1.0.10
+    "@chainify/logger": 1.0.10
+    "@chainify/types": 1.0.10
+    "@chainify/utils": 1.0.10
     "@ledgerhq/hw-transport": 6.27.1
     "@ledgerhq/hw-transport-webhid": 6.27.1
+  checksum: 8d725bde11f311b0d941b84f3d9d130c7b077cf0769fa323c8bc86c9b86b96c4a61f6077270de750250d0b1a632feb811061c5483152ce864962fed47b4cdfed
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/logger@portal:/Users/bradley/Code/liquality/chainify/packages/logger::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/logger@portal:/Users/bradley/Code/liquality/chainify/packages/logger::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/logger@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/logger@npm:1.0.10"
+  checksum: 7158bc9459379ae385b051b7a8c3362135fefcb5f8abe02130295062aa60b948ba57c021d8cc4037d4ba3f60c1c491441e9d408c5b8e2f7ff01b8f2b8846a5bb
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/near@portal:/Users/bradley/Code/liquality/chainify/packages/near::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/near@portal:/Users/bradley/Code/liquality/chainify/packages/near::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/near@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/near@npm:1.0.10"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.10
+    "@chainify/errors": 1.0.10
+    "@chainify/types": 1.0.10
+    "@chainify/utils": 1.0.10
     bn.js: ^5.2.0
     near-api-js: ^0.44.2
     near-seed-phrase: ^0.2.0
+  checksum: f4b7b2545c8770e8b53617e85c9bda8f357ef80396532ce1db4e68a0650e70f62132b049345905ed9a8209138f7f9d19580d7b67e5e22db74b6eab744e68762d
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/solana@portal:/Users/bradley/Code/liquality/chainify/packages/solana::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/solana@portal:/Users/bradley/Code/liquality/chainify/packages/solana::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/solana@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/solana@npm:1.0.10"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/logger": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.10
+    "@chainify/errors": 1.0.10
+    "@chainify/logger": 1.0.10
+    "@chainify/types": 1.0.10
+    "@chainify/utils": 1.0.10
     "@solana/spl-token": ^0.2.0
     "@solana/web3.js": ^1.37.2
     bip39: ^3.0.4
     ed25519-hd-key: ^1.2.0
     tweetnacl: ^1.0.3
+  checksum: a73537065c356b4dced764d66219197bc6d5a2ed813c6728ce942980b1a537548b60e9ee1c64c57f2b66e645b67ec0b2493558649588d35e709b701c3550fbde
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/terra@portal:/Users/bradley/Code/liquality/chainify/packages/terra::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/terra@portal:/Users/bradley/Code/liquality/chainify/packages/terra::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/terra@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/terra@npm:1.0.10"
   dependencies:
-    "@chainify/client": "workspace:*"
-    "@chainify/errors": "workspace:*"
-    "@chainify/types": "workspace:*"
-    "@chainify/utils": "workspace:*"
+    "@chainify/client": 1.0.10
+    "@chainify/errors": 1.0.10
+    "@chainify/types": 1.0.10
+    "@chainify/utils": 1.0.10
     "@terra-money/terra.js": 2.1.18
     "@types/luxon": ^2.0.9
     lodash: ^4.17.21
     luxon: ^2.3.1
+  checksum: 439c90da63e07c9199f9d6b3d3a3c781a5f80a49b1f7b9951aa80694c93de7019ee6bd2c36c373929bf8e6a0d6400e21326bb66a775d9da6c86106ec55ed0654
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/types@portal:/Users/bradley/Code/liquality/chainify/packages/types::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/types@portal:/Users/bradley/Code/liquality/chainify/packages/types::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/types@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/types@npm:1.0.10"
   dependencies:
     "@ethersproject/bignumber": 5.6.0
     "@liquality/cryptoassets": ^1.13.2
     bignumber.js: ^9.0.2
+  checksum: a8f7a6c6be73dbfc4945718981005be591ef83cfa0449a915901d50398ca525e43874cad956eeff8f25c51ddcc0279867aae07d91634fa4fdedfb36a0b786ae1
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"@chainify/utils@portal:/Users/bradley/Code/liquality/chainify/packages/utils::locator=%40liquality%2Fwallet-core%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@chainify/utils@portal:/Users/bradley/Code/liquality/chainify/packages/utils::locator=%40liquality%2Fwallet-core%40workspace%3A."
+"@chainify/utils@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@chainify/utils@npm:1.0.10"
   dependencies:
-    "@chainify/errors": "workspace:*"
-    "@chainify/types": "workspace:*"
+    "@chainify/errors": 1.0.10
+    "@chainify/types": 1.0.10
     "@ethersproject/sha2": 5.6.0
     bech32: ^2.0.0
     bs58: ^5.0.0
     crypto-hashing: ^1.0.0
     setimmediate: ^1.0.5
+  checksum: e34b73c380afb9008f589b33fb0db00058c3879f75fa333e17e21ef67c413f2a223ed765b93ba5d6c832410bfc1c92eb87910cd03ee2ed06ba68b5c46810982c
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@commitlint/cli@npm:^16.2.3":
   version: 16.3.0
@@ -2026,17 +2039,17 @@ __metadata:
   dependencies:
     "@babel/types": ^7.17.0
     "@blobfishkate/sovryncontracts": 1.3.27
-    "@chainify/bitcoin": 1.0.8
-    "@chainify/bitcoin-ledger": 1.0.8
-    "@chainify/client": 1.0.8
-    "@chainify/errors": 1.0.8
-    "@chainify/evm": 1.0.8
-    "@chainify/evm-ledger": 1.0.8
-    "@chainify/near": 1.0.8
-    "@chainify/solana": 1.0.8
-    "@chainify/terra": 1.0.8
-    "@chainify/types": 1.0.8
-    "@chainify/utils": 1.0.8
+    "@chainify/bitcoin": 1.0.10
+    "@chainify/bitcoin-ledger": 1.0.10
+    "@chainify/client": 1.0.10
+    "@chainify/errors": 1.0.10
+    "@chainify/evm": 1.0.10
+    "@chainify/evm-ledger": 1.0.10
+    "@chainify/near": 1.0.10
+    "@chainify/solana": 1.0.10
+    "@chainify/terra": 1.0.10
+    "@chainify/types": 1.0.10
+    "@chainify/utils": 1.0.10
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
     "@ethersproject/address": ^5.6.0
@@ -2865,12 +2878,12 @@ __metadata:
   linkType: hard
 
 "@typescript-eslint/eslint-plugin@npm:^5.12.1":
-  version: 5.27.0
-  resolution: "@typescript-eslint/eslint-plugin@npm:5.27.0"
+  version: 5.27.1
+  resolution: "@typescript-eslint/eslint-plugin@npm:5.27.1"
   dependencies:
-    "@typescript-eslint/scope-manager": 5.27.0
-    "@typescript-eslint/type-utils": 5.27.0
-    "@typescript-eslint/utils": 5.27.0
+    "@typescript-eslint/scope-manager": 5.27.1
+    "@typescript-eslint/type-utils": 5.27.1
+    "@typescript-eslint/utils": 5.27.1
     debug: ^4.3.4
     functional-red-black-tree: ^1.0.1
     ignore: ^5.2.0
@@ -2883,42 +2896,42 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: af7970f90c511641c332b7abecc53523fbbcb19e59ec52df9679f02047ddd5fd5e9ce3ca9359b17674ac7e20e380995861482fb6e60049fe8facd766c2bd85fe
+  checksum: ee00d8d3a7b395e346801b7bf30209e278f06b5c283ad71c03b34db9e2d68a43ca0e292e315fa7e5bf131a8839ff4a24e0ed76c37811d230f97aae7e123d73ea
   languageName: node
   linkType: hard
 
 "@typescript-eslint/parser@npm:^5.12.1":
-  version: 5.27.0
-  resolution: "@typescript-eslint/parser@npm:5.27.0"
+  version: 5.27.1
+  resolution: "@typescript-eslint/parser@npm:5.27.1"
   dependencies:
-    "@typescript-eslint/scope-manager": 5.27.0
-    "@typescript-eslint/types": 5.27.0
-    "@typescript-eslint/typescript-estree": 5.27.0
+    "@typescript-eslint/scope-manager": 5.27.1
+    "@typescript-eslint/types": 5.27.1
+    "@typescript-eslint/typescript-estree": 5.27.1
     debug: ^4.3.4
   peerDependencies:
     eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 40ccdc481f871c296ee419e886ffd6f89ec23f6b10dbb2847c7e89bfd2234c6be23c49ab92d2965e16cd4c3cf378010e3dcd72d34f82b1e2ca8b5c812133fb00
+  checksum: 0f1df76142c9d7a6c6dbfc5d19fdee02bbc0e79def6e6df4b126c7eaae1c3a46a3871ad498d4b1fc7ad5cb58d6eb70f020807f600d99c0b9add98441fc12f23b
   languageName: node
   linkType: hard
 
-"@typescript-eslint/scope-manager@npm:5.27.0":
-  version: 5.27.0
-  resolution: "@typescript-eslint/scope-manager@npm:5.27.0"
+"@typescript-eslint/scope-manager@npm:5.27.1":
+  version: 5.27.1
+  resolution: "@typescript-eslint/scope-manager@npm:5.27.1"
   dependencies:
-    "@typescript-eslint/types": 5.27.0
-    "@typescript-eslint/visitor-keys": 5.27.0
-  checksum: 84eb2d6241a6644c622b473c060bb7a227c2a82e8af8ddcf654fb63716e1b3c6fe1b5d747d032d85594c0ad147d95aabc2b217d4af574b55eab93910e0c292ce
+    "@typescript-eslint/types": 5.27.1
+    "@typescript-eslint/visitor-keys": 5.27.1
+  checksum: 401bf2b46de08ddb80ec9f36df7d58bf5de7837185a472b190b670d421d685743aad4c9fa8a6893f65ba933b822c5d7060c640e87cf0756d7aa56abdd25689cc
   languageName: node
   linkType: hard
 
-"@typescript-eslint/type-utils@npm:5.27.0":
-  version: 5.27.0
-  resolution: "@typescript-eslint/type-utils@npm:5.27.0"
+"@typescript-eslint/type-utils@npm:5.27.1":
+  version: 5.27.1
+  resolution: "@typescript-eslint/type-utils@npm:5.27.1"
   dependencies:
-    "@typescript-eslint/utils": 5.27.0
+    "@typescript-eslint/utils": 5.27.1
     debug: ^4.3.4
     tsutils: ^3.21.0
   peerDependencies:
@@ -2926,23 +2939,23 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 21ef57ecc0dfa085e7ce8f7714d143993f592004086e37582cb6ab5924cb3358267b607e0701ce43737e01f46fb33d66e3f3428fbb7be6e64971d4c26f73c265
+  checksum: 43b7da26ea1bd7d249c45d168ec88f971fb71362bbc21ec4748d73b1ecb43f4ca59f5ed338e8dbc74272ae4ebac1cab87a9b62c0fa616c6f9bd833a212dc8a40
   languageName: node
   linkType: hard
 
-"@typescript-eslint/types@npm:5.27.0":
-  version: 5.27.0
-  resolution: "@typescript-eslint/types@npm:5.27.0"
-  checksum: d19802bb7bc8202885a47118e196ad9a26b686f00da5aa71a84974c1e838c5e3a36f54116605c46ffe909ccf856a49623f2a095fd05243b4fe4fecfe5cecb89c
+"@typescript-eslint/types@npm:5.27.1":
+  version: 5.27.1
+  resolution: "@typescript-eslint/types@npm:5.27.1"
+  checksum: 81faa50256ba67c23221273744c51676774fe6a1583698c3a542f3e2fd21ab34a4399019527c9cf7ab4e5a1577272f091d5848d3af937232ddb2dbf558a7c39a
   languageName: node
   linkType: hard
 
-"@typescript-eslint/typescript-estree@npm:5.27.0":
-  version: 5.27.0
-  resolution: "@typescript-eslint/typescript-estree@npm:5.27.0"
+"@typescript-eslint/typescript-estree@npm:5.27.1":
+  version: 5.27.1
+  resolution: "@typescript-eslint/typescript-estree@npm:5.27.1"
   dependencies:
-    "@typescript-eslint/types": 5.27.0
-    "@typescript-eslint/visitor-keys": 5.27.0
+    "@typescript-eslint/types": 5.27.1
+    "@typescript-eslint/visitor-keys": 5.27.1
     debug: ^4.3.4
     globby: ^11.1.0
     is-glob: ^4.0.3
@@ -2951,33 +2964,33 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: a0f14c332cd293a100399172c9ae498c230c8c205ab74565ea2de08a0bd860af829a9c4dde1888df89667fa0bc29048bc33993eb9445d2689fa2dfcec55c4915
+  checksum: 59d2a0885be7d54bd86472a446d84930cc52d2690ea432d9164075ea437b3b4206dadd49799764ad0fb68f3e4ebb4e36db9717c7a443d0f3c82d5659e41fbd05
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:5.27.0, @typescript-eslint/utils@npm:^5.10.0":
-  version: 5.27.0
-  resolution: "@typescript-eslint/utils@npm:5.27.0"
+"@typescript-eslint/utils@npm:5.27.1, @typescript-eslint/utils@npm:^5.10.0":
+  version: 5.27.1
+  resolution: "@typescript-eslint/utils@npm:5.27.1"
   dependencies:
     "@types/json-schema": ^7.0.9
-    "@typescript-eslint/scope-manager": 5.27.0
-    "@typescript-eslint/types": 5.27.0
-    "@typescript-eslint/typescript-estree": 5.27.0
+    "@typescript-eslint/scope-manager": 5.27.1
+    "@typescript-eslint/types": 5.27.1
+    "@typescript-eslint/typescript-estree": 5.27.1
     eslint-scope: ^5.1.1
     eslint-utils: ^3.0.0
   peerDependencies:
     eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-  checksum: ed823528c3b7f8c71a44ea0481896c46178e361e89003c63736de6ece45cb771defea13b505f0adb517c59f55a95d0b5f1bb990f7a24d3a2597aa045bba0a7bf
+  checksum: 51add038226cddad2b3322225de18d53bc1ed44613f7b3a379eb597114b8830a632990b0f4321e0ddf3502b460d80072d7e789be89135b5e11e8dae167005625
   languageName: node
   linkType: hard
 
-"@typescript-eslint/visitor-keys@npm:5.27.0":
-  version: 5.27.0
-  resolution: "@typescript-eslint/visitor-keys@npm:5.27.0"
+"@typescript-eslint/visitor-keys@npm:5.27.1":
+  version: 5.27.1
+  resolution: "@typescript-eslint/visitor-keys@npm:5.27.1"
   dependencies:
-    "@typescript-eslint/types": 5.27.0
+    "@typescript-eslint/types": 5.27.1
     eslint-visitor-keys: ^3.3.0
-  checksum: 7781f35e25a09d0986b4ba97c707102394cf94738a92d68eca6382b00ffba1b0fac3e937ca4ee6266295dd40ec837a61889fd715f594549f2c3d837594999c29
+  checksum: 8f104eda321cd6c613daf284fbebbd32b149d4213d137b0ce1caec7a1334c9f46c82ed64aff1243b712ac8c13f67ac344c996cd36d21fbb15032c24d9897a64a
   languageName: node
   linkType: hard
 
@@ -4115,17 +4128,17 @@ __metadata:
   linkType: hard
 
 "browserslist@npm:^4.20.2":
-  version: 4.20.3
-  resolution: "browserslist@npm:4.20.3"
+  version: 4.20.4
+  resolution: "browserslist@npm:4.20.4"
   dependencies:
-    caniuse-lite: ^1.0.30001332
-    electron-to-chromium: ^1.4.118
+    caniuse-lite: ^1.0.30001349
+    electron-to-chromium: ^1.4.147
     escalade: ^3.1.1
-    node-releases: ^2.0.3
+    node-releases: ^2.0.5
     picocolors: ^1.0.0
   bin:
     browserslist: cli.js
-  checksum: 1e4b719ac2ca0fe235218a606e8b8ef16b8809e0973b924158c39fbc435a0b0fe43437ea52dd6ef5ad2efcb83fcb07431244e472270177814217f7c563651f7d
+  checksum: 0e56c42da765524e5c31bc9a1f08afaa8d5dba085071137cf21e56dc78d0cf0283764143df4c7d1c0cd18c3187fc9494e1d93fa0255004f0be493251a28635f9
   languageName: node
   linkType: hard
 
@@ -4348,10 +4361,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001332":
-  version: 1.0.30001346
-  resolution: "caniuse-lite@npm:1.0.30001346"
-  checksum: 951590454ffa4e2e7b772558dc593cd08604b44c83741e1188166298f54c34387f4bf34f5141a35de4a43028c012484240ad15c896e48bf4eac70dd7076a4449
+"caniuse-lite@npm:^1.0.30001349":
+  version: 1.0.30001349
+  resolution: "caniuse-lite@npm:1.0.30001349"
+  checksum: 0095fcbb7ca4ef76227f5c3788c3cdbad3c52a25825c577371ffa73a44d74ff43fc5a849e5fa37c8b4c6237bb5272777085e1f674f9f86fde9aed85201d26f07
   languageName: node
   linkType: hard
 
@@ -5327,10 +5340,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-to-chromium@npm:^1.4.118":
-  version: 1.4.146
-  resolution: "electron-to-chromium@npm:1.4.146"
-  checksum: 5700a27f44463d2701cbc1593973a711ba7b23374db840ec00c612d1e0272ba95b4f170f561953380441739665a400670c6678bcff26a0ae28d2e49ab03d478d
+"electron-to-chromium@npm:^1.4.147":
+  version: 1.4.147
+  resolution: "electron-to-chromium@npm:1.4.147"
+  checksum: a714da8ac6842887e98886026b8eeaee0d2fd6d57f5707b0fc2a2916c1b9d026ca8deeef529fd3b069e96f719495a7467b01a508b881fd90d95aa204a7a92000
   languageName: node
   linkType: hard
 
@@ -9376,7 +9389,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-releases@npm:^2.0.3":
+"node-releases@npm:^2.0.5":
   version: 2.0.5
   resolution: "node-releases@npm:2.0.5"
   checksum: e85d949addd19f8827f32569d2be5751e7812ccf6cc47879d49f79b5234ff4982225e39a3929315f96370823b070640fb04d79fc0ddec8b515a969a03493a42f
