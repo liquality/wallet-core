@@ -42,7 +42,7 @@ export abstract class EvmSwapProvider extends SwapProvider {
     const userAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     const userAddress = chains[fromAsset.chain].formatAddress(userAddressRaw, network);
 
-    const allowance = await tokenContract.allowance(userAddress, this.config.routerAddress);
+    const allowance = await tokenContract.allowance(userAddress.toLowerCase(), this.config.routerAddress);
     // if allowance is enough, no approve is needed
     if (allowance.gte(quote.fromAmount)) {
       return {
