@@ -1,27 +1,12 @@
+import { Transaction } from '@chainify/types';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
 import { createHistoryNotification } from '../broker/notification';
-import { Transaction } from '@liquality/types';
-import {
-  NFTSendHistoryItem,
-  NFTSendTransactionParams,
-  SendStatus,
-  TransactionType,
-} from '../types';
+import { NFTSendHistoryItem, NFTSendTransactionParams, SendStatus, TransactionType } from '../types';
 
 export const sendNFTTransaction = async (
   context: ActionContext,
-  {
-    network,
-    accountId,
-    walletId,
-    receiver,
-    values,
-    fee,
-    feeLabel,
-    nft,
-    asset
-  }: NFTSendTransactionParams
+  { network, accountId, walletId, receiver, values, fee, feeLabel, nft, asset }: NFTSendTransactionParams
 ): Promise<Transaction> => {
   const { getters, commit, dispatch } = rootActionContext(context);
   const client = getters.client({
@@ -37,7 +22,7 @@ export const sendNFTTransaction = async (
     network,
     walletId,
     to: '',
-    from: '', 
+    from: '',
     toAddress: receiver,
     fee,
     tx,

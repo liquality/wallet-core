@@ -10,14 +10,13 @@ export const getNFTAssets = async (
   }: {
     walletId: WalletId;
   }
-): Promise<any> => {
+): Promise<void> => {
   const { state, commit, getters } = rootActionContext(context);
   const { networks, nftAssets } = buildConfig;
 
   networks.forEach((network) => {
     const assetKeys = nftAssets[network];
-    console.log('🚀 ~ file: getNFTAssets.ts ~ line 20 ~ networks.forEach ~ assetKeys', assetKeys);
-    nftAssets[network].forEach(async (chain, index) => {
+    assetKeys.forEach(async (chain) => {
       const asset = chains[chain].nativeAsset;
       const account = state.accounts[walletId]![network].find((a) => a.assets.includes(asset));
       const _client = getters.client({
@@ -27,8 +26,7 @@ export const getNFTAssets = async (
         accountId: account?.id,
       });
 
-      const nft = await _client.nft.fetch();
-      console.log('🚀 ~ file: getNFTAssets.ts ~ line 27 ~ nft', index, '>>>', nft);
+      const nft: any = await _client.nft?.fetch();
 
       const nftAssetsStoredInState: NFTAsset[] = account?.nftAssets || [];
       const nftAssetsFetched: NFTAsset[] = nft.assets;
@@ -44,9 +42,6 @@ export const getNFTAssets = async (
       });
 
       commit.SET_NFT_ASSETS({ nftAssets, network, walletId, accountId: account?.id });
-      console.log('🚀 ~ file: getNFTAssets.ts ~ line 47 ~ nftAssets', index, '>>>', nftAssets);
-
-      return nftAssets;
     });
   });
 };

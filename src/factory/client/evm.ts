@@ -1,25 +1,32 @@
-import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
+import { EIP1559FeeProvider, EvmChainProvider, EvmNftProvider, EvmWalletProvider, RpcFeeProvider } from '@chainify/evm';
 import { AccountType, Network } from '../../store/types';
 import { ChainNetworks } from '../../utils/networks';
 import { createEVMClient } from './clients';
 
-export function createEthClient(
-  network: Network,
-  mnemonic: string,
-  accountType: AccountType,
-  derivationPath: string
-) {
+export function createEthClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
   const ethNetwork = ChainNetworks.ethereum[network];
+  const httpConfig: any = {
+    baseURL: ethNetwork.nftProviderUrl,
+    responseType: 'text',
+    transformResponse: undefined,
+    headers: {
+      'X-Api-Key': '',
+    },
+  };
   const feeProvider = new EIP1559FeeProvider(ethNetwork.rpcUrl as string);
-  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountType, derivationPath);
+  const chainProvider = new EvmChainProvider(
+    { ...ethNetwork, chainId: 4 },
+    undefined,
+    feeProvider,
+    !ethNetwork.isTestnet
+  );
+  const walletOptions = { derivationPath, mnemonic };
+  const walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
+  const nftProvider = new EvmNftProvider(walletProvider, httpConfig);
+  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountType, derivationPath, nftProvider);
 }
 
-export function createRskClient(
-  network: Network,
-  mnemonic: string,
-  accountType: AccountType,
-  derivationPath: string
-) {
+export function createRskClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
   const rskNetwork = ChainNetworks.rsk[network];
   const feeProvider = new RpcFeeProvider(rskNetwork.rpcUrl, {
     slowMultiplier: 1,

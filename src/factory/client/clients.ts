@@ -6,7 +6,7 @@ import {
 } from '@chainify/bitcoin';
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
 import { Client, Fee } from '@chainify/client';
-import { EvmChainProvider, EvmSwapProvider, EvmWalletProvider } from '@chainify/evm';
+import { EvmChainProvider, EvmNftProvider, EvmSwapProvider, EvmWalletProvider } from '@chainify/evm';
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
 import { WebHidTransportCreator } from '@chainify/hw-ledger';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
@@ -87,11 +87,14 @@ export function createEVMClient(
   feeProvider: Fee,
   mnemonic: string,
   accountType: AccountType,
-  derivationPath: string
+  derivationPath: string,
+  nftProvider?: EvmNftProvider
 ) {
   // disable multicall for Testnets
   const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider, !ethereumNetwork.isTestnet);
   const swapProvider = new EvmSwapProvider({ contractAddress: HTLC_CONTRACT_ADDRESS });
+  const walletOptions = { derivationPath, mnemonic };
+  const walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
 
   if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
     const ledgerProvider = new EvmLedgerProvider(
@@ -105,12 +108,14 @@ export function createEVMClient(
 
     swapProvider.setWallet(ledgerProvider);
   } else {
-    const walletOptions = { derivationPath, mnemonic };
-    const walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
     swapProvider.setWallet(walletProvider);
   }
 
-  return new Client().connect(swapProvider);
+  if (nftProvider) {
+    return new Client().connect(swapProvider).connect(nftProvider);
+  } else {
+    return new Client().connect(swapProvider);
+  }
 }
 
 export function createNearClient(network: Network, mnemonic: string, derivationPath: string) {

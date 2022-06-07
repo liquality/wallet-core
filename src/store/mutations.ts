@@ -444,9 +444,9 @@ export default {
     payload: { nftAssets: NFTAsset[]; network: Network; walletId: WalletId; accountId?: AccountId }
   ) {
     const account = state.accounts[payload.walletId]![payload.network].find((a) => a.id === payload.accountId);
+
     if (account) {
       Vue.set(account, 'nftAssets', payload.nftAssets);
-      console.log('🚀 ~ file: mutations.ts ~ line 448 ~ account', account);
     }
   },
   SET_STARRED_NFTS(
