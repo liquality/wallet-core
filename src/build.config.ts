@@ -201,6 +201,12 @@ const config: WalletCoreConfig = {
         URL: 'https://lcd.terra.dev',
         chainID: 'columbus-5',
       },
+      jupiter: {
+        name: 'Jupiter',
+        icon: 'astroport.svg',
+        type: SwapProviderType.Jupiter,
+        URL: 'https://solana--mainnet.datahub.figment.io/apikey/d7d9844ccf72ad4fef9bc5caaa957a50',
+      },
       hop: {
         name: 'Hop',
         icon: 'hop.svg',

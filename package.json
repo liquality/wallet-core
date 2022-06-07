@@ -33,6 +33,7 @@
     "@hop-protocol/sdk": "0.0.1-beta.314",
     "@liquality/cryptoassets": "^1.13.2",
     "@metamask/eth-sig-util": "^4.0.1",
+    "@solana/web3.js": "^1.43.4",
     "@terra-money/terra.js": "2.1.18",
     "@thorchain/asgardex-util": "^0.10.0",
     "@uniswap/sdk-core": "^3.0.1",
