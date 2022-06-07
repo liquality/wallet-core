@@ -296,7 +296,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const routerAddress = this.getRouterAddress(fromThorchainAsset.chain);
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, swap.from, swap.toAccountId);
-    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw, network);
+    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw);
     const allowance = await erc20.allowance(fromAddress, routerAddress);
     const inputAmount = ethers.BigNumber.from(new BN(swap.fromAmount).toFixed());
     if (allowance.gte(inputAmount)) {
@@ -405,7 +405,7 @@ class ThorchainSwapProvider extends SwapProvider {
   async makeMemo({ network, walletId, swap }: NextSwapActionRequest<ThorchainSwapQuote>) {
     const toChain = cryptoassets[swap.to].chain;
     const toAddressRaw = await this.getSwapAddress(network, walletId, swap.to, swap.toAccountId);
-    const toAddress = chains[toChain].formatAddress(toAddressRaw, network);
+    const toAddress = chains[toChain].formatAddress(toAddressRaw);
     // Substract swap.receiveFee from toAmount as this is the minimum limit that you are going to receive
     const baseOutputAmount = baseAmount(
       new BigNumber(swap.toAmount).minus(swap.receiveFee),

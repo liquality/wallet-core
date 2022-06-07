@@ -5,7 +5,7 @@ import { Transaction, TxStatus } from '@chainify/types';
 import { chains } from '@liquality/cryptoassets';
 import * as ethers from 'ethers';
 import { SwapHistoryItem } from '../store/types';
-import cryptoassets from '../utils/cryptoassets';
+import { assetsAdapter } from '../utils/chainify';
 import { SwapProvider } from './SwapProvider';
 import { BaseSwapProviderConfig, NextSwapActionRequest, SwapRequest, SwapStatus } from './types';
 
@@ -27,7 +27,7 @@ export abstract class EvmSwapProvider extends SwapProvider {
 
   async approve(swapRequest: SwapRequest, approveMax = true) {
     const { quote, network, walletId } = swapRequest;
-    const fromAsset = cryptoassets[quote.from];
+    const fromAsset = assetsAdapter(quote.from)[0];
 
     // only ERC20 tokens allowed
     if (!fromAsset.contractAddress) {
@@ -40,9 +40,9 @@ export abstract class EvmSwapProvider extends SwapProvider {
     const tokenContract = Typechain.ERC20__factory.connect(fromAsset.contractAddress, signer);
 
     const userAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const userAddress = chains[fromAsset.chain].formatAddress(userAddressRaw, network);
+    const userAddress = chains[fromAsset.chain].formatAddress(userAddressRaw);
 
-    const allowance = await tokenContract.allowance(userAddress.toLowerCase(), this.config.routerAddress);
+    const allowance = await tokenContract.allowance(userAddress, this.config.routerAddress);
     // if allowance is enough, no approve is needed
     if (allowance.gte(quote.fromAmount)) {
       return {
