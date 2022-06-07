@@ -51,7 +51,7 @@ export const ChainNetworks = {
   [ChainId.Polygon]: {
     testnet: {
       ...EvmNetworks.polygon_testnet,
-      rpcUrl: 'https://rpc-mumbai.matic.today',
+      rpcUrl: 'https://matic-testnet-archive-rpc.bwarelabs.com',
     },
     mainnet: {
       ...EvmNetworks.polygon_mainnet,
@@ -95,7 +95,11 @@ export const ChainNetworks = {
   },
 
   [ChainId.Terra]: {
-    testnet: TerraNetworks.terra_testnet,
+    testnet: {
+      ...TerraNetworks.terra_testnet,
+      rpcUrl: 'https://pisco-lcd.terra.dev',
+      helperUrl: 'https://pisco-fcd.terra.dev',
+    },
     mainnet: {
       ...TerraNetworks.terra_mainnet,
       rpcUrl: process.env.VUE_APP_TERRA_MAINNET_URL || TerraNetworks.terra_mainnet.rpcUrl,

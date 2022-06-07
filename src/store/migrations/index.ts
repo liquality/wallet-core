@@ -8,9 +8,11 @@ import { accountsChainsSetEnabled } from './15_accounts_chains_set_enabled';
 import { enableTerraChain } from './16_enable_terra_chain';
 import { removeInjectionEnabled } from './17_remove_injection_enabled';
 import { enableAvalancheChain } from './18_enable_avalanche_chain';
-import { enableOptimismChain } from './19_enable_optimism_chain';
+import { removeExistingLedgerAccounts } from './19_remove_existing_ledger_accounts';
 // Migrations
 import { firstMigration } from './1_first_migration';
+import { addMissingAccounts } from './20_fix_accounts';
+import { enableOptimismChain } from './21_enable_optimism_chain';
 import { setDefaultAssets } from './2_set_default_assets';
 import { addNetworkCustomTokens } from './3_add_network_custom_tokens';
 import { fixRSKTokenInjectedAsset } from './4_fix_rsk_token_injected_asset';
@@ -39,7 +41,9 @@ const migrations = [
   enableTerraChain, // v16
   removeInjectionEnabled, // v17
   enableAvalancheChain, // v18
-  enableOptimismChain, // v19
+  removeExistingLedgerAccounts, // v19
+  addMissingAccounts, // v20
+  enableOptimismChain, // v21
 ];
 
 const LATEST_VERSION = migrations[migrations.length - 1].version;

@@ -8,7 +8,8 @@ import {getStatusLabel, getStep} from "../../utils/history";
 
 describe('sendTransaction tests', () => {
   jest.setTimeout(90000);
-  const wallet = setupWallet(defaultWalletOptions);
+  const createNotification = jest.fn();
+  const wallet = setupWallet({...defaultWalletOptions, createNotification });
   let TEST_MNEMONIC = Process.env.TEST_MNEMONIC;
   if (!TEST_MNEMONIC) {
     throw new Error('Please set the TEST_MNEMONIC environment variable');

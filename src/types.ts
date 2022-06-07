@@ -1,9 +1,4 @@
-import { BitcoinTypes } from '@chainify/bitcoin';
-import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
-import { EvmLedgerProvider } from '@chainify/evm-ledger';
-import { Network as ChainifyNetwork } from '@chainify/types';
-import { ChainId } from '@liquality/cryptoassets';
-import { Network, RootState } from './store/types';
+import { RootState } from './store/types';
 
 export interface ParsedCipherText {
   ct: string;
@@ -26,19 +21,4 @@ export interface WalletOptions {
   };
 
   createNotification(notification: Notification): void;
-
-  createBitcoinLedgerProvider?(
-    network: Network,
-    bitcoinNetwork: BitcoinTypes.BitcoinNetwork,
-    addressType: string,
-    baseDerivationPath: string
-  ): BitcoinLedgerProvider;
-
-  createEthereumLedgerProvider?(
-    network: Network,
-    ethereumNetwork: ChainifyNetwork,
-    chain: ChainId,
-    derivationPath: string,
-    hardfork?: string
-  ): EvmLedgerProvider;
 }

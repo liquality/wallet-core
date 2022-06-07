@@ -5,7 +5,7 @@ import { Networks } from '../../utils/networks';
 import { AccountType } from '../types';
 
 export const enableOptimismChain = {
-  version: 19,
+  version: 21,
   migrate: async (state: any) => {
     const accounts: any = {};
     const enabledChains: any = {};

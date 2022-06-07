@@ -107,7 +107,8 @@ export default {
       }
 
       const { mnemonic } = wallet;
-      const client = createClient(asset, network, mnemonic, _accountType, derivationPath);
+
+      const client = createClient(asset, network, mnemonic, _accountType, derivationPath, account);
       clientCache[cacheKey] = client;
 
       return client;

@@ -47,7 +47,7 @@ const initialState: RootState = {
     notAskAgain: false,
   },
   experiments: {},
-  watsNewModalVersion: '',
+  whatsNewModalVersion: '',
   enabledChains: {},
 };
 
