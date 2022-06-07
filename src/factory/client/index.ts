@@ -24,8 +24,8 @@ export const createClient = (
   const assetData = cryptoassets[asset];
 
   if (!assetData) {
-    console.error('Asset ', asset);
-    console.error('Asset Data ', assetData);
+    console.info('Asset ', asset);
+    console.info('Asset Data ', assetData);
     throw new Error('Asset not found');
   }
 
