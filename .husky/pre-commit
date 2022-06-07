@@ -4,3 +4,4 @@
 yarn lint
 yarn build
 yarn test
+yarn unlink ../wallet-core

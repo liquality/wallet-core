@@ -57,7 +57,18 @@ export interface AccountDefinition {
   updatedAt?: number;
   color: string;
   enabled?: boolean;
+  chainCode?: string;
+  publicKey?: string;
 }
+
+export interface AccountInfo {
+  derivationPath: string;
+  type: string;
+  chainCode?: string;
+  publicKey?: string;
+  address?: string;
+}
+
 
 export interface Account extends AccountDefinition {
   id: AccountId;
@@ -68,7 +79,6 @@ export interface Account extends AccountDefinition {
   chainCode?: string;
   publicKey?: string;
 }
-
 export interface PairData {
   from: Asset;
   to: Asset;

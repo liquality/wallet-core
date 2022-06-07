@@ -95,5 +95,22 @@
   "packageManager": "yarn@3.1.1",
   "publishConfig": {
     "access": "public"
+  },
+  "resolutions": {
+    "chainify": "portal:/Users/bradley/Code/liquality/chainify",
+    "@chainify/bitcoin": "portal:/Users/bradley/Code/liquality/chainify/packages/bitcoin",
+    "@chainify/bitcoin-ledger": "portal:/Users/bradley/Code/liquality/chainify/packages/bitcoin-ledger",
+    "@chainify/client": "portal:/Users/bradley/Code/liquality/chainify/packages/client",
+    "@chainify/errors": "portal:/Users/bradley/Code/liquality/chainify/packages/errors",
+    "@chainify/evm": "portal:/Users/bradley/Code/liquality/chainify/packages/evm",
+    "@chainify/evm-contracts": "portal:/Users/bradley/Code/liquality/chainify/packages/evm-contracts",
+    "@chainify/evm-ledger": "portal:/Users/bradley/Code/liquality/chainify/packages/evm-ledger",
+    "@chainify/hw-ledger": "portal:/Users/bradley/Code/liquality/chainify/packages/hw-ledger",
+    "@chainify/logger": "portal:/Users/bradley/Code/liquality/chainify/packages/logger",
+    "@chainify/near": "portal:/Users/bradley/Code/liquality/chainify/packages/near",
+    "@chainify/solana": "portal:/Users/bradley/Code/liquality/chainify/packages/solana",
+    "@chainify/terra": "portal:/Users/bradley/Code/liquality/chainify/packages/terra",
+    "@chainify/types": "portal:/Users/bradley/Code/liquality/chainify/packages/types",
+    "@chainify/utils": "portal:/Users/bradley/Code/liquality/chainify/packages/utils"
   }
 }

@@ -1,6 +1,5 @@
-import { Nullable } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
-import { Account, AccountType, Asset, Network } from '../../store/types';
+import { AccountInfo, Asset, Network } from '../../store/types';
 import cryptoassets from '../../utils/cryptoassets';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import {
@@ -17,34 +16,32 @@ export const createClient = (
   asset: Asset,
   network: Network,
   mnemonic: string,
-  accountType: AccountType,
-  derivationPath: string,
-  account?: Nullable<Account>
+  accountInfo: AccountInfo
 ) => {
   const assetData = cryptoassets[asset];
 
   switch (assetData.chain) {
     case ChainId.Bitcoin:
-      return createBtcClient(network, mnemonic, accountType, derivationPath, account);
+      return createBtcClient(network, mnemonic, accountInfo);
     case ChainId.Rootstock:
-      return createRskClient(network, mnemonic, accountType, derivationPath);
+      return createRskClient(network, mnemonic, accountInfo);
     case ChainId.BinanceSmartChain:
-      return createBSCClient(network, mnemonic, derivationPath);
+      return createBSCClient(network, mnemonic, accountInfo);
     case ChainId.Polygon:
-      return createPolygonClient(network, mnemonic, derivationPath);
+      return createPolygonClient(network, mnemonic, accountInfo);
     case ChainId.Arbitrum:
-      return createArbitrumClient(network, mnemonic, derivationPath);
+      return createArbitrumClient(network, mnemonic, accountInfo);
     case ChainId.Avalanche:
-      return createAvalancheClient(network, mnemonic, derivationPath);
+      return createAvalancheClient(network, mnemonic, accountInfo);
     case ChainId.Fuse:
-      return createFuseClient(network, mnemonic, derivationPath);
+      return createFuseClient(network, mnemonic, accountInfo);
     case ChainId.Near:
-      return createNearClient(network, mnemonic, derivationPath);
+      return createNearClient(network, mnemonic, accountInfo);
     case ChainId.Terra:
-      return createTerraClient(network, mnemonic, derivationPath);
+      return createTerraClient(network, mnemonic, accountInfo);
     case ChainId.Solana:
-      return createSolanaClient(network, mnemonic, derivationPath);
+      return createSolanaClient(network, mnemonic, accountInfo);
     default:
-      return createEthClient(network, mnemonic, accountType, derivationPath);
+      return createEthClient(network, mnemonic, accountInfo);
   }
 };

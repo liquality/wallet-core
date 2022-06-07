@@ -7,7 +7,7 @@ import { createClient } from '../factory';
 import { cryptoToFiat } from '../utils/coinFormatter';
 import { getDerivationPath } from '../utils/derivationPath';
 import { Networks } from '../utils/networks';
-import { Account, AccountId, AccountType, Asset as AssetType, HistoryItem, Network, WalletId } from './types';
+import { Account, AccountId, AccountInfo, AccountType, Asset as AssetType, HistoryItem, Network, WalletId } from './types';
 
 const clientCache: { [key: string]: Client } = {};
 
@@ -104,8 +104,14 @@ export default {
       }
 
       const { mnemonic } = wallet;
-
-      const client = createClient(asset, network, mnemonic, _accountType, derivationPath, account);
+      const accountInfo: AccountInfo = { 
+        type: _accountType, 
+        derivationPath,
+        chainCode: account?.chainCode,
+        publicKey: account?.publicKey,
+        address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined
+      }
+      const client = createClient(asset, network, mnemonic, accountInfo);
       clientCache[cacheKey] = client;
 
       return client;

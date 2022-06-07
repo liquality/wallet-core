@@ -1,24 +1,22 @@
 import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
-import { AccountType, Network } from '../../store/types';
+import { AccountInfo, Network } from '../../store/types';
 import { ChainNetworks } from '../../utils/networks';
 import { createEVMClient } from './clients';
 
 export function createEthClient(
   network: Network,
   mnemonic: string,
-  accountType: AccountType,
-  derivationPath: string
+  accountInfo: AccountInfo
 ) {
   const ethNetwork = ChainNetworks.ethereum[network];
   const feeProvider = new EIP1559FeeProvider(ethNetwork.rpcUrl as string);
-  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountType, derivationPath);
+  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountInfo);
 }
 
 export function createRskClient(
   network: Network,
   mnemonic: string,
-  accountType: AccountType,
-  derivationPath: string
+  accountInfo: AccountInfo
 ) {
   const rskNetwork = ChainNetworks.rsk[network];
   const feeProvider = new RpcFeeProvider(rskNetwork.rpcUrl, {
@@ -27,10 +25,10 @@ export function createRskClient(
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(rskNetwork, feeProvider, mnemonic, accountType, derivationPath);
+  return createEVMClient(rskNetwork, feeProvider, mnemonic, accountInfo);
 }
 
-export function createBSCClient(network: Network, mnemonic: string, derivationPath: string) {
+export function createBSCClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const bscNetwork = ChainNetworks.bsc[network];
 
   const feeProvider = new RpcFeeProvider(bscNetwork.rpcUrl as string, {
@@ -39,10 +37,10 @@ export function createBSCClient(network: Network, mnemonic: string, derivationPa
     fastMultiplier: 2.2,
   });
 
-  return createEVMClient(bscNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(bscNetwork, feeProvider, mnemonic, accountInfo);
 }
 
-export function createPolygonClient(network: Network, mnemonic: string, derivationPath: string) {
+export function createPolygonClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const polygonNetwork = ChainNetworks.polygon[network];
 
   const feeProvider =
@@ -54,10 +52,10 @@ export function createPolygonClient(network: Network, mnemonic: string, derivati
           fastMultiplier: 2.2,
         });
 
-  return createEVMClient(polygonNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(polygonNetwork, feeProvider, mnemonic, accountInfo);
 }
 
-export function createArbitrumClient(network: Network, mnemonic: string, derivationPath: string) {
+export function createArbitrumClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const arbitrumNetwork = ChainNetworks.arbitrum[network];
 
   const feeProvider = new RpcFeeProvider(arbitrumNetwork.rpcUrl as string, {
@@ -66,10 +64,10 @@ export function createArbitrumClient(network: Network, mnemonic: string, derivat
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(arbitrumNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(arbitrumNetwork, feeProvider, mnemonic, accountInfo);
 }
 
-export function createAvalancheClient(network: Network, mnemonic: string, derivationPath: string) {
+export function createAvalancheClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const avalancheNetwork = ChainNetworks.avalanche[network];
 
   const feeProvider = new RpcFeeProvider(avalancheNetwork.rpcUrl as string, {
@@ -78,10 +76,10 @@ export function createAvalancheClient(network: Network, mnemonic: string, deriva
     fastMultiplier: 2.2,
   });
 
-  return createEVMClient(avalancheNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(avalancheNetwork, feeProvider, mnemonic, accountInfo);
 }
 
-export function createFuseClient(network: Network, mnemonic: string, derivationPath: string) {
+export function createFuseClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const fuseNetwork = ChainNetworks.fuse[network];
 
   const feeProvider = new RpcFeeProvider(fuseNetwork.rpcUrl as string, {
@@ -90,5 +88,5 @@ export function createFuseClient(network: Network, mnemonic: string, derivationP
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(fuseNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath);
+  return createEVMClient(fuseNetwork, feeProvider, mnemonic, accountInfo);
 }
