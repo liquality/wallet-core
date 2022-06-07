@@ -12,6 +12,7 @@ import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { AccountId, Asset, Network, WalletId } from '../../store/types';
 import { timestamp, wait } from '../../store/utils';
+import { assetsAdapter } from '../../utils/chainify';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
@@ -174,11 +175,11 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     const messageHex = Buffer.from(message, 'utf8').toString('hex');
     const secret = await fromClient.swap.generateSecret(messageHex);
     const secretHash = sha256(secret);
-    const asset = cryptoassets[quote.from];
+    const asset = assetsAdapter(quote.from)[0];
 
     const fromFundTx = await fromClient.swap.initiateSwap(
       {
-        asset: { ...asset, isNative: asset.type === 'native' } as ChainifyAsset,
+        asset,
         value: new BN(quote.fromAmount),
         recipientAddress: quote.fromCounterPartyAddress,
         refundAddress: quote.fromAddress,
@@ -500,8 +501,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   private async refundSwap({ swap, network, walletId }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
     const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
     await this.sendLedgerNotification(swap.fromAccountId, 'Signing required to refund the swap.');
-    const fromAsset = cryptoassets[swap.from];
-    const asset = { ...fromAsset, isNative: fromAsset.type === 'native' } as ChainifyAsset;
+    const asset = assetsAdapter(swap.from)[0];
     const refundTx = await fromClient.swap.refundSwap(
       {
         asset,
@@ -657,9 +657,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
 
     await this.sendLedgerNotification(swap.toAccountId, 'Signing required to claim the swap.');
 
-    const toAsset = cryptoassets[swap.to];
-    const asset = { ...toAsset, isNative: toAsset.type === 'native' } as ChainifyAsset;
-
+    const asset = assetsAdapter(swap.to)[0];
     const toClaimTx = await toClient.swap.claimSwap(
       {
         asset,
