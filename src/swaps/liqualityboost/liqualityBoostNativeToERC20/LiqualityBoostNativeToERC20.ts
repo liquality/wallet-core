@@ -235,7 +235,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       ...this.liqualitySwapProvider.statuses,
-      ...this.oneinchSwapProvider.statuses,
+      ...this.sovrynSwapProvider.statuses,
       CONFIRM_COUNTER_PARTY_INITIATION: {
         ...this.liqualitySwapProvider.statuses.CONFIRM_COUNTER_PARTY_INITIATION,
         label: 'Locking {bridgeAsset}',
@@ -256,12 +256,12 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
         label: 'Claiming {bridgeAsset}',
       },
       APPROVE_CONFIRMED: {
-        ...this.oneinchSwapProvider.statuses.APPROVE_CONFIRMED,
-        step: 3,
+        ...this.sovrynSwapProvider.statuses.APPROVE_CONFIRMED,
+        step: 5,
         label: 'Swapping {bridgeAsset} for {to}',
       },
       WAITING_FOR_SWAP_CONFIRMATIONS: {
-        ...this.oneinchSwapProvider.statuses.WAITING_FOR_SWAP_CONFIRMATIONS,
+        ...this.sovrynSwapProvider.statuses.WAITING_FOR_SWAP_CONFIRMATIONS,
         notification() {
           return {
             message: 'Engaging Automated Market Maker',
@@ -274,7 +274,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
         step: 4,
       },
       FAILED: {
-        ...this.oneinchSwapProvider.statuses.FAILED,
+        ...this.sovrynSwapProvider.statuses.FAILED,
         step: 4,
       },
     };
