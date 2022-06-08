@@ -297,10 +297,10 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     { network, walletId, swap }: NextSwapActionRequest<LiqualitySwapHistoryItem>
   ) {
     switch (swap.status) {
-      case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
+      case 'WAITING_FOR_APPROVE_CONFIRMATIONS_LSP':
         return withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
 
-      case 'APPROVE_CONFIRMED':
+      case 'APPROVE_CONFIRMED_LSP':
         return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
           this.initiateSwap({ quote: swap, network, walletId })
         );
@@ -342,12 +342,12 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     return {
       ...super._getStatuses(),
       INITIATED: {
-        step: 1,
+        step: 2,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
       },
       INITIATION_REPORTED: {
-        step: 1,
+        step: 2,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
         notification() {
@@ -357,13 +357,13 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       INITIATION_CONFIRMED: {
-        step: 1,
+        step: 2,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
       },
 
       CONFIRM_COUNTER_PARTY_INITIATION: {
-        step: 2,
+        step: 3,
         label: 'Locking {to}',
         filterStatus: 'PENDING',
         notification(swap: any) {
@@ -374,7 +374,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       },
 
       READY_TO_CLAIM: {
-        step: 3,
+        step: 4,
         label: 'Claiming {to}',
         filterStatus: 'PENDING',
         notification() {
@@ -384,28 +384,28 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       WAITING_FOR_CLAIM_CONFIRMATIONS: {
-        step: 3,
+        step: 4,
         label: 'Claiming {to}',
         filterStatus: 'PENDING',
       },
       WAITING_FOR_REFUND: {
-        step: 3,
+        step: 4,
         label: 'Pending Refund',
         filterStatus: 'PENDING',
       },
       GET_REFUND: {
-        step: 3,
+        step: 4,
         label: 'Refunding {from}',
         filterStatus: 'PENDING',
       },
       WAITING_FOR_REFUND_CONFIRMATIONS: {
-        step: 3,
+        step: 4,
         label: 'Refunding {from}',
         filterStatus: 'PENDING',
       },
 
       REFUNDED: {
-        step: 4,
+        step: 5,
         label: 'Refunded',
         filterStatus: 'REFUNDED',
         notification(swap: any) {
@@ -415,7 +415,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       SUCCESS: {
-        step: 4,
+        step: 5,
         label: 'Completed',
         filterStatus: 'COMPLETED',
         notification(swap: any) {
@@ -425,7 +425,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       QUOTE_EXPIRED: {
-        step: 4,
+        step: 5,
         label: 'Quote Expired',
         filterStatus: 'REFUNDED',
       },
@@ -449,7 +449,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   }
 
   protected _totalSteps(): number {
-    return 4;
+    return 5;
   }
 
   private async _getQuote({ from, to, amount }: { from: Asset; to: Asset; amount: string }) {
