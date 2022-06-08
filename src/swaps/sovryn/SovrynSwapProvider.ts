@@ -14,6 +14,7 @@ import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem } from '../../store/types';
 import { isERC20 } from '../../utils/asset';
+import { assetsAdapter } from '../../utils/chainify';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
@@ -144,13 +145,9 @@ class SovrynSwapProvider extends SwapProvider {
   }
 
   async buildApprovalTx({ network, walletId, quote }: SwapRequest<SovrynSwapHistoryItem>) {
-    const fromInfo = cryptoassets[quote.from];
+    const fromInfo = assetsAdapter(quote.from)[0];
     const toInfo = cryptoassets[quote.to];
-    const erc20 = new ethers.Contract(
-      fromInfo.contractAddress!.toLowerCase(),
-      ERC20.abi,
-      this._getApi(network, quote.from)
-    );
+    const erc20 = new ethers.Contract(String(fromInfo.contractAddress), ERC20.abi, this._getApi(network, quote.from));
 
     const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
     const inputAmountHex = inputAmount.toHexString();
@@ -169,7 +166,7 @@ class SovrynSwapProvider extends SwapProvider {
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
-      to: fromInfo.contractAddress!,
+      to: String(fromInfo.contractAddress),
       value: new BN(0),
       data: encodedData,
       fee: quote.fee,

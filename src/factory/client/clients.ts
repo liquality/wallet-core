@@ -6,7 +6,7 @@ import {
 } from '@chainify/bitcoin';
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
 import { Client, Fee } from '@chainify/client';
-import { EvmChainProvider, EvmNftProvider, EvmSwapProvider, EvmWalletProvider } from '@chainify/evm';
+import { EvmChainProvider, EvmNftProvider, EvmSwapProvider, EvmTypes, EvmWalletProvider } from '@chainify/evm';
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
 import { WebHidTransportCreator } from '@chainify/hw-ledger';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
@@ -15,7 +15,6 @@ import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider 
 import { Network as ChainifyNetwork, Nullable } from '@chainify/types';
 import buildConfig from '../../build.config';
 import { Account, AccountType, Network } from '../../store/types';
-import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
 
@@ -95,6 +94,11 @@ export function createEVMClient(
   const swapProvider = new EvmSwapProvider({ contractAddress: HTLC_CONTRACT_ADDRESS });
   const walletOptions = { derivationPath, mnemonic };
   const walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
+  swapOptions: EvmTypes.EvmSwapOptions
+) {
+  // disable multicall for all networks until it's utilized properly
+  const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider, false);
+  const swapProvider = new EvmSwapProvider(swapOptions);
 
   if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
     const ledgerProvider = new EvmLedgerProvider(

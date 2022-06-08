@@ -12,6 +12,7 @@ import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { AccountId, Asset, Network, WalletId } from '../../store/types';
 import { timestamp, wait } from '../../store/utils';
+import { assetsAdapter } from '../../utils/chainify';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
@@ -171,11 +172,11 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     const messageHex = Buffer.from(message, 'utf8').toString('hex');
     const secret = await fromClient.swap.generateSecret(messageHex);
     const secretHash = sha256(secret);
-    const asset = cryptoassets[quote.from];
+    const asset = assetsAdapter(quote.from)[0];
 
     const fromFundTx = await fromClient.swap.initiateSwap(
       {
-        asset: { ...asset, isNative: asset.type === 'native' } as ChainifyAsset,
+        asset,
         value: new BN(quote.fromAmount),
         recipientAddress: quote.fromCounterPartyAddress,
         refundAddress: quote.fromAddress,
@@ -293,10 +294,10 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     { network, walletId, swap }: NextSwapActionRequest<LiqualitySwapHistoryItem>
   ) {
     switch (swap.status) {
-      case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
+      case 'WAITING_FOR_APPROVE_CONFIRMATIONS_LSP':
         return withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
 
-      case 'APPROVE_CONFIRMED':
+      case 'APPROVE_CONFIRMED_LSP':
         return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
           this.initiateSwap({ quote: swap, network, walletId })
         );
@@ -338,12 +339,12 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     return {
       ...super._getStatuses(),
       INITIATED: {
-        step: 1,
+        step: 2,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
       },
       INITIATION_REPORTED: {
-        step: 1,
+        step: 2,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
         notification() {
@@ -353,13 +354,13 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       INITIATION_CONFIRMED: {
-        step: 1,
+        step: 2,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
       },
 
       CONFIRM_COUNTER_PARTY_INITIATION: {
-        step: 2,
+        step: 3,
         label: 'Locking {to}',
         filterStatus: 'PENDING',
         notification(swap: any) {
@@ -370,7 +371,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       },
 
       READY_TO_CLAIM: {
-        step: 3,
+        step: 4,
         label: 'Claiming {to}',
         filterStatus: 'PENDING',
         notification() {
@@ -380,28 +381,28 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       WAITING_FOR_CLAIM_CONFIRMATIONS: {
-        step: 3,
+        step: 4,
         label: 'Claiming {to}',
         filterStatus: 'PENDING',
       },
       WAITING_FOR_REFUND: {
-        step: 3,
+        step: 4,
         label: 'Pending Refund',
         filterStatus: 'PENDING',
       },
       GET_REFUND: {
-        step: 3,
+        step: 4,
         label: 'Refunding {from}',
         filterStatus: 'PENDING',
       },
       WAITING_FOR_REFUND_CONFIRMATIONS: {
-        step: 3,
+        step: 4,
         label: 'Refunding {from}',
         filterStatus: 'PENDING',
       },
 
       REFUNDED: {
-        step: 4,
+        step: 5,
         label: 'Refunded',
         filterStatus: 'REFUNDED',
         notification(swap: any) {
@@ -411,7 +412,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       SUCCESS: {
-        step: 4,
+        step: 5,
         label: 'Completed',
         filterStatus: 'COMPLETED',
         notification(swap: any) {
@@ -421,7 +422,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       QUOTE_EXPIRED: {
-        step: 4,
+        step: 5,
         label: 'Quote Expired',
         filterStatus: 'REFUNDED',
       },
@@ -445,7 +446,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   }
 
   protected _totalSteps(): number {
-    return 4;
+    return 5;
   }
 
   private async _getQuote({ from, to, amount }: { from: Asset; to: Asset; amount: string }) {
@@ -497,8 +498,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   private async refundSwap({ swap, network, walletId }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
     const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
     await this.sendLedgerNotification(swap.fromAccountId, 'Signing required to refund the swap.');
-    const fromAsset = cryptoassets[swap.from];
-    const asset = { ...fromAsset, isNative: fromAsset.type === 'native' } as ChainifyAsset;
+    const asset = assetsAdapter(swap.from)[0];
     const refundTx = await fromClient.swap.refundSwap(
       {
         asset,
@@ -654,9 +654,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
 
     await this.sendLedgerNotification(swap.toAccountId, 'Signing required to claim the swap.');
 
-    const toAsset = cryptoassets[swap.to];
-    const asset = { ...toAsset, isNative: toAsset.type === 'native' } as ChainifyAsset;
-
+    const asset = assetsAdapter(swap.to)[0];
     const toClaimTx = await toClient.swap.claimSwap(
       {
         asset,
@@ -745,31 +743,31 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
 
   private feeUnits = {
     [LiqualityTxTypes.SWAP_INITIATION]: {
-      ETH: 165000,
-      RBTC: 165000,
-      BNB: 165000,
-      NEAR: 10000000000000,
+      ETH: 165_000,
+      RBTC: 165_000,
+      BNB: 165_000,
+      NEAR: 10_000_000_000_000,
       SOL: 2,
-      LUNA: 800000,
-      UST: 800000,
-      MATIC: 165000,
-      ERC20: 600000 + 94500, // Contract creation + erc20 transfer
-      ARBETH: 2400000,
-      AVAX: 165000,
+      LUNA: 800_000,
+      UST: 800_000,
+      MATIC: 165_000,
+      ERC20: 200_000, // Contract creation + erc20 transfer
+      ARBETH: 2_400_000,
+      AVAX: 165_000,
     },
     [LiqualityTxTypes.SWAP_CLAIM]: {
       BTC: 143,
-      ETH: 45000,
-      RBTC: 45000,
-      BNB: 45000,
-      MATIC: 45000,
-      NEAR: 8000000000000,
+      ETH: 90_000,
+      RBTC: 90_000,
+      BNB: 90_000,
+      MATIC: 90_000,
+      NEAR: 8_000_000_000_000,
       SOL: 1,
-      LUNA: 800000,
-      UST: 800000,
-      ERC20: 100000,
-      ARBETH: 680000,
-      AVAX: 45000,
+      LUNA: 800_000,
+      UST: 800_000,
+      ERC20: 110_000,
+      ARBETH: 680_000,
+      AVAX: 90_000,
     },
   };
 }

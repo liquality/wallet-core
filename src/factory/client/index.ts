@@ -23,6 +23,12 @@ export const createClient = (
 ) => {
   const assetData = cryptoassets[asset];
 
+  if (!assetData) {
+    console.info('Asset ', asset);
+    console.info('Asset Data ', assetData);
+    throw new Error('Asset not found');
+  }
+
   switch (assetData.chain) {
     case ChainId.Bitcoin:
       return createBtcClient(network, mnemonic, accountType, derivationPath, account);

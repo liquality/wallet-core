@@ -228,7 +228,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
   ) {
     let updates: Partial<SwapHistoryItem> | undefined;
 
-    if (swap.status === 'WAITING_FOR_SWAP_CONFIRMATIONS') {
+    if (swap.status === 'APPROVE_CONFIRMED_LSP') {
       updates = await withInterval(async () =>
         this.finalizeAutomatedMarketMakerAndStartLiqualitySwap({
           swapLSP: this.swapLiqualityFormat(swap),
@@ -284,20 +284,25 @@ class LiqualityBoostERC20toNative extends SwapProvider {
           };
         },
       },
+      APPROVE_CONFIRMED_LSP: {
+        step: 2,
+        label: 'Locking {from}',
+        filterStatus: 'PENDING',
+      },
       // Liquality swap states
       INITIATED: {
         ...this.liqualitySwapProvider.statuses.INITIATED,
-        step: 2,
+        step: 3,
         label: 'Locking {bridgeAsset}',
       },
       INITIATION_REPORTED: {
         ...this.liqualitySwapProvider.statuses.INITIATION_REPORTED,
-        step: 2,
+        step: 3,
         label: 'Locking {bridgeAsset}',
       },
       INITIATION_CONFIRMED: {
         ...this.liqualitySwapProvider.statuses.INITIATION_CONFIRMED,
-        step: 2,
+        step: 3,
         label: 'Locking {bridgeAsset}',
       },
 
@@ -311,46 +316,46 @@ class LiqualityBoostERC20toNative extends SwapProvider {
             } to escrow`,
           };
         },
-        step: 3,
+        step: 4,
       },
       READY_TO_CLAIM: {
         ...this.liqualitySwapProvider.statuses.READY_TO_CLAIM,
-        step: 4,
+        step: 5,
       },
       WAITING_FOR_CLAIM_CONFIRMATIONS: {
         ...this.liqualitySwapProvider.statuses.WAITING_FOR_CLAIM_CONFIRMATIONS,
-        step: 4,
+        step: 5,
       },
       WAITING_FOR_REFUND: {
         ...this.liqualitySwapProvider.statuses.WAITING_FOR_REFUND,
-        step: 4,
+        step: 5,
       },
       GET_REFUND: {
         ...this.liqualitySwapProvider.statuses.GET_REFUND,
         label: 'Refunding {bridgeAsset}',
-        step: 4,
+        step: 5,
       },
       WAITING_FOR_REFUND_CONFIRMATIONS: {
         ...this.liqualitySwapProvider.statuses.WAITING_FOR_REFUND_CONFIRMATIONS,
         label: 'Refunding {bridgeAsset}',
-        step: 4,
+        step: 5,
       },
       // final states
       REFUNDED: {
         ...this.liqualitySwapProvider.statuses.REFUNDED,
-        step: 5,
+        step: 6,
       },
       SUCCESS: {
         ...this.liqualitySwapProvider.statuses.SUCCESS,
-        step: 5,
+        step: 6,
       },
       QUOTE_EXPIRED: {
         ...this.liqualitySwapProvider.statuses.QUOTE_EXPIRED,
-        step: 5,
+        step: 6,
       },
       FAILED: {
         ...this.sovrynSwapProvider.statuses.FAILED,
-        step: 5,
+        step: 6,
       },
     };
   }
@@ -371,11 +376,22 @@ class LiqualityBoostERC20toNative extends SwapProvider {
   }
 
   protected _timelineDiagramSteps(): string[] {
-    return ['APPROVE', 'SWAP', 'INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
+    // remove approval step because bridge asset is always native and doesn't need approval
+    const lspTimeline = this.liqualitySwapProvider.timelineDiagramSteps;
+    if (lspTimeline[0] === 'APPROVE') {
+      lspTimeline.shift();
+    }
+
+    return this.sovrynSwapProvider.timelineDiagramSteps.concat(lspTimeline);
   }
 
   protected _totalSteps(): number {
-    return 6;
+    let lspSteps = this.liqualitySwapProvider.totalSteps;
+    if (this.liqualitySwapProvider.timelineDiagramSteps[0] === 'APPROVE') {
+      lspSteps -= 1;
+    }
+
+    return this.sovrynSwapProvider.totalSteps + lspSteps;
   }
 
   private swapLiqualityFormat(swap: any): LiqualitySwapHistoryItem {
