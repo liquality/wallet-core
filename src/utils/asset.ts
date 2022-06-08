@@ -278,3 +278,34 @@ export const fetchTerraToken = async (address: string) => {
     decimals: 6,
   };
 };
+
+const NFT_ASSETS_MAP: { [key in ChainId]?: { [key in Network]: { url: string; transfer: string } } } = {
+  ethereum: {
+    testnet: {
+      url: `https://testnet.opensea.io/`,
+      transfer: `https://testnets.opensea.io/assets/{contract_address}/{token_id}`,
+    },
+    mainnet: {
+      url: `https://opensea.io/`,
+      transfer: `https://opensea.io/assets/{contract_address}/{token_id}`,
+    },
+  },
+};
+
+export const getNftTransferLink = (asset: Asset, network: Network, tokenId: string, contract_address: string) => {
+  const chainId = cryptoassets[asset].chain;
+  const transfer = NFT_ASSETS_MAP[chainId]![network].transfer;
+
+  return transfer.replace('{contract_address}', contract_address).replace('{token_id}', tokenId);
+};
+
+export const getNftLink = (asset: Asset, network: Network) => {
+  const chainId = cryptoassets[asset].chain;
+  const url = NFT_ASSETS_MAP[chainId]![network].url;
+
+  return url;
+};
+
+export const openseaLink = (network: Network) => {
+  return `https://${network === 'testnet' ? 'testnets.' : ''}opensea.io/`;
+};

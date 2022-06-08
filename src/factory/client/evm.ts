@@ -1,3 +1,4 @@
+import { ClientTypes } from '@chainify/client';
 import { EIP1559FeeProvider, EvmChainProvider, EvmNftProvider, EvmWalletProvider, RpcFeeProvider } from '@chainify/evm';
 import { AccountType, Network } from '../../store/types';
 import { ChainNetworks } from '../../utils/networks';
@@ -5,7 +6,7 @@ import { createEVMClient } from './clients';
 
 export function createEthClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
   const ethNetwork = ChainNetworks.ethereum[network];
-  const httpConfig: any = {
+  const httpConfig: ClientTypes.AxiosRequestConfig = {
     baseURL: ethNetwork.nftProviderUrl,
     responseType: 'text',
     transformResponse: undefined,

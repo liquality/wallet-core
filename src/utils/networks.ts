@@ -17,8 +17,8 @@ export const ChainNetworks = {
 
   [ChainId.Ethereum]: {
     testnet: {
-      ...EvmNetworks.ropsten,
-      rpcUrl: `https://ropsten.infura.io/v3/${buildConfig.infuraApiKey}`,
+      ...EvmNetworks.rinkeby,
+      rpcUrl: `https://rinkeby.infura.io/v3/${buildConfig.infuraApiKey}`,
       nftProviderUrl: 'https://rinkeby-api.opensea.io/api/v1/',
     },
     mainnet: {
