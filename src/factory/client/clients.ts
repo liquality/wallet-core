@@ -87,14 +87,8 @@ export function createEVMClient(
   mnemonic: string,
   accountType: AccountType,
   derivationPath: string,
+  swapOptions: EvmTypes.EvmSwapOptions,
   nftProvider?: EvmNftProvider
-) {
-  // disable multicall for Testnets
-  const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider, !ethereumNetwork.isTestnet);
-  const swapProvider = new EvmSwapProvider({ contractAddress: HTLC_CONTRACT_ADDRESS });
-  const walletOptions = { derivationPath, mnemonic };
-  const walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
-  swapOptions: EvmTypes.EvmSwapOptions
 ) {
   // disable multicall for all networks until it's utilized properly
   const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider, false);
@@ -112,6 +106,8 @@ export function createEVMClient(
 
     swapProvider.setWallet(ledgerProvider);
   } else {
+    const walletOptions = { derivationPath, mnemonic };
+    const walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
     swapProvider.setWallet(walletProvider);
   }
 
