@@ -15,7 +15,7 @@ export interface WalletCoreConfig {
   defaultAssets: {
     [key in Network]: Asset[];
   };
-  nftAssets: {
+  supportedNFTChains: {
     [key in Network]: ChainId[];
   };
   swapProviders: {
@@ -63,7 +63,7 @@ const config: WalletCoreConfig = {
     ],
     testnet: ['BTC', 'ETH', 'DAI', 'RBTC', 'BNB', 'NEAR', 'SOV', 'MATIC', 'PWETH', 'ARBETH', 'AVAX', 'LUNA', 'UST'],
   },
-  nftAssets: {
+  supportedNFTChains: {
     mainnet: [ChainId.Ethereum, ChainId.Polygon],
     testnet: [ChainId.Ethereum, ChainId.Polygon],
   },

@@ -238,7 +238,6 @@ export interface RootState {
 export type NFTAsset = {
   animation_original_url: string;
   animation_url: string;
-  asset: Asset;
   asset_contract: {
     address: string;
     asset_contract_type: string;
