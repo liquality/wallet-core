@@ -222,7 +222,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
   ) {
     let updates: Partial<SwapHistoryItem> | undefined;
 
-    if (swap.status === 'APPROVE_CONFIRMED_LSP') {
+    if (swap.status === 'WAITING_FOR_SWAP_CONFIRMATIONS') {
       updates = await withInterval(async () =>
         this.finalizeAutomatedMarketMakerAndStartLiqualitySwap({
           swapLSP: this.swapLiqualityFormat(swap),
