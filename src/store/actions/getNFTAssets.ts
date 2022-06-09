@@ -18,7 +18,7 @@ export const getNFTAssets = async (
 
   supportedNFTChains[network].forEach(async (chain) => {
     const asset = chains[chain].nativeAsset;
-    const account = state.accounts[walletId]![network].find((account) => account.chain);
+    const account = state.accounts[walletId]![network].find((account) => account.chain === chain);
     const _client = getters.client({
       network,
       walletId,
@@ -27,7 +27,7 @@ export const getNFTAssets = async (
     });
     const nft: any = await _client.nft?.fetch();
     const nftAssetsStoredInState: NFTAsset[] = account?.nftAssets || [];
-    const nftAssetsFetched: NFTAsset[] = nft['assets'];
+    const nftAssetsFetched: NFTAsset[] = nft?.assets;
     const nftAssets: NFTAsset[] = nftAssetsFetched.map((nftAsset) => {
       const nftAssetStoredInState = nftAssetsStoredInState.find((asset) => asset.id === nftAsset.id);
       if (nftAssetStoredInState) {
