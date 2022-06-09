@@ -342,12 +342,12 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     return {
       ...super._getStatuses(),
       INITIATED: {
-        step: 2,
+        step: 1,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
       },
       INITIATION_REPORTED: {
-        step: 2,
+        step: 1,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
         notification() {
@@ -363,7 +363,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       },
 
       CONFIRM_COUNTER_PARTY_INITIATION: {
-        step: 3,
+        step: 2,
         label: 'Locking {to}',
         filterStatus: 'PENDING',
         notification(swap: any) {
@@ -374,7 +374,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       },
 
       READY_TO_CLAIM: {
-        step: 4,
+        step: 3,
         label: 'Claiming {to}',
         filterStatus: 'PENDING',
         notification() {
@@ -384,28 +384,28 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       WAITING_FOR_CLAIM_CONFIRMATIONS: {
-        step: 4,
+        step: 3,
         label: 'Claiming {to}',
         filterStatus: 'PENDING',
       },
       WAITING_FOR_REFUND: {
-        step: 4,
+        step: 3,
         label: 'Pending Refund',
         filterStatus: 'PENDING',
       },
       GET_REFUND: {
-        step: 4,
+        step: 3,
         label: 'Refunding {from}',
         filterStatus: 'PENDING',
       },
       WAITING_FOR_REFUND_CONFIRMATIONS: {
-        step: 4,
+        step: 3,
         label: 'Refunding {from}',
         filterStatus: 'PENDING',
       },
 
       REFUNDED: {
-        step: 5,
+        step: 4,
         label: 'Refunded',
         filterStatus: 'REFUNDED',
         notification(swap: any) {
@@ -415,7 +415,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       SUCCESS: {
-        step: 5,
+        step: 4,
         label: 'Completed',
         filterStatus: 'COMPLETED',
         notification(swap: any) {
@@ -425,7 +425,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       QUOTE_EXPIRED: {
-        step: 5,
+        step: 4,
         label: 'Quote Expired',
         filterStatus: 'REFUNDED',
       },

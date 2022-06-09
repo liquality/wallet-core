@@ -279,24 +279,24 @@ class LiqualityBoostERC20toNative extends SwapProvider {
         },
       },
       APPROVE_CONFIRMED_LSP: {
-        step: 2,
+        step: 1,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
       },
       // Liquality swap states
       INITIATED: {
         ...this.liqualitySwapProvider.statuses.INITIATED,
-        step: 3,
+        step: 2,
         label: 'Locking {bridgeAsset}',
       },
       INITIATION_REPORTED: {
         ...this.liqualitySwapProvider.statuses.INITIATION_REPORTED,
-        step: 3,
+        step: 2,
         label: 'Locking {bridgeAsset}',
       },
       INITIATION_CONFIRMED: {
         ...this.liqualitySwapProvider.statuses.INITIATION_CONFIRMED,
-        step: 3,
+        step: 2,
         label: 'Locking {bridgeAsset}',
       },
 
@@ -310,46 +310,46 @@ class LiqualityBoostERC20toNative extends SwapProvider {
             } to escrow`,
           };
         },
-        step: 4,
+        step: 3,
       },
       READY_TO_CLAIM: {
         ...this.liqualitySwapProvider.statuses.READY_TO_CLAIM,
-        step: 5,
+        step: 4,
       },
       WAITING_FOR_CLAIM_CONFIRMATIONS: {
         ...this.liqualitySwapProvider.statuses.WAITING_FOR_CLAIM_CONFIRMATIONS,
-        step: 5,
+        step: 4,
       },
       WAITING_FOR_REFUND: {
         ...this.liqualitySwapProvider.statuses.WAITING_FOR_REFUND,
-        step: 5,
+        step: 4,
       },
       GET_REFUND: {
         ...this.liqualitySwapProvider.statuses.GET_REFUND,
         label: 'Refunding {bridgeAsset}',
-        step: 5,
+        step: 4,
       },
       WAITING_FOR_REFUND_CONFIRMATIONS: {
         ...this.liqualitySwapProvider.statuses.WAITING_FOR_REFUND_CONFIRMATIONS,
         label: 'Refunding {bridgeAsset}',
-        step: 5,
+        step: 4,
       },
       // final states
       REFUNDED: {
         ...this.liqualitySwapProvider.statuses.REFUNDED,
-        step: 6,
+        step: 5,
       },
       SUCCESS: {
         ...this.liqualitySwapProvider.statuses.SUCCESS,
-        step: 6,
+        step: 5,
       },
       QUOTE_EXPIRED: {
         ...this.liqualitySwapProvider.statuses.QUOTE_EXPIRED,
-        step: 6,
+        step: 5,
       },
       FAILED: {
         ...this.sovrynSwapProvider.statuses.FAILED,
-        step: 6,
+        step: 5,
       },
     };
   }
