@@ -56,6 +56,14 @@ const config: WalletCoreConfig = {
       'FISH',
       'LUNA',
       'UST',
+      'BDX',
+      'BDUS',
+      'BDEU',
+      'XUSD',
+      'ETHs',
+      'bXAU',
+      'bGBP',
+      'DOC'
     ],
     testnet: ['BTC', 'ETH', 'DAI', 'RBTC', 'BNB', 'NEAR', 'SOV', 'MATIC', 'PWETH', 'ARBETH', 'AVAX', 'LUNA', 'UST'],
   },
@@ -182,6 +190,12 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.Astroport,
         URL: 'https://lcd.terra.dev',
         chainID: 'columbus-5',
+      },
+      blindex: {
+        name: 'Blindex',
+        icon: 'blindex.svg',
+        type: SwapProviderType.Blindex,
+        routerAddress: '0x102692AbBAB9a1AA75AA78Fff6E23f6ea7b84f61'
       },
       hop: {
         name: 'Hop',
