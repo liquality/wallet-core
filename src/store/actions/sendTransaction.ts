@@ -6,6 +6,7 @@ import { ActionContext, rootActionContext } from '..';
 import { assetsAdapter } from '../../utils/chainify';
 import { createHistoryNotification } from '../broker/notification';
 import { AccountId, Asset, FeeLabel, Network, SendHistoryItem, SendStatus, TransactionType, WalletId } from '../types';
+import {ChainId} from "@liquality/cryptoassets/src/types";
 
 export const sendTransaction = async (
   context: ActionContext,
@@ -40,7 +41,7 @@ export const sendTransaction = async (
 
   const _asset = assetsAdapter(asset)[0];
   const tx = await client.wallet.sendTransaction({
-    to: chains[_asset.chain].formatAddress(to),
+    to: chains[_asset.chain as ChainId].formatAddress(to),
     value: new BN(amount),
     data,
     gasLimit: gas,
