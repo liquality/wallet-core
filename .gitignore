@@ -39,3 +39,4 @@ dist/
 .yarn/versions
 .yarn/install-state.gz
 .yarn/unplugged
+/.env

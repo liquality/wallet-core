@@ -1,4 +1,3 @@
-import { Transaction } from '@chainify/types';
 import { chains } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,7 +34,7 @@ export const sendTransaction = async (
     feeLabel: FeeLabel;
     fiatRate: number;
   }
-): Promise<Transaction> => {
+): Promise<SendHistoryItem> => {
   const { dispatch, commit, getters } = rootActionContext(context);
   const client = getters.client({ network, walletId, asset, accountId });
 
