@@ -259,7 +259,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       },
       APPROVE_CONFIRMED: {
         ...this.sovrynSwapProvider.statuses.APPROVE_CONFIRMED,
-        step: 5,
+        step: 4,
         label: 'Swapping {bridgeAsset} for {to}',
       },
       WAITING_FOR_SWAP_CONFIRMATIONS: {
@@ -269,15 +269,15 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
             message: 'Engaging Automated Market Maker',
           };
         },
-        step: 5,
+        step: 4,
       },
       SUCCESS: {
         ...this.liqualitySwapProvider.statuses.SUCCESS,
-        step: 6,
+        step: 5,
       },
       FAILED: {
         ...this.sovrynSwapProvider.statuses.FAILED,
-        step: 6,
+        step: 5,
       },
     };
   }
@@ -304,6 +304,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       ammTimeline.shift();
     }
 
+    // ['APPROVE', 'INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND', 'SWAP'];
     return this.liqualitySwapProvider.timelineDiagramSteps.concat(ammTimeline);
   }
 
