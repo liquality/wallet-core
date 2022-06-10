@@ -1,6 +1,6 @@
 import { assets, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
-import { getSwapProvider } from '../../../factory/swapProvider';
+import { getSwapProvider } from '../../../factory';
 import { ActionContext } from '../../../store';
 import { withInterval } from '../../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem, WalletId } from '../../../store/types';
@@ -284,6 +284,11 @@ class LiqualityBoostERC20toNative extends SwapProvider {
           };
         },
       },
+      APPROVE_CONFIRMED_LSP: {
+        step: 1,
+        label: 'Locking {from}',
+        filterStatus: 'PENDING',
+      },
       // Liquality swap states
       INITIATED: {
         ...this.liqualitySwapProvider.statuses.INITIATED,
@@ -300,11 +305,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
         step: 2,
         label: 'Locking {bridgeAsset}',
       },
-      FUNDED: {
-        ...this.liqualitySwapProvider.statuses.FUNDED,
-        step: 3,
-        label: 'Locking {bridgeAsset}',
-      },
+
       CONFIRM_COUNTER_PARTY_INITIATION: {
         ...this.liqualitySwapProvider.statuses.CONFIRM_COUNTER_PARTY_INITIATION,
         label: 'Locking {bridgeAsset}',
@@ -375,11 +376,22 @@ class LiqualityBoostERC20toNative extends SwapProvider {
   }
 
   protected _timelineDiagramSteps(): string[] {
-    return ['APPROVE', 'SWAP', 'INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
+    // remove approval step because bridge asset is always native and doesn't need approval
+    const lspTimeline = this.liqualitySwapProvider.timelineDiagramSteps;
+    if (lspTimeline[0] === 'APPROVE') {
+      lspTimeline.shift();
+    }
+
+    return this.sovrynSwapProvider.timelineDiagramSteps.concat(lspTimeline);
   }
 
   protected _totalSteps(): number {
-    return 6;
+    let lspSteps = this.liqualitySwapProvider.totalSteps;
+    if (this.liqualitySwapProvider.timelineDiagramSteps[0] === 'APPROVE') {
+      lspSteps -= 1;
+    }
+
+    return this.sovrynSwapProvider.totalSteps + lspSteps;
   }
 
   private swapLiqualityFormat(swap: any): LiqualitySwapHistoryItem {

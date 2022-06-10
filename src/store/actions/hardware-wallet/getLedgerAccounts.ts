@@ -1,9 +1,9 @@
-import { LedgerProvider } from '@liquality/ledger-provider'
+import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
 import { assets, ChainId, chains } from '@liquality/cryptoassets';
+import BN from 'bignumber.js';
 import { ActionContext, rootActionContext } from '../..';
 import { getDerivationPath } from '../../../utils/derivationPath';
 import { AccountType, Asset, Network, WalletId } from '../../types';
-import BN from 'bignumber.js';
 
 type LedgerAccountEntry = {
   account: string;
@@ -32,6 +32,8 @@ export const getLedgerAccounts = async (
   const { getters } = rootActionContext(context);
   const { client, networkAccounts, assetFiatBalance } = getters;
   const { chain } = assets[asset];
+  const chainifyAsset = { ...assets[asset], isNative: assets[asset].type === 'native' };
+
   const results: LedgerAccountEntry[] = [];
   const existingAccounts = networkAccounts.filter((account) => {
     return account.chain === chain;
@@ -54,36 +56,25 @@ export const getLedgerAccounts = async (
 
     // we need to get the chain code and public key for btc
     if (chain === ChainId.Bitcoin) {
-      const provider = _client._providers.find((p) => {
-        // Ledger provider as a IApp not exported so we should use Any
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const _p = p as LedgerProvider<any>;
-        return _p._App && _p._App?.name === 'Btc';
-      });
-      if (provider) {
-        // Ledger provider as a IApp not exported so we should use Any
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const app = await (provider as LedgerProvider<any>).getApp()
-        const btcAccount = await app.getWalletPublicKey(derivationPath)
-        _chainCode = btcAccount.chainCode
-        _publicKey = btcAccount.publicKey
-      }
+      const btcAccount = await (_client.wallet as BitcoinLedgerProvider).getWalletPublicKey(derivationPath);
+      _chainCode = btcAccount.chainCode;
+      _publicKey = btcAccount.publicKey;
     }
-    
+
     const addresses = await _client.wallet.getAddresses();
     if (addresses && addresses.length > 0) {
       const [account] = addresses;
       const normalizedAddress = chains[chain].formatAddress(account.address, network);
-      
+
       // verify if the account exists
       const existingIndex = existingAccounts.findIndex((a) => {
-          const addresses = a.addresses.map((a) => chains[chain].formatAddress(a, network))
-          return addresses.includes(normalizedAddress)
+        const addresses = a.addresses.map((a) => chains[chain].formatAddress(a, network));
+        return addresses.includes(normalizedAddress);
       });
       const exists = existingIndex >= 0;
 
       // Get the account balance
-      const balance = addresses.length === 0 ? 0 : await _client.chain.getBalance(addresses)
+      const balance = addresses.length === 0 ? 0 : (await _client.chain.getBalance(addresses, [chainifyAsset]))[0];
       const fiatBalance = assetFiatBalance(asset, balance as BN) || new BN(0);
 
       const result = {
@@ -94,8 +85,8 @@ export const getLedgerAccounts = async (
         exists,
         chainCode: _chainCode,
         publicKey: _publicKey,
-        derivationPath
-      }
+        derivationPath,
+      };
       results.push(result);
     }
   }

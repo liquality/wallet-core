@@ -1,12 +1,14 @@
+import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider, BitcoinTypes } from '@chainify/bitcoin';
+import { Client } from '@chainify/client';
+import { Transaction } from '@chainify/types';
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { bitcoin, Transaction } from '@liquality/types';
 import BN from 'bignumber.js';
 import { mapValues } from 'lodash';
 import { io, Socket } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext } from '../../store';
 import { withInterval } from '../../store/actions/performNextAction/utils';
-import { SwapHistoryItem } from '../../store/types';
+import { Network, SwapHistoryItem } from '../../store/types';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { SwapProvider } from '../SwapProvider';
@@ -55,7 +57,7 @@ export interface FastBtcDepositHistory {
 
 export interface FastBtcSwapHistoryItem extends SwapHistoryItem {
   swapTxHash: string;
-  swapTx: Transaction<bitcoin.Transaction>;
+  swapTx: Transaction<BitcoinTypes.Transaction>;
 }
 
 export interface FastBtcSwapProviderConfig extends BaseSwapProviderConfig {
@@ -82,6 +84,13 @@ class FastbtcSwapProvider extends SwapProvider {
         console.log('FastBtc socket disconnected');
       });
     });
+  }
+
+  public getClient(network: Network, walletId: string, asset: string, accountId: string) {
+    return super.getClient(network, walletId, asset, accountId) as Client<
+      BitcoinEsploraApiProvider,
+      BitcoinBaseWalletProvider
+    >;
   }
 
   async getSupportedPairs() {
@@ -151,15 +160,18 @@ class FastbtcSwapProvider extends SwapProvider {
   }
 
   async sendSwap({ network, walletId, quote }: SwapRequest) {
-    if (quote.from !== 'BTC' || quote.to !== 'RBTC') return null;
+    if (quote.from !== 'BTC' || quote.to !== 'RBTC') {
+      return null;
+    }
     const toChain = cryptoassets[quote.to].chain;
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const toAddressRaw = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
-    const toAddress = chains[toChain].formatAddress(toAddressRaw, network);
+    // don't pass network because Ethers does not support EIP1191
+    const toAddress = chains[toChain].formatAddress(toAddressRaw);
     const relayAddress = await this._getAddress(toAddress);
 
     await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
-    const swapTx = await client.chain.sendTransaction({
+    const swapTx = await client.wallet.sendTransaction({
       to: relayAddress.btcadr,
       value: new BN(quote.fromAmount),
       data: '',
@@ -188,7 +200,7 @@ class FastbtcSwapProvider extends SwapProvider {
       const client = this.getClient(network, walletId, asset, quote.fromAccountId);
       const value = max ? undefined : new BN(quote.fromAmount);
       const txs = feePrices.map((fee) => ({ to: '', value, fee }));
-      const totalFees = await client.getMethod('getTotalFees')(txs, max);
+      const totalFees = await client.wallet.getTotalFees(txs, max);
       return mapValues(totalFees, (f) => unitToCurrency(cryptoassets[asset], f));
     }
     return null;
@@ -215,7 +227,8 @@ class FastbtcSwapProvider extends SwapProvider {
     try {
       const toChain = cryptoassets[swap.to].chain;
       const toAddressRaw = await this.getSwapAddress(network, walletId, swap.to, swap.toAccountId);
-      const toAddress = chains[toChain].formatAddress(toAddressRaw, network);
+      // don't pass network because Ethers does not support EIP1191
+      const toAddress = chains[toChain].formatAddress(toAddressRaw);
       const addressHistory = (await this._getHistory(toAddress)).sort((a, b) =>
         new Date(a.dateAdded).getTime() > new Date(b.dateAdded).getTime() ? 1 : -1
       );

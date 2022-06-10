@@ -7,7 +7,7 @@ test('should be able to export private key', async () => {
   const wallet = await setupWallet(defaultWalletOptions);
   await wallet.dispatch.createWallet({
     key: '0x1234567890123456789012345678901234567890',
-    mnemonic: 'test',
+    mnemonic: 'piece effort bind that embrace enrich remind powder sudden patient legend group',
     imported: true,
   });
   await wallet.dispatch.unlockWallet({

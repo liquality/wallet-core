@@ -1,5 +1,5 @@
 import { ActionContext, rootActionContext } from '../..';
-import { getSwapProvider } from '../../../factory/swapProvider';
+import { getSwapProvider } from '../../../factory/swap';
 import { createHistoryNotification } from '../../broker/notification';
 import { HistoryItem, Network, TransactionType, WalletId } from '../../types';
 import { performNextTransactionAction } from './send';

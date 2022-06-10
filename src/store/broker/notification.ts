@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { getSwapProvider } from '../../factory/swapProvider';
+import { getSwapProvider } from '../../factory/swap';
 import { Notification } from '../../types';
 import { prettyBalance } from '../../utils/coinFormatter';
 import { walletOptionsStore } from '../../walletOptions';

@@ -1,6 +1,6 @@
 import { assets, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
-import { getSwapProvider } from '../../../factory/swapProvider';
+import { getSwapProvider } from '../../../factory';
 import { ActionContext } from '../../../store';
 import { withInterval } from '../../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem, WalletId } from '../../../store/types';
@@ -237,11 +237,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       ...this.liqualitySwapProvider.statuses,
-      ...this.oneinchSwapProvider.statuses,
-      FUNDED: {
-        ...this.liqualitySwapProvider.statuses.FUNDED,
-        label: 'Locking {bridgeAsset}',
-      },
+      ...this.sovrynSwapProvider.statuses,
       CONFIRM_COUNTER_PARTY_INITIATION: {
         ...this.liqualitySwapProvider.statuses.CONFIRM_COUNTER_PARTY_INITIATION,
         label: 'Locking {bridgeAsset}',
@@ -262,26 +258,26 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
         label: 'Claiming {bridgeAsset}',
       },
       APPROVE_CONFIRMED: {
-        ...this.oneinchSwapProvider.statuses.APPROVE_CONFIRMED,
-        step: 3,
+        ...this.sovrynSwapProvider.statuses.APPROVE_CONFIRMED,
+        step: 4,
         label: 'Swapping {bridgeAsset} for {to}',
       },
       WAITING_FOR_SWAP_CONFIRMATIONS: {
-        ...this.oneinchSwapProvider.statuses.WAITING_FOR_SWAP_CONFIRMATIONS,
+        ...this.sovrynSwapProvider.statuses.WAITING_FOR_SWAP_CONFIRMATIONS,
         notification() {
           return {
             message: 'Engaging Automated Market Maker',
           };
         },
-        step: 3,
+        step: 4,
       },
       SUCCESS: {
         ...this.liqualitySwapProvider.statuses.SUCCESS,
-        step: 4,
+        step: 5,
       },
       FAILED: {
-        ...this.oneinchSwapProvider.statuses.FAILED,
-        step: 4,
+        ...this.sovrynSwapProvider.statuses.FAILED,
+        step: 5,
       },
     };
   }
@@ -302,11 +298,24 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
   }
 
   protected _timelineDiagramSteps(): string[] {
-    return ['INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND', 'SWAP'];
+    // remove approval step because bridge asset is always native and doesn't need approval
+    const ammTimeline = this.sovrynSwapProvider.timelineDiagramSteps;
+    if (ammTimeline[0] === 'APPROVE') {
+      ammTimeline.shift();
+    }
+
+    // ['APPROVE', 'INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND', 'SWAP'];
+    return this.liqualitySwapProvider.timelineDiagramSteps.concat(ammTimeline);
   }
 
   protected _totalSteps(): number {
-    return 5;
+    // remove approval step because bridge asset is always native and doesn't need approval
+    let ammSteps = this.sovrynSwapProvider.totalSteps;
+    if (this.sovrynSwapProvider.timelineDiagramSteps[0] === 'APPROVE') {
+      ammSteps -= 1;
+    }
+
+    return this.liqualitySwapProvider.totalSteps + ammSteps;
   }
 
   private swapLiqualityFormat(swap: any): LiqualitySwapHistoryItem {

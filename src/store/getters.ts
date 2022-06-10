@@ -1,9 +1,9 @@
-import { Client } from '@liquality/client';
+import { Client } from '@chainify/client';
 import { Asset, assets as cryptoassets, ChainId, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash';
 import { rootGetterContext } from '.';
-import { createClient } from '../factory/client';
+import { createClient } from '../factory';
 import { cryptoToFiat } from '../utils/coinFormatter';
 import { getDerivationPath } from '../utils/derivationPath';
 import { Networks } from '../utils/networks';
@@ -63,7 +63,7 @@ export default {
       accountId,
       useCache = true,
       accountType = AccountType.Default,
-      accountIndex = 0
+      accountIndex = 0,
     }: {
       network: Network;
       walletId: WalletId;
@@ -104,23 +104,8 @@ export default {
       }
 
       const { mnemonic } = wallet;
-      
-      let bitcoinLedgerCache;
-      if (account?.chain === ChainId.Bitcoin) {
-        bitcoinLedgerCache = {
-          publicKey: account?.publicKey,
-          chainCode: account?.chainCode
-        };
-      }
-      
-      const client = createClient(
-        asset,
-        network,
-        mnemonic,
-        _accountType,
-        derivationPath,
-        bitcoinLedgerCache
-      );
+
+      const client = createClient(asset, network, mnemonic, _accountType, derivationPath, account);
       clientCache[cacheKey] = client;
 
       return client;

@@ -1,5 +1,5 @@
+import { BitcoinTypes } from '@chainify/bitcoin';
 import { ChainId } from '@liquality/cryptoassets';
-import { bitcoin } from '@liquality/types';
 import { AccountType, Network } from '../store/types';
 import { BTC_ADDRESS_TYPE_TO_PREFIX } from '../utils/address';
 import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
@@ -14,7 +14,7 @@ const getBitcoinDerivationPath = (accountType: AccountType, coinType: string, in
     const { addressType } = option;
     return `${BTC_ADDRESS_TYPE_TO_PREFIX[addressType]}'/${coinType}'/${index}'`;
   } else {
-    return `${BTC_ADDRESS_TYPE_TO_PREFIX[bitcoin.AddressType.BECH32]}'/${coinType}'/${index}'`;
+    return `${BTC_ADDRESS_TYPE_TO_PREFIX[BitcoinTypes.AddressType.BECH32]}'/${coinType}'/${index}'`;
   }
 };
 
@@ -66,7 +66,7 @@ const derivationPaths: DerivationPathCreator = {
   },
   [ChainId.Solana]: (network: Network, index: number) => {
     const solanaNetwork = ChainNetworks[ChainId.Solana][network];
-    return `m/44'/501'/${solanaNetwork.walletIndex}'/${index}'`;
+    return `m/44'/${solanaNetwork.coinType}'/${index}'/0'`;
   },
   [ChainId.Terra]: (network: Network, index: number) => {
     const terraNetwork = ChainNetworks[ChainId.Terra][network];

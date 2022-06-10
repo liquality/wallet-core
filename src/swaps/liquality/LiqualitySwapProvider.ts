@@ -1,21 +1,23 @@
-import { sha256 } from '@liquality/crypto';
+import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
+import { Client } from '@chainify/client';
+import { Asset as ChainifyAsset, Transaction } from '@chainify/types';
+import { sha256 } from '@chainify/utils';
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { Transaction } from '@liquality/types';
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import pkg from '../../../package.json';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
-import { AccountId, Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
+import { AccountId, Asset, Network, WalletId } from '../../store/types';
 import { timestamp, wait } from '../../store/utils';
-import { isERC20 } from '../../utils/asset';
+import { assetsAdapter } from '../../utils/chainify';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
-import { SwapProvider } from '../SwapProvider';
+import { EvmSwapHistoryItem, EvmSwapProvider, EvmSwapProviderConfig } from '../EvmSwapProvider';
 import {
-  BaseSwapProviderConfig,
   EstimateFeeRequest,
   EstimateFeeResponse,
   NextSwapActionRequest,
@@ -24,7 +26,7 @@ import {
   SwapStatus,
 } from '../types';
 
-const VERSION_STRING = `Wallet ${pkg.version} (CAL ${pkg.dependencies['@liquality/client']
+const VERSION_STRING = `Wallet ${pkg.version} (Chainify ${pkg.dependencies['@chainify/client']
   .replace('^', '')
   .replace('~', '')})`;
 
@@ -50,7 +52,7 @@ export interface LiqualityMarketData {
   rate: number;
 }
 
-export interface LiqualitySwapHistoryItem extends SwapHistoryItem {
+export interface LiqualitySwapHistoryItem extends EvmSwapHistoryItem {
   orderId: string;
   fromAddress: string;
   toAddress: string;
@@ -70,11 +72,11 @@ export interface LiqualitySwapHistoryItem extends SwapHistoryItem {
   toFundHash: string;
 }
 
-export interface LiqualitySwapProviderConfig extends BaseSwapProviderConfig {
+export interface LiqualitySwapProviderConfig extends EvmSwapProviderConfig {
   agent: string;
 }
 
-export class LiqualitySwapProvider extends SwapProvider {
+export class LiqualitySwapProvider extends EvmSwapProvider {
   config: LiqualitySwapProviderConfig;
   private async getMarketInfo(): Promise<LiqualityMarketData[]> {
     return (
@@ -123,12 +125,21 @@ export class LiqualitySwapProvider extends SwapProvider {
     };
   }
 
-  public async newSwap({ network, walletId, quote: _quote }: SwapRequest<LiqualitySwapHistoryItem>) {
+  public async newSwap(swapRequest: SwapRequest<LiqualitySwapHistoryItem>) {
+    const approveTx = await this.approve(swapRequest, true);
+    const updates = approveTx || (await this.initiateSwap(swapRequest));
+    return { id: uuidv4(), ...updates };
+  }
+
+  private async initiateSwap({ network, walletId, quote: _quote }: SwapRequest<LiqualitySwapHistoryItem>) {
     const lockedQuote = await this._getQuote({
       from: _quote.from,
       to: _quote.to,
       amount: _quote.fromAmount,
     });
+
+    // Do not override the id that was created during approve step
+    delete lockedQuote.id;
 
     if (new BN(lockedQuote.toAmount).lt(new BN(_quote.toAmount).times(0.995))) {
       throw new Error('The quote slippage is too high (> 0.5%). Try again.');
@@ -161,9 +172,11 @@ export class LiqualitySwapProvider extends SwapProvider {
     const messageHex = Buffer.from(message, 'utf8').toString('hex');
     const secret = await fromClient.swap.generateSecret(messageHex);
     const secretHash = sha256(secret);
+    const asset = assetsAdapter(quote.from)[0];
 
     const fromFundTx = await fromClient.swap.initiateSwap(
       {
+        asset,
         value: new BN(quote.fromAmount),
         recipientAddress: quote.fromCounterPartyAddress,
         refundAddress: quote.fromAddress,
@@ -193,10 +206,13 @@ export class LiqualitySwapProvider extends SwapProvider {
     max,
   }: EstimateFeeRequest<LiqualityTxTypes>) {
     if (txType === this._txTypes().SWAP_INITIATION && asset === 'BTC') {
-      const client = this.getClient(network, walletId, asset, quote.fromAccountId);
+      const client = this.getClient(network, walletId, asset, quote.fromAccountId) as Client<
+        BitcoinEsploraApiProvider,
+        BitcoinBaseWalletProvider
+      >;
       const value = max ? undefined : new BN(quote.fromAmount);
       const txs = feePrices.map((fee) => ({ to: '', value, fee }));
-      const totalFees = await client.getMethod('getTotalFees')(txs, max);
+      const totalFees = await client.wallet.getTotalFees(txs, max);
       return mapValues(totalFees, (f) => unitToCurrency(cryptoassets[asset], f));
     }
 
@@ -278,6 +294,14 @@ export class LiqualitySwapProvider extends SwapProvider {
     { network, walletId, swap }: NextSwapActionRequest<LiqualitySwapHistoryItem>
   ) {
     switch (swap.status) {
+      case 'WAITING_FOR_APPROVE_CONFIRMATIONS_LSP':
+        return withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
+
+      case 'APPROVE_CONFIRMED_LSP':
+        return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+          this.initiateSwap({ quote: swap, network, walletId })
+        );
+
       case 'INITIATED':
         return this.reportInitiation(swap);
 
@@ -285,11 +309,6 @@ export class LiqualitySwapProvider extends SwapProvider {
         return withInterval(async () => this.confirmInitiation({ swap, network, walletId }));
 
       case 'INITIATION_CONFIRMED':
-        return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
-          this.fundSwap({ swap, network, walletId })
-        );
-
-      case 'FUNDED':
         return withInterval(async () => this.findCounterPartyInitiation({ swap, network, walletId }));
 
       case 'CONFIRM_COUNTER_PARTY_INITIATION':
@@ -318,13 +337,14 @@ export class LiqualitySwapProvider extends SwapProvider {
 
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
+      ...super._getStatuses(),
       INITIATED: {
-        step: 0,
+        step: 1,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
       },
       INITIATION_REPORTED: {
-        step: 0,
+        step: 1,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
         notification() {
@@ -334,18 +354,13 @@ export class LiqualitySwapProvider extends SwapProvider {
         },
       },
       INITIATION_CONFIRMED: {
-        step: 0,
+        step: 2,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
       },
 
-      FUNDED: {
-        step: 1,
-        label: 'Locking {to}',
-        filterStatus: 'PENDING',
-      },
       CONFIRM_COUNTER_PARTY_INITIATION: {
-        step: 1,
+        step: 2,
         label: 'Locking {to}',
         filterStatus: 'PENDING',
         notification(swap: any) {
@@ -356,7 +371,7 @@ export class LiqualitySwapProvider extends SwapProvider {
       },
 
       READY_TO_CLAIM: {
-        step: 2,
+        step: 3,
         label: 'Claiming {to}',
         filterStatus: 'PENDING',
         notification() {
@@ -366,28 +381,28 @@ export class LiqualitySwapProvider extends SwapProvider {
         },
       },
       WAITING_FOR_CLAIM_CONFIRMATIONS: {
-        step: 2,
+        step: 3,
         label: 'Claiming {to}',
         filterStatus: 'PENDING',
       },
       WAITING_FOR_REFUND: {
-        step: 2,
+        step: 3,
         label: 'Pending Refund',
         filterStatus: 'PENDING',
       },
       GET_REFUND: {
-        step: 2,
+        step: 3,
         label: 'Refunding {from}',
         filterStatus: 'PENDING',
       },
       WAITING_FOR_REFUND_CONFIRMATIONS: {
-        step: 2,
+        step: 3,
         label: 'Refunding {from}',
         filterStatus: 'PENDING',
       },
 
       REFUNDED: {
-        step: 3,
+        step: 4,
         label: 'Refunded',
         filterStatus: 'REFUNDED',
         notification(swap: any) {
@@ -397,7 +412,7 @@ export class LiqualitySwapProvider extends SwapProvider {
         },
       },
       SUCCESS: {
-        step: 3,
+        step: 4,
         label: 'Completed',
         filterStatus: 'COMPLETED',
         notification(swap: any) {
@@ -407,7 +422,7 @@ export class LiqualitySwapProvider extends SwapProvider {
         },
       },
       QUOTE_EXPIRED: {
-        step: 3,
+        step: 4,
         label: 'Quote Expired',
         filterStatus: 'REFUNDED',
       },
@@ -427,11 +442,11 @@ export class LiqualitySwapProvider extends SwapProvider {
   }
 
   protected _timelineDiagramSteps(): string[] {
-    return ['INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
+    return ['APPROVE', 'INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
   }
 
   protected _totalSteps(): number {
-    return 4;
+    return 5;
   }
 
   private async _getQuote({ from, to, amount }: { from: Asset; to: Asset; amount: string }) {
@@ -483,8 +498,10 @@ export class LiqualitySwapProvider extends SwapProvider {
   private async refundSwap({ swap, network, walletId }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
     const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
     await this.sendLedgerNotification(swap.fromAccountId, 'Signing required to refund the swap.');
+    const asset = assetsAdapter(swap.from)[0];
     const refundTx = await fromClient.swap.refundSwap(
       {
+        asset,
         value: new BN(swap.fromAmount),
         recipientAddress: swap.fromCounterPartyAddress,
         refundAddress: swap.fromAddress,
@@ -499,39 +516,6 @@ export class LiqualitySwapProvider extends SwapProvider {
       refundHash: refundTx.hash,
       refundTx,
       status: 'WAITING_FOR_REFUND_CONFIRMATIONS',
-    };
-  }
-
-  private async fundSwap({ swap, network, walletId }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
-    if (await this.hasQuoteExpired(swap)) {
-      return { status: 'QUOTE_EXPIRED' };
-    }
-
-    if (!isERC20(swap.from)) return { status: 'FUNDED' }; // Skip. Only ERC20 swaps need funding
-
-    const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
-
-    await this.sendLedgerNotification(swap.fromAccountId, 'Signing required to fund the swap.');
-
-    const fundTx = await fromClient.swap.fundSwap(
-      {
-        value: new BN(swap.fromAmount),
-        recipientAddress: swap.fromCounterPartyAddress,
-        refundAddress: swap.fromAddress,
-        secretHash: swap.secretHash,
-        expiration: swap.swapExpiration,
-      },
-      swap.fromFundHash,
-      swap.fee
-    );
-
-    if (!fundTx) {
-      throw new Error('Funding transaction returned null');
-    }
-
-    return {
-      fundTxHash: fundTx.hash,
-      status: 'FUNDED',
     };
   }
 
@@ -578,9 +562,12 @@ export class LiqualitySwapProvider extends SwapProvider {
     walletId,
   }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
     const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
+    const toAsset = cryptoassets[swap.to];
+    const asset = { ...toAsset, isNative: toAsset.type === 'native' } as ChainifyAsset;
 
     try {
       const tx = await toClient.swap.findInitiateSwapTransaction({
+        asset,
         value: new BN(swap.toAmount),
         recipientAddress: swap.toAddress,
         refundAddress: swap.toCounterPartyAddress,
@@ -593,6 +580,7 @@ export class LiqualitySwapProvider extends SwapProvider {
 
         const isVerified = await toClient.swap.verifyInitiateSwapTransaction(
           {
+            asset,
             value: new BN(swap.toAmount),
             recipientAddress: swap.toAddress,
             refundAddress: swap.toCounterPartyAddress,
@@ -602,23 +590,7 @@ export class LiqualitySwapProvider extends SwapProvider {
           toFundHash
         );
 
-        // ERC20 swaps have separate funding tx. Ensures funding tx has enough confirmations
-        const fundingTransaction = await toClient.swap.findFundSwapTransaction(
-          {
-            value: new BN(swap.toAmount),
-            recipientAddress: swap.toAddress,
-            refundAddress: swap.toCounterPartyAddress,
-            secretHash: swap.secretHash,
-            expiration: swap.nodeSwapExpiration,
-          },
-          toFundHash
-        );
-        const fundingConfirmed = fundingTransaction
-          ? fundingTransaction.confirmations &&
-            fundingTransaction.confirmations >= chains[cryptoassets[swap.to].chain].safeConfirmations
-          : true;
-
-        if (isVerified && fundingConfirmed) {
+        if (isVerified) {
           return {
             toFundHash,
             status: 'CONFIRM_COUNTER_PARTY_INITIATION',
@@ -682,8 +654,10 @@ export class LiqualitySwapProvider extends SwapProvider {
 
     await this.sendLedgerNotification(swap.toAccountId, 'Signing required to claim the swap.');
 
+    const asset = assetsAdapter(swap.to)[0];
     const toClaimTx = await toClient.swap.claimSwap(
       {
+        asset,
         value: new BN(swap.toAmount),
         recipientAddress: swap.toAddress,
         refundAddress: swap.toCounterPartyAddress,
@@ -769,31 +743,31 @@ export class LiqualitySwapProvider extends SwapProvider {
 
   private feeUnits = {
     [LiqualityTxTypes.SWAP_INITIATION]: {
-      ETH: 165000,
-      RBTC: 165000,
-      BNB: 165000,
-      NEAR: 10000000000000,
+      ETH: 165_000,
+      RBTC: 165_000,
+      BNB: 165_000,
+      NEAR: 10_000_000_000_000,
       SOL: 2,
-      LUNA: 800000,
-      UST: 800000,
-      MATIC: 165000,
-      ERC20: 600000 + 94500, // Contract creation + erc20 transfer
-      ARBETH: 2400000,
-      AVAX: 165000,
+      LUNA: 800_000,
+      UST: 800_000,
+      MATIC: 165_000,
+      ERC20: 200_000, // Contract creation + erc20 transfer
+      ARBETH: 2_400_000,
+      AVAX: 165_000,
     },
     [LiqualityTxTypes.SWAP_CLAIM]: {
       BTC: 143,
-      ETH: 45000,
-      RBTC: 45000,
-      BNB: 45000,
-      MATIC: 45000,
-      NEAR: 8000000000000,
+      ETH: 90_000,
+      RBTC: 90_000,
+      BNB: 90_000,
+      MATIC: 90_000,
+      NEAR: 8_000_000_000_000,
       SOL: 1,
-      LUNA: 800000,
-      UST: 800000,
-      ERC20: 100000,
-      ARBETH: 680000,
-      AVAX: 45000,
+      LUNA: 800_000,
+      UST: 800_000,
+      ERC20: 110_000,
+      ARBETH: 680_000,
+      AVAX: 90_000,
     },
   };
 }

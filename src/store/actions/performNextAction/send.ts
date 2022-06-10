@@ -1,4 +1,4 @@
-import { TxStatus } from '@liquality/types';
+import { TxStatus } from '@chainify/types';
 import { ActionContext, rootActionContext } from '../..';
 import { Network, SendHistoryItem, SendStatus, WalletId } from '../../types';
 import { withInterval } from './utils';

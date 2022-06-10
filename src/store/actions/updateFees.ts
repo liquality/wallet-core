@@ -1,4 +1,4 @@
-import { FeeDetails } from '@liquality/types';
+import { FeeDetails } from '@chainify/types';
 import { ActionContext, rootActionContext } from '..';
 import { Asset } from '../types';
 

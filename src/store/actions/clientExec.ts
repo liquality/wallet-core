@@ -1,4 +1,4 @@
-import { Address } from '@liquality/types';
+import { Address } from '@chainify/types';
 import { ActionContext, rootActionContext } from '..';
 import { AccountId, Asset, Network, WalletId } from '../types';
 

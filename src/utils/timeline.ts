@@ -1,6 +1,6 @@
-import { Client } from '@liquality/client';
-import { Transaction } from '@liquality/types';
-import { getSwapProvider } from '../factory/swapProvider';
+import { Client } from '@chainify/client';
+import { Transaction } from '@chainify/types';
+import { getSwapProvider } from '../factory';
 import { Asset, Network, SwapHistoryItem, WalletId } from '../store/types';
 import { LiqualitySwapHistoryItem } from '../swaps/liquality/LiqualitySwapProvider';
 import { ThorchainSwapHistoryItem } from '../swaps/thorchain/ThorchainSwapProvider';

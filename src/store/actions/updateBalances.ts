@@ -1,7 +1,8 @@
+import { Address } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
-import { Address } from '@liquality/types';
 import Bluebird from 'bluebird';
 import { ActionContext, rootActionContext } from '..';
+import { assetsAdapter } from '../../utils/chainify';
 import { Asset, Network } from '../types';
 
 export const updateBalances = async (
@@ -46,17 +47,14 @@ export const updateBalances = async (
           }
 
           try {
-            const balance = addresses.length === 0 ? '0' : (await _client.chain.getBalance(addresses)).toString();
-
-            commit.UPDATE_BALANCE({
-              network,
-              accountId: account.id,
-              walletId,
-              asset,
-              balance,
-            });
+            const _assets = assetsAdapter(asset);
+            const balance =
+              addresses.length === 0 ? '0' : (await _client.chain.getBalance(addresses, _assets)).toString();
+            commit.UPDATE_BALANCE({ network, accountId: account.id, walletId, asset, balance });
           } catch (err) {
-            console.error(err);
+            console.error(`Asset: ${asset} Balance update error:  `, err.message);
+            console.info('Asset: ', assetsAdapter(asset));
+            console.info('Connected network ', _client.chain.getNetwork());
           }
 
           // Commit to the state the addresses

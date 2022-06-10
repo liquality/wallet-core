@@ -2,8 +2,10 @@ import SovrynSwapNetworkABI from '@blobfishkate/sovryncontracts/abi/abiSovrynSwa
 import RBTCWrapperProxyABI from '@blobfishkate/sovryncontracts/abi/abiWrapperProxy_new.json';
 import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-mainnet.json';
 import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
+import { Client } from '@chainify/client';
+import { EvmChainProvider, EvmTypes } from '@chainify/evm';
+import { Transaction, TxStatus } from '@chainify/types';
 import { AssetTypes, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { ethereum, Transaction } from '@liquality/types';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import BN from 'bignumber.js';
 import * as ethers from 'ethers';
@@ -12,6 +14,7 @@ import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem } from '../../store/types';
 import { isERC20 } from '../../utils/asset';
+import { assetsAdapter } from '../../utils/chainify';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
@@ -41,8 +44,8 @@ export interface SovrynSwapProviderConfig extends BaseSwapProviderConfig {
 export interface SovrynSwapHistoryItem extends SwapHistoryItem {
   approveTxHash: string;
   swapTxHash: string;
-  approveTx: Transaction<ethereum.Transaction>;
-  swapTx: Transaction<ethereum.Transaction>;
+  approveTx: Transaction<EvmTypes.EthersTransactionResponse>;
+  swapTx: Transaction<EvmTypes.EthersTransactionResponse>;
 }
 
 class SovrynSwapProvider extends SwapProvider {
@@ -56,6 +59,10 @@ class SovrynSwapProvider extends SwapProvider {
 
   async getSupportedPairs() {
     return [];
+  }
+
+  public getClient(network: Network, walletId: string, asset: string, accountId: string) {
+    return super.getClient(network, walletId, asset, accountId) as Client<EvmChainProvider>;
   }
 
   // returns rates between tokens
@@ -120,7 +127,9 @@ class SovrynSwapProvider extends SwapProvider {
     );
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw, network);
+    // don't pass network because Ethers does not support EIP1191
+    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw);
+
     const spender = (
       fromInfo.type === AssetTypes.native || toInfo.type === AssetTypes.native
         ? this.config.routerAddressRBTC
@@ -136,13 +145,9 @@ class SovrynSwapProvider extends SwapProvider {
   }
 
   async buildApprovalTx({ network, walletId, quote }: SwapRequest<SovrynSwapHistoryItem>) {
-    const fromInfo = cryptoassets[quote.from];
+    const fromInfo = assetsAdapter(quote.from)[0];
     const toInfo = cryptoassets[quote.to];
-    const erc20 = new ethers.Contract(
-      fromInfo.contractAddress!.toLowerCase(),
-      ERC20.abi,
-      this._getApi(network, quote.from)
-    );
+    const erc20 = new ethers.Contract(String(fromInfo.contractAddress), ERC20.abi, this._getApi(network, quote.from));
 
     const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
     const inputAmountHex = inputAmount.toHexString();
@@ -156,11 +161,12 @@ class SovrynSwapProvider extends SwapProvider {
 
     const fromChain = fromInfo.chain;
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw, network);
+    // don't pass network because Ethers does not support EIP1191
+    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
-      to: fromInfo.contractAddress!,
+      to: String(fromInfo.contractAddress),
       value: new BN(0),
       data: encodedData,
       fee: quote.fee,
@@ -181,7 +187,7 @@ class SovrynSwapProvider extends SwapProvider {
 
     const txData = await this.buildApprovalTx({ network, walletId, quote });
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-    const approveTx = await client.chain.sendTransaction(txData);
+    const approveTx = await client.wallet.sendTransaction(txData);
 
     return {
       status: 'WAITING_FOR_APPROVE_CONFIRMATIONS',
@@ -229,7 +235,8 @@ class SovrynSwapProvider extends SwapProvider {
     const value = isERC20(quote.from) ? new BN(0) : new BN(quote.fromAmount);
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw, network);
+    // don't pass network because Ethers does not support EIP1191
+    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
@@ -245,7 +252,7 @@ class SovrynSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 
     await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
-    const swapTx = await client.chain.sendTransaction(txData);
+    const swapTx = await client.wallet.sendTransaction(txData);
 
     return {
       status: 'WAITING_FOR_SWAP_CONFIRMATIONS',
@@ -287,7 +294,7 @@ class SovrynSwapProvider extends SwapProvider {
         value: '0x' + approvalTx.value.toString(16),
       };
 
-      gasLimit += await client.getMethod('estimateGas')(rawApprovalTx);
+      gasLimit += (await client.chain.getProvider().estimateGas(rawApprovalTx)).toNumber();
     }
 
     // Due to a problem on RSK network with incorrect gas estimations, the gas used by swap transaction
@@ -331,11 +338,11 @@ class SovrynSwapProvider extends SwapProvider {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
-        const { status } = await client.getMethod('getTransactionReceipt')(swap.swapTxHash);
+        const { status } = tx;
         this.updateBalances(network, walletId, [swap.from]);
         return {
           endTime: Date.now(),
-          status: Number(status) === 1 ? 'SUCCESS' : 'FAILED',
+          status: status === TxStatus.Success ? 'SUCCESS' : 'FAILED',
         };
       }
     } catch (e) {
@@ -368,7 +375,7 @@ class SovrynSwapProvider extends SwapProvider {
       throw new Error('SovrynSwapProvider: chain not supported');
     }
 
-    const chainId = ChainNetworks.rsk[network].chainId;
+    const chainId = Number(ChainNetworks.rsk[network].chainId);
     if (chainId in this._apiCache) {
       return this._apiCache[chainId];
     } else {
