@@ -112,6 +112,8 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       to,
       fromAmount: quote.fromAmount,
       toAmount: finalQuote.toAmount,
+      min: quote.min,
+      max: quote.max,
       bridgeAsset,
       bridgeAssetAmount: quote.toAmount,
       path: finalQuote.path,

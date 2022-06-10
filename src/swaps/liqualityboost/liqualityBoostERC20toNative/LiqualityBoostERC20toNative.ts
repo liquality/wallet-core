@@ -101,11 +101,17 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     });
     if (!finalQuote) return null;
 
+    // increase minimum amount with 5% to minimize calculation
+    // error and price fluctuation
+    const min = finalQuote.min.times(1.05);
+
     return {
       from,
       to,
       fromAmount: quote.fromAmount,
       toAmount: finalQuote.toAmount,
+      minInBridgeAsset: min,
+      maxInBridgeAsset: finalQuote.max,
       bridgeAsset,
       bridgeAssetAmount: quote.toAmount,
       path: quote.path,
