@@ -74,5 +74,5 @@ export const sendTransaction = async (
 
   createHistoryNotification(transaction);
 
-  return tx;
+  return transaction;
 };
