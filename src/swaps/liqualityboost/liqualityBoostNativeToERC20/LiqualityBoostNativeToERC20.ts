@@ -232,6 +232,10 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
     return updates;
   }
 
+  async getMin(quoteRequest: QuoteRequest) {
+    this.liqualitySwapProvider.getMin(quoteRequest)
+  }
+
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
       ...this.liqualitySwapProvider.statuses,

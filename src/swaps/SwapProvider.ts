@@ -41,9 +41,14 @@ export abstract class SwapProvider {
   public abstract getSupportedPairs({ network }: { network: Network }): Promise<PairData[]>;
 
   /**
+   * Get min swap amount for given swap provider
+   */
+  public abstract getMin(quoteRequest: QuoteRequest) : number | any
+
+  /**
    * Get a quote for the specified parameters
    */
-  public abstract getQuote(quoteRequest: QuoteRequest): Promise<GetQuoteResult | null>;
+  public abstract getQuote(quoteRequest: QuoteRequest | null): Promise<GetQuoteResult | null>;
 
   /**
    * Create a new swap for the given quote
@@ -157,4 +162,5 @@ export abstract class SwapProvider {
     }
     return totalSteps;
   }
+
 }

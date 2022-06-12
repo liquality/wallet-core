@@ -97,6 +97,11 @@ class FastbtcSwapProvider extends SwapProvider {
     ];
   }
 
+  // @ts-ignore
+  async getMin(quoteRequest: QuoteRequest) {
+      return (await this.getSupportedPairs())[0]?.min
+  }
+
   async _getHistory(address: string): Promise<FastBtcDepositHistory[]> {
     await this.connectSocket();
     return new Promise((resolve, reject) => {

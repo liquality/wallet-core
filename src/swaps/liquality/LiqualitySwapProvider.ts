@@ -231,6 +231,18 @@ export class LiqualitySwapProvider extends SwapProvider {
     return fees;
   }
 
+  async getMin(quoteRequest: QuoteRequest) {
+    if(quoteRequest){
+      const pairs = await this.getSupportedPairs()
+      for(const pair of pairs){
+        if(pair.from == quoteRequest.from && pair.to == quoteRequest.to ){
+          return pair.min;
+        }
+      }
+    }
+    return 0
+  }
+
   public async updateOrder(order: LiqualitySwapHistoryItem) {
     const res = await axios({
       url: this.config.agent + '/api/swap/order/' + order.orderId,

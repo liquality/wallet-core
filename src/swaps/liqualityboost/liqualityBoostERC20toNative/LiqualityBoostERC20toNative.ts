@@ -183,6 +183,10 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     }
   }
 
+  async getMin(quoteRequest: QuoteRequest) {
+    this.liqualitySwapProvider.getMin(quoteRequest)
+  }
+
   async finalizeAutomatedMarketMakerAndStartLiqualitySwap({
     swapLSP,
     swapAMM,
