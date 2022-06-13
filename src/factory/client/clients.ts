@@ -90,7 +90,7 @@ export function createEVMClient(
   swapOptions: EvmTypes.EvmSwapOptions,
   ethersProvider?: StaticJsonRpcProvider
 ) {
-  // disable multicall for all networks until it's utilized properly
+  // disable multicall for all testnets, because not every testnet supports it
   const chainProvider = new EvmChainProvider(ethereumNetwork, ethersProvider, feeProvider, !ethereumNetwork.isTestnet);
   const swapProvider = new EvmSwapProvider(swapOptions);
 
