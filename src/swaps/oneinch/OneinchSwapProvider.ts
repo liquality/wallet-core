@@ -30,6 +30,7 @@ const NATIVE_ASSET_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 const SLIPPAGE_PERCENTAGE = 0.5;
 const chainToRpcProviders: { [chainId: number]: string } = {
   1: `https://mainnet.infura.io/v3/${buildConfig.infuraApiKey}`,
+  10: `https://optimism-mainnet.infura.io/v3/${buildConfig.infuraApiKey}`,
   56: 'https://bsc-dataseed.binance.org',
   137: 'https://polygon-rpc.com',
   43114: 'https://api.avax.network/ext/bc/C/rpc',

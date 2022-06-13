@@ -113,4 +113,15 @@ export const ChainNetworks = {
     },
     mainnet: { ...EvmNetworks.fuse_mainnet, rpcUrl: 'https://rpc.fuse.io' },
   },
+
+  [ChainId.Optimism]: {
+    testnet: {
+      ...EvmNetworks.optimism_testnet,
+      rpcUrl: `https://optimism-kovan.infura.io/v3/${buildConfig.infuraApiKey}`,
+    },
+    mainnet: {
+      ...EvmNetworks.optimism_mainnet,
+      rpcUrl: `https://optimism-mainnet.infura.io/v3/${buildConfig.infuraApiKey}`,
+    },
+  },
 };
