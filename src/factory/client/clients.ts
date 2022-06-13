@@ -83,14 +83,15 @@ export function createBtcClient(
 
 export function createEVMClient(
   ethereumNetwork: ChainifyNetwork,
-  feeProvider: Fee,
   mnemonic: string,
   accountType: AccountType,
   derivationPath: string,
-  swapOptions: EvmTypes.EvmSwapOptions
+  swapOptions: EvmTypes.EvmSwapOptions,
+  feeProvider?: Fee,
+  chainProvider?: EvmChainProvider
 ) {
   // disable multicall for all networks until it's utilized properly
-  const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider, false);
+  const _chainProvider = chainProvider ?? new EvmChainProvider(ethereumNetwork, undefined, feeProvider, false);
   const swapProvider = new EvmSwapProvider(swapOptions);
 
   if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
@@ -100,13 +101,13 @@ export function createEVMClient(
         derivationPath,
         transportCreator: ledgerTransportCreator,
       },
-      chainProvider
+      _chainProvider
     );
 
     swapProvider.setWallet(ledgerProvider);
   } else {
     const walletOptions = { derivationPath, mnemonic };
-    const walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
+    const walletProvider = new EvmWalletProvider(walletOptions, _chainProvider);
     swapProvider.setWallet(walletProvider);
   }
 

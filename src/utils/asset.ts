@@ -119,6 +119,16 @@ const EXPLORERS: ExplorerMap = {
       address: 'https://explorer.fuse.io/address/{hash}',
     },
   },
+  optimism: {
+    testnet: {
+      tx: 'https://kovan-optimistic.etherscan.io/tx/{hash}',
+      address: 'https://kovan-optimistic.etherscan.io/address/{hash}',
+    },
+    mainnet: {
+      tx: 'https://optimistic.etherscan.io/tx/{hash}',
+      address: 'https://optimistic.etherscan.io/address/{hash}',
+    },
+  },
 };
 
 function getChainExplorer(chain: ChainId) {
@@ -240,6 +250,14 @@ export const tokenDetailProviders: {
   fuse: {
     async getDetails(contractAddress) {
       return await fetchTokenDetails(contractAddress, 'https://rpc.fuse.io');
+    },
+  },
+  optimism: {
+    async getDetails(contractAddress) {
+      return await fetchTokenDetails(
+        contractAddress,
+        `https://optimism-mainnet.infura.io/v3/${buildConfig.infuraApiKey}`
+      );
     },
   },
 };

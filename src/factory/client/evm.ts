@@ -1,4 +1,6 @@
-import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
+import { EIP1559FeeProvider, OptimismChainProvider, RpcFeeProvider } from '@chainify/evm';
+import { asL2Provider } from '@eth-optimism/sdk';
+import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { AccountType, Network } from '../../store/types';
 import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
 import { ChainNetworks } from '../../utils/networks';
@@ -11,7 +13,7 @@ const defaultSwapOptions = {
 export function createEthClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
   const ethNetwork = ChainNetworks.ethereum[network];
   const feeProvider = new EIP1559FeeProvider(ethNetwork.rpcUrl as string);
-  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountType, derivationPath, defaultSwapOptions);
+  return createEVMClient(ethNetwork, mnemonic, accountType, derivationPath, defaultSwapOptions, feeProvider);
 }
 
 export function createRskClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
@@ -27,7 +29,7 @@ export function createRskClient(network: Network, mnemonic: string, accountType:
     gasLimitMargin: 3000, // 30%;
   };
 
-  return createEVMClient(rskNetwork, feeProvider, mnemonic, accountType, derivationPath, swapOptions);
+  return createEVMClient(rskNetwork, mnemonic, accountType, derivationPath, swapOptions, feeProvider);
 }
 
 export function createBSCClient(network: Network, mnemonic: string, derivationPath: string) {
@@ -39,7 +41,7 @@ export function createBSCClient(network: Network, mnemonic: string, derivationPa
     fastMultiplier: 2.2,
   });
 
-  return createEVMClient(bscNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath, defaultSwapOptions);
+  return createEVMClient(bscNetwork, mnemonic, AccountType.Default, derivationPath, defaultSwapOptions, feeProvider);
 }
 
 export function createPolygonClient(network: Network, mnemonic: string, derivationPath: string) {
@@ -56,11 +58,11 @@ export function createPolygonClient(network: Network, mnemonic: string, derivati
 
   return createEVMClient(
     polygonNetwork,
-    feeProvider,
     mnemonic,
     AccountType.Default,
     derivationPath,
-    defaultSwapOptions
+    defaultSwapOptions,
+    feeProvider
   );
 }
 
@@ -75,11 +77,11 @@ export function createArbitrumClient(network: Network, mnemonic: string, derivat
 
   return createEVMClient(
     arbitrumNetwork,
-    feeProvider,
     mnemonic,
     AccountType.Default,
     derivationPath,
-    defaultSwapOptions
+    defaultSwapOptions,
+    feeProvider
   );
 }
 
@@ -94,11 +96,11 @@ export function createAvalancheClient(network: Network, mnemonic: string, deriva
 
   return createEVMClient(
     avalancheNetwork,
-    feeProvider,
     mnemonic,
     AccountType.Default,
     derivationPath,
-    defaultSwapOptions
+    defaultSwapOptions,
+    feeProvider
   );
 }
 
@@ -111,5 +113,25 @@ export function createFuseClient(network: Network, mnemonic: string, derivationP
     fastMultiplier: 1.25,
   });
 
-  return createEVMClient(fuseNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath, defaultSwapOptions);
+  return createEVMClient(fuseNetwork, mnemonic, AccountType.Default, derivationPath, defaultSwapOptions, feeProvider);
+}
+
+export function createOptimismClient(network: Network, mnemonic: string, derivationPath: string) {
+  const optimismNetwork = ChainNetworks.optimism[network];
+  const jsonRpcProvider = asL2Provider(new StaticJsonRpcProvider(optimismNetwork.rpcUrl));
+  const chainProvider = new OptimismChainProvider(optimismNetwork, jsonRpcProvider, {
+    slowMultiplier: 1,
+    averageMultiplier: 1,
+    fastMultiplier: 1,
+  });
+
+  return createEVMClient(
+    optimismNetwork,
+    mnemonic,
+    AccountType.Default,
+    derivationPath,
+    defaultSwapOptions,
+    undefined,
+    chainProvider
+  );
 }

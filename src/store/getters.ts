@@ -17,6 +17,7 @@ const TESTNET_CONTRACT_ADDRESSES: { [asset: string]: string } = {
   PWETH: '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa',
   SUSHI: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
   ANC: 'terra1747mad58h0w4y589y3sk84r5efqdev9q4r02pc',
+  OPTUSDC: '0x4e62882864fB8CE54AFfcAf8D899A286762B011B',
 };
 
 const TESTNET_ASSETS: { [asset: string]: Asset } = [
@@ -37,6 +38,8 @@ const TESTNET_ASSETS: { [asset: string]: Asset } = [
   'UST',
   'ANC',
   'FUSE',
+  'OPTETH',
+  'OPTUSDC',
 ].reduce((assets, asset) => {
   const contractAddress = TESTNET_CONTRACT_ADDRESSES[asset];
   return Object.assign(assets, {
