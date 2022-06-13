@@ -1,9 +1,8 @@
 import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
-import { Client } from '@chainify/client';
+import { Client, HttpClient } from '@chainify/client';
 import { Asset as ChainifyAsset, Transaction } from '@chainify/types';
 import { sha256 } from '@chainify/utils';
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -77,15 +76,16 @@ export interface LiqualitySwapProviderConfig extends EvmSwapProviderConfig {
 }
 
 export class LiqualitySwapProvider extends EvmSwapProvider {
-  config: LiqualitySwapProviderConfig;
+  public config: LiqualitySwapProviderConfig;
+  private _httpClient: HttpClient;
+
+  constructor(config: LiqualitySwapProviderConfig) {
+    super(config);
+    this._httpClient = new HttpClient({ baseURL: this.config.agent });
+  }
+
   private async getMarketInfo(): Promise<LiqualityMarketData[]> {
-    return (
-      await axios({
-        url: this.config.agent + '/api/swap/marketinfo',
-        method: 'get',
-        headers,
-      })
-    ).data;
+    return this._httpClient.nodeGet('/api/swap/marketinfo', null, { headers });
   }
 
   public async getSupportedPairs() {
@@ -245,18 +245,16 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   }
 
   public async updateOrder(order: LiqualitySwapHistoryItem) {
-    const res = await axios({
-      url: this.config.agent + '/api/swap/order/' + order.orderId,
-      method: 'post',
-      data: {
+    return this._httpClient.nodePost(
+      `/api/swap/order/${order.orderId}`,
+      {
         fromAddress: order.fromAddress,
         toAddress: order.toAddress,
         fromFundHash: order.fromFundHash,
         secretHash: order.secretHash,
       },
-      headers,
-    });
-    return res.data;
+      { headers }
+    );
   }
 
   public async waitForClaimConfirmations({ swap, network, walletId }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
@@ -451,14 +449,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
 
   private async _getQuote({ from, to, amount }: { from: Asset; to: Asset; amount: string }) {
     try {
-      return (
-        await axios({
-          url: this.config.agent + '/api/swap/order',
-          method: 'post',
-          data: { from, to, fromAmount: amount },
-          headers,
-        })
-      ).data;
+      return this._httpClient.nodePost('/api/swap/order', { from, to, fromAmount: amount }, { headers });
     } catch (e) {
       if (e?.response?.data?.error) {
         throw new Error(e.response.data.error);
