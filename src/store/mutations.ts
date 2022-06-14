@@ -12,7 +12,7 @@ import {
   HistoryItem,
   MarketData,
   Network,
-  NFTAsset,
+  NFT,
   NFTSendHistoryItem,
   RootState,
   SendHistoryItem,
@@ -439,28 +439,27 @@ export default {
       ...payload,
     };
   },
-  SET_NFT_ASSETS(
+  UPDATE_NFTS(
     state: RootState,
-    payload: { nftAssets: NFTAsset[]; network: Network; walletId: WalletId; accountId?: AccountId }
+    { network, walletId, accountId, nfts }: { network: Network; walletId: WalletId; accountId: AccountId; nfts: NFT[] }
   ) {
-    const account = state.accounts[payload.walletId]![payload.network].find((a) => a.id === payload.accountId);
+    const account = state.accounts[walletId]![network].find((a) => a.id === accountId);
+    if (!account) throw new Error(`Tried to update nfts for unknown account ${accountId}`);
 
-    if (account) {
-      Vue.set(account, 'nftAssets', payload.nftAssets);
-    }
+    Vue.set(account, 'nfts', nfts);
   },
-  SET_STARRED_NFTS(
+  NFT_TOGGLE_STARRED(
     state: RootState,
-    payload: { nftAsset: NFTAsset; network: Network; walletId: WalletId; accountId: AccountId }
+    { network, walletId, accountId, nft }: { network: Network; walletId: WalletId; accountId: AccountId; nft: NFT }
   ) {
-    const account = state.accounts[payload.walletId]![payload.network].find((a) => a.id === payload.accountId);
-    if (account?.nftAssets) {
-      const nftAsset = account?.nftAssets.find((nft) => {
-        return nft.asset_contract.address === payload.nftAsset.asset_contract.address && nft.id === payload.nftAsset.id;
-      });
-      if (nftAsset) {
-        nftAsset.starred = payload.nftAsset.starred;
-      }
+    const account = state.accounts[walletId]![network].find((a) => a.id === accountId);
+    if (!account) throw new Error(`Tried to update nfts for unknown account ${accountId}`);
+
+    const stateNFT = account.nfts?.find((accountNFT) => {
+      return accountNFT.asset_contract.address === nft.asset_contract.address && accountNFT.id === nft.id;
+    });
+    if (stateNFT) {
+      stateNFT.starred = !stateNFT.starred;
     }
   },
   TOGGLE_EXPERIMENT(state: RootState, { name }: { name: ExperimentType }) {

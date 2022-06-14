@@ -65,7 +65,7 @@ const config: WalletCoreConfig = {
   },
   supportedNFTChains: {
     mainnet: [ChainId.Ethereum, ChainId.Polygon],
-    testnet: [ChainId.Ethereum, ChainId.Polygon],
+    testnet: [ChainId.Polygon],
   },
   infuraApiKey: 'da99ebc8c0964bb8bb757b6f8cc40f1f',
   exploraApis: {

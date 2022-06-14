@@ -14,8 +14,8 @@ import {
   Asset as AssetType,
   HistoryItem,
   Network,
-  NFTAsset,
-  NFTAssets,
+  NFT,
+  NFTCollections,
   WalletId,
 } from './types';
 
@@ -293,24 +293,24 @@ export default {
     }
     return false;
   },
-  nftAssetsByCollection(...context: GetterContext): NFTAssets {
+  nftAssetsByCollection(...context: GetterContext): NFTCollections {
     const { getters } = rootGetterContext(context);
     const { nftAssetsByAccount } = getters;
-    const nftAssetsByCollection: NFTAssets = Object.values(nftAssetsByAccount).reduce((accum, nftAssets) => {
+    const nftAssetsByCollection: NFTCollections = Object.values(nftAssetsByAccount).reduce((accum, nftAssets) => {
       const mergedCollectionAssets = Object.assign({}, accum, nftAssets);
       return mergedCollectionAssets;
     }, {});
     return nftAssetsByCollection;
   },
-  nftAssetsByAccount(...context: GetterContext): { [accountName: string]: NFTAssets } {
+  nftAssetsByAccount(...context: GetterContext): { [accountName: string]: NFTCollections } {
     const { getters } = rootGetterContext(context);
     const { accountsData } = getters;
-    const nftAssetsByAccount: { [accountName: string]: NFTAssets } = {};
+    const nftAssetsByAccount: { [accountName: string]: NFTCollections } = {};
     accountsData.forEach((account) => {
-      if (account.nftAssets) {
-        const result = account.nftAssets.reduce((assets: NFTAssets, asset: NFTAsset) => {
+      if (account.nfts) {
+        const result = account.nfts.reduce((assets: NFTCollections, asset: NFT) => {
           (assets[asset.collection.name] ||= []).push(asset);
-          assets[asset.collection.name].sort((assetA: NFTAsset, assetB: NFTAsset) => {
+          assets[asset.collection.name].sort((assetA: NFT, assetB: NFT) => {
             return assetA.starred === assetB.starred ? 0 : assetA.starred ? -1 : 1;
           });
           return assets;
