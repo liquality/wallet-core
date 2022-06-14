@@ -293,31 +293,28 @@ export default {
     }
     return false;
   },
-  nftAssetsByCollection(...context: GetterContext): NFTCollections {
+  allNftCollections(...context: GetterContext): NFTCollections {
     const { getters } = rootGetterContext(context);
-    const { nftAssetsByAccount } = getters;
-    const nftAssetsByCollection: NFTCollections = Object.values(nftAssetsByAccount).reduce((accum, nftAssets) => {
-      const mergedCollectionAssets = Object.assign({}, accum, nftAssets);
-      return mergedCollectionAssets;
+    const accounts = getters.accountsData;
+    const allNftCollections: NFTCollections = accounts.reduce((allCollections, account) => {
+      const collections = getters.accountNftCollections(account.id);
+      return Object.assign({}, allCollections, collections);
     }, {});
-    return nftAssetsByCollection;
+    return allNftCollections;
   },
-  nftAssetsByAccount(...context: GetterContext): { [accountName: string]: NFTCollections } {
+  accountNftCollections(...context: GetterContext) {
     const { getters } = rootGetterContext(context);
-    const { accountsData } = getters;
-    const nftAssetsByAccount: { [accountName: string]: NFTCollections } = {};
-    accountsData.forEach((account) => {
-      if (account.nfts) {
-        const result = account.nfts.reduce((assets: NFTCollections, asset: NFT) => {
-          (assets[asset.collection.name] ||= []).push(asset);
-          assets[asset.collection.name].sort((assetA: NFT, assetB: NFT) => {
-            return assetA.starred === assetB.starred ? 0 : assetA.starred ? -1 : 1;
-          });
-          return assets;
-        }, {});
-        nftAssetsByAccount[account.chain] = result;
-      }
-    });
-    return nftAssetsByAccount;
+    return (accountId: AccountId): NFTCollections => {
+      const account = getters.accountItem(accountId);
+      if (!account?.nfts || !account.nfts.length) return {};
+
+      return account.nfts.reduce((collections: NFTCollections, nft: NFT) => {
+        (collections[nft.collection.name] ||= []).push(nft);
+        collections[nft.collection.name].sort((nftA: NFT, nftB: NFT) => {
+          return nftA.starred === nftB.starred ? 0 : nftA.starred ? -1 : 1;
+        });
+        return collections;
+      }, {});
+    };
   },
 };
