@@ -37,11 +37,7 @@ export const updateBalances = async (
       if (type.includes('ledger')) {
         addresses = account.addresses
           .filter((a) => typeof a === 'string')
-          .map((address) => {
-            return new Address({
-              address: `${address}`,
-            });
-          });
+          .map((address) => new Address({ address: `${address}` }));
       } else {
         addresses = await client.wallet.getUsedAddresses();
       }
@@ -63,18 +59,24 @@ export const updateBalances = async (
           // update each asset in state
           assetsChunks.forEach((assets, index) =>
             assets.forEach((asset, innerIndex) => {
-              commit.UPDATE_BALANCE({
-                network,
-                accountId: account.id,
-                walletId,
-                asset: asset.code,
-                balance: balances[index][innerIndex].toString(),
-              });
+              // if balance is `null` there was a problem while fetching
+              const balance = balances[index][innerIndex];
+              if (balance) {
+                commit.UPDATE_BALANCE({
+                  network,
+                  accountId: account.id,
+                  walletId,
+                  asset: asset.code,
+                  balance: balance.toString(),
+                });
+              } else {
+                console.error(`Balance not fetched: ${asset.code}`);
+              }
             })
           );
         } catch (err) {
-          console.error(`Asset: ${nativeAsset} Balance update error:  `, err.message);
           console.info('Connected network ', client.chain.getNetwork());
+          console.error(`Asset: ${nativeAsset} Balance update error:  `, err.message);
         }
       }
 
