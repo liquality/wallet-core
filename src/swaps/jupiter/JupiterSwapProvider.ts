@@ -1,16 +1,28 @@
 import { TxStatus } from '@chainify/types';
-import { ChainId, currencyToUnit } from '@liquality/cryptoassets';
-import { Transaction } from '@solana/web3.js';
+import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { Connection, Transaction } from '@solana/web3.js';
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext } from '../../store';
 import { withInterval } from '../../store/actions/performNextAction/utils';
+import { SwapHistoryItem } from '../../store/types';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { SwapProvider } from '../SwapProvider';
-import { EstimateFeeResponse, NextSwapActionRequest, QuoteRequest, SwapStatus } from '../types';
+import {
+  EstimateFeeRequest,
+  EstimateFeeResponse,
+  NextSwapActionRequest,
+  QuoteRequest,
+  SwapRequest,
+  SwapStatus,
+} from '../types';
 
+export interface JupiterSwapHistoryItem extends SwapHistoryItem {
+  info: object;
+  swapTxHash: string;
+}
 class JupiterSwapProvider extends SwapProvider {
   protected _getStatuses(): Record<string, SwapStatus> {
     return {
@@ -26,7 +38,7 @@ class JupiterSwapProvider extends SwapProvider {
         step: 1,
         label: 'Completed',
         filterStatus: 'COMPLETED',
-        notification(swap: any) {
+        notification(swap: SwapHistoryItem) {
           return {
             message: `Swap completed, ${prettyBalance(new BigNumber(swap.toAmount), swap.to)} ${swap.to} ready to use`,
           };
@@ -63,6 +75,7 @@ class JupiterSwapProvider extends SwapProvider {
   public async getSupportedPairs() {
     return [];
   }
+
   public async getQuote(quoteRequest: QuoteRequest) {
     const { from, to, amount } = quoteRequest;
     const fromInfo = cryptoassets[from];
@@ -78,56 +91,79 @@ class JupiterSwapProvider extends SwapProvider {
     const fromAddress = fromInfo.contractAddress || solMintAddress;
     const toAddress = toInfo.contractAddress || solMintAddress;
 
-    const fromAmountInUnit = currencyToUnit(
-      fromInfo,
-      new BN(amount).decimalPlaces(fromInfo.decimals, BN.ROUND_DOWN) // ignore all decimals after nth
-    );
-
-    console.log(fromAddress);
-    console.log(toAddress);
-    console.log('amount', fromAmountInUnit.toString());
+    const fromAmountInUnit = currencyToUnit(fromInfo, new BN(amount)).toFixed();
 
     const { data } = await axios.get(
-      `https://quote-api.jup.ag/v1/quote?inputMint=${fromAddress}&outputMint=${toAddress}&amount=${new BN(
-        100
-      )}&slippage=0.5&`
+      `https://quote-api.jup.ag/v1/quote?inputMint=${fromAddress}&outputMint=${toAddress}&amount=${fromAmountInUnit}&slippage=0.5&`
     );
 
+    if (!data.data?.[0]) {
+      return null;
+    }
+
     const info = data.data[0];
+
+    // console.log(info);
 
     return {
       from,
       to,
       fromAmount: fromAmountInUnit.toString(),
       toAmount: info.outAmount.toString(),
-      info,
+      info: {
+        ...info,
+        toAddress,
+      },
     };
   }
 
-  public async newSwap(quoteInput: any): Promise<any> {
-    console.log('quote input', quoteInput);
+  public async newSwap(quoteInput: SwapRequest<JupiterSwapHistoryItem>) {
+    const connection = new Connection(
+      'https://solana--mainnet.datahub.figment.io/apikey/d7d9844ccf72ad4fef9bc5caaa957a50',
+      {
+        confirmTransactionInitialTimeout: 120000,
+        commitment: 'confirmed',
+      }
+    );
     const { network, walletId, quote } = quoteInput;
-
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const [{ address }] = await client.wallet.getAddresses();
 
     const transactions = await this._getTransactions(quote.info, address);
 
-    const { setupTransaction, swapTransaction, cleanupTransaction } = transactions;
+    let swapTx;
+    const txTypes = Object.keys(transactions);
 
-    let swapTx: any;
+    /* Full swap flow might be constructed from 3 different transactions:
+      1. Setup transaction  - used to handle creating ATA or Serum open order accounts
+      2. Swap transaction  - performing the actual swaps
+      3. Clean up transaction - unwrap SOL if a SOL swap.
 
-    for (let serializedTransaction of [setupTransaction, swapTransaction, cleanupTransaction].filter(Boolean)) {
-      const transaction = Transaction.from(Buffer.from(serializedTransaction, 'base64'));
+      You must send each transaction sequentially in the order:
+      setupTransaction -> swapTransaction -> cleanupTransaction and wait for each to be 'confirmed' before sending the next one.
+    */
 
-      // @ts-ignore TODO: CAL should allow `any` for data
-      swapTx = await client.wallet.sendTransaction({ transaction, value: new BN(quote.fromAmount) });
+    console.log(txTypes);
+    for (let i = 0; i < txTypes.length; i++) {
+      const tx = Transaction.from(Buffer.from(transactions[txTypes[i]], 'base64'));
+      console.log('broadcast', txTypes[i]);
+      if (txTypes[i] === 'swapTransaction') {
+        // @ts-ignore TODO: CAL should allow `any` for data
+        swapTx = await client.wallet.sendTransaction({ transaction: tx, value: new BN(quote.fromAmount) });
+        await connection.confirmTransaction(swapTx.hash, 'confirmed');
+        console.log('swap tx', swapTx);
+      } else {
+        // @ts-ignore TODO: CAL should allow `any` for data
+        const res = await client.wallet.sendTransaction({ transaction: tx, value: new BN(0) });
+        await connection.confirmTransaction(res.hash, 'confirmed');
+        console.log('re', res);
+      }
     }
 
     const updates = {
       status: 'WAITING_FOR_SWAP_CONFIRMATIONS',
       swapTx,
-      swapTxHash: swapTx.hash,
+      swapTxHash: swapTx?.hash,
     };
 
     return {
@@ -138,18 +174,38 @@ class JupiterSwapProvider extends SwapProvider {
     };
   }
 
-  public estimateFees(): // estimateFeeRequest: EstimateFeeRequest<string, SwapQuote>
-  Promise<EstimateFeeResponse | null> {
-    throw new Error('Method not implemented.');
+  public async estimateFees({
+    txType,
+    feePrices,
+    asset,
+  }: EstimateFeeRequest<string, JupiterSwapHistoryItem>): Promise<EstimateFeeResponse | null> {
+    if (txType != this.fromTxType) {
+      throw new Error(`Invalid tx type ${txType}`);
+    }
+
+    const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
+
+    const gasLimit = 1000000000;
+    const fees: EstimateFeeResponse = {};
+
+    for (const feePrice of feePrices) {
+      const fee = new BN(gasLimit).times(feePrice);
+      fees[feePrice] = new BN(unitToCurrency(cryptoassets[nativeAsset], fee).toFixed());
+    }
+
+    return fees;
   }
 
-  async performNextSwapAction(_store: ActionContext, { network, walletId, swap }: NextSwapActionRequest<any>) {
+  async performNextSwapAction(
+    _store: ActionContext,
+    { network, walletId, swap }: NextSwapActionRequest<JupiterSwapHistoryItem>
+  ) {
     if (swap.status === 'WAITING_FOR_SWAP_CONFIRMATIONS') {
       return withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
     }
   }
 
-  async waitForSwapConfirmations({ swap, network, walletId }: NextSwapActionRequest<any>) {
+  async waitForSwapConfirmations({ swap, network, walletId }: NextSwapActionRequest<JupiterSwapHistoryItem>) {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
@@ -168,12 +224,11 @@ class JupiterSwapProvider extends SwapProvider {
       else throw e;
     }
   }
-  private async _getTransactions(route: any, userPublicKey: any) {
+  private async _getTransactions(route: object, userPublicKey: string) {
     const { data: transactions } = await axios.post('https://quote-api.jup.ag/v1/swap', {
       route,
       userPublicKey,
-      // to make sure it doesnt close the sol account
-      wrapUnwrapSOL: false,
+      wrapUnwrapSOL: true,
     });
 
     return transactions;
