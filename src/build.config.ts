@@ -2,7 +2,6 @@ import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-main
 import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
 import { ChainId } from '@liquality/cryptoassets';
 import { Asset, Network, SwapProviderType } from './store/types';
-import { HTLC_CONTRACT_ADDRESS } from './utils/chainify';
 
 export interface SwapProviderDefinition {
   name: string;
@@ -79,7 +78,6 @@ const config: WalletCoreConfig = {
         name: 'Liquality',
         icon: 'liquality.svg',
         type: SwapProviderType.Liquality,
-        routerAddress: HTLC_CONTRACT_ADDRESS,
         agent: process.env.VUE_APP_AGENT_TESTNET_URL || 'https://testnet-dev-agent.liq-chainhub.net',
       },
       liqualityBoostNativeToERC20: {

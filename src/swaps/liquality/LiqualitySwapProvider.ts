@@ -107,12 +107,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     const marketData = this.getMarketData(network);
     // Quotes are retrieved using market data because direct quotes take a long time for BTC swaps (agent takes long to generate new address)
     const market = marketData.find(
-      (market) =>
-        market.provider === this.config.providerId &&
-        market.to === to &&
-        market.from === from &&
-        new BN(amount).gte(new BN(market.min)) &&
-        new BN(amount).lte(new BN(market.max))
+      (market) => market.provider === this.config.providerId && market.to === to && market.from === from
     );
 
     if (!market) return null;
@@ -125,6 +120,8 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       to,
       fromAmount: fromAmount.toFixed(),
       toAmount: toAmount.toFixed(),
+      min: new BN(market.min),
+      max: new BN(market.max),
     };
   }
 
@@ -297,10 +294,10 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     { network, walletId, swap }: NextSwapActionRequest<LiqualitySwapHistoryItem>
   ) {
     switch (swap.status) {
-      case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
+      case 'WAITING_FOR_APPROVE_CONFIRMATIONS_LSP':
         return withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
 
-      case 'APPROVE_CONFIRMED':
+      case 'APPROVE_CONFIRMED_LSP':
         return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
           this.initiateSwap({ quote: swap, network, walletId })
         );
@@ -357,7 +354,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         },
       },
       INITIATION_CONFIRMED: {
-        step: 1,
+        step: 2,
         label: 'Locking {from}',
         filterStatus: 'PENDING',
       },
@@ -449,7 +446,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   }
 
   protected _totalSteps(): number {
-    return 4;
+    return 5;
   }
 
   private async _getQuote({ from, to, amount }: { from: Asset; to: Asset; amount: string }) {

@@ -101,11 +101,17 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     });
     if (!finalQuote) return null;
 
+    // increase minimum amount with 5% to minimize calculation
+    // error and price fluctuation
+    const min = finalQuote.min.times(1.05);
+
     return {
       from,
       to,
       fromAmount: quote.fromAmount,
       toAmount: finalQuote.toAmount,
+      minInBridgeAsset: min,
+      maxInBridgeAsset: finalQuote.max,
       bridgeAsset,
       bridgeAssetAmount: quote.toAmount,
       path: quote.path,
@@ -278,6 +284,11 @@ class LiqualityBoostERC20toNative extends SwapProvider {
           };
         },
       },
+      APPROVE_CONFIRMED_LSP: {
+        step: 1,
+        label: 'Locking {from}',
+        filterStatus: 'PENDING',
+      },
       // Liquality swap states
       INITIATED: {
         ...this.liqualitySwapProvider.statuses.INITIATED,
@@ -365,11 +376,22 @@ class LiqualityBoostERC20toNative extends SwapProvider {
   }
 
   protected _timelineDiagramSteps(): string[] {
-    return ['APPROVE', 'SWAP', 'INITIATION', 'AGENT_INITIATION', 'CLAIM_OR_REFUND'];
+    // remove approval step because bridge asset is always native and doesn't need approval
+    const lspTimeline = this.liqualitySwapProvider.timelineDiagramSteps;
+    if (lspTimeline[0] === 'APPROVE') {
+      lspTimeline.shift();
+    }
+
+    return this.sovrynSwapProvider.timelineDiagramSteps.concat(lspTimeline);
   }
 
   protected _totalSteps(): number {
-    return 6;
+    let lspSteps = this.liqualitySwapProvider.totalSteps;
+    if (this.liqualitySwapProvider.timelineDiagramSteps[0] === 'APPROVE') {
+      lspSteps -= 1;
+    }
+
+    return this.sovrynSwapProvider.totalSteps + lspSteps;
   }
 
   private swapLiqualityFormat(swap: any): LiqualitySwapHistoryItem {
