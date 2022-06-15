@@ -76,9 +76,8 @@ export const getLedgerAccounts = async (
       // Get the account balance
       const balance = addresses.length === 0 ? 0 : (await _client.chain.getBalance(addresses, [chainifyAsset]))[0];
       const fiatBalance = assetFiatBalance(asset, balance as BN) || new BN(0);
-
       const result = {
-        account: account.address,
+        account: normalizedAddress.startsWith('0x') ? normalizedAddress : `0x${normalizedAddress}`,
         balance,
         fiatBalance,
         index,

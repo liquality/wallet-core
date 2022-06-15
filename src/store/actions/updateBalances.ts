@@ -22,7 +22,7 @@ export const updateBalances = async (
   await Bluebird.map(
     accounts,
     async (account) => {
-      const { assets, type } = account;
+      const { assets } = account;
       await Bluebird.map(
         assets,
         async (asset) => {
@@ -34,22 +34,15 @@ export const updateBalances = async (
             accountId: account.id,
           });
 
-          if (type.includes('ledger')) {
-            addresses = account.addresses
-              .filter((a) => typeof a === 'string')
-              .map((address) => {
-                return new Address({
-                  address: `${address}`,
-                });
-              });
-          } else {
-            addresses = await _client.wallet.getUsedAddresses();
-          }
-
+          addresses = await _client.wallet.getUsedAddresses();
+          
           try {
             const _assets = assetsAdapter(asset);
+            const _addresses = addresses.map(a => {
+              return a.address.startsWith('0x') ? {...a, address: a.address.substring(2, a.address.length)} : a;
+            })
             const balance =
-              addresses.length === 0 ? '0' : (await _client.chain.getBalance(addresses, _assets)).toString();
+              addresses.length === 0 ? '0' : (await _client.chain.getBalance(_addresses, _assets)).toString();
             commit.UPDATE_BALANCE({ network, accountId: account.id, walletId, asset, balance });
           } catch (err) {
             console.error(`Asset: ${asset} Balance update error:  `, err.message);
