@@ -21,9 +21,13 @@ describe('getNFTAssets tests', () => {
     await wallet.dispatch.initializeAnalyticsPreferences({
       accepted: true,
     });
-    const assets = await wallet.dispatch.getNFTAssets({
+    const account = wallet.state.accounts?.[walletId]?.testnet?.[1];
+    const ethAccountId = account?.id;
+
+    const assets = await wallet.dispatch.updateNFTs({
       walletId: walletId,
       network: Network.Testnet,
+      accountIds: [ethAccountId]!,
     });
     expect(assets).toEqual([]);
   });

@@ -32,7 +32,7 @@ export * from './setEthereumInjectionChain';
 export * from './setWhatsNewModalVersion';
 export * from './showNotification';
 export * from './toggleExperiment';
-export * from './toggleNftStarred';
+export * from './toggleNFTStarred';
 export * from './unlockWallet';
 export * from './updateAccountBalance';
 export * from './updateBalances';
