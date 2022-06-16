@@ -15,9 +15,6 @@ export interface WalletCoreConfig {
   defaultAssets: {
     [key in Network]: Asset[];
   };
-  supportedNFTChains: {
-    [key in Network]: ChainId[];
-  };
   swapProviders: {
     [key in Network]: {
       [providerId: string]: SwapProviderDefinition;
@@ -62,10 +59,6 @@ const config: WalletCoreConfig = {
       'UST',
     ],
     testnet: ['BTC', 'ETH', 'DAI', 'RBTC', 'BNB', 'NEAR', 'SOV', 'MATIC', 'PWETH', 'ARBETH', 'AVAX', 'LUNA', 'UST'],
-  },
-  supportedNFTChains: {
-    mainnet: [ChainId.Ethereum, ChainId.Polygon],
-    testnet: [ChainId.Polygon],
   },
   infuraApiKey: 'da99ebc8c0964bb8bb757b6f8cc40f1f',
   exploraApis: {

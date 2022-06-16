@@ -1,10 +1,4 @@
-import {
-  EIP1559FeeProvider,
-  EvmChainProvider,
-  EvmWalletProvider,
-  OpenSeaNftProvider,
-  RpcFeeProvider,
-} from '@chainify/evm';
+import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
 import { AccountType, Network } from '../../store/types';
 import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
 import { ChainNetworks } from '../../utils/networks';
@@ -17,19 +11,7 @@ const defaultSwapOptions = {
 export function createEthClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
   const ethNetwork = ChainNetworks.ethereum[network];
   const feeProvider = new EIP1559FeeProvider(ethNetwork.rpcUrl as string);
-  const chainProvider = new EvmChainProvider(ethNetwork, undefined, feeProvider, !ethNetwork.isTestnet);
-  const walletOptions = { derivationPath, mnemonic };
-  const walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
-  const nftProvider = new OpenSeaNftProvider(walletProvider, { apiKey: '', url: ethNetwork.nftProviderUrl });
-  return createEVMClient(
-    ethNetwork,
-    feeProvider,
-    mnemonic,
-    accountType,
-    derivationPath,
-    defaultSwapOptions,
-    nftProvider
-  );
+  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountType, derivationPath, defaultSwapOptions);
 }
 
 export function createRskClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {

@@ -2,7 +2,7 @@ import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
 import { Network } from '../types';
 
-describe('getNFTAssets tests', () => {
+describe('updateNFTs tests', () => {
   it('should getNFT assets for ETH', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
@@ -21,9 +21,11 @@ describe('getNFTAssets tests', () => {
     await wallet.dispatch.initializeAnalyticsPreferences({
       accepted: true,
     });
-    const assets = await wallet.dispatch.getNFTAssets({
+    const accountIds = wallet.getters.accountsData.map((a) => a.id);
+    const assets = await wallet.dispatch.updateNFTs({
       walletId: walletId,
       network: Network.Testnet,
+      accountIds,
     });
     expect(assets).toEqual([]);
   });

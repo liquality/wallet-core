@@ -6,19 +6,62 @@ import {
 } from '@chainify/bitcoin';
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
 import { Client, Fee } from '@chainify/client';
-import { EvmChainProvider, EvmNftProvider, EvmSwapProvider, EvmTypes, EvmWalletProvider } from '@chainify/evm';
+import {
+  EvmBaseWalletProvider,
+  EvmChainProvider,
+  EvmSwapProvider,
+  EvmTypes,
+  EvmWalletProvider,
+  MoralisNftProvider,
+  OpenSeaNftProvider,
+} from '@chainify/evm';
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
 import { WebHidTransportCreator } from '@chainify/hw-ledger';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
 import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
 import { Network as ChainifyNetwork, Nullable } from '@chainify/types';
+import { BaseProvider } from '@ethersproject/providers';
 import buildConfig from '../../build.config';
 import { Account, AccountType, Network } from '../../store/types';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
 
 const ledgerTransportCreator = new WebHidTransportCreator();
+
+export enum NftProviderType {
+  OpenSea = 'opensea',
+  Moralis = 'moralis',
+  Covalent = 'covalent',
+}
+
+const chainIdToProvider: { [chainId: number]: NftProviderType } = {
+  1: NftProviderType.OpenSea,
+  137: NftProviderType.Moralis,
+  80001: NftProviderType.Moralis,
+};
+
+function getNftProvider(walletProvider: EvmBaseWalletProvider<BaseProvider>, network: ChainifyNetwork) {
+  if (!network.chainId) {
+    return;
+  }
+  const providerType = chainIdToProvider[network.chainId as number];
+  if (providerType) {
+    switch (providerType) {
+      case NftProviderType.OpenSea:
+        return new OpenSeaNftProvider(walletProvider, {
+          url: 'https://api.opensea.io/api/v1/',
+          apiKey: '963da5bcea554a92b078fe1f48a2300e',
+        });
+      case NftProviderType.Moralis:
+        return new MoralisNftProvider(walletProvider, {
+          url: 'https://y3mp1u0stvix.usemoralis.com:2053/server',
+          apiKey: 'DoxOxcpmFnJzIvEwFyptq971kHFkQHhHyda6Cmuw',
+          appId: 'zEsj7V2obfCOP0zL2nmyR2OtlPY62zUrHtsVzqAX',
+        });
+    }
+  }
+}
 
 export function createBtcClient(
   network: Network,
@@ -87,15 +130,15 @@ export function createEVMClient(
   mnemonic: string,
   accountType: AccountType,
   derivationPath: string,
-  swapOptions: EvmTypes.EvmSwapOptions,
-  nftProvider?: EvmNftProvider
+  swapOptions: EvmTypes.EvmSwapOptions
 ) {
   // disable multicall for all networks until it's utilized properly
   const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider, false);
   const swapProvider = new EvmSwapProvider(swapOptions);
 
+  let walletProvider;
   if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
-    const ledgerProvider = new EvmLedgerProvider(
+    walletProvider = new EvmLedgerProvider(
       {
         network: ethereumNetwork,
         derivationPath,
@@ -103,13 +146,13 @@ export function createEVMClient(
       },
       chainProvider
     );
-
-    swapProvider.setWallet(ledgerProvider);
   } else {
     const walletOptions = { derivationPath, mnemonic };
-    const walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
-    swapProvider.setWallet(walletProvider);
+    walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
   }
+  swapProvider.setWallet(walletProvider);
+
+  const nftProvider = getNftProvider(walletProvider, ethereumNetwork);
 
   if (nftProvider) {
     return new Client().connect(swapProvider).connect(nftProvider);

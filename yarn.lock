@@ -476,31 +476,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/bitcoin-ledger@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/bitcoin-ledger@npm:1.1.2"
+"@chainify/bitcoin-ledger@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/bitcoin-ledger@npm:1.2.1"
   dependencies:
-    "@chainify/bitcoin": 1.1.2
-    "@chainify/client": 1.1.2
-    "@chainify/errors": 1.1.2
-    "@chainify/hw-ledger": 1.1.2
-    "@chainify/types": 1.1.2
-    "@chainify/utils": 1.1.2
+    "@chainify/bitcoin": 1.2.1
+    "@chainify/client": 1.2.1
+    "@chainify/errors": 1.2.1
+    "@chainify/hw-ledger": 1.2.1
+    "@chainify/types": 1.2.1
+    "@chainify/utils": 1.2.1
     "@ledgerhq/hw-app-btc": 6.7.0
     bip32: 2.0.6
     bitcoinjs-lib: 5.2.0
-  checksum: 5e1183012929c14e17d8a23c306ec9b14aed07418150d8117415d122c6b807793f3e88f1a40b4c0d6d41ce85ff232c2d8222a2fdb2fe013ba3252d1cf1859d68
+  checksum: 18160336002d7887df1cdc477335398016a7d1b93a1729c4218fa86bde425111c662b825e06a4d1d8bc4c11a51c3edb97552a3ad25ad68e3cff5fcb2da1c8473
   languageName: node
   linkType: hard
 
-"@chainify/bitcoin@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/bitcoin@npm:1.1.2"
+"@chainify/bitcoin@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/bitcoin@npm:1.2.1"
   dependencies:
-    "@chainify/client": 1.1.2
-    "@chainify/errors": 1.1.2
-    "@chainify/types": 1.1.2
-    "@chainify/utils": 1.1.2
+    "@chainify/client": 1.2.1
+    "@chainify/errors": 1.2.1
+    "@chainify/types": 1.2.1
+    "@chainify/utils": 1.2.1
     "@types/bip32": ^2.0.0
     "@types/bip39": ^3.0.0
     "@types/bitcoinjs-lib": ^5.0.0
@@ -514,42 +514,42 @@ __metadata:
     coinselect: ^3.1.12
     lodash: ^4.17.21
     memoizee: ^0.4.15
-  checksum: 1610a527b4f29fcb27c1a62379a8bd9fcdb5f126d3e62a2bc811138a2223a45d3a4ffbd89754bb6327991ce222447137c91752aff5f8678bffff772c5967323f
+  checksum: 5eb35366bb25f953e63bc6337d80fcca937aa619743c87ff22d8ad80fd53a8775d6043f2fb0bc4b9431bd7d671798d22cddf4bfc7f6bcb406503bcb67fc89ca4
   languageName: node
   linkType: hard
 
-"@chainify/client@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/client@npm:1.1.2"
+"@chainify/client@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/client@npm:1.2.1"
   dependencies:
-    "@chainify/errors": 1.1.2
-    "@chainify/logger": 1.1.2
-    "@chainify/types": 1.1.2
-    "@chainify/utils": 1.1.2
+    "@chainify/errors": 1.2.1
+    "@chainify/logger": 1.2.1
+    "@chainify/types": 1.2.1
+    "@chainify/utils": 1.2.1
     axios: ^0.25.0
-  checksum: 74588c70657723c02a244f7416618b505ce2ae369c739c2589ade94c532b9b8765f1cc3113e66686f3d44ec4dd924b005b0dc2a3901bfc88348cddf980255e33
+  checksum: 730a8cc1a426919c78d71135f2843ccd74e5203720f76128b93ac8daa029d8c1111f12f9c536e8205e0f462d81e2a7f758ff97f91abedaf6bd91d1a5d297bf65
   languageName: node
   linkType: hard
 
-"@chainify/errors@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/errors@npm:1.1.2"
+"@chainify/errors@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/errors@npm:1.2.1"
   dependencies:
     standard-error: ^1.1.0
-  checksum: 0924d6f34ed302273f1121d42d6a314b767a0c5ab4f57decc6200b8da7488ea843b8949385034276280106e0289f6c6ea3977b9210cfa82e21bc1859885248b3
+  checksum: 9dd2b667ec84e444b51b53c6818b985d61813e2ca1e43408df01da90a9070ac534490220aa70d5d391714a77ccc3d53ac9bd9973e8768c996fc63e6526b55f2f
   languageName: node
   linkType: hard
 
-"@chainify/evm-ledger@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/evm-ledger@npm:1.1.2"
+"@chainify/evm-ledger@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/evm-ledger@npm:1.2.1"
   dependencies:
-    "@chainify/client": 1.1.2
-    "@chainify/errors": 1.1.2
-    "@chainify/evm": 1.1.2
-    "@chainify/hw-ledger": 1.1.2
-    "@chainify/types": 1.1.2
-    "@chainify/utils": 1.1.2
+    "@chainify/client": 1.2.1
+    "@chainify/errors": 1.2.1
+    "@chainify/evm": 1.2.1
+    "@chainify/hw-ledger": 1.2.1
+    "@chainify/types": 1.2.1
+    "@chainify/utils": 1.2.1
     "@ethersproject/abstract-provider": 5.6.0
     "@ethersproject/abstract-signer": 5.6.0
     "@ethersproject/address": 5.6.0
@@ -560,19 +560,19 @@ __metadata:
     "@ethersproject/strings": 5.6.0
     "@ethersproject/transactions": 5.6.0
     "@ledgerhq/hw-app-eth": ^6.26.0
-  checksum: e5a7cc3f0975f81dba6d3bccd8fcfad0a970f58f71510fa40bcf7bc4c1159eb8dae2cec98c39d2d20d05403b9e7bb88268672c6722dd4493cb5c58fe994c452b
+  checksum: 0b6203f1fbc703be53fa50780b0f17cd980085eced95ab0450c044ffc939efdecd52227a38e1f3ea9196761e3bf47e1796ec6a424b31a9295c5e174e6c39b8d3
   languageName: node
   linkType: hard
 
-"@chainify/evm@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/evm@npm:1.1.2"
+"@chainify/evm@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/evm@npm:1.2.1"
   dependencies:
-    "@chainify/client": 1.1.2
-    "@chainify/errors": 1.1.2
-    "@chainify/logger": 1.1.2
-    "@chainify/types": 1.1.2
-    "@chainify/utils": 1.1.2
+    "@chainify/client": 1.2.1
+    "@chainify/errors": 1.2.1
+    "@chainify/logger": 1.2.1
+    "@chainify/types": 1.2.1
+    "@chainify/utils": 1.2.1
     "@eth-optimism/sdk": ^1.1.5
     "@ethersproject/abi": 5.6.0
     "@ethersproject/abstract-provider": 5.6.0
@@ -586,104 +586,104 @@ __metadata:
     "@metamask/eth-sig-util": ^4.0.1
     "@rainbow-me/fee-suggestions": ^2.0.0
     moralis: 1.8.0
-  checksum: e9413c2ae8942b94e0f062fe7ba563cf498cf56bc076137cfc731f06cef85c211379d2ae96aebfd6a5622eb8fd456949cb4602aeb69eaebfbb35f38ffe440068
+  checksum: 419c27250dd6540f5775d4fb8b79796d23929f1179a49df85efec3bfd026e38e40850ea53b767a147159f112475387895783b3d099beb183f5eb633579e951cf
   languageName: node
   linkType: hard
 
-"@chainify/hw-ledger@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/hw-ledger@npm:1.1.2"
+"@chainify/hw-ledger@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/hw-ledger@npm:1.2.1"
   dependencies:
-    "@chainify/errors": 1.1.2
-    "@chainify/logger": 1.1.2
-    "@chainify/types": 1.1.2
-    "@chainify/utils": 1.1.2
+    "@chainify/errors": 1.2.1
+    "@chainify/logger": 1.2.1
+    "@chainify/types": 1.2.1
+    "@chainify/utils": 1.2.1
     "@ledgerhq/hw-transport": 6.27.1
     "@ledgerhq/hw-transport-webhid": 6.27.1
-  checksum: 532685a46447ad51a116600aeb13ebb20eebfc9f94c210392238a93b71cac9851962b58dcbd09d023c7961d08ea1498bc3d5baa57be2f197dcdc094e56e627cd
+  checksum: 1b9584fbc05375cdafee06bb06b2d5fc29ed4380d6767cc9fa444728b9c033d253210b4cd134f206591f88f21823fc3aa1b5c89f4a41fa9acf2b328725ebef3e
   languageName: node
   linkType: hard
 
-"@chainify/logger@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/logger@npm:1.1.2"
-  checksum: 387e03eaf2759760333068f48510b4bbc57fa0a0e0dc44ee98675b4513f58a18eee28efc55e9f0caf1e136609fb30c6fbe50bf2b5949fc9830369161e4d67565
+"@chainify/logger@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/logger@npm:1.2.1"
+  checksum: d87d1a7d3bd0353f973bb06f3e67c4b9284a9f34c840c8b2d482dc9fb6fc8571ef12fe164e808b6dbdbc90e66ddde6ac972e360c264ec47bcc8eb056d547b6f7
   languageName: node
   linkType: hard
 
-"@chainify/near@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/near@npm:1.1.2"
+"@chainify/near@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/near@npm:1.2.1"
   dependencies:
-    "@chainify/client": 1.1.2
-    "@chainify/errors": 1.1.2
-    "@chainify/types": 1.1.2
-    "@chainify/utils": 1.1.2
+    "@chainify/client": 1.2.1
+    "@chainify/errors": 1.2.1
+    "@chainify/types": 1.2.1
+    "@chainify/utils": 1.2.1
     bn.js: ^5.2.0
     near-api-js: ^0.44.2
     near-seed-phrase: ^0.2.0
-  checksum: 48b18a7a242cf7594b47c3ced34a80697ed6ecae00a8f57890fb596157ddd4a5aa3cec503e7fe235cc814e882b198e55348c8947e883c24798e9c1f7b2c8b267
+  checksum: fd954af09b5a783a11d9b15d39d8057b3779a3aead63c1c8247fa8b6a5c792caecd7a193b99f2d111c7a912352ab624d7d43410c4aa4c0e228d14173715baf8b
   languageName: node
   linkType: hard
 
-"@chainify/solana@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/solana@npm:1.1.2"
+"@chainify/solana@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/solana@npm:1.2.1"
   dependencies:
-    "@chainify/client": 1.1.2
-    "@chainify/errors": 1.1.2
-    "@chainify/logger": 1.1.2
-    "@chainify/types": 1.1.2
-    "@chainify/utils": 1.1.2
+    "@chainify/client": 1.2.1
+    "@chainify/errors": 1.2.1
+    "@chainify/logger": 1.2.1
+    "@chainify/types": 1.2.1
+    "@chainify/utils": 1.2.1
     "@solana/spl-token": ^0.2.0
     "@solana/web3.js": ^1.37.2
     bip39: ^3.0.4
     ed25519-hd-key: ^1.2.0
     tweetnacl: ^1.0.3
-  checksum: 39c8b96a813b6ddc0286053209732c75210e044367fe51cce5657d6c871a930c0d82df630814cc824bf81253e74a03ca53588ef479a18277b8532dc4134735a6
+  checksum: 8ac21a0a1bd886c2f765fea013964f4ff050d3ed5017049a2570c02615d95ac3947353d7f65a409378025599a7817c2a19c63ffeface03e9bfb2b0fcb015f0e4
   languageName: node
   linkType: hard
 
-"@chainify/terra@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/terra@npm:1.1.2"
+"@chainify/terra@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/terra@npm:1.2.1"
   dependencies:
-    "@chainify/client": 1.1.2
-    "@chainify/errors": 1.1.2
-    "@chainify/logger": 1.1.2
-    "@chainify/types": 1.1.2
-    "@chainify/utils": 1.1.2
+    "@chainify/client": 1.2.1
+    "@chainify/errors": 1.2.1
+    "@chainify/logger": 1.2.1
+    "@chainify/types": 1.2.1
+    "@chainify/utils": 1.2.1
     "@terra-money/terra.js": 3.1.3
     "@types/luxon": ^2.0.9
     lodash: ^4.17.21
     luxon: ^2.3.1
-  checksum: da1e70e987cac778e9e0880dbf65ed975be8d8d5099b60acae3ca0e78a8f9dd6c5f940deee00228b0fc76fc581b5a1ee17d8e285e5dceadc3718c797ca175613
+  checksum: 8312235282560a76a9625d8cdc12924f1bce5bb4a03a5d6e60e5a7130cf687d6dd658ecc8c7121472e0b08864b19e1d30a1b25d35565cb412a84a311121e3ba6
   languageName: node
   linkType: hard
 
-"@chainify/types@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/types@npm:1.1.2"
+"@chainify/types@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/types@npm:1.2.1"
   dependencies:
     "@ethersproject/bignumber": 5.6.0
     "@liquality/cryptoassets": ^1.13.3
     bignumber.js: ^9.0.2
-  checksum: 8f2e197321ad17c81790c1a2d03ff1cfbf09aea257a2ad6f93431a880bae1c2bb52efbf2549556fe44bde6353f236da4b455b120afa5859fc966c822a9d0ae41
+  checksum: 6199ef76db4ff1a09acfaa15a94a5667f6e44a4e246c527821cdb010628c6fdcd2de0a606d70f6102cad51940c193b4d8019892943488366a6ebfe75816d1867
   languageName: node
   linkType: hard
 
-"@chainify/utils@npm:1.1.2":
-  version: 1.1.2
-  resolution: "@chainify/utils@npm:1.1.2"
+"@chainify/utils@npm:1.2.1":
+  version: 1.2.1
+  resolution: "@chainify/utils@npm:1.2.1"
   dependencies:
-    "@chainify/errors": 1.1.2
-    "@chainify/types": 1.1.2
+    "@chainify/errors": 1.2.1
+    "@chainify/types": 1.2.1
     "@ethersproject/sha2": 5.6.0
     bech32: ^2.0.0
     bs58: ^5.0.0
     crypto-hashing: ^1.0.0
     setimmediate: ^1.0.5
-  checksum: dd4167f2c686775dbeac27f52523c48725c37ec85215005ac2675f8c76cd25243c2a0db43322bc02a03944f547b4a70d7f47d5a41ab310db2e628a900abfd159
+  checksum: 4f1f05e055629e264c0405d9b8a65a31da24d8b7bca1407eb48d8b80c76e31d53d6c594b95d69c8cbcd41d98682f36544458797850f93d3b9d89c6337c6acc18
   languageName: node
   linkType: hard
 
@@ -2401,17 +2401,17 @@ __metadata:
   dependencies:
     "@babel/types": ^7.17.0
     "@blobfishkate/sovryncontracts": 1.3.27
-    "@chainify/bitcoin": 1.1.2
-    "@chainify/bitcoin-ledger": 1.1.2
-    "@chainify/client": 1.1.2
-    "@chainify/errors": 1.1.2
-    "@chainify/evm": 1.1.2
-    "@chainify/evm-ledger": 1.1.2
-    "@chainify/near": 1.1.2
-    "@chainify/solana": 1.1.2
-    "@chainify/terra": 1.1.2
-    "@chainify/types": 1.1.2
-    "@chainify/utils": 1.1.2
+    "@chainify/bitcoin": 1.2.1
+    "@chainify/bitcoin-ledger": 1.2.1
+    "@chainify/client": 1.2.1
+    "@chainify/errors": 1.2.1
+    "@chainify/evm": 1.2.1
+    "@chainify/evm-ledger": 1.2.1
+    "@chainify/near": 1.2.1
+    "@chainify/solana": 1.2.1
+    "@chainify/terra": 1.2.1
+    "@chainify/types": 1.2.1
+    "@chainify/utils": 1.2.1
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
     "@ethersproject/address": 5.6.0
