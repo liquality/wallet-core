@@ -14,7 +14,7 @@ export const sendNFTTransaction = async (
     walletId,
     asset,
   });
-  const tx = await client.nft.transfer(nft.asset_contract.address, receiver, [+nft.token_id], values);
+  const tx = await client.nft.transfer(nft.asset_contract.address, receiver, [nft.token_id], values);
 
   const transaction: NFTSendHistoryItem = {
     id: uuidv4(),
