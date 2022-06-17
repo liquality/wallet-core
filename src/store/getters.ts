@@ -183,6 +183,7 @@ export default {
   accountItem(...context: GetterContext) {
     const { getters } = rootGetterContext(context);
     const { accountsData } = getters;
+
     return (accountId: AccountId): Account | undefined => {
       const account = accountsData.find((a) => a.id === accountId && a.enabled);
       return account;

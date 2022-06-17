@@ -68,6 +68,7 @@ export interface Account extends AccountDefinition {
   derivationPath: string;
   chainCode?: string;
   publicKey?: string;
+  nfts?: NFT[];
 }
 
 export interface PairData {
@@ -241,4 +242,9 @@ export type NFTCollections = {
 
 export interface NFT extends NFTAsset {
   starred: boolean;
+}
+
+export enum NftProviderType {
+  OpenSea = 'opensea',
+  Moralis = 'moralis',
 }

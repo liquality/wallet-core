@@ -1,5 +1,5 @@
 import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
-import { AccountType, Network } from '../../store/types';
+import { AccountType, Network, NftProviderType } from '../../store/types';
 import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
 import { ChainNetworks } from '../../utils/networks';
 import { createEVMClient } from './clients';
@@ -11,7 +11,16 @@ const defaultSwapOptions = {
 export function createEthClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
   const ethNetwork = ChainNetworks.ethereum[network];
   const feeProvider = new EIP1559FeeProvider(ethNetwork.rpcUrl as string);
-  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountType, derivationPath, defaultSwapOptions);
+  const nftProviderType = network === Network.Mainnet ? NftProviderType.OpenSea : NftProviderType.Moralis;
+  return createEVMClient(
+    ethNetwork,
+    feeProvider,
+    mnemonic,
+    accountType,
+    derivationPath,
+    defaultSwapOptions,
+    nftProviderType
+  );
 }
 
 export function createRskClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
@@ -38,8 +47,15 @@ export function createBSCClient(network: Network, mnemonic: string, derivationPa
     averageMultiplier: 2,
     fastMultiplier: 2.2,
   });
-
-  return createEVMClient(bscNetwork, feeProvider, mnemonic, AccountType.Default, derivationPath, defaultSwapOptions);
+  return createEVMClient(
+    bscNetwork,
+    feeProvider,
+    mnemonic,
+    AccountType.Default,
+    derivationPath,
+    defaultSwapOptions,
+    NftProviderType.Moralis
+  );
 }
 
 export function createPolygonClient(network: Network, mnemonic: string, derivationPath: string) {
@@ -60,7 +76,8 @@ export function createPolygonClient(network: Network, mnemonic: string, derivati
     mnemonic,
     AccountType.Default,
     derivationPath,
-    defaultSwapOptions
+    defaultSwapOptions,
+    NftProviderType.Moralis
   );
 }
 
@@ -98,7 +115,8 @@ export function createAvalancheClient(network: Network, mnemonic: string, deriva
     mnemonic,
     AccountType.Default,
     derivationPath,
-    defaultSwapOptions
+    defaultSwapOptions,
+    NftProviderType.Moralis
   );
 }
 

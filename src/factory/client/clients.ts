@@ -23,43 +23,25 @@ import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider 
 import { Network as ChainifyNetwork, Nullable } from '@chainify/types';
 import { BaseProvider } from '@ethersproject/providers';
 import buildConfig from '../../build.config';
-import { Account, AccountType, Network } from '../../store/types';
+import { Account, AccountType, Network, NftProviderType } from '../../store/types';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
 
 const ledgerTransportCreator = new WebHidTransportCreator();
 
-export enum NftProviderType {
-  OpenSea = 'opensea',
-  Moralis = 'moralis',
-  Covalent = 'covalent',
-}
-
-const chainIdToProvider: { [chainId: number]: NftProviderType } = {
-  1: NftProviderType.OpenSea,
-  137: NftProviderType.Moralis,
-  80001: NftProviderType.Moralis,
-};
-
-function getNftProvider(walletProvider: EvmBaseWalletProvider<BaseProvider>, network: ChainifyNetwork) {
-  if (!network.chainId) {
-    return;
-  }
-  const providerType = chainIdToProvider[network.chainId as number];
-  if (providerType) {
-    switch (providerType) {
-      case NftProviderType.OpenSea:
-        return new OpenSeaNftProvider(walletProvider, {
-          url: 'https://api.opensea.io/api/v1/',
-          apiKey: '963da5bcea554a92b078fe1f48a2300e',
-        });
-      case NftProviderType.Moralis:
-        return new MoralisNftProvider(walletProvider, {
-          url: 'https://y3mp1u0stvix.usemoralis.com:2053/server',
-          apiKey: 'DoxOxcpmFnJzIvEwFyptq971kHFkQHhHyda6Cmuw',
-          appId: 'zEsj7V2obfCOP0zL2nmyR2OtlPY62zUrHtsVzqAX',
-        });
-    }
+function getNftProvider(providerType: NftProviderType, walletProvider: EvmBaseWalletProvider<BaseProvider>) {
+  switch (providerType) {
+    case NftProviderType.OpenSea:
+      return new OpenSeaNftProvider(walletProvider, {
+        url: 'https://api.opensea.io/api/v1/',
+        apiKey: '963da5bcea554a92b078fe1f48a2300e',
+      });
+    case NftProviderType.Moralis:
+      return new MoralisNftProvider(walletProvider, {
+        url: 'https://y3mp1u0stvix.usemoralis.com:2053/server',
+        apiKey: 'DoxOxcpmFnJzIvEwFyptq971kHFkQHhHyda6Cmuw',
+        appId: 'zEsj7V2obfCOP0zL2nmyR2OtlPY62zUrHtsVzqAX',
+      });
   }
 }
 
@@ -130,7 +112,8 @@ export function createEVMClient(
   mnemonic: string,
   accountType: AccountType,
   derivationPath: string,
-  swapOptions: EvmTypes.EvmSwapOptions
+  swapOptions: EvmTypes.EvmSwapOptions,
+  nftProviderType?: NftProviderType
 ) {
   // disable multicall for all networks until it's utilized properly
   const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider, false);
@@ -152,13 +135,14 @@ export function createEVMClient(
   }
   swapProvider.setWallet(walletProvider);
 
-  const nftProvider = getNftProvider(walletProvider, ethereumNetwork);
+  const client = new Client().connect(swapProvider);
 
-  if (nftProvider) {
-    return new Client().connect(swapProvider).connect(nftProvider);
-  } else {
-    return new Client().connect(swapProvider);
+  if (nftProviderType) {
+    const nftProvider = getNftProvider(nftProviderType, walletProvider);
+    client.connect(nftProvider);
   }
+
+  return client;
 }
 
 export function createNearClient(network: Network, mnemonic: string, derivationPath: string) {
