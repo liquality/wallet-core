@@ -97,22 +97,5 @@
   "packageManager": "yarn@3.1.1",
   "publishConfig": {
     "access": "public"
-  },
-  "resolutions": {
-    "@chainify/bitcoin": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/bitcoin",
-    "@chainify/bitcoin-ledger": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/bitcoin-ledger",
-    "@chainify/client": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/client",
-    "@chainify/errors": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/errors",
-    "@chainify/evm": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/evm",
-    "@chainify/evm-contracts": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/evm-contracts",
-    "@chainify/evm-ledger": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/evm-ledger",
-    "@chainify/hw-ledger": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/hw-ledger",
-    "@chainify/logger": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/logger",
-    "@chainify/near": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/near",
-    "@chainify/solana": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/solana",
-    "@chainify/terra": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/terra",
-    "@chainify/types": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/types",
-    "@chainify/utils": "portal:/Users/andonmitev/Desktop/chainify/chainify/packages/utils",
-    "@liquality/cryptoassets": "file:/Users/andonmitev/Desktop/Repositories/cryptoassets"
   }
 }
