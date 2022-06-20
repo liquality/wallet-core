@@ -2067,6 +2067,8 @@ __metadata:
     "@hop-protocol/sdk": 0.0.1-beta.314
     "@liquality/cryptoassets": ^1.13.3
     "@metamask/eth-sig-util": ^4.0.1
+    "@solana/spl-token": ^0.2.0
+    "@solana/web3.js": ^1.44.0
     "@terra-money/terra.js": 3.1.3
     "@thorchain/asgardex-util": ^0.10.0
     "@types/amplitude-js": ^8.16.0
@@ -2391,6 +2393,30 @@ __metadata:
     superstruct: ^0.14.2
     tweetnacl: ^1.0.0
   checksum: c0cd6add9a1deb6cde6a9b3f32e7c0ce1e09fb7174160216fa14e5bafe4d1e0056278152520a13573118b428530c15d85a2138200d4106dcfe75d94b6d100a55
+  languageName: node
+  linkType: hard
+
+"@solana/web3.js@npm:^1.44.0":
+  version: 1.44.1
+  resolution: "@solana/web3.js@npm:1.44.1"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+    "@ethersproject/sha2": ^5.5.0
+    "@solana/buffer-layout": ^4.0.0
+    bigint-buffer: ^1.1.5
+    bn.js: ^5.0.0
+    borsh: ^0.7.0
+    bs58: ^4.0.1
+    buffer: 6.0.1
+    fast-stable-stringify: ^1.0.0
+    jayson: ^3.4.4
+    js-sha3: ^0.8.0
+    node-fetch: 2
+    rpc-websockets: ^7.4.2
+    secp256k1: ^4.0.2
+    superstruct: ^0.14.2
+    tweetnacl: ^1.0.0
+  checksum: 99a7f12e71342ca6bd6ee6b351cf645e9ec11c95df2469751aa4282db5df905cf6b748e27cd6cf737012a9d0814586cb285b187fead42d5b2f35c16cd0044ee3
   languageName: node
   linkType: hard
 

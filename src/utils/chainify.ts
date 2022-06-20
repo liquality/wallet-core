@@ -1,21 +1,12 @@
 import { Asset as ChainifyAsset } from '@chainify/types';
-import { Asset } from '@liquality/cryptoassets';
+import { Asset, ChainId } from '@liquality/cryptoassets';
 import cryptoassets from './cryptoassets';
 
 export function assetsAdapter(assets: string | string[]): ChainifyAsset[] {
   if (assets instanceof Array) {
-    return assets.reduce((result, asset) => {
-      if (cryptoassets[asset]) {
-        result.push(parseAsset(cryptoassets[asset]));
-      }
-      return result;
-    }, [] as ChainifyAsset[]);
+    return assets.map((a) => parseAsset(cryptoassets[a]));
   } else {
-    const result = [];
-    if (cryptoassets[assets]) {
-      result.push(parseAsset(cryptoassets[assets]));
-    }
-    return result;
+    return [parseAsset(cryptoassets[assets])];
   }
 }
 
@@ -23,7 +14,21 @@ const parseAsset = (asset: Asset) => {
   if (asset.type === 'native') {
     return { ...asset, isNative: true } as ChainifyAsset;
   } else {
-    return { ...asset, isNative: false, contractAddress: asset.contractAddress?.toLowerCase() } as ChainifyAsset;
+    const chainifyAsset = {
+      ...asset,
+      isNative: false,
+    };
+
+    // Avoid mutation on contractAddress to lower case
+    switch (asset.chain) {
+      case ChainId.Solana:
+        return chainifyAsset as ChainifyAsset;
+      default:
+        return {
+          ...chainifyAsset,
+          contractAddress: asset.contractAddress?.toLowerCase(),
+        } as ChainifyAsset;
+    }
   }
 };
 
