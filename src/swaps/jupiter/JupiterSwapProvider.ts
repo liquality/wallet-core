@@ -103,8 +103,6 @@ class JupiterSwapProvider extends SwapProvider {
 
     const info = data.data[0];
 
-    // console.log(info);
-
     return {
       from,
       to,
