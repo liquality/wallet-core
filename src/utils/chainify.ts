@@ -4,9 +4,18 @@ import cryptoassets from './cryptoassets';
 
 export function assetsAdapter(assets: string | string[]): ChainifyAsset[] {
   if (assets instanceof Array) {
-    return assets.map((a) => parseAsset(cryptoassets[a]));
+    return assets.reduce((result, asset) => {
+      if (cryptoassets[asset]) {
+        result.push(parseAsset(cryptoassets[asset]));
+      }
+      return result;
+    }, [] as ChainifyAsset[]);
   } else {
-    return [parseAsset(cryptoassets[assets])];
+    const result = [];
+    if (cryptoassets[assets]) {
+      result.push(parseAsset(cryptoassets[assets]));
+    }
+    return result;
   }
 }
 
