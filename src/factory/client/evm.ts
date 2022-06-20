@@ -96,7 +96,8 @@ export function createArbitrumClient(network: Network, mnemonic: string, derivat
     mnemonic,
     AccountType.Default,
     derivationPath,
-    defaultSwapOptions
+    defaultSwapOptions,
+    NftProviderType.Covalent
   );
 }
 

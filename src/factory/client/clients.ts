@@ -7,6 +7,7 @@ import {
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
 import { Client, Fee } from '@chainify/client';
 import {
+  CovalentNftProvider,
   EvmBaseWalletProvider,
   EvmChainProvider,
   EvmSwapProvider,
@@ -38,9 +39,14 @@ function getNftProvider(providerType: NftProviderType, walletProvider: EvmBaseWa
       });
     case NftProviderType.Moralis:
       return new MoralisNftProvider(walletProvider, {
-        url: 'https://y3mp1u0stvix.usemoralis.com:2053/server',
-        apiKey: 'DoxOxcpmFnJzIvEwFyptq971kHFkQHhHyda6Cmuw',
-        appId: 'zEsj7V2obfCOP0zL2nmyR2OtlPY62zUrHtsVzqAX',
+        url: 'https://kohrm0o4nam7.usemoralis.com:2053/server',
+        apiKey: 'ciwQYOFBtMPZDpTJ5hiKjzIOilROxIuigWAhGw7o',
+        appId: '5sHZfn2NpkJlPNCMb8bKzNhi0DhAagt64wFkhfR9',
+      });
+    case NftProviderType.Covalent:
+      return new CovalentNftProvider(walletProvider, {
+        url: 'https://api.covalenthq.com/v1',
+        apiKey: 'ckey_e26519be33bb4587a8145b2df06',
       });
   }
 }

@@ -247,4 +247,5 @@ export interface NFT extends NFTAsset {
 export enum NftProviderType {
   OpenSea = 'opensea',
   Moralis = 'moralis',
+  Covalent = 'covalent',
 }
