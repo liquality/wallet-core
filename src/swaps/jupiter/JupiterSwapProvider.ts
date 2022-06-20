@@ -145,14 +145,14 @@ class JupiterSwapProvider extends SwapProvider {
         // @ts-ignore TODO: CAL should allow `any` for data
         swapTx = await client.wallet.sendTransaction({ transaction: tx, value: new BN(quote.fromAmount) });
         await connection.confirmTransaction(swapTx.hash);
-        // await this.retry(async () => connection.confirmTransaction(swapTx.hash), 500, 2, 7);
+
         console.log('swap tx', swapTx);
       } else {
         // @ts-ignore TODO: CAL should allow `any` for data
-        const res = await client.wallet.sendTransaction({ transaction: tx, value: new BN(0) });
+        const transaction = await client.wallet.sendTransaction({ transaction: tx, value: new BN(0) });
+        connection.confirmTransaction(transaction.hash);
 
-        await this.retry(async () => connection.confirmTransaction(res.hash), 500, 2, 7);
-        console.log('re', res);
+        console.log('transaction', transaction);
       }
     }
 
@@ -168,27 +168,6 @@ class JupiterSwapProvider extends SwapProvider {
       slippage: 50,
       ...updates,
     };
-  }
-
-  private async retry(method: any, startWaitTime = 500, waitBackoff = 2, retryNumber = 5) {
-    let waitTime = startWaitTime;
-    for (let i = 0; i < retryNumber; i++) {
-      try {
-        const result = await method();
-        if (result) {
-          return result;
-        }
-      } catch (err) {
-        // throw error on last try
-        if (i + 1 == retryNumber) {
-          throw err;
-        }
-      } finally {
-        await new Promise((resolve) => setTimeout(resolve, waitTime));
-        waitTime *= waitBackoff;
-      }
-    }
-    return null;
   }
 
   public async estimateFees({
