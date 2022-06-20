@@ -133,7 +133,6 @@ export interface NFTSendTransactionParams {
   fee: number;
   feeLabel: FeeLabel;
   nft: NFT;
-  asset: Asset;
 }
 
 export enum SendStatus {
