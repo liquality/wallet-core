@@ -36,7 +36,7 @@ export const updateNFTs = async (
       const nftAssetsStoredInState = account.nfts || [];
       const nftAssetsFetched = await client.nft.fetch();
       const nfts = nftAssetsFetched.map((nftAsset) => {
-        const nftAssetStoredInState = nftAssetsStoredInState.find((asset) => asset.id === nftAsset.id);
+        const nftAssetStoredInState = nftAssetsStoredInState.find((asset) => asset.token_id === nftAsset.token_id);
         const starred = nftAssetStoredInState ? nftAssetStoredInState.starred : false;
         return {
           ...nftAsset,

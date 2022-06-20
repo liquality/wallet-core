@@ -287,7 +287,17 @@ const NFT_ASSETS_MAP: { [key in ChainId]?: { [key in Network]: { url: string; tr
     },
     mainnet: {
       url: `https://opensea.io/`,
-      transfer: `https://opensea.io/assets/{contract_address}/{token_id}`,
+      transfer: `https://opensea.io/assets/{chain}/{contract_address}/{token_id}`,
+    },
+  },
+  polygon: {
+    testnet: {
+      url: `https://testnet.opensea.io/`,
+      transfer: `https://testnets.opensea.io/assets/{contract_address}/{token_id}`,
+    },
+    mainnet: {
+      url: `https://opensea.io/`,
+      transfer: `https://opensea.io/assets/{asset}/{contract_address}/{token_id}`,
     },
   },
 };
@@ -296,7 +306,11 @@ export const getNftTransferLink = (asset: Asset, network: Network, tokenId: stri
   const chainId = cryptoassets[asset].chain;
   const transfer = NFT_ASSETS_MAP[chainId]![network].transfer;
 
-  return transfer.replace('{contract_address}', contract_address).replace('{token_id}', tokenId);
+  return transfer
+    .replace('{contract_address}', contract_address)
+    .replace('{chain}', chainId)
+    .replace('{asset}', asset)
+    .replace('{token_id}', tokenId);
 };
 
 export const getNftLink = (asset: Asset, network: Network) => {
