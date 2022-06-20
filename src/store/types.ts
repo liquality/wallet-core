@@ -235,9 +235,13 @@ export interface RootState {
   enabledChains: WalletIdNetworkMap<ChainId[]>;
 }
 
-export type NFTCollections = {
-  [collectionName: string]: NFT[];
+export type NFTCollections<T> = {
+  [collectionName: string]: T[];
 };
+
+export interface NFTWithAccount extends NFT {
+  accountId: AccountId;
+}
 
 export interface NFT extends NFTAsset {
   starred: boolean;
