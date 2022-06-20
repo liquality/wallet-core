@@ -120,10 +120,7 @@ class JupiterSwapProvider extends SwapProvider {
   public async newSwap(quoteInput: SwapRequest<JupiterSwapHistoryItem>) {
     const connection = new Connection(
       'https://solana--mainnet.datahub.figment.io/apikey/d7d9844ccf72ad4fef9bc5caaa957a50',
-      {
-        confirmTransactionInitialTimeout: 120000,
-        commitment: 'confirmed',
-      }
+      'confirmed'
     );
     const { network, walletId, quote } = quoteInput;
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
@@ -150,12 +147,14 @@ class JupiterSwapProvider extends SwapProvider {
       if (txTypes[i] === 'swapTransaction') {
         // @ts-ignore TODO: CAL should allow `any` for data
         swapTx = await client.wallet.sendTransaction({ transaction: tx, value: new BN(quote.fromAmount) });
-        await connection.confirmTransaction(swapTx.hash, 'confirmed');
+        await connection.confirmTransaction(swapTx.hash);
+        // await this.retry(async () => connection.confirmTransaction(swapTx.hash), 500, 2, 7);
         console.log('swap tx', swapTx);
       } else {
         // @ts-ignore TODO: CAL should allow `any` for data
         const res = await client.wallet.sendTransaction({ transaction: tx, value: new BN(0) });
-        await connection.confirmTransaction(res.hash, 'confirmed');
+
+        await this.retry(async () => connection.confirmTransaction(res.hash), 500, 2, 7);
         console.log('re', res);
       }
     }
@@ -172,6 +171,27 @@ class JupiterSwapProvider extends SwapProvider {
       slippage: 50,
       ...updates,
     };
+  }
+
+  private async retry(method: any, startWaitTime = 500, waitBackoff = 2, retryNumber = 5) {
+    let waitTime = startWaitTime;
+    for (let i = 0; i < retryNumber; i++) {
+      try {
+        const result = await method();
+        if (result) {
+          return result;
+        }
+      } catch (err) {
+        // throw error on last try
+        if (i + 1 == retryNumber) {
+          throw err;
+        }
+      } finally {
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
+        waitTime *= waitBackoff;
+      }
+    }
+    return null;
   }
 
   public async estimateFees({
@@ -194,6 +214,16 @@ class JupiterSwapProvider extends SwapProvider {
     }
 
     return fees;
+  }
+
+  // Jupiter on their site before performing swap are recommending:
+  // "We recommend having at least 0.05 SOL for any transaction"
+  // https://jup.ag/swap/SOL-USDT
+
+  // Here we are returning `33333333` Lamports because in wallet we multiply be 1.5 which
+  // output exactly 0.05 SOL
+  getExtraAmountToExtractFromBalance() {
+    return 33333333;
   }
 
   async performNextSwapAction(
