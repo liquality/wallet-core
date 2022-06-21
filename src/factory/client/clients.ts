@@ -30,7 +30,11 @@ import { ChainNetworks } from '../../utils/networks';
 
 const ledgerTransportCreator = new WebHidTransportCreator();
 
-function getNftProvider(providerType: NftProviderType, walletProvider: EvmBaseWalletProvider<BaseProvider>) {
+function getNftProvider(
+  providerType: NftProviderType,
+  walletProvider: EvmBaseWalletProvider<BaseProvider>,
+  testnet: boolean
+) {
   switch (providerType) {
     case NftProviderType.OpenSea:
       return new OpenSeaNftProvider(walletProvider, {
@@ -38,10 +42,17 @@ function getNftProvider(providerType: NftProviderType, walletProvider: EvmBaseWa
         apiKey: '963da5bcea554a92b078fe1f48a2300e',
       });
     case NftProviderType.Moralis:
+      if (testnet) {
+        return new MoralisNftProvider(walletProvider, {
+          url: 'https://tjgwcry8a7dd.usemoralis.com:2053/server',
+          appId: 'PwWfldBBlRaVWGihW4K6LqL4AQbmVNTI3w2OyDhN',
+          apiKey: 'X9Bg0wQh5rzvbZ3owmtqAsxdMTy3L81jnz6BNVsj',
+        });
+      }
       return new MoralisNftProvider(walletProvider, {
-        url: 'https://kohrm0o4nam7.usemoralis.com:2053/server',
-        apiKey: 'ciwQYOFBtMPZDpTJ5hiKjzIOilROxIuigWAhGw7o',
-        appId: '5sHZfn2NpkJlPNCMb8bKzNhi0DhAagt64wFkhfR9',
+        url: 'https://ghi7f9miezr7.usemoralis.com:2053/server',
+        appId: 'T94TjnFcaFycYfHqkf227JmpZeEjGXmDWINkfJD2',
+        apiKey: 'iv94v0ZQgQfIkTe09QLple1DDAGbmAD8zX9BeVGo',
       });
     case NftProviderType.Covalent:
       return new CovalentNftProvider(walletProvider, {
@@ -144,7 +155,7 @@ export function createEVMClient(
   const client = new Client().connect(swapProvider);
 
   if (nftProviderType) {
-    const nftProvider = getNftProvider(nftProviderType, walletProvider);
+    const nftProvider = getNftProvider(nftProviderType, walletProvider, ethereumNetwork.isTestnet);
     client.connect(nftProvider);
   }
 
