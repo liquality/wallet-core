@@ -190,6 +190,10 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
     }
   }
 
+  async getMin(quoteRequest: QuoteRequest) {
+    this.liqualitySwapProvider.getMin(quoteRequest)
+  }
+
   async finalizeLiqualitySwapAndStartAutomatedMarketMaker({ swapLSP, network, walletId }: BoostNextSwapActionRequest) {
     const result = await this.liqualitySwapProvider.waitForClaimConfirmations({
       swap: swapLSP,

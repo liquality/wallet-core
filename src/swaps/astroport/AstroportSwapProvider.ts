@@ -186,6 +186,11 @@ class AstroportSwapProvider extends SwapProvider {
     return fees;
   }
 
+  // @ts-ignore
+  async getMin(quoteRequest: QuoteRequest) {
+    return 0
+  }
+
   // ======== UTILS ========
 
   _getRPC() {
