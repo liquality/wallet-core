@@ -410,7 +410,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.17.2, @babel/runtime@npm:^7.3.4":
+"@babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.17.2, @babel/runtime@npm:^7.3.4":
   version: 7.18.3
   resolution: "@babel/runtime@npm:7.18.3"
   dependencies:
@@ -1210,7 +1210,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/contracts@npm:5.6.2, @ethersproject/contracts@npm:^5.5.0":
+"@ethersproject/contracts@npm:5.6.2":
   version: 5.6.2
   resolution: "@ethersproject/contracts@npm:5.6.2"
   dependencies:
@@ -2228,17 +2228,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@liquality/crypto@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/crypto@npm:1.13.12"
-  dependencies:
-    bech32: ^1.1.3
-    bs58: ^4.0.1
-    crypto-hashing: ^1.0.0
-  checksum: 485427c165e5bd9a70ecac23fed5ffb627a80358e4837781ca9709081b04af01485f8a72ed4f9da64cb50e299acd234bbcff4eb433dd743f0c699310921a4024
-  languageName: node
-  linkType: hard
-
 "@liquality/cryptoassets@npm:^1.13.3":
   version: 1.13.3
   resolution: "@liquality/cryptoassets@npm:1.13.3"
@@ -2250,148 +2239,6 @@ __metadata:
     ethereumjs-util: ^7.1.4
     lodash: ^4.17.11
   checksum: c6ef083079ac1655dcfc3e545a44328f0ff6f18aeba528dabc9316fc54557de068e00896e5cba98d29ad2df4d13b26f8f18d1a2579e1fb405a88d03b1df40022
-  languageName: node
-  linkType: hard
-
-"@liquality/errors@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/errors@npm:1.13.12"
-  dependencies:
-    "@types/standard-error": ^1.1.0
-    standard-error: ^1.1.0
-  checksum: d8f0b49a2f6a20c9aef7e324bf9887fab11b256f35ff20ed17f5a8a99b9dcaacffc2d1c6ae7e30f5d15ce2dbc23b70ec1cb61ebada1af6edd6d4836af143cd4c
-  languageName: node
-  linkType: hard
-
-"@liquality/ethereum-utils@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/ethereum-utils@npm:1.13.12"
-  dependencies:
-    "@babel/runtime": ^7.12.1
-    "@liquality/crypto": ^1.13.12
-    "@liquality/errors": ^1.13.12
-    "@liquality/schema": ^1.13.12
-    "@liquality/types": ^1.13.12
-    "@liquality/utils": ^1.13.12
-    "@types/lodash": ^4.14.168
-    bignumber.js: ^9.0.0
-    eip55: ^1.0.3
-    lodash: ^4.17.20
-  checksum: 5cd062a26f33020dd6322f9dbaccbb0cd573ef73c6f8cbe10bf1c22c8d8062efe3c6d55932b174200a68085e0476f7ce4ed6f497ba9c4e4b5459c1a15f57a341
-  languageName: node
-  linkType: hard
-
-"@liquality/nft-base-provider@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/nft-base-provider@npm:1.13.12"
-  dependencies:
-    "@babel/runtime": ^7.12.1
-    "@ethersproject/contracts": ^5.5.0
-    "@liquality/errors": ^1.13.12
-    "@liquality/ethereum-utils": ^1.13.12
-    "@liquality/provider": ^1.13.12
-    "@liquality/types": ^1.13.12
-    "@liquality/utils": ^1.13.12
-  checksum: 4e730dbc50206174453a9c56a17b74391c28a5e4a81641c341900c5d64b88093e69d69050d52040f0b126361afc42f2b8d1961bfd3c63f886a6658acd0fc7897
-  languageName: node
-  linkType: hard
-
-"@liquality/nft-erc1155-provider@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/nft-erc1155-provider@npm:1.13.12"
-  dependencies:
-    "@babel/runtime": ^7.12.1
-    "@liquality/errors": ^1.13.12
-    "@liquality/ethereum-utils": ^1.13.12
-    "@liquality/nft-base-provider": ^1.13.12
-    "@liquality/types": ^1.13.12
-    "@liquality/utils": ^1.13.12
-    lodash: ^4.17.20
-  checksum: b34784f0f0d43e20b6d3d02500be09824dbf329db689b79dc6ddc29dd59d21ceb98734b91a84848aa04857a075b6734759ee80d494f35ee119000c0d55abbc5c
-  languageName: node
-  linkType: hard
-
-"@liquality/nft-erc721-provider@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/nft-erc721-provider@npm:1.13.12"
-  dependencies:
-    "@babel/runtime": ^7.12.1
-    "@liquality/errors": ^1.13.12
-    "@liquality/ethereum-utils": ^1.13.12
-    "@liquality/nft-base-provider": ^1.13.12
-    "@liquality/types": ^1.13.12
-    "@liquality/utils": ^1.13.12
-    lodash: ^4.17.20
-  checksum: e5b5948f9f3c8097e23d4406b87c49ecac89dcf4c949e144b9ac6689b163c5a10f666a49d853c458e323a791636d376566eb0bf7707cca7392337a7e060ef324
-  languageName: node
-  linkType: hard
-
-"@liquality/nft-provider@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/nft-provider@npm:1.13.12"
-  dependencies:
-    "@babel/runtime": ^7.12.1
-    "@liquality/ethereum-utils": ^1.13.12
-    "@liquality/nft-base-provider": ^1.13.12
-    "@liquality/nft-erc1155-provider": ^1.13.12
-    "@liquality/nft-erc721-provider": ^1.13.12
-    "@liquality/node-provider": ^1.13.12
-    "@liquality/types": ^1.13.12
-    "@liquality/utils": ^1.13.12
-  checksum: 60668e84f8a5d31e9bd69be4e49e529a83834cc4d3e75fcd8cf3a1b3092ebece8a336c50bcb9308b1c2c2f4ac5539c53010f067715b00f8579ff02c6f529c4b7
-  languageName: node
-  linkType: hard
-
-"@liquality/node-provider@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/node-provider@npm:1.13.12"
-  dependencies:
-    "@babel/runtime": ^7.12.1
-    "@liquality/errors": ^1.13.12
-    "@liquality/provider": ^1.13.12
-    "@types/axios": ^0.14.0
-    "@types/lodash": ^4.14.168
-    axios: ^0.21.0
-    lodash: ^4.17.20
-  checksum: 97b3f45f57dbe3dc5b2810e7186dae991ba6a44f817bf3515c83027e11fb2d30b7389de43edb96f5a14fb63514ff25036f80096e8907d6c9dc09b774ac21f0a7
-  languageName: node
-  linkType: hard
-
-"@liquality/provider@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/provider@npm:1.13.12"
-  dependencies:
-    "@liquality/types": ^1.13.12
-  checksum: 847bbdcc84fe0907cc3519a3012a82ce17b79136b2336dcc5f1d9dec1979952bcd17df09ae1dd79825017322d67d55d387ffc5d72c53ef573ebd0edde2fb5f89
-  languageName: node
-  linkType: hard
-
-"@liquality/schema@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/schema@npm:1.13.12"
-  checksum: a4a73ca0c7652e7c496a7a46fa185f45efa30f7230406dc10a0893df5ecf7b892a35512978e34101dfe87764dcd31434a3b972514584117a49c8aa85824449ef
-  languageName: node
-  linkType: hard
-
-"@liquality/types@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/types@npm:1.13.12"
-  dependencies:
-    bignumber.js: ^9.0.1
-  checksum: d7dbecaebdd40f4b311e82e0e66eb2c85da2dd16ed1796aeeb15dfba5f20ab917a4960445dd90afb792d60ed2a8268717fab10ab6f0a982c0c42f3fba36e5d36
-  languageName: node
-  linkType: hard
-
-"@liquality/utils@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/utils@npm:1.13.12"
-  dependencies:
-    "@babel/runtime": ^7.12.1
-    "@liquality/crypto": ^1.13.12
-    "@liquality/errors": ^1.13.12
-    "@liquality/types": ^1.13.12
-    setimmediate: ^1.0.5
-  checksum: bd2fd9fb3ddfa6d45e6de15ba536365f90414be1943d8c4367ce923918bd0c6d20f98898739bde709e3c0f60686de468f0bd55b9db49de6e08576bd23787b393
   languageName: node
   linkType: hard
 
@@ -2417,7 +2264,6 @@ __metadata:
     "@ethersproject/address": 5.6.0
     "@hop-protocol/sdk": 0.0.1-beta.314
     "@liquality/cryptoassets": ^1.13.3
-    "@liquality/nft-provider": ^1.13.12
     "@metamask/eth-sig-util": ^4.0.1
     "@terra-money/terra.js": 3.1.3
     "@thorchain/asgardex-util": ^0.10.0
@@ -2863,15 +2709,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/axios@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "@types/axios@npm:0.14.0"
-  dependencies:
-    axios: "*"
-  checksum: 12a230b9404055d81804cb57fe4739b2317111b28a39e2477b2513250e8b85725e6f6ce509fc2a9494a6da60facb8d80df875fcd747f62f6c3abebc7db60ae66
-  languageName: node
-  linkType: hard
-
 "@types/babel__core@npm:^7.0.0, @types/babel__core@npm:^7.1.14":
   version: 7.1.19
   resolution: "@types/babel__core@npm:7.1.19"
@@ -3104,7 +2941,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.159, @types/lodash@npm:^4.14.168, @types/lodash@npm:^4.14.178":
+"@types/lodash@npm:^4.14.159, @types/lodash@npm:^4.14.178":
   version: 4.14.182
   resolution: "@types/lodash@npm:4.14.182"
   checksum: 7dd137aa9dbabd632408bd37009d984655164fa1ecc3f2b6eb94afe35bf0a5852cbab6183148d883e9c73a958b7fec9a9bcf7c8e45d41195add6a18c34958209
@@ -3233,13 +3070,6 @@ __metadata:
   version: 2.0.1
   resolution: "@types/stack-utils@npm:2.0.1"
   checksum: 205fdbe3326b7046d7eaf5e494d8084f2659086a266f3f9cf00bccc549c8e36e407f88168ad4383c8b07099957ad669f75f2532ed4bc70be2b037330f7bae019
-  languageName: node
-  linkType: hard
-
-"@types/standard-error@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@types/standard-error@npm:1.1.0"
-  checksum: 15556aa639845b1321394412b897b94461f729304c79f1977063af3c3e6eceeb788ad3f208818a8005f6f0a917d645d5c048e7c9f954fe54dbf9dc321e6c2cf8
   languageName: node
   linkType: hard
 
@@ -3858,16 +3688,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:*":
-  version: 0.27.2
-  resolution: "axios@npm:0.27.2"
-  dependencies:
-    follow-redirects: ^1.14.9
-    form-data: ^4.0.0
-  checksum: 38cb7540465fe8c4102850c4368053c21683af85c5fdf0ea619f9628abbcb59415d1e22ebc8a6390d2bbc9b58a9806c874f139767389c862ec9b772235f06854
-  languageName: node
-  linkType: hard
-
 "axios@npm:0.26.1, axios@npm:^0.26.1":
   version: 0.26.1
   resolution: "axios@npm:0.26.1"
@@ -3877,7 +3697,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.21.0, axios@npm:^0.21.1":
+"axios@npm:^0.21.1":
   version: 0.21.4
   resolution: "axios@npm:0.21.4"
   dependencies:
@@ -4166,7 +3986,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bindings@npm:^1.2.1, bindings@npm:^1.3.0, bindings@npm:^1.5.0":
+"bindings@npm:^1.3.0, bindings@npm:^1.5.0":
   version: 1.5.0
   resolution: "bindings@npm:1.5.0"
   dependencies:
@@ -5769,15 +5589,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eip55@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "eip55@npm:1.0.3"
-  dependencies:
-    keccak: ^1.3.0
-  checksum: 081a731b944a4e7dc821a260782399e597b60d9f3c21f988fd795964153a2f646245ed615605d8469a0417dda21f0aa634b31444c57da11d4130dc1021db457a
-  languageName: node
-  linkType: hard
-
 "electron-to-chromium@npm:^1.4.118":
   version: 1.4.146
   resolution: "electron-to-chromium@npm:1.4.146"
@@ -6858,7 +6669,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.14.7, follow-redirects@npm:^1.14.8, follow-redirects@npm:^1.14.9":
+"follow-redirects@npm:^1.14.0, follow-redirects@npm:^1.14.7, follow-redirects@npm:^1.14.8":
   version: 1.15.1
   resolution: "follow-redirects@npm:1.15.1"
   peerDependenciesMeta:
@@ -6892,17 +6703,6 @@ __metadata:
     combined-stream: ^1.0.8
     mime-types: ^2.1.12
   checksum: b019e8d35c8afc14a2bd8a7a92fa4f525a4726b6d5a9740e8d2623c30e308fbb58dc8469f90415a856698933c8479b01646a9dff33c87cc4e76d72aedbbf860d
-  languageName: node
-  linkType: hard
-
-"form-data@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "form-data@npm:4.0.0"
-  dependencies:
-    asynckit: ^0.4.0
-    combined-stream: ^1.0.8
-    mime-types: ^2.1.12
-  checksum: 01135bf8675f9d5c61ff18e2e2932f719ca4de964e3be90ef4c36aacfc7b9cb2fceb5eca0b7e0190e3383fe51c5b37f4cb80b62ca06a99aaabfcfd6ac7c9328c
   languageName: node
   linkType: hard
 
@@ -8912,19 +8712,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keccak@npm:^1.3.0":
-  version: 1.4.0
-  resolution: "keccak@npm:1.4.0"
-  dependencies:
-    bindings: ^1.2.1
-    inherits: ^2.0.3
-    nan: ^2.2.1
-    node-gyp: latest
-    safe-buffer: ^5.1.0
-  checksum: 236ba4183d64e1118566c4f123d812cc8fa5fb0fa477b6743bc398aced42595816f46a322bf0240a6a7589eff932aa1540066a30db2367e4049436d9fa30f537
-  languageName: node
-  linkType: hard
-
 "keccak@npm:^3.0.0":
   version: 3.0.2
   resolution: "keccak@npm:3.0.2"
@@ -9770,7 +9557,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.13.2, nan@npm:^2.14.0, nan@npm:^2.2.1":
+"nan@npm:^2.13.2, nan@npm:^2.14.0":
   version: 2.16.0
   resolution: "nan@npm:2.16.0"
   dependencies:
