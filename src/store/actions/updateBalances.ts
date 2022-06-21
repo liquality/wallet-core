@@ -38,11 +38,8 @@ export const updateBalances = async (
           
           try {
             const _assets = assetsAdapter(asset);
-            const _addresses = addresses.map(a => {
-              return a.address.startsWith('0x') ? {...a, address: a.address.substring(2, a.address.length)} : a;
-            })
             const balance =
-              addresses.length === 0 ? '0' : (await _client.chain.getBalance(_addresses, _assets)).toString();
+              addresses.length === 0 ? '0' : (await _client.chain.getBalance(addresses, _assets)).toString();
             commit.UPDATE_BALANCE({ network, accountId: account.id, walletId, asset, balance });
           } catch (err) {
             console.error(`Asset: ${asset} Balance update error:  `, err.message);

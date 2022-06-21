@@ -23,4 +23,7 @@ module.exports = {
   forceExit: true,
   detectOpenHandles: true,
   verbose: true,
+  setupFiles: [
+    "<rootDir>/jest/setup.js"
+  ]
 };
