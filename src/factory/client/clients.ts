@@ -6,19 +6,61 @@ import {
 } from '@chainify/bitcoin';
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
 import { Client, Fee } from '@chainify/client';
-import { EvmChainProvider, EvmSwapProvider, EvmTypes, EvmWalletProvider } from '@chainify/evm';
+import {
+  CovalentNftProvider,
+  EvmBaseWalletProvider,
+  EvmChainProvider,
+  EvmSwapProvider,
+  EvmTypes,
+  EvmWalletProvider,
+  MoralisNftProvider,
+  OpenSeaNftProvider,
+} from '@chainify/evm';
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
 import { WebHidTransportCreator } from '@chainify/hw-ledger';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
 import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
 import { Network as ChainifyNetwork, Nullable } from '@chainify/types';
+import { BaseProvider } from '@ethersproject/providers';
 import buildConfig from '../../build.config';
-import { Account, AccountType, Network } from '../../store/types';
+import { Account, AccountType, Network, NftProviderType } from '../../store/types';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
 
 const ledgerTransportCreator = new WebHidTransportCreator();
+
+function getNftProvider(
+  providerType: NftProviderType,
+  walletProvider: EvmBaseWalletProvider<BaseProvider>,
+  testnet: boolean
+) {
+  switch (providerType) {
+    case NftProviderType.OpenSea:
+      return new OpenSeaNftProvider(walletProvider, {
+        url: 'https://api.opensea.io/api/v1/',
+        apiKey: '963da5bcea554a92b078fe1f48a2300e',
+      });
+    case NftProviderType.Moralis:
+      if (testnet) {
+        return new MoralisNftProvider(walletProvider, {
+          url: 'https://tjgwcry8a7dd.usemoralis.com:2053/server',
+          appId: 'PwWfldBBlRaVWGihW4K6LqL4AQbmVNTI3w2OyDhN',
+          apiKey: 'X9Bg0wQh5rzvbZ3owmtqAsxdMTy3L81jnz6BNVsj',
+        });
+      }
+      return new MoralisNftProvider(walletProvider, {
+        url: 'https://ghi7f9miezr7.usemoralis.com:2053/server',
+        appId: 'T94TjnFcaFycYfHqkf227JmpZeEjGXmDWINkfJD2',
+        apiKey: 'iv94v0ZQgQfIkTe09QLple1DDAGbmAD8zX9BeVGo',
+      });
+    case NftProviderType.Covalent:
+      return new CovalentNftProvider(walletProvider, {
+        url: 'https://api.covalenthq.com/v1',
+        apiKey: 'ckey_e26519be33bb4587a8145b2df06',
+      });
+  }
+}
 
 export function createBtcClient(
   network: Network,
@@ -87,14 +129,16 @@ export function createEVMClient(
   mnemonic: string,
   accountType: AccountType,
   derivationPath: string,
-  swapOptions: EvmTypes.EvmSwapOptions
+  swapOptions: EvmTypes.EvmSwapOptions,
+  nftProviderType?: NftProviderType
 ) {
   // disable multicall for all networks until it's utilized properly
   const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider, false);
   const swapProvider = new EvmSwapProvider(swapOptions);
 
+  let walletProvider;
   if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
-    const ledgerProvider = new EvmLedgerProvider(
+    walletProvider = new EvmLedgerProvider(
       {
         network: ethereumNetwork,
         derivationPath,
@@ -102,15 +146,20 @@ export function createEVMClient(
       },
       chainProvider
     );
-
-    swapProvider.setWallet(ledgerProvider);
   } else {
     const walletOptions = { derivationPath, mnemonic };
-    const walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
-    swapProvider.setWallet(walletProvider);
+    walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
+  }
+  swapProvider.setWallet(walletProvider);
+
+  const client = new Client().connect(swapProvider);
+
+  if (nftProviderType) {
+    const nftProvider = getNftProvider(nftProviderType, walletProvider, ethereumNetwork.isTestnet);
+    client.connect(nftProvider);
   }
 
-  return new Client().connect(swapProvider);
+  return client;
 }
 
 export function createNearClient(network: Network, mnemonic: string, derivationPath: string) {
