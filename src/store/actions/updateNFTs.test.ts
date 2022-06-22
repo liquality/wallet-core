@@ -1,6 +1,5 @@
 import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
-import { Network } from '../types';
 
 describe('updateNFTs tests', () => {
   it('should getNFT assets for ETH', async () => {
@@ -17,14 +16,13 @@ describe('updateNFTs tests', () => {
     expect(wallet.state.wallets[0].imported).toBe(true);
     expect(wallet.state.unlockedAt).not.toBe(0);
 
-    const walletId = wallet.state.activeWalletId;
     await wallet.dispatch.initializeAnalyticsPreferences({
       accepted: true,
     });
-    const accountIds = wallet.getters.accountsData.map((a) => a.id);
+    const accountIds = [wallet.getters.accountsData.find((a) => a.chain === 'ethereum')!.id];
     const assets = await wallet.dispatch.updateNFTs({
-      walletId: walletId,
-      network: Network.Testnet,
+      walletId: wallet.state.activeWalletId,
+      network: wallet.state.activeNetwork,
       accountIds,
     });
     expect(assets).toEqual(Array(accountIds.length).fill([]));
