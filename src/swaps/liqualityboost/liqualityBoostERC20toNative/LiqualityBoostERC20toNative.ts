@@ -190,7 +190,21 @@ class LiqualityBoostERC20toNative extends SwapProvider {
   }
 
   async getMin(quoteRequest: QuoteRequest) {
-    this.liqualitySwapProvider.getMin(quoteRequest)
+    try {
+      const amountInNative = await this.liqualitySwapProvider.getMin({...quoteRequest, from: getNativeAsset(quoteRequest.from)})
+      const quote = (await this.bridgeAssetToAutomatedMarketMaker[getNativeAsset(quoteRequest.from)].getQuote({
+        network: quoteRequest.network,
+        from: getNativeAsset(quoteRequest.from),
+        to: quoteRequest.from,
+        amount: new BN(amountInNative),
+     })) as BoostNativeERC20toNativeSwapQuote;
+      const fromMinAmount = unitToCurrency(assets[quoteRequest.from], new BN(quote.toAmount));
+      return fromMinAmount;
+    } catch(err){
+        console.warn(err)
+        return 0
+    }
+
   }
 
   async finalizeAutomatedMarketMakerAndStartLiqualitySwap({
