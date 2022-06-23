@@ -13,21 +13,25 @@ type UpdateBalanceRequestType = {
 };
 
 export const updateBalances = async (context: ActionContext, request: UpdateBalanceRequestType) => {
-  const { walletId, network, accountIds } = request;
+  const { walletId, network } = request;
   const { state, commit, getters } = rootActionContext(context);
   const getClient = getters.client;
 
-  const allEnabledAccountIds =
-    state.accounts[walletId]?.[network]?.reduce((filtered, account) => {
-      if (account.enabled) {
-        filtered.push(account.id);
-      }
-      return filtered;
-    }, [] as AccountId[]) || [];
+  let accountIds = request.accountIds;
+
+  if (!accountIds) {
+    accountIds =
+      state.accounts[walletId]?.[network]?.reduce((filtered, account) => {
+        if (account.enabled) {
+          filtered.push(account.id);
+        }
+        return filtered;
+      }, [] as AccountId[]) || [];
+  }
 
   await Bluebird.map(
     // if accountIds is not passed fetch for all enabled account ids
-    accountIds || allEnabledAccountIds,
+    accountIds,
     async (accountId) => {
       const account = getters.accountItem(accountId);
 
