@@ -132,8 +132,7 @@ export function createEVMClient(
   ethersProvider?: StaticJsonRpcProvider,
   nftProviderType?: NftProviderType
 ) {
-  // disable multicall for all networks until it's utilized properly
-  const chainProvider = new EvmChainProvider(ethereumNetwork, ethersProvider, feeProvider, false);
+  const chainProvider = new EvmChainProvider(ethereumNetwork, ethersProvider, feeProvider, true);
   const swapProvider = new EvmSwapProvider(swapOptions);
 
   let walletProvider;

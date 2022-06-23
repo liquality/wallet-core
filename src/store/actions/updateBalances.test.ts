@@ -5,9 +5,9 @@ import { Network } from '../types';
 
 describe('updateBalances tests', () => {
   jest.setTimeout(90000);
-  
+
   const createNotification = jest.fn();
-  const wallet = setupWallet({...defaultWalletOptions, createNotification });
+  const wallet = setupWallet({ ...defaultWalletOptions, createNotification });
 
   beforeEach(async () => {
     await wallet.dispatch.createWallet({
@@ -28,16 +28,18 @@ describe('updateBalances tests', () => {
     expect(wallet.state.activeNetwork).toBe('testnet');
 
     const walletId = wallet.state.activeWalletId;
-    let testnetEnabledAssets = wallet?.state?.enabledAssets?.testnet?.[walletId];
-    testnetEnabledAssets = testnetEnabledAssets!.filter((asset) => asset !== 'SOL');
-    expect(testnetEnabledAssets?.length).not.toBe(0);
+    const testnetAccounts = wallet?.state?.accounts?.[walletId]?.testnet;
+    expect(testnetAccounts?.length).not.toBe(0);
 
-    // update balance this will generate addresses for each asset
-    await wallet.dispatch.updateBalances({
-      network: Network.Testnet,
-      walletId: walletId,
-      assets: testnetEnabledAssets!,
-    });
+    if (testnetAccounts) {
+      // update balance this will generate addresses for each asset
+      await wallet.dispatch.updateBalances({
+        network: Network.Testnet,
+        walletId: walletId,
+
+        accountIds: testnetAccounts.map((t) => t.id),
+      });
+    }
 
     const account = wallet.state.accounts?.[walletId]?.testnet?.find((acc) => acc.chain === ChainId.Bitcoin);
     expect(account?.chain).toBe(ChainId.Bitcoin);

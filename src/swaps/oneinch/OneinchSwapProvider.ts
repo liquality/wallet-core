@@ -256,7 +256,7 @@ class OneinchSwapProvider extends SwapProvider {
       if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
         const { status } = tx;
-        this.updateBalances(network, walletId, [swap.from]);
+        this.updateBalances(network, walletId, [swap.fromAccountId]);
         return {
           endTime: Date.now(),
           status: status === TxStatus.Success ? 'SUCCESS' : 'FAILED',

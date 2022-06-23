@@ -264,7 +264,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       const tx = await toClient.chain.getTransactionByHash(swap.toClaimHash);
 
       if (tx && tx.confirmations && tx.confirmations > 0) {
-        this.updateBalances(network, walletId, [swap.to, swap.from]);
+        this.updateBalances(network, walletId, [swap.toAccountId, swap.fromAccountId]);
 
         return {
           endTime: Date.now(),
