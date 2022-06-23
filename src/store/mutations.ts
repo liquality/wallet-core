@@ -12,6 +12,8 @@ import {
   HistoryItem,
   MarketData,
   Network,
+  NFT,
+  NFTSendHistoryItem,
   RootState,
   SendHistoryItem,
   SwapHistoryItem,
@@ -115,6 +117,14 @@ export default {
   NEW_TRASACTION(
     state: RootState,
     { network, walletId, transaction }: { network: Network; walletId: WalletId; transaction: SendHistoryItem }
+  ) {
+    ensureNetworkWalletTree(state.history, network, walletId, []);
+
+    state.history[network]![walletId].push(transaction);
+  },
+  NEW_NFT_TRASACTION(
+    state: RootState,
+    { network, walletId, transaction }: { network: Network; walletId: WalletId; transaction: NFTSendHistoryItem }
   ) {
     ensureNetworkWalletTree(state.history, network, walletId, []);
 
@@ -428,6 +438,29 @@ export default {
       ...state.analytics,
       ...payload,
     };
+  },
+  UPDATE_NFTS(
+    state: RootState,
+    { network, walletId, accountId, nfts }: { network: Network; walletId: WalletId; accountId: AccountId; nfts: NFT[] }
+  ) {
+    const account = state.accounts[walletId]![network].find((a) => a.id === accountId);
+    if (!account) throw new Error(`Tried to update nfts for unknown account ${accountId}`);
+
+    Vue.set(account, 'nfts', nfts);
+  },
+  NFT_TOGGLE_STARRED(
+    state: RootState,
+    { network, walletId, accountId, nft }: { network: Network; walletId: WalletId; accountId: AccountId; nft: NFT }
+  ) {
+    const account = state.accounts[walletId]![network].find((a) => a.id === accountId);
+    if (!account) throw new Error(`Tried to update nfts for unknown account ${accountId}`);
+
+    const stateNFT = account.nfts?.find((accountNFT) => {
+      return accountNFT.asset_contract.address === nft.asset_contract.address && accountNFT.token_id === nft.token_id;
+    });
+    if (stateNFT) {
+      stateNFT.starred = !stateNFT.starred;
+    }
   },
   TOGGLE_EXPERIMENT(state: RootState, { name }: { name: ExperimentType }) {
     const { experiments } = state;
