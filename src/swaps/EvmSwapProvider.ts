@@ -38,12 +38,12 @@ export abstract class EvmSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId) as Client<EvmChainProvider>;
     const signer = client.wallet.getSigner();
 
-    const tokenContract = Typechain.ERC20__factory.connect(fromAsset.contractAddress, signer);
+    const tokenContract = Typechain.ERC20__factory.connect(fromAsset.contractAddress.toLowerCase(), signer);
 
     const userAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     const userAddress = chains[fromAsset.chain].formatAddress(userAddressRaw);
 
-    const allowance = await tokenContract.allowance(userAddress, this.config.routerAddress);
+    const allowance = await tokenContract.allowance(userAddress.toLowerCase(), this.config.routerAddress);
 
     const isLSP = swapRequest.quote.provider === SwapProviderType.Liquality;
 
