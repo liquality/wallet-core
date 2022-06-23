@@ -8,7 +8,7 @@ describe('initializeAddresses tests', () => {
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
-      mnemonic: 'test',
+      mnemonic: 'rough symbol license spirit advance pact catalog vibrant dream great usage empty',
       imported: true,
     });
     await wallet.dispatch.unlockWallet({

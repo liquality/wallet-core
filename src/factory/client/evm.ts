@@ -1,6 +1,6 @@
 import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
-import { AccountType, Network } from '../../store/types';
+import { AccountType, Network, NftProviderType } from '../../store/types';
 import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
 import { ChainNetworks } from '../../utils/networks';
 import { createEVMClient } from './clients';
@@ -13,7 +13,17 @@ export function createEthClient(network: Network, mnemonic: string, accountType:
   const ethNetwork = ChainNetworks.ethereum[network];
   const provider = new StaticJsonRpcProvider(ethNetwork.rpcUrl, ethNetwork.chainId);
   const feeProvider = new EIP1559FeeProvider(provider);
-  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountType, derivationPath, defaultSwapOptions, provider);
+  const nftProviderType = network === Network.Mainnet ? NftProviderType.OpenSea : NftProviderType.Moralis;
+  return createEVMClient(
+    ethNetwork,
+    feeProvider,
+    mnemonic,
+    accountType,
+    derivationPath,
+    defaultSwapOptions,
+    provider,
+    nftProviderType
+  );
 }
 
 export function createRskClient(network: Network, mnemonic: string, accountType: AccountType, derivationPath: string) {
@@ -35,23 +45,15 @@ export function createBSCClient(network: Network, mnemonic: string, derivationPa
     AccountType.Default,
     derivationPath,
     defaultSwapOptions,
-    provider
+    provider,
+    NftProviderType.Moralis
   );
 }
 
 export function createPolygonClient(network: Network, mnemonic: string, derivationPath: string) {
   const polygonNetwork = ChainNetworks.polygon[network];
   const provider = new StaticJsonRpcProvider(polygonNetwork.rpcUrl, polygonNetwork.chainId);
-
-  const feeProvider =
-    network === Network.Testnet
-      ? new EIP1559FeeProvider(provider)
-      : new RpcFeeProvider(provider, {
-          slowMultiplier: 1,
-          averageMultiplier: 2,
-          fastMultiplier: 2.2,
-        });
-
+  const feeProvider = new EIP1559FeeProvider(polygonNetwork.rpcUrl as string);
   return createEVMClient(
     polygonNetwork,
     feeProvider,
@@ -59,7 +61,8 @@ export function createPolygonClient(network: Network, mnemonic: string, derivati
     AccountType.Default,
     derivationPath,
     defaultSwapOptions,
-    provider
+    provider,
+    NftProviderType.Moralis
   );
 }
 
@@ -74,7 +77,8 @@ export function createArbitrumClient(network: Network, mnemonic: string, derivat
     AccountType.Default,
     derivationPath,
     defaultSwapOptions,
-    provider
+    provider,
+    NftProviderType.Covalent
   );
 }
 
@@ -89,7 +93,8 @@ export function createAvalancheClient(network: Network, mnemonic: string, deriva
     AccountType.Default,
     derivationPath,
     defaultSwapOptions,
-    provider
+    provider,
+    NftProviderType.Moralis
   );
 }
 

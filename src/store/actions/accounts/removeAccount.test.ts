@@ -48,7 +48,6 @@ describe('Remove account', () => {
       walletId: walletId,
       id: btcTestnetAccountId!,
     });
-    console.log(JSON.stringify(wallet.state));
     //TODO: check if account is removed at the moment its removing other accounts, @bradly check if this is the case
     expect(account?.mainnet[0].id).not.toBe(btcMainnetAccountId);
     expect(account?.mainnet.length).toBe(5);
