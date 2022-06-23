@@ -563,7 +563,7 @@ class ThorchainSwapProvider extends SwapProvider {
           const receiveTx = await client.chain.getTransactionByHash(receiveHash);
 
           if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
-            this.updateBalances(network, walletId, [asset]);
+            this.updateBalances(network, walletId, [accountId]);
             const status = OUT_MEMO_TO_STATUS[memoAction];
             return {
               receiveTxHash: receiveTx.hash,

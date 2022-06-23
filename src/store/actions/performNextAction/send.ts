@@ -31,7 +31,7 @@ async function waitForConfirmations(
       dispatch.updateBalances({
         network,
         walletId,
-        assets: [transaction.from],
+        accountIds: [transaction.accountId],
       });
 
       return {

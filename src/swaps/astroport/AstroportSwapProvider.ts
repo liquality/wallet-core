@@ -137,7 +137,7 @@ class AstroportSwapProvider extends SwapProvider {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         const { status } = tx;
-        this.updateBalances(network, walletId, [swap.from]);
+        this.updateBalances(network, walletId, [swap.fromAccountId]);
 
         return {
           endTime: Date.now(),

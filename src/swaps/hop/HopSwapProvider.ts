@@ -338,7 +338,7 @@ class HopSwapProvider extends SwapProvider {
       const tx = await client.chain.getTransactionByHash(swap.fromFundHash);
       const chainId: ChainId = <ChainId>swap.hopChainFrom.slug.toString();
       if (tx && tx.confirmations && tx.confirmations >= chains[chainId].safeConfirmations) {
-        this.updateBalances(network, walletId, [swap.from]);
+        this.updateBalances(network, walletId, [swap.fromAccountId]);
         return {
           endTime: Date.now(),
           status:
