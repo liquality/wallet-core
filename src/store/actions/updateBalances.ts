@@ -1,8 +1,8 @@
 import { Address } from '@chainify/types';
 import { ChainId, chains } from '@liquality/cryptoassets';
 import Bluebird from 'bluebird';
+import { chunk } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
-import { chunkArray } from '../../utils/arrays';
 import { assetsAdapter } from '../../utils/chainify';
 import { Asset, Network } from '../types';
 
@@ -53,7 +53,7 @@ export const updateBalances = async (
         try {
           const chainifyAssets = assetsAdapter(assets);
           // split into chunks of 25 to avoid gas limitations of static calls
-          const assetsChunks = chunkArray(chainifyAssets, 25);
+          const assetsChunks = chunk(chainifyAssets, 25);
           // run all balance queries concurrently
           const balances = await Promise.all(assetsChunks.map((chunk) => client.chain.getBalance(addresses, chunk)));
           // update each asset in state
