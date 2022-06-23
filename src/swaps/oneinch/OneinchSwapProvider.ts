@@ -1,9 +1,8 @@
-import { Client } from '@chainify/client';
+import { Client, HttpClient } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Transaction, TxStatus } from '@chainify/types';
 import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
-import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import * as ethers from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
@@ -60,7 +59,13 @@ export interface OneinchSwapProviderConfig extends BaseSwapProviderConfig {
 }
 
 class OneinchSwapProvider extends SwapProvider {
-  config: OneinchSwapProviderConfig;
+  public config: OneinchSwapProviderConfig;
+  private _httpClient: HttpClient;
+
+  constructor(config: OneinchSwapProviderConfig) {
+    super(config);
+    this._httpClient = new HttpClient({ baseURL: this.config.agent });
+  }
 
   async getSupportedPairs() {
     return [];
@@ -70,21 +75,17 @@ class OneinchSwapProvider extends SwapProvider {
     return super.getClient(network, walletId, asset, accountId) as Client<EvmChainProvider>;
   }
 
-  async _getQuote(chainIdFrom: number, from: Asset, to: Asset, amount: number) {
+  private async _getQuote(chainIdFrom: number, from: Asset, to: Asset, amount: number) {
     const fromToken = cryptoassets[from].contractAddress;
     const toToken = cryptoassets[to].contractAddress;
     const referrerAddress = this.config.referrerAddress?.[cryptoassets[from].chain];
     const fee = referrerAddress && this.config.referrerFee;
 
-    return await axios({
-      url: this.config.agent + `/${chainIdFrom}/quote`,
-      method: 'get',
-      params: {
-        fromTokenAddress: fromToken || NATIVE_ASSET_ADDRESS,
-        toTokenAddress: toToken || NATIVE_ASSET_ADDRESS,
-        amount,
-        fee,
-      },
+    return await this._httpClient.nodeGet(`/${chainIdFrom}/quote`, {
+      fromTokenAddress: fromToken || NATIVE_ASSET_ADDRESS,
+      toTokenAddress: toToken || NATIVE_ASSET_ADDRESS,
+      amount,
+      fee,
     });
   }
 
@@ -98,7 +99,7 @@ class OneinchSwapProvider extends SwapProvider {
     if (chainIdFrom !== chainIdTo || !chainToRpcProviders[chainIdFrom]) return null;
 
     const trade = await this._getQuote(chainIdFrom, from, to, fromAmountInUnit.toNumber());
-    const toAmountInUnit = new BN(trade.data.toTokenAmount);
+    const toAmountInUnit = new BN(trade?.toTokenAmount);
     return {
       from,
       to,
@@ -126,20 +127,16 @@ class OneinchSwapProvider extends SwapProvider {
       };
     }
 
-    const callData = await axios({
-      url: this.config.agent + `/${chainId}/approve/transaction`,
-      method: 'get',
-      params: {
-        tokenAddress: cryptoassets[quote.from].contractAddress,
-        amount: inputAmount.toString(),
-      },
+    const callData = await this._httpClient.nodeGet(`/${chainId}/approve/transaction`, {
+      tokenAddress: cryptoassets[quote.from].contractAddress,
+      amount: inputAmount.toString(),
     });
 
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const approveTx = await client.wallet.sendTransaction({
-      to: callData.data?.to,
-      value: callData.data?.value,
-      data: callData.data?.data,
+      to: callData?.to,
+      value: callData?.value,
+      data: callData?.data,
       fee: quote.fee,
     });
 
@@ -177,23 +174,19 @@ class OneinchSwapProvider extends SwapProvider {
       swapParams.fee = this.config.referrerFee;
     }
 
-    const trade = await axios({
-      url: this.config.agent + `/${chainId}/swap`,
-      method: 'get',
-      params: swapParams,
-    });
+    const trade = await this._httpClient.nodeGet(`/${chainId}/swap`, swapParams);
 
-    if (new BN(quote.toAmount).times(1 - swapParams.slippage / 100).gt(trade.data.toTokenAmount)) {
+    if (new BN(quote.toAmount).times(1 - swapParams.slippage / 100).gt(trade?.toTokenAmount)) {
       throw new Error(
-        `Slippage is too high. You expect ${quote.toAmount} but you are going to receive ${trade.data.toTokenAmount} ${quote.to}`
+        `Slippage is too high. You expect ${quote.toAmount} but you are going to receive ${trade?.toTokenAmount} ${quote.to}`
       );
     }
 
     await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
     const swapTx = await client.wallet.sendTransaction({
-      to: trade.data.tx?.to,
-      value: trade.data.tx?.value,
-      data: trade.data.tx?.data,
+      to: trade?.tx?.to,
+      value: trade?.tx?.value,
+      data: trade?.tx?.data,
       fee: quote.fee,
     });
     return {
@@ -229,7 +222,7 @@ class OneinchSwapProvider extends SwapProvider {
       const tradeData = await this._getQuote(chainId, quote.from, quote.to, new BigNumber(quote.fromAmount).toNumber());
       for (const feePrice of feePrices) {
         const gasPrice = new BN(feePrice).times(1e9); // ETH fee price is in gwei
-        const fee = new BN(tradeData.data?.estimatedGas).times(chainToGasMultiplier[chainId] || 1.5).times(gasPrice);
+        const fee = new BN(tradeData?.estimatedGas).times(chainToGasMultiplier[chainId] || 1.5).times(gasPrice);
         fees[feePrice] = unitToCurrency(cryptoassets[nativeAsset], fee);
       }
       return fees;

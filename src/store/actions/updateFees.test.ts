@@ -7,7 +7,6 @@ describe('updateFees tests', () => {
   jest.setTimeout(40000);
   const wallet = setupWallet(defaultWalletOptions);
   beforeEach(async () => {
-    jest.useFakeTimers();
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
       mnemonic: 'rough symbol license spirit advance pact catalog vibrant dream great usage empty',

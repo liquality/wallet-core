@@ -1,5 +1,5 @@
+import { HttpClient } from '@chainify/client';
 import { AssetTypes, ChainId, chains, isEthereumChain as _isEthereumChain } from '@liquality/cryptoassets';
-import axios from 'axios';
 import * as ethers from 'ethers';
 import buildConfig from '../build.config';
 import { Asset, Network } from '../store/types';
@@ -268,7 +268,7 @@ export const estimateGas = async ({ data, to, value }: { data: string; to: strin
 export const fetchTerraToken = async (address: string) => {
   const {
     data: { mainnet: tokens },
-  } = await axios.get('https://assets.terra.money/cw20/tokens.json');
+  } = await HttpClient.get('https://assets.terra.money/cw20/tokens.json');
   const token = tokens[address];
   const { symbol } = token;
 
