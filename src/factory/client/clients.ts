@@ -22,12 +22,11 @@ import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } fr
 import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
 import { Network as ChainifyNetwork, Nullable } from '@chainify/types';
-import { BaseProvider } from '@ethersproject/providers';
+import { BaseProvider, StaticJsonRpcProvider } from '@ethersproject/providers';
 import buildConfig from '../../build.config';
 import { Account, AccountType, Network, NftProviderType } from '../../store/types';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
-
 const ledgerTransportCreator = new WebHidTransportCreator();
 
 function getNftProvider(
@@ -130,10 +129,11 @@ export function createEVMClient(
   accountType: AccountType,
   derivationPath: string,
   swapOptions: EvmTypes.EvmSwapOptions,
+  ethersProvider?: StaticJsonRpcProvider,
   nftProviderType?: NftProviderType
 ) {
   // disable multicall for all networks until it's utilized properly
-  const chainProvider = new EvmChainProvider(ethereumNetwork, undefined, feeProvider, false);
+  const chainProvider = new EvmChainProvider(ethereumNetwork, ethersProvider, feeProvider, false);
   const swapProvider = new EvmSwapProvider(swapOptions);
 
   let walletProvider;

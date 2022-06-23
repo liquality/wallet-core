@@ -10,11 +10,14 @@ export const updateBalances = async (
   { network, walletId, assets }: { network: Network; walletId: string; assets: Asset[] }
 ): Promise<void> => {
   const { state, commit, getters } = rootActionContext(context);
+
+  // filter accounts for all enabled assets
   let accounts = state.accounts[walletId]?.[network].filter((a) => a.assets && a.assets.length > 0 && a.enabled);
 
   if (!accounts) return;
 
   if (assets && assets.length > 0) {
+    // filter accounts for a match between all enabled assets and requested ones
     accounts = accounts.filter((a) => a.assets.some((s) => assets.includes(s)));
   }
   const client = getters.client;
