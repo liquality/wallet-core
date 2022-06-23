@@ -334,8 +334,10 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   }
 
   protected _getStatuses(): Record<string, SwapStatus> {
+    const baseStatuses = super._getStatuses();
     return {
-      ...super._getStatuses(),
+      WAITING_FOR_APPROVE_CONFIRMATIONS_LSP: baseStatuses.WAITING_FOR_APPROVE_CONFIRMATIONS,
+      APPROVE_CONFIRMED_LSP: baseStatuses.APPROVE_CONFIRMED,
       INITIATED: {
         step: 1,
         label: 'Locking {from}',
