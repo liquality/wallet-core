@@ -132,8 +132,7 @@ export function createEVMClient(
   ethersProvider?: StaticJsonRpcProvider,
   nftProviderType?: NftProviderType
 ) {
-  // disable multicall for all testnets, because not every testnet supports it
-  const chainProvider = new EvmChainProvider(ethereumNetwork, ethersProvider, feeProvider, !ethereumNetwork.isTestnet);
+  const chainProvider = new EvmChainProvider(ethereumNetwork, ethersProvider, feeProvider, true);
   const swapProvider = new EvmSwapProvider(swapOptions);
 
   let walletProvider;
