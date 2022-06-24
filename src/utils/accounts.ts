@@ -14,7 +14,7 @@ export const accountCreator = (payload: {
   const enabled = account.enabled !== null && account.enabled !== undefined ? account.enabled : true;
 
   const _addresses = addresses.map((a) => {
-    return chains[chain].formatAddress(a, network);
+    return chains[chain].formatAddress(a);
   });
 
   const derivationPath = account.derivationPath

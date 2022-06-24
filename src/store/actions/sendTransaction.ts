@@ -1,15 +1,10 @@
-<<<<<<< HEAD
-import { Transaction } from '@chainify/types';
-=======
->>>>>>> master
-import { chains } from '@liquality/cryptoassets';
+import { ChainId, chains } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
 import { assetsAdapter } from '../../utils/chainify';
 import { createHistoryNotification } from '../broker/notification';
 import { AccountId, Asset, FeeLabel, Network, SendHistoryItem, SendStatus, TransactionType, WalletId } from '../types';
-import {ChainId} from "@liquality/cryptoassets/src/types";
 
 export const sendTransaction = async (
   context: ActionContext,
@@ -44,11 +39,7 @@ export const sendTransaction = async (
 
   const _asset = assetsAdapter(asset)[0];
   const tx = await client.wallet.sendTransaction({
-<<<<<<< HEAD
-    to: chains[_asset.chain].formatAddress(to),
-=======
     to: chains[_asset.chain as ChainId].formatAddress(to),
->>>>>>> master
     value: new BN(amount),
     data,
     gasLimit: gas,
