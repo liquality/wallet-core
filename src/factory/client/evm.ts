@@ -53,7 +53,16 @@ export function createBSCClient(network: Network, mnemonic: string, derivationPa
 export function createPolygonClient(network: Network, mnemonic: string, derivationPath: string) {
   const polygonNetwork = ChainNetworks.polygon[network];
   const provider = new StaticJsonRpcProvider(polygonNetwork.rpcUrl, polygonNetwork.chainId);
-  const feeProvider = new EIP1559FeeProvider(polygonNetwork.rpcUrl as string);
+
+  const feeProvider =
+    network === Network.Testnet
+      ? new EIP1559FeeProvider(polygonNetwork.rpcUrl as string)
+      : new RpcFeeProvider(polygonNetwork.rpcUrl as string, {
+          slowMultiplier: 1,
+          averageMultiplier: 2,
+          fastMultiplier: 2.2,
+        });
+
   return createEVMClient(
     polygonNetwork,
     feeProvider,
