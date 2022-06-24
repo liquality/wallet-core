@@ -43,7 +43,7 @@ export abstract class EvmSwapProvider extends SwapProvider {
     const userAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     const userAddress = chains[fromAsset.chain].formatAddress(userAddressRaw);
 
-    const allowance = await tokenContract.allowance(userAddress, this.config.routerAddress);
+    const allowance = await tokenContract.allowance(userAddress.toLowerCase(), this.config.routerAddress);
 
     const isLSP = swapRequest.quote.provider === SwapProviderType.Liquality;
 
