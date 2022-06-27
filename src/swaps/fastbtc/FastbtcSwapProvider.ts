@@ -206,10 +206,9 @@ class FastbtcSwapProvider extends SwapProvider {
     return null;
   }
 
-  // @ts-ignore
-  async getMin(quoteRequest: QuoteRequest) {
+  async getMin(_quoteRequest: QuoteRequest) {
       const validAmountRange = await this._getTxAmount();
-      return validAmountRange.min
+      return new BN(validAmountRange.min)
   }
 
   async waitForSendConfirmations({ swap, network, walletId }: NextSwapActionRequest<FastBtcSwapHistoryItem>) {

@@ -361,9 +361,8 @@ class UniswapSwapProvider extends SwapProvider {
     return fees;
   }
 
-  // @ts-ignore
-  async getMin(quoteRequest: QuoteRequest) {
-    return 0
+  async getMin(_quoteRequest: QuoteRequest) {
+    return new BN(0)
   }
 
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<UniswapSwapHistoryItem>) {

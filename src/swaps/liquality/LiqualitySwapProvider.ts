@@ -249,11 +249,11 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       const pairs = await this.getSupportedPairs()
       for(const pair of pairs){
         if(pair.from == quoteRequest.from && pair.to == quoteRequest.to ){
-          return pair.min;
+          return new BN(pair.min);
         }
       }
     }
-    return 0
+    return new BN(0)
   }
 
   public async updateOrder(order: LiqualitySwapHistoryItem) {

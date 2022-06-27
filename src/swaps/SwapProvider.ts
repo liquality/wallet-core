@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import store, { ActionContext } from '../store';
 import { createNotification } from '../store/broker/notification';
 import { MarketData, Network, PairData, SwapHistoryItem } from '../store/types';
@@ -43,7 +44,7 @@ export abstract class SwapProvider {
     /**
    * Get min swap amount for given swap provider
    */
-  public abstract getMin(quoteRequest: QuoteRequest) : number | any
+  public abstract getMin(quoteRequest: QuoteRequest) : Promise<BigNumber>
 
   /**
    * Get a quote for the specified parameters

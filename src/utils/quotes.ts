@@ -10,8 +10,7 @@ export function calculateQuoteRate(quote: SwapQuote) {
   return toAmount.div(fromAmount);
 }
 
-// @ts-ignore
-export function sortQuotes(quotes: SwapQuote[], network: Network) {
+export function sortQuotes(quotes: SwapQuote[], _network: Network) {
   return quotes.slice(0).sort((a, b) => {
     return new BN(b.toAmount).minus(a.toAmount).toNumber();
   });
