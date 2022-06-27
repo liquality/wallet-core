@@ -186,6 +186,10 @@ class AstroportSwapProvider extends SwapProvider {
     return fees;
   }
 
+  async getMin(_quoteRequest: QuoteRequest) {
+    return new BN(0)
+  }
+
   // ======== UTILS ========
 
   _getRPC() {

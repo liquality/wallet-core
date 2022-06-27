@@ -316,6 +316,10 @@ class HopSwapProvider extends SwapProvider {
     return fees;
   }
 
+  async getMin(_quoteRequest: QuoteRequest) {
+    return new BN(0)
+  }
+
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<HopSwapHistoryItem>) {
     const client = this._getClient(network, walletId, swap.from, swap.fromAccountId);
     try {
