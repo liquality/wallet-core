@@ -6,7 +6,7 @@ import EventEmitter from 'events';
 import { findKey, mapKeys, mapValues, random } from 'lodash';
 import cryptoassets from '../utils/cryptoassets';
 import { ChainNetworks } from '../utils/networks';
-import { Asset, CurrenciesInfo, Network, RootState, WalletId } from './types';
+import { Asset, AssetInfo, CurrenciesInfo, Network, RootState, WalletId } from './types';
 
 export const CHAIN_LOCK: { [key: string]: boolean } = {};
 
@@ -125,25 +125,15 @@ export async function getCurrenciesInfo(baseCurrencies: string[]): Promise<Curre
     ])
   ).flat();
 
-  const result = coindIds.reduce((acc, currValue) => {
+  return coindIds.reduce((acc, currValue) => {
     const { coinGeckoId, asset } = currValue;
     const coinInfo = data.find((coin) => coin.id === coinGeckoId);
 
     return (acc = {
       ...acc,
-      [asset]: {
-        marketCap: coinInfo ? coinInfo.market_cap : 0,
-      },
+      [asset]: coinInfo ? new BN(coinInfo.market_cap) : new BN(0),
     });
   }, {}) as CurrenciesInfo;
-
-  for (const baseCurrency of baseCurrencies) {
-    if (!result[baseCurrency] && cryptoassets[baseCurrency]?.matchingAsset) {
-      result[baseCurrency] = { marketCap: 0 };
-    }
-  }
-
-  return result;
 }
 
 /*
@@ -159,9 +149,9 @@ export async function getCurrenciesInfo(baseCurrencies: string[]): Promise<Curre
 export const orderAssets = (
   hasFiat: boolean,
   hasTokenBalance: boolean,
-  sortedAssetsByFiat: { asset: string; amount: BN; type: string }[],
-  sortedAssetsByMarketCap: { asset: string; amount: BN; type: string }[],
-  sortedAssetsByTokenBalance: { asset: string; amount: BN; type: string }[]
+  sortedAssetsByFiat: AssetInfo[],
+  sortedAssetsByMarketCap: AssetInfo[],
+  sortedAssetsByTokenBalance: AssetInfo[]
 ) => {
   let orderedAssets = [];
 

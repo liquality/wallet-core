@@ -1,4 +1,5 @@
 import { Client } from '@chainify/client';
+import { Nullable } from '@chainify/types';
 import { Asset, assets as cryptoassets, ChainId, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
@@ -12,6 +13,8 @@ import {
   AccountId,
   AccountType,
   Asset as AssetType,
+  AssetInfo,
+  CurrenciesInfo,
   HistoryItem,
   Network,
   NFT,
@@ -230,10 +233,10 @@ export default {
                 Sort and group assets by dollar value / token amount / market cap
             */
             const totalFiatBalance = accountFiatBalance(activeWalletId, activeNetwork, account.id);
-            const assetsWithFiat: { asset: string; type: string; amount: BN }[] = [];
-            const assetsWithMarketCap: { asset: string; type: string; amount: BN }[] = [];
-            const assetsWithTokenBalance: { asset: string; type: string; amount: BN }[] = [];
-            let assetsMarketCap: { asset: string; marketCap: BN } = {} as any;
+            const assetsWithFiat: AssetInfo[] = [];
+            const assetsWithMarketCap: AssetInfo[] = [];
+            const assetsWithTokenBalance: AssetInfo[] = [];
+            let assetsMarketCap: CurrenciesInfo = {} as any;
             let hasFiat = false;
             let hasTokenBalance = false;
 
@@ -287,16 +290,7 @@ export default {
               totalFiatBalance,
             };
           })
-          .sort((a, b) => {
-            /*
-                Sort accounts by dollar value
-            */
-            if (a.totalFiatBalance.gt(b.totalFiatBalance)) {
-              return -1;
-            }
-
-            return 1;
-          })
+          .sort((a, b) => (a.totalFiatBalance.gt(b.totalFiatBalance) ? -1 : 1))
           .reduce((acc: { [key: string]: Account[] }, account) => {
             /*
                 Group sorted assets by chain / multiaccount ordering
@@ -331,7 +325,7 @@ export default {
     const { state } = rootGetterContext(context);
     const { fiatRates } = state;
     return (asset: AssetType, balance: BigNumber): BigNumber | null => {
-      if (fiatRates && fiatRates[asset] && balance.gt(0)) {
+      if (fiatRates && fiatRates[asset] && balance?.gt(0)) {
         const amount = unitToCurrency(cryptoassets[asset], balance);
         // TODO: coinformatter types are messed up and this shouldn't require `as BigNumber`
         return cryptoToFiat(amount, fiatRates[asset]) as BigNumber;
@@ -343,9 +337,9 @@ export default {
     const { state } = rootGetterContext(context);
     const { currenciesInfo } = state;
 
-    return (asset: AssetType): BigNumber | null => {
+    return (asset: AssetType): Nullable<BigNumber> => {
       if (currenciesInfo && currenciesInfo[asset]) {
-        const { marketCap } = currenciesInfo[asset];
+        const marketCap = currenciesInfo[asset];
         return new BigNumber(marketCap);
       }
       return null;

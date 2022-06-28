@@ -1,5 +1,6 @@
 import { FeeDetails, NFTAsset, Transaction } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
+import BN from 'bignumber.js';
 
 export type NetworkWalletIdMap<T> = Partial<Record<Network, Record<WalletId, T>>>;
 export type WalletIdNetworkMap<T> = Partial<Record<WalletId, Record<Network, T>>>;
@@ -13,10 +14,8 @@ export type WalletId = string;
 export type AccountId = string;
 export type Asset = string;
 export type FiatRates = Record<Asset, number>;
-export type CurrenciesInfo = Record<Asset, CurrencyInfo>;
-export type CurrencyInfo = {
-  marketCap: number;
-};
+export type CurrenciesInfo = Record<Asset, BN>;
+
 export type AnalyticsState = {
   userId: string;
   acceptedDate: number;
@@ -24,6 +23,8 @@ export type AnalyticsState = {
   askedTimes: number;
   notAskAgain: boolean;
 };
+export type AssetInfo = { asset: string; type: string; amount: BN };
+
 export interface Wallet {
   id: WalletId;
   name: string;
