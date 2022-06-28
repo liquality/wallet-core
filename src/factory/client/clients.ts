@@ -17,7 +17,6 @@ import {
   OpenSeaNftProvider,
 } from '@chainify/evm';
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
-import { WebHidTransportCreator } from '@chainify/hw-ledger';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
 import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
@@ -27,7 +26,8 @@ import buildConfig from '../../build.config';
 import { AccountInfo, AccountType, Network, NftProviderType } from '../../store/types';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
-const ledgerTransportCreator = new WebHidTransportCreator();
+import { walletOptionsStore } from '../../walletOptions';
+
 
 function getNftProvider(
   providerType: NftProviderType,
@@ -95,6 +95,9 @@ export function createBtcClient(
       throw new Error(`Account type ${accountInfo.type} not an option`);
     }
     const { addressType } = option;
+    if (!walletOptionsStore.walletOptions.ledgerTransportCreator) {
+      throw new Error('Wallet Options: ledgerTransportCreator is not defined - unable to build ledger client');
+    }
     const ledgerProvider = new BitcoinLedgerProvider(
       {
         network: bitcoinNetwork,
@@ -102,7 +105,7 @@ export function createBtcClient(
         baseDerivationPath: accountInfo.derivationPath,
         basePublicKey: accountInfo?.publicKey,
         baseChainCode: accountInfo?.chainCode,
-        transportCreator: ledgerTransportCreator,
+        transportCreator: walletOptionsStore.walletOptions.ledgerTransportCreator,
       },
       chainProvider
     );
@@ -141,12 +144,15 @@ export function createEVMClient(
         address: accountInfo.address
       });
     }
+    if (!walletOptionsStore.walletOptions.ledgerTransportCreator) {
+      throw new Error('Wallet Options: ledgerTransportCreator is not defined - unable to build ledger client');
+    }
     walletProvider = new EvmLedgerProvider(
       {
         network: ethereumNetwork,
         derivationPath: accountInfo.derivationPath,
         addressCache,
-        transportCreator: ledgerTransportCreator,
+        transportCreator: walletOptionsStore.walletOptions.ledgerTransportCreator,
       },
       chainProvider
     );
