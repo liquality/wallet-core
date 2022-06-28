@@ -234,8 +234,8 @@ export default {
             const assetsWithMarketCap: { asset: string; type: string; amount: BN }[] = [];
             const assetsWithTokenBalance: { asset: string; type: string; amount: BN }[] = [];
             let assetsMarketCap: { asset: string; marketCap: BN } = {} as any;
-            let hasFiat: boolean = false;
-            let hasTokenBalance: boolean = false;
+            let hasFiat = false;
+            let hasTokenBalance = false;
 
             const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
               const fiat = assetFiatBalance(asset, new BN(balance));
