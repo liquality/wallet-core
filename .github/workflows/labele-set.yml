@@ -1,4 +1,4 @@
-name: "Pull Request Labeler"
+name: "PR title check & label set"
 
 on:
   pull_request:
@@ -24,4 +24,3 @@ jobs:
       - uses: actions/labeler@v4
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          sync-labels: true
