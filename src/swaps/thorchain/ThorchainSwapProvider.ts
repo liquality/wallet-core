@@ -503,6 +503,11 @@ class ThorchainSwapProvider extends SwapProvider {
     return null;
   }
 
+
+  async getMin(_quoteRequest: QuoteRequest) {
+    return new BN(0)
+  }
+
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<ThorchainSwapHistoryItem>) {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 

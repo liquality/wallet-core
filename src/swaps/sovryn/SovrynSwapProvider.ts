@@ -312,6 +312,10 @@ class SovrynSwapProvider extends SwapProvider {
     return fees;
   }
 
+  async getMin(_quoteRequest: QuoteRequest) {
+    return new BN(0)
+  }
+
   // ======== STATE TRANSITIONS ========
 
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<SovrynSwapHistoryItem>) {
