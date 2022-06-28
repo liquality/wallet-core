@@ -125,8 +125,6 @@ export async function getCurrenciesInfo(baseCurrencies: string[]): Promise<Curre
     ])
   ).flat();
 
-  // let result: CurrenciesInfo = {};
-
   const result = coindIds.reduce((acc, currValue) => {
     const { coinGeckoId, asset } = currValue;
     const coinInfo = data.find((coin) => coin.id === coinGeckoId);

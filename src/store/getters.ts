@@ -318,11 +318,9 @@ export default {
     const { assetFiatBalance } = getters;
     return (walletId: WalletId, network: Network, accountId: AccountId): BigNumber => {
       const account = accounts[walletId]?.[network].find((a) => a.id === accountId);
-
       if (account) {
         return Object.entries(account.balances).reduce((accum, [asset, balance]) => {
           const fiat = assetFiatBalance(asset, new BigNumber(balance));
-
           return accum.plus(fiat || 0);
         }, new BN(0));
       }

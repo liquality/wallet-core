@@ -176,6 +176,7 @@ export default {
     const accounts = state.accounts[walletId]![network];
     if (accounts) {
       const index = accounts.findIndex((a) => a.id === accountId);
+
       if (index >= 0) {
         const _account = accounts[index];
         const balances = {
