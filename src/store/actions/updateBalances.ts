@@ -1,75 +1,108 @@
 import { Address } from '@chainify/types';
-import { ChainId } from '@liquality/cryptoassets';
+import { ChainId, chains } from '@liquality/cryptoassets';
 import Bluebird from 'bluebird';
+import { chunk } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
 import { assetsAdapter } from '../../utils/chainify';
-import { Asset, Network } from '../types';
+import { AccountId, Network, WalletId } from '../types';
 
-export const updateBalances = async (
-  context: ActionContext,
-  { network, walletId, assets }: { network: Network; walletId: string; assets: Asset[] }
-): Promise<void> => {
+type UpdateBalanceRequestType = {
+  walletId: WalletId;
+  network: Network;
+  accountIds?: AccountId[];
+};
+
+export const updateBalances = async (context: ActionContext, request: UpdateBalanceRequestType) => {
+  const { walletId, network } = request;
   const { state, commit, getters } = rootActionContext(context);
-  let accounts = state.accounts[walletId]?.[network].filter((a) => a.assets && a.assets.length > 0 && a.enabled);
+  const getClient = getters.client;
 
-  if (!accounts) return;
+  let accountIds = request.accountIds;
 
-  if (assets && assets.length > 0) {
-    accounts = accounts.filter((a) => a.assets.some((s) => assets.includes(s)));
+  if (!accountIds) {
+    accountIds =
+      state.accounts[walletId]?.[network]?.reduce((filtered, account) => {
+        if (account.enabled) {
+          filtered.push(account.id);
+        }
+        return filtered;
+      }, [] as AccountId[]) || [];
   }
-  const client = getters.client;
 
   await Bluebird.map(
-    accounts,
-    async (account) => {
-      const { assets } = account;
-      await Bluebird.map(
-        assets,
-        async (asset) => {
-          let addresses: Address[] = [];
-          const _client = client({
-            network,
-            walletId,
-            asset,
-            accountId: account.id,
-          });
+    // if accountIds is not passed fetch for all enabled account ids
+    accountIds,
+    async (accountId) => {
+      const account = getters.accountItem(accountId);
 
-          addresses = await _client.wallet.getUsedAddresses();
-          
+      if (account) {
+        const { assets, chain } = account;
+        let addresses: Address[] = [];
+
+        const nativeAsset = chains[chain].nativeAsset;
+        const client = getClient({ network, walletId, asset: nativeAsset, accountId: account.id });
+
+        addresses = await client.wallet.getUsedAddresses();
+
+        // if there are no addresses set balance to 0
+        if (addresses.length === 0) {
+          assets.forEach((a) =>
+            commit.UPDATE_BALANCE({ network, accountId: account.id, walletId, asset: a, balance: '0' })
+          );
+        }
+        // fetch balances
+        else {
           try {
-            const _assets = assetsAdapter(asset);
-            const balance =
-              addresses.length === 0 ? '0' : (await _client.chain.getBalance(addresses, _assets)).toString();
-            commit.UPDATE_BALANCE({ network, accountId: account.id, walletId, asset, balance });
+            const chainifyAssets = assetsAdapter(assets);
+            // split into chunks of 25 to avoid gas limitations of static calls
+            const assetsChunks = chunk(chainifyAssets, 25);
+            // run all balance queries concurrently
+            const balances = await Promise.all(assetsChunks.map((chunk) => client.chain.getBalance(addresses, chunk)));
+            // update each asset in state
+            assetsChunks.forEach((assets, index) =>
+              assets.forEach((asset, innerIndex) => {
+                // if balance is `null` there was a problem while fetching
+                const balance = balances[index][innerIndex];
+                if (balance) {
+                  commit.UPDATE_BALANCE({
+                    network,
+                    accountId: account.id,
+                    walletId,
+                    asset: asset.code,
+                    balance: balance.toString(),
+                  });
+                } else {
+                  console.error(`Balance not fetched: ${asset.code}`);
+                }
+              })
+            );
           } catch (err) {
-            console.error(`Asset: ${asset} Balance update error:  `, err.message);
-            console.info('Asset: ', assetsAdapter(asset));
-            console.info('Connected network ', _client.chain.getNetwork());
+            console.info('Connected network ', client.chain.getNetwork());
+            console.error(`Asset: ${nativeAsset} Balance update error:  `, err.message);
           }
+        }
 
-          // Commit to the state the addresses
-          let updatedAddresses: string[] = [];
-          if (account.chain === ChainId.Bitcoin) {
-            const addressExists = addresses.some((a) => account.addresses.includes(a.address));
-            if (!addressExists) {
-              updatedAddresses = [...account.addresses, ...addresses.map((a) => a.address)];
-            } else {
-              updatedAddresses = [...account.addresses];
-            }
+        let updatedAddresses: string[] = [];
+        if (account.chain === ChainId.Bitcoin) {
+          const addressExists = addresses.some((a) => account.addresses.includes(a.toString()));
+          if (!addressExists) {
+            updatedAddresses = [...account.addresses, ...addresses.map((a) => a.toString())];
           } else {
-            updatedAddresses = [...addresses.map((a) => a.address)];
+            updatedAddresses = [...account.addresses];
           }
+        } else {
+          updatedAddresses = [...addresses.map((a) => a.toString())];
+        }
 
-          commit.UPDATE_ACCOUNT_ADDRESSES({
-            network,
-            accountId: account.id,
-            walletId,
-            addresses: updatedAddresses,
-          });
-        },
-        { concurrency: 1 }
-      );
+        commit.UPDATE_ACCOUNT_ADDRESSES({
+          network,
+          accountId: account.id,
+          walletId,
+          addresses: updatedAddresses,
+        });
+      }
     },
-    { concurrency: 1 }
+    // 7 accounts at a time
+    { concurrency: 7 }
   );
 };

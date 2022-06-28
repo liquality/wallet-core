@@ -56,6 +56,6 @@ export const getUnusedAddresses = async (
       }
       return '';
     },
-    { concurrency: 1 }
+    { concurrency: 7 }
   );
 };

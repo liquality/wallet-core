@@ -1,11 +1,12 @@
+import { chains } from '@liquality/cryptoassets';
 import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
+import { Network } from '../types';
 
 describe('updateFees tests', () => {
-  jest.setTimeout(90000);
+  jest.setTimeout(40000);
   const wallet = setupWallet(defaultWalletOptions);
   beforeEach(async () => {
-    jest.useFakeTimers();
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
       mnemonic: 'rough symbol license spirit advance pact catalog vibrant dream great usage empty',
@@ -20,13 +21,13 @@ describe('updateFees tests', () => {
     expect(wallet.state.wallets.length).toBe(1);
 
     const walletId = wallet.state.activeWalletId;
-    const mainnetEnabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
-    expect(mainnetEnabledAssets).not.toBeNull();
-    expect(mainnetEnabledAssets?.length).toBeGreaterThan(10);
+    const enabledChains = wallet.state.enabledChains[wallet.state.activeWalletId]![wallet.state.activeNetwork];
+    const assets = enabledChains.map((chain) => chains[chain].nativeAsset);
+    expect(assets).not.toBeNull();
     // mainnet asset fee update
-    for (const mainnnetAsset of mainnetEnabledAssets!) {
+    for (const mainnetAsset of assets) {
       await wallet.dispatch.updateFees({
-        asset: mainnnetAsset,
+        asset: mainnetAsset,
       });
     }
     const maintainElement = wallet.state.fees.mainnet?.[walletId];
@@ -51,16 +52,15 @@ describe('updateFees tests', () => {
   it('should be able to update testnet assets fees', async () => {
     expect(wallet.state.wallets.length).toBe(1);
 
+    await wallet.dispatch.changeActiveNetwork({ network: Network.Testnet });
     const walletId = wallet.state.activeWalletId;
-    const testnetEnabledAssets = wallet?.state?.enabledAssets?.mainnet?.[walletId];
-    expect(testnetEnabledAssets).not.toBeNull();
-    expect(testnetEnabledAssets?.length).toBeGreaterThan(10);
-    if (typeof testnetEnabledAssets !== 'undefined') {
-      for (const testnetAsset of testnetEnabledAssets) {
-        await wallet.dispatch.updateFees({
-          asset: testnetAsset,
-        });
-      }
+    const enabledChains = wallet.state.enabledChains[wallet.state.activeWalletId]![wallet.state.activeNetwork];
+    const assets = enabledChains.map((chain) => chains[chain].nativeAsset);
+    expect(assets).not.toBeNull();
+    for (const testnetAsset of assets) {
+      await wallet.dispatch.updateFees({
+        asset: testnetAsset,
+      });
     }
     const testnetFeeElement = wallet.state.fees.mainnet?.[walletId];
     // BTC fee object checks

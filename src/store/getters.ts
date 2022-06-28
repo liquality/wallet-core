@@ -1,13 +1,25 @@
 import { Client } from '@chainify/client';
 import { Asset, assets as cryptoassets, ChainId, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
-import { uniq } from 'lodash';
+import { mapValues, uniq } from 'lodash';
 import { rootGetterContext } from '.';
 import { createClient } from '../factory';
 import { cryptoToFiat } from '../utils/coinFormatter';
 import { getDerivationPath } from '../utils/derivationPath';
 import { Networks } from '../utils/networks';
-import { Account, AccountId, AccountInfo, AccountType, Asset as AssetType, HistoryItem, Network, WalletId } from './types';
+import {
+  Account,
+  AccountId,
+  AccountInfo,
+  AccountType,
+  Asset as AssetType,
+  HistoryItem,
+  Network,
+  NFT,
+  NFTCollections,
+  NFTWithAccount,
+  WalletId,
+} from './types';
 
 const clientCache: { [key: string]: Client } = {};
 
@@ -179,6 +191,7 @@ export default {
   accountItem(...context: GetterContext) {
     const { getters } = rootGetterContext(context);
     const { accountsData } = getters;
+
     return (accountId: AccountId): Account | undefined => {
       const account = accountsData.find((a) => a.id === accountId && a.enabled);
       return account;
@@ -288,5 +301,32 @@ export default {
       return true;
     }
     return false;
+  },
+  allNftCollections(...context: GetterContext): NFTCollections<NFTWithAccount> {
+    const { getters } = rootGetterContext(context);
+    const accounts = getters.accountsData;
+    const allNftCollections = accounts.reduce((allCollections: NFTCollections<NFTWithAccount>, account) => {
+      const collections = getters.accountNftCollections(account.id);
+      const collectionsWithAccount = mapValues(collections, (nfts) => {
+        return nfts.map((nft) => ({ ...nft, accountId: account.id }));
+      });
+      return { ...allCollections, ...collectionsWithAccount };
+    }, {});
+    return allNftCollections;
+  },
+  accountNftCollections(...context: GetterContext) {
+    const { getters } = rootGetterContext(context);
+    return (accountId: AccountId): NFTCollections<NFT> => {
+      const account = getters.accountItem(accountId);
+      if (!account?.nfts || !account.nfts.length) return {};
+
+      return account.nfts.reduce((collections: NFTCollections<NFT>, nft: NFT) => {
+        (collections[nft.collection.name] ||= []).push(nft);
+        collections[nft.collection.name].sort((nftA: NFT, nftB: NFT) => {
+          return nftA.starred === nftB.starred ? 0 : nftA.starred ? -1 : 1;
+        });
+        return collections;
+      }, {});
+    };
   },
 };

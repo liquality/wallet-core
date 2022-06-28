@@ -1,5 +1,5 @@
+import { HttpClient } from '@chainify/client';
 import { AssetTypes, ChainId, chains, isEthereumChain as _isEthereumChain } from '@liquality/cryptoassets';
-import axios from 'axios';
 import * as ethers from 'ethers';
 import buildConfig from '../build.config';
 import { Asset, Network } from '../store/types';
@@ -268,7 +268,7 @@ export const estimateGas = async ({ data, to, value }: { data: string; to: strin
 export const fetchTerraToken = async (address: string) => {
   const {
     data: { mainnet: tokens },
-  } = await axios.get('https://assets.terra.money/cw20/tokens.json');
+  } = await HttpClient.get('https://assets.terra.money/cw20/tokens.json');
   const token = tokens[address];
   const { symbol } = token;
 
@@ -277,4 +277,49 @@ export const fetchTerraToken = async (address: string) => {
     symbol,
     decimals: 6,
   };
+};
+
+const NFT_ASSETS_MAP: { [key in ChainId]?: { [key in Network]: { url: string; transfer: string } } } = {
+  ethereum: {
+    testnet: {
+      url: `https://testnet.opensea.io/`,
+      transfer: `https://testnets.opensea.io/assets/{contract_address}/{token_id}`,
+    },
+    mainnet: {
+      url: `https://opensea.io/`,
+      transfer: `https://opensea.io/assets/{chain}/{contract_address}/{token_id}`,
+    },
+  },
+  polygon: {
+    testnet: {
+      url: `https://testnet.opensea.io/`,
+      transfer: `https://testnets.opensea.io/assets/{contract_address}/{token_id}`,
+    },
+    mainnet: {
+      url: `https://opensea.io/`,
+      transfer: `https://opensea.io/assets/{asset}/{contract_address}/{token_id}`,
+    },
+  },
+};
+
+export const getNftTransferLink = (asset: Asset, network: Network, tokenId: string, contract_address: string) => {
+  const chainId = cryptoassets[asset].chain;
+  const transfer = NFT_ASSETS_MAP[chainId]![network].transfer;
+
+  return transfer
+    .replace('{contract_address}', contract_address)
+    .replace('{chain}', chainId)
+    .replace('{asset}', asset)
+    .replace('{token_id}', tokenId);
+};
+
+export const getNftLink = (asset: Asset, network: Network) => {
+  const chainId = cryptoassets[asset].chain;
+  const url = NFT_ASSETS_MAP[chainId]![network].url;
+
+  return url;
+};
+
+export const openseaLink = (network: Network) => {
+  return `https://${network === 'testnet' ? 'testnets.' : ''}opensea.io/`;
 };

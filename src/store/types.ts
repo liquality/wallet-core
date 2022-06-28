@@ -1,4 +1,4 @@
-import { FeeDetails, Transaction } from '@chainify/types';
+import { FeeDetails, NFTAsset, Transaction } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
 
 export type NetworkWalletIdMap<T> = Partial<Record<Network, Record<WalletId, T>>>;
@@ -59,6 +59,7 @@ export interface AccountDefinition {
   enabled?: boolean;
   chainCode?: string;
   publicKey?: string;
+  nfts?: NFT[];
 }
 
 export interface AccountInfo {
@@ -78,6 +79,7 @@ export interface Account extends AccountDefinition {
   derivationPath: string;
   chainCode?: string;
   publicKey?: string;
+  nfts?: NFT[];
 }
 export interface PairData {
   from: Asset;
@@ -100,6 +102,7 @@ export enum FeeLabel {
 export enum TransactionType {
   Send = 'SEND',
   Swap = 'SWAP',
+  NFT = 'NFT',
 }
 
 export enum SwapProviderType {
@@ -112,7 +115,7 @@ export enum SwapProviderType {
   Sovryn = 'sovryn',
   Thorchain = 'thorchain',
   Astroport = 'astroport',
-  Hop = 'hop'
+  Hop = 'hop',
 }
 
 export interface BaseHistoryItem {
@@ -129,6 +132,17 @@ export interface BaseHistoryItem {
   walletId: WalletId;
   error?: string;
   waitingForLock?: boolean;
+}
+
+export interface NFTSendTransactionParams {
+  network: Network;
+  accountId: AccountId;
+  walletId: WalletId;
+  receiver: string;
+  values: number[];
+  fee: number;
+  feeLabel: FeeLabel;
+  nft: NFT;
 }
 
 export enum SendStatus {
@@ -148,6 +162,16 @@ export interface SendHistoryItem extends BaseHistoryItem {
   status: SendStatus;
 }
 
+export interface NFTSendHistoryItem extends BaseHistoryItem {
+  type: TransactionType.NFT;
+  toAddress: string;
+  tx: Transaction;
+  nft: NFT;
+  txHash: string;
+  accountId: AccountId;
+  status: SendStatus;
+}
+
 export interface SwapHistoryItem extends BaseHistoryItem {
   type: TransactionType.Swap;
   claimFeeLabel: FeeLabel;
@@ -162,7 +186,7 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   path?: string[];
 }
 
-export type HistoryItem = SendHistoryItem | SwapHistoryItem;
+export type HistoryItem = NFTSendHistoryItem | SendHistoryItem | SwapHistoryItem;
 
 export enum ExperimentType {
   ManageAccounts = 'manageAccounts',
@@ -219,4 +243,22 @@ export interface RootState {
   experiments: Partial<Record<ExperimentType, boolean>>;
   whatsNewModalVersion: string;
   enabledChains: WalletIdNetworkMap<ChainId[]>;
+}
+
+export type NFTCollections<T> = {
+  [collectionName: string]: T[];
+};
+
+export interface NFTWithAccount extends NFT {
+  accountId: AccountId;
+}
+
+export interface NFT extends NFTAsset {
+  starred: boolean;
+}
+
+export enum NftProviderType {
+  OpenSea = 'opensea',
+  Moralis = 'moralis',
+  Covalent = 'covalent',
 }

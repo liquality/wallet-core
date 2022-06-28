@@ -1,5 +1,5 @@
 import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
-import { Client } from '@chainify/client';
+import { Client, HttpClient } from '@chainify/client';
 import { Transaction } from '@chainify/types';
 import { ChainId, chains, currencyToUnit, isEthereumChain, unitToCurrency } from '@liquality/cryptoassets';
 import {
@@ -10,7 +10,6 @@ import {
 } from '@thorchain/asgardex-util';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import { assetFromString, BaseAmount, baseAmount, baseToAsset } from '@xchainjs/xchain-util';
-import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import * as ethers from 'ethers';
 import { mapValues } from 'lodash';
@@ -170,23 +169,29 @@ export interface ThorchainSwapQuote extends SwapQuote {
 }
 
 class ThorchainSwapProvider extends SwapProvider {
-  config: ThorchainSwapProviderConfig;
+  public config: ThorchainSwapProviderConfig;
+  private _httpClient: HttpClient;
+
+  constructor(config: ThorchainSwapProviderConfig) {
+    super(config);
+    this._httpClient = new HttpClient({ baseURL: this.config.thornode });
+  }
 
   async getSupportedPairs() {
     return [];
   }
 
   async _getPools(): Promise<ThorchainPool[]> {
-    return (await axios.get(`${this.config.thornode}/thorchain/pools`)).data;
+    return this._httpClient.nodeGet('/thorchain/pools');
   }
 
   async _getInboundAddresses(): Promise<ThorchainInboundAddress[]> {
-    return (await axios.get(`${this.config.thornode}/thorchain/inbound_addresses`)).data;
+    return this._httpClient.nodeGet('/thorchain/inbound_addresses');
   }
 
   async _getTransaction(hash: string): Promise<ThorchainTransactionResponse | null> {
     try {
-      return (await axios.get(`${this.config.thornode}/thorchain/tx/${hash}`)).data;
+      return this._httpClient.nodeGet(`/thorchain/tx/${hash}`);
     } catch (e) {
       // Error means tx not found
       return null;
@@ -558,7 +563,7 @@ class ThorchainSwapProvider extends SwapProvider {
           const receiveTx = await client.chain.getTransactionByHash(receiveHash);
 
           if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
-            this.updateBalances(network, walletId, [asset]);
+            this.updateBalances(network, walletId, [accountId]);
             const status = OUT_MEMO_TO_STATUS[memoAction];
             return {
               receiveTxHash: receiveTx.hash,

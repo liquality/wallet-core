@@ -1,6 +1,6 @@
 import store, { ActionContext } from '../store';
 import { createNotification } from '../store/broker/notification';
-import { MarketData, Network, PairData, SwapHistoryItem } from '../store/types';
+import { AccountId, MarketData, Network, PairData, SwapHistoryItem } from '../store/types';
 import {
   ActionStatus,
   BaseSwapProviderConfig,
@@ -96,8 +96,8 @@ export abstract class SwapProvider {
   /**
    * Update balances for given assets
    */
-  public async updateBalances(network: Network, walletId: string, assets: string[]) {
-    return store.dispatch.updateBalances({ network, walletId, assets });
+  public async updateBalances(network: Network, walletId: string, accountIds: AccountId[]) {
+    return store.dispatch.updateBalances({ network, walletId, accountIds });
   }
 
   /**

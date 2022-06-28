@@ -1,6 +1,6 @@
+import { HttpClient } from '@chainify/client';
 import { EvmChainProvider, EvmWalletProvider } from '@chainify/evm';
 import { AssetTypes, ChainId } from '@liquality/cryptoassets';
-import axios from 'axios';
 import EventEmitter from 'events';
 import { findKey, mapKeys, mapValues, random } from 'lodash';
 import cryptoassets from '../utils/cryptoassets';
@@ -91,7 +91,7 @@ export async function getPrices(baseCurrencies: string[], toCurrency: string) {
   const coindIds = baseCurrencies
     .filter((currency) => cryptoassets[currency]?.coinGeckoId)
     .map((currency) => cryptoassets[currency].coinGeckoId);
-  const { data } = await axios.get(
+  const data = await HttpClient.get(
     `${COIN_GECKO_API}/simple/price?ids=${coindIds.join(',')}&vs_currencies=${toCurrency}`
   );
   let prices = mapKeys(data, (_, coinGeckoId) => findKey(cryptoassets, (asset) => asset.coinGeckoId === coinGeckoId));
