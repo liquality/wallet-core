@@ -228,7 +228,6 @@ class HopSwapProvider extends SwapProvider {
       ...txData,
       ...feeFormated,
     });
-    approveTx.hash = approveTx?.hash?.substring(2);
     return {
       status: 'WAITING_FOR_APPROVE_CONFIRMATIONS',
       approveTx,
@@ -249,7 +248,6 @@ class HopSwapProvider extends SwapProvider {
       ...txData,
       ...feeFormated,
     });
-    fromFundTx.hash = fromFundTx?.hash?.substring(2);
     return {
       status: 'WAITING_FOR_SEND_SWAP_CONFIRMATIONS',
       fromFundTx,
