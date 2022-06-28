@@ -37,7 +37,6 @@ export const updateBalances = async (context: ActionContext, request: UpdateBala
 
       if (account) {
         const { assets, type, chain } = account;
-        console.log('assets', assets);
         let addresses: Address[] = [];
 
         const nativeAsset = chains[chain].nativeAsset;
@@ -63,7 +62,6 @@ export const updateBalances = async (context: ActionContext, request: UpdateBala
             const chainifyAssets = assetsAdapter(assets);
             // split into chunks of 25 to avoid gas limitations of static calls
             const assetsChunks = chunk(chainifyAssets, 25);
-            console.log('assetsChunks', assetsChunks);
             // run all balance queries concurrently
             const balances = await Promise.all(assetsChunks.map((chunk) => client.chain.getBalance(addresses, chunk)));
             // update each asset in state
