@@ -65,8 +65,8 @@ export const updateBalances = async (context: ActionContext, request: UpdateBala
             // run all balance queries concurrently
             const balances = await Promise.all(assetsChunks.map((chunk) => client.chain.getBalance(addresses, chunk)));
             // update each asset in state
-            assetsChunks.forEach((assets, index) =>
-              assets.forEach((asset, innerIndex) => {
+            assetsChunks.forEach((_assets, index) =>
+              _assets.forEach((asset, innerIndex) => {
                 // if balance is `null` there was a problem while fetching
                 const balance = balances[index][innerIndex];
                 if (balance) {
@@ -74,7 +74,7 @@ export const updateBalances = async (context: ActionContext, request: UpdateBala
                     network,
                     accountId: account.id,
                     walletId,
-                    asset: asset.code,
+                    asset: assets[innerIndex],
                     balance: balance.toString(),
                   });
                 } else {
