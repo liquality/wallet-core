@@ -278,14 +278,10 @@ export default {
               sortedAssetsByMarketCap,
               sortedAssetsByTokenBalance
             );
-            if (account.name === 'Polygon 1') {
-              console.log(orderedAssets);
-              console.log(sortedAssetsByFiat);
-            }
 
             return {
               ...account,
-              // assets: orderedAssets.length ? orderedAssets : account.assets,
+              assets: orderedAssets.length ? orderedAssets : account.assets,
               marketCap: assetsMarketCap,
               fiatBalances,
               totalFiatBalance,
