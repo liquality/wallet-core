@@ -13,6 +13,10 @@ export type WalletId = string;
 export type AccountId = string;
 export type Asset = string;
 export type FiatRates = Record<Asset, number>;
+export type CurrenciesInfo = Record<Asset, CurrencyInfo>;
+export type CurrencyInfo = {
+  marketCap: number;
+};
 export type AnalyticsState = {
   userId: string;
   acceptedDate: number;
@@ -211,6 +215,7 @@ export interface RootState {
   accounts: WalletIdNetworkMap<Account[]>;
 
   fiatRates: FiatRates;
+  currenciesInfo: CurrenciesInfo;
   fees: NetworkWalletIdMap<Record<Asset, FeeDetails>>;
   history: NetworkWalletIdMap<HistoryItem[]>;
   marketData: Partial<Record<Network, MarketData[]>>;
