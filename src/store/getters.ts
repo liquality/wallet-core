@@ -348,7 +348,7 @@ export default {
   chainAssets(...context: GetterContext): { [key in ChainId]?: AssetType[] } {
     // Sort crypto assets
     const { getters } = rootGetterContext(context);
-    const { accountsWithBalance, accountsData } = getters;
+    const { accountsWithBalance, accountsData, cryptoassets } = getters;
 
     // By dollar amount
     const data: { [key in string]: string[] } = accountsWithBalance.reduce((acc, { chain, assets, balances }) => {
