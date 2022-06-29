@@ -346,19 +346,47 @@ export default {
     };
   },
   chainAssets(...context: GetterContext): { [key in ChainId]?: AssetType[] } {
+    // Sort crypto assets
     const { getters } = rootGetterContext(context);
-    const { cryptoassets } = getters;
+    const { accountsWithBalance, accountsData } = getters;
 
-    const chainAssets = Object.entries(cryptoassets).reduce(
-      (chains: { [chain in ChainId]?: AssetType[] }, [asset, assetData]) => {
-        const assets = assetData.chain in chains ? chains[assetData.chain]! : [];
-        return Object.assign({}, chains, {
-          [assetData.chain]: [...assets, asset],
-        });
-      },
-      {}
-    );
-    return chainAssets;
+    // By dollar amount
+    const data: { [key in string]: string[] } = accountsWithBalance.reduce((acc, { chain, assets, balances }) => {
+      return {
+        ...acc,
+        [chain]: assets.filter((asset) => Object.keys(balances).includes(asset)),
+      };
+    }, {});
+
+    // By token balance
+    accountsData.forEach(({ assets, chain }) => {
+      data[chain] = data[chain] ?? [];
+
+      assets.reduce((acc, asset) => {
+        if (!data[chain].includes(asset)) {
+          return {
+            ...acc,
+            [chain]: data[chain].push(asset),
+          };
+        }
+
+        return data;
+      }, {});
+    });
+
+    Object.entries(cryptoassets).reduce((acc, [asset, { chain }]) => {
+      data[chain] = data[chain] ?? [];
+
+      if (!data[chain].includes(asset)) {
+        return {
+          ...acc,
+          [chain]: data[chain].push(asset),
+        };
+      }
+      return data;
+    }, {});
+
+    return data;
   },
   analyticsEnabled(...context: GetterContext): boolean {
     const { state } = rootGetterContext(context);
