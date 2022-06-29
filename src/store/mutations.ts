@@ -144,9 +144,10 @@ export default {
       updates: Partial<HistoryItem>;
     }
   ) {
-    const item = state.history[network]?.[walletId].find((i) => i.id === id);
-    if (item) {
-      Object.assign(item, updates);
+    const itemIndex = state.history[network]?.[walletId].findIndex((i) => i.id === id);
+    if (itemIndex != undefined && itemIndex >= 0) {
+      const item = state.history[network]?.[walletId][itemIndex]
+      Vue.set(state.history[network]?.[walletId], itemIndex, Object.assign(Object.assign({}, item), updates))
     }
   },
   REMOVE_ORDER(state: RootState, { network, walletId, id }: { network: Network; walletId: WalletId; id: string }) {

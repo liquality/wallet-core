@@ -3,6 +3,19 @@ import buildConfig from '../../build.config';
 import { getSwapProvider } from '../../factory/swap';
 import { MarketData, Network } from '../types';
 
+Promise.allSettled = Promise.allSettled || ((promises: Promise<any>[]) => Promise.all(
+    promises.map(p => p
+        .then(value => ({
+          status: "fulfilled",
+          value
+        }))
+        .catch(reason => ({
+          status: "rejected",
+          reason
+        }))
+    )
+));
+
 export const updateMarketData = async (
   context: ActionContext,
   { network }: { network: Network }
