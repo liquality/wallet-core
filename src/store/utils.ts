@@ -133,7 +133,7 @@ export async function getCurrenciesInfo(baseCurrencies: string[]): Promise<Curre
       ...acc,
       [asset]: coinInfo ? new BN(coinInfo.market_cap) : new BN(0),
     });
-  }, {}) as CurrenciesInfo;
+  }, {});
 }
 
 /*
