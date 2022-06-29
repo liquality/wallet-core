@@ -1,4 +1,4 @@
-import { EIP1559FeeApiProvider, EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
+import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { AccountType, Network, NftProviderType } from '../../store/types';
 import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
@@ -53,7 +53,7 @@ export function createBSCClient(network: Network, mnemonic: string, derivationPa
 export function createPolygonClient(network: Network, mnemonic: string, derivationPath: string) {
   const polygonNetwork = ChainNetworks.polygon[network];
   const provider = new StaticJsonRpcProvider(polygonNetwork.rpcUrl, polygonNetwork.chainId);
-  const feeProvider = new EIP1559FeeApiProvider(String(polygonNetwork.chainId));
+  const feeProvider = new EIP1559FeeProvider(provider);
 
   return createEVMClient(
     polygonNetwork,
@@ -86,11 +86,7 @@ export function createArbitrumClient(network: Network, mnemonic: string, derivat
 export function createAvalancheClient(network: Network, mnemonic: string, derivationPath: string) {
   const avalancheNetwork = ChainNetworks.avalanche[network];
   const provider = new StaticJsonRpcProvider(avalancheNetwork.rpcUrl, avalancheNetwork.chainId);
-  const feeProvider =
-    network === Network.Testnet
-      ? new RpcFeeProvider(provider, { slowMultiplier: 1, averageMultiplier: 2, fastMultiplier: 2.2 })
-      : // enable 1559 for Avalanche mainnet
-        new EIP1559FeeApiProvider(String(avalancheNetwork.chainId));
+  const feeProvider = new EIP1559FeeProvider(provider);
 
   return createEVMClient(
     avalancheNetwork,

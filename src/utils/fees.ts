@@ -1,6 +1,6 @@
 import { ChainId, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
-import { Asset, Network } from '../store/types';
+import { Asset } from '../store/types';
 import { getNativeAsset, isERC20, isEthereumChain } from './asset';
 import cryptoassets from './cryptoassets';
 
@@ -38,12 +38,8 @@ function getFeeLabel(fee: string) {
   return FEE_OPTIONS[name]?.label || '';
 }
 
-function isEIP1559Fees(chain: ChainId, network: Network) {
-  return (
-    chain === ChainId.Ethereum ||
-    chain === ChainId.Polygon ||
-    (chain === ChainId.Avalanche && network === Network.Mainnet)
-  );
+function isEIP1559Fees(chain: ChainId) {
+  return chain === ChainId.Ethereum || chain === ChainId.Polygon || chain === ChainId.Avalanche;
 }
 
 export { FEE_OPTIONS, getSendFee, getTxFee, getFeeLabel, isEIP1559Fees };
