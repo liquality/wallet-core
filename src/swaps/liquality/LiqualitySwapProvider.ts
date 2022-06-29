@@ -244,6 +244,18 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     return fees;
   }
 
+  async getMin(quoteRequest: QuoteRequest) {
+    if(quoteRequest){
+      const pairs = await this.getSupportedPairs()
+      for(const pair of pairs){
+        if(pair.from == quoteRequest.from && pair.to == quoteRequest.to ){
+          return new BN(pair.min);
+        }
+      }
+    }
+    return new BN(0)
+  }
+
   public async updateOrder(order: LiqualitySwapHistoryItem) {
     return this._httpClient.nodePost(
       `/api/swap/order/${order.orderId}`,

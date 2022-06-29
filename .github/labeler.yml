@@ -9,7 +9,7 @@ test:
   - 'src/*.test.ts'
 
 ci-update:
-  - any: [ '.github/**/*.yml', '.github/workflows/*.yml' ,.github/*.yml', 'configs/*.json' ]
+  - any: [ '.github/**/*.yml', '.github/workflows/*.yml' ,.github/*.yml']
 
 dependencies:
   - any: [ 'package.json', 'yarn.lock' ]

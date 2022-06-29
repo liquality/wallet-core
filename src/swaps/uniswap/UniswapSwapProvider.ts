@@ -361,6 +361,10 @@ class UniswapSwapProvider extends SwapProvider {
     return fees;
   }
 
+  async getMin(_quoteRequest: QuoteRequest) {
+    return new BN(0)
+  }
+
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<UniswapSwapHistoryItem>) {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 

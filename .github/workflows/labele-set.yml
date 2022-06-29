@@ -1,4 +1,4 @@
-name: "Pull Request Labeler"
+name: "PR title check & label set"
 
 on:
   pull_request:
@@ -11,7 +11,16 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
+      - uses: amannn/action-semantic-pull-request@v4
+        with:
+          types: |
+            fix
+            feat
+            docs
+            ci
+            core
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/labeler@v4
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          sync-labels: true
