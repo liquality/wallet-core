@@ -1,11 +1,11 @@
 import { chains } from '@liquality/cryptoassets';
+import { ChainId } from '@liquality/cryptoassets/src/types';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
 import { assetsAdapter } from '../../utils/chainify';
 import { createHistoryNotification } from '../broker/notification';
 import { AccountId, Asset, FeeLabel, Network, SendHistoryItem, SendStatus, TransactionType, WalletId } from '../types';
-import {ChainId} from "@liquality/cryptoassets/src/types";
 
 export const sendTransaction = async (
   context: ActionContext,
@@ -18,6 +18,7 @@ export const sendTransaction = async (
     amount,
     data,
     fee,
+    feeAsset,
     gas,
     feeLabel,
     fiatRate,
@@ -30,6 +31,7 @@ export const sendTransaction = async (
     amount: BigNumber;
     data: string;
     fee: number;
+    feeAsset: string;
     gas: number;
     feeLabel: FeeLabel;
     fiatRate: number;
@@ -39,6 +41,8 @@ export const sendTransaction = async (
   const client = getters.client({ network, walletId, asset, accountId });
 
   const _asset = assetsAdapter(asset)[0];
+  const _feeAsset = assetsAdapter(feeAsset)[0] || _asset;
+
   const tx = await client.wallet.sendTransaction({
     to: chains[_asset.chain as ChainId].formatAddress(to),
     value: new BN(amount),
@@ -46,7 +50,7 @@ export const sendTransaction = async (
     gasLimit: gas,
     fee,
     asset: _asset,
-    feeAsset: _asset,
+    feeAsset: _feeAsset,
   });
 
   const transaction: SendHistoryItem = {
