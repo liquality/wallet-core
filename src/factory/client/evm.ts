@@ -53,14 +53,7 @@ export function createBSCClient(network: Network, mnemonic: string, derivationPa
 export function createPolygonClient(network: Network, mnemonic: string, derivationPath: string) {
   const polygonNetwork = ChainNetworks.polygon[network];
   const provider = new StaticJsonRpcProvider(polygonNetwork.rpcUrl, polygonNetwork.chainId);
-  const feeProvider =
-    network === Network.Testnet
-      ? new EIP1559FeeProvider(polygonNetwork.rpcUrl as string)
-      : new RpcFeeProvider(polygonNetwork.rpcUrl as string, {
-          slowMultiplier: 1,
-          averageMultiplier: 2,
-          fastMultiplier: 2.2,
-        });
+  const feeProvider = new EIP1559FeeProvider(provider);
 
   return createEVMClient(
     polygonNetwork,
@@ -93,7 +86,8 @@ export function createArbitrumClient(network: Network, mnemonic: string, derivat
 export function createAvalancheClient(network: Network, mnemonic: string, derivationPath: string) {
   const avalancheNetwork = ChainNetworks.avalanche[network];
   const provider = new StaticJsonRpcProvider(avalancheNetwork.rpcUrl, avalancheNetwork.chainId);
-  const feeProvider = new RpcFeeProvider(provider, { slowMultiplier: 1, averageMultiplier: 2, fastMultiplier: 2.2 });
+  const feeProvider = new EIP1559FeeProvider(provider);
+
   return createEVMClient(
     avalancheNetwork,
     feeProvider,
