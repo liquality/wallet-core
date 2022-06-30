@@ -52,5 +52,6 @@ export const formatFiat = (amount: BN) => {
 };
 
 export const formatFiatUI = (amount: number) => {
-  return isNaN(amount) ? amount : '$' + amount;
+  const _amount = String(amount).replace(/,/g, '');
+  return isNaN(Number(_amount)) ? amount : '$' + amount;
 };
