@@ -36,6 +36,7 @@ export * from './toggleNFTStarred';
 export * from './unlockWallet';
 export * from './updateAccountBalance';
 export * from './updateBalances';
+export * from './updateCurrenciesInfo';
 export * from './updateFees';
 export * from './updateFiatRates';
 export * from './updateMarketData';

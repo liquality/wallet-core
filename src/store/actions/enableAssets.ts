@@ -60,6 +60,7 @@ export const enableAssets = async (
       await dispatch.updateAccountBalance({ network, walletId, accountId });
     }
   });
+  dispatch.updateCurrenciesInfo({ assets: [...getters.allNetworkAssets] });
   dispatch.updateFiatRates({ assets: [...getters.allNetworkAssets] });
   dispatch.updateMarketData({ network });
 };
