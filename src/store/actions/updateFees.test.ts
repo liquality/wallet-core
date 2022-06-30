@@ -4,7 +4,7 @@ import defaultWalletOptions from '../../walletOptions/defaultOptions';
 import { Network } from '../types';
 
 describe('updateFees tests', () => {
-  jest.setTimeout(40000);
+  jest.setTimeout(90000);
   const wallet = setupWallet(defaultWalletOptions);
   beforeEach(async () => {
     await wallet.dispatch.createWallet({
@@ -41,13 +41,13 @@ describe('updateFees tests', () => {
     expect(maintainElement?.BTC).toHaveProperty('fast');
     expect(maintainElement?.BTC.fast.fee).not.toBe(0);
     expect(maintainElement?.BTC.fast.wait).toBe(600);
-    // LUNA fee object checks
-    expect(maintainElement?.LUNA).toHaveProperty('slow');
-    expect(maintainElement?.LUNA).toHaveProperty('average');
-    expect(maintainElement?.LUNA).toHaveProperty('fast');
-    expect(maintainElement?.LUNA.slow.fee).not.toBe(0);
-    expect(maintainElement?.LUNA.average.fee).not.toBe(0);
-    expect(maintainElement?.LUNA.fast.fee).not.toBe(0);
+    // AVAX fee object checks
+    expect(maintainElement?.AVAX).toHaveProperty('slow');
+    expect(maintainElement?.AVAX).toHaveProperty('average');
+    expect(maintainElement?.AVAX).toHaveProperty('fast');
+    expect(maintainElement?.AVAX.slow.fee).not.toBe(0);
+    expect(maintainElement?.AVAX.average.fee).not.toBe(0);
+    expect(maintainElement?.AVAX.fast.fee).not.toBe(0);
   });
   it('should be able to update testnet assets fees', async () => {
     expect(wallet.state.wallets.length).toBe(1);
@@ -66,7 +66,7 @@ describe('updateFees tests', () => {
         asset: testnetAsset,
       });
     }
-    const testnetFeeElement = wallet.state.fees.mainnet?.[walletId];
+    const testnetFeeElement = wallet.state.fees.testnet?.[walletId];
     // BTC fee object checks
     expect(testnetFeeElement?.BTC).toHaveProperty('slow');
     expect(testnetFeeElement?.BTC.slow.fee).not.toBe(0);
@@ -77,12 +77,12 @@ describe('updateFees tests', () => {
     expect(testnetFeeElement?.BTC).toHaveProperty('fast');
     expect(testnetFeeElement?.BTC.fast.fee).not.toBe(0);
     expect(testnetFeeElement?.BTC.fast.wait).toBe(600);
-    // LUNA fee object checks
-    expect(testnetFeeElement?.LUNA).toHaveProperty('slow');
-    expect(testnetFeeElement?.LUNA).toHaveProperty('average');
-    expect(testnetFeeElement?.LUNA).toHaveProperty('fast');
-    expect(testnetFeeElement?.LUNA.slow.fee).not.toBe(0);
-    expect(testnetFeeElement?.LUNA.average.fee).not.toBe(0);
-    expect(testnetFeeElement?.LUNA.fast.fee).not.toBe(0);
+    // Avax fee object checks
+    expect(testnetFeeElement?.AVAX).toHaveProperty('slow');
+    expect(testnetFeeElement?.AVAX).toHaveProperty('average');
+    expect(testnetFeeElement?.AVAX).toHaveProperty('fast');
+    expect(testnetFeeElement?.AVAX.slow.fee).not.toBe(0);
+    expect(testnetFeeElement?.AVAX.average.fee).not.toBe(0);
+    expect(testnetFeeElement?.AVAX.fast.fee).not.toBe(0);
   });
 });

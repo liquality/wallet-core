@@ -3,7 +3,7 @@ import defaultWalletOptions from '../../walletOptions/defaultOptions';
 import { Network } from '../types';
 
 describe('initializeAddresses tests', () => {
-  jest.setTimeout(60000);
+  jest.setTimeout(120000);
   it('should be able to validate every asset has addresses', async () => {
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
