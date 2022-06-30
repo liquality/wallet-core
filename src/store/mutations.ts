@@ -146,8 +146,8 @@ export default {
   ) {
     const itemIndex = state.history[network]?.[walletId].findIndex((i) => i.id === id);
     if (itemIndex != undefined && itemIndex >= 0) {
-      const item = state.history[network]?.[walletId][itemIndex]
-      Vue.set(state.history[network]?.[walletId], itemIndex, Object.assign(Object.assign({}, item), updates))
+      const item = state?.history?.[network]?.[walletId]?.[itemIndex]
+      if (item) Vue.set(state.history[network]![walletId], itemIndex, Object.assign(Object.assign({}, item), updates))
     }
   },
   REMOVE_ORDER(state: RootState, { network, walletId, id }: { network: Network; walletId: WalletId; id: string }) {
