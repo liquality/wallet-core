@@ -6,6 +6,7 @@ import {
   AccountId,
   AnalyticsState,
   Asset,
+  CurrenciesInfo,
   CustomToken,
   ExperimentType,
   FiatRates,
@@ -203,6 +204,9 @@ export default {
   },
   UPDATE_FIAT_RATES(state: RootState, { fiatRates }: { fiatRates: FiatRates }) {
     state.fiatRates = Object.assign({}, state.fiatRates, fiatRates);
+  },
+  UPDATE_CURRENCIES_INFO(state: RootState, { currenciesInfo }: { currenciesInfo: CurrenciesInfo }) {
+    state.currenciesInfo = Object.assign({}, state.currenciesInfo, currenciesInfo);
   },
   UPDATE_MARKET_DATA(state: RootState, { network, marketData }: { network: Network; marketData: MarketData[] }) {
     Vue.set(state.marketData, network, marketData);
