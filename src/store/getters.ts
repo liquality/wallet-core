@@ -1,7 +1,8 @@
 import { Client } from '@chainify/client';
+import { Nullable } from '@chainify/types';
 import { Asset, assets as cryptoassets, ChainId, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
-import { mapValues, uniq } from 'lodash';
+import { mapValues, orderBy, uniq } from 'lodash';
 import { rootGetterContext } from '.';
 import { createClient } from '../factory';
 import { cryptoToFiat } from '../utils/coinFormatter';
@@ -13,6 +14,8 @@ import {
   AccountInfo,
   AccountType,
   Asset as AssetType,
+  AssetInfo,
+  CurrenciesInfo,
   HistoryItem,
   Network,
   NFT,
@@ -20,6 +23,7 @@ import {
   NFTWithAccount,
   WalletId,
 } from './types';
+import { orderAssets } from './utils';
 
 const clientCache: { [key: string]: Client } = {};
 
@@ -220,8 +224,9 @@ export default {
   accountsData(...context: GetterContext): Account[] {
     const { state, getters } = rootGetterContext(context);
     const { accounts, activeNetwork, activeWalletId, enabledChains } = state;
-    const { accountFiatBalance, assetFiatBalance } = getters;
-    return accounts[activeWalletId]?.[activeNetwork]
+    const { accountFiatBalance, assetFiatBalance, assetMarketCap } = getters;
+
+    const _accounts = accounts[activeWalletId]?.[activeNetwork]
       ? accounts[activeWalletId]![activeNetwork].filter(
           (account) =>
             account.assets &&
@@ -230,29 +235,84 @@ export default {
             enabledChains[activeWalletId]?.[activeNetwork]?.includes(account.chain)
         )
           .map((account) => {
+            /*
+                Calculate fiat balances and asset balances
+                Sort and group assets by dollar value / token amount / market cap
+            */
             const totalFiatBalance = accountFiatBalance(activeWalletId, activeNetwork, account.id);
+            const assetsWithFiat: AssetInfo[] = [];
+            const assetsWithMarketCap: AssetInfo[] = [];
+            const assetsWithTokenBalance: AssetInfo[] = [];
+            let assetsMarketCap: CurrenciesInfo = {} as any;
+            let hasFiat = false;
+            let hasTokenBalance = false;
+
             const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
-              const fiat = assetFiatBalance(asset, new BigNumber(balance));
+              const fiat = assetFiatBalance(asset, new BN(balance));
+              const marketCap = assetMarketCap(asset);
+              const tokenBalance = account.balances[asset];
+              const { type } = cryptoassets[asset];
+
+              if (fiat) {
+                hasFiat = true;
+                assetsWithFiat.push({ asset, type, amount: fiat });
+              } else if (marketCap) {
+                assetsWithMarketCap.push({ asset, type, amount: marketCap || new BN(0) });
+              } else {
+                if (!hasTokenBalance) {
+                  hasTokenBalance = new BN(tokenBalance).gt(0);
+                }
+
+                assetsWithTokenBalance.push({ asset, type, amount: new BN(tokenBalance) });
+              }
+
+              assetsMarketCap = {
+                ...assetsMarketCap,
+                [asset]: marketCap || new BN(0),
+              };
+
               return {
                 ...accum,
                 [asset]: fiat,
               };
             }, {});
+
+            const sortedAssetsByFiat = orderBy(assetsWithFiat, 'amount', 'desc');
+            const sortedAssetsByMarketCap = orderBy(assetsWithMarketCap, 'amount', 'desc');
+            const sortedAssetsByTokenBalance = orderBy(assetsWithTokenBalance, 'amount', 'desc');
+
+            const orderedAssets = orderAssets(
+              hasFiat,
+              hasTokenBalance,
+              sortedAssetsByFiat,
+              sortedAssetsByMarketCap,
+              sortedAssetsByTokenBalance
+            );
+
             return {
               ...account,
+              assets: orderedAssets.length ? orderedAssets : account.assets,
+              marketCap: assetsMarketCap,
               fiatBalances,
               totalFiatBalance,
             };
           })
-          .sort((a, b) => {
-            if (a.type.includes('ledger') || a.chain < b.chain) {
-              return -1;
-            }
+          .sort((a, b) => (a.totalFiatBalance.gt(b.totalFiatBalance) ? -1 : 1))
+          .reduce((acc: { [key: string]: Account[] }, account) => {
+            /*
+                Group sorted assets by chain / multiaccount ordering
+            */
+            const { chain } = account;
 
-            return 0;
-          })
+            acc[chain] = acc[chain] ?? [];
+            acc[chain].push(account);
+
+            return acc;
+          }, {})
       : [];
+    return Object.values(_accounts).flat();
   },
+
   accountFiatBalance(...context: GetterContext) {
     const { state, getters } = rootGetterContext(context);
     const { accounts } = state;
@@ -272,7 +332,7 @@ export default {
     const { state } = rootGetterContext(context);
     const { fiatRates } = state;
     return (asset: AssetType, balance: BigNumber): BigNumber | null => {
-      if (fiatRates && fiatRates[asset] && balance) {
+      if (fiatRates && fiatRates[asset] && balance?.gt(0)) {
         const amount = unitToCurrency(cryptoassets[asset], balance);
         // TODO: coinformatter types are messed up and this shouldn't require `as BigNumber`
         return cryptoToFiat(amount, fiatRates[asset]) as BigNumber;
@@ -280,20 +340,60 @@ export default {
       return null;
     };
   },
-  chainAssets(...context: GetterContext): { [key in ChainId]?: AssetType[] } {
-    const { getters } = rootGetterContext(context);
-    const { cryptoassets } = getters;
+  assetMarketCap(...context: GetterContext) {
+    const { state } = rootGetterContext(context);
+    const { currenciesInfo } = state;
 
-    const chainAssets = Object.entries(cryptoassets).reduce(
-      (chains: { [chain in ChainId]?: AssetType[] }, [asset, assetData]) => {
-        const assets = assetData.chain in chains ? chains[assetData.chain]! : [];
-        return Object.assign({}, chains, {
-          [assetData.chain]: [...assets, asset],
-        });
-      },
-      {}
-    );
-    return chainAssets;
+    return (asset: AssetType): Nullable<BigNumber> => {
+      if (currenciesInfo && currenciesInfo[asset]) {
+        const marketCap = currenciesInfo[asset];
+        return new BigNumber(marketCap);
+      }
+      return null;
+    };
+  },
+  chainAssets(...context: GetterContext): { [key in ChainId]?: AssetType[] } {
+    // Sort crypto assets
+    const { getters } = rootGetterContext(context);
+    const { accountsWithBalance, accountsData, cryptoassets } = getters;
+
+    // By dollar amount
+    const data: { [key in string]: string[] } = accountsWithBalance.reduce((acc, { chain, assets, balances }) => {
+      return {
+        ...acc,
+        [chain]: assets.filter((asset) => Object.keys(balances).includes(asset)),
+      };
+    }, {});
+
+    // By token balance
+    accountsData.forEach(({ assets, chain }) => {
+      data[chain] = data[chain] ?? [];
+
+      assets.reduce((acc, asset) => {
+        if (!data[chain].includes(asset)) {
+          return {
+            ...acc,
+            [chain]: data[chain].push(asset),
+          };
+        }
+
+        return data;
+      }, {});
+    });
+
+    Object.entries(cryptoassets).reduce((acc, [asset, { chain }]) => {
+      data[chain] = data[chain] ?? [];
+
+      if (!data[chain].includes(asset)) {
+        return {
+          ...acc,
+          [chain]: data[chain].push(asset),
+        };
+      }
+      return data;
+    }, {});
+
+    return data;
   },
   analyticsEnabled(...context: GetterContext): boolean {
     const { state } = rootGetterContext(context);

@@ -1,11 +1,12 @@
 import { HttpClient } from '@chainify/client';
 import { EvmChainProvider, EvmWalletProvider } from '@chainify/evm';
 import { AssetTypes, ChainId } from '@liquality/cryptoassets';
+import BN from 'bignumber.js';
 import EventEmitter from 'events';
 import { findKey, mapKeys, mapValues, random } from 'lodash';
 import cryptoassets from '../utils/cryptoassets';
 import { ChainNetworks } from '../utils/networks';
-import { Asset, Network, RootState, WalletId } from './types';
+import { Asset, AssetInfo, CurrenciesInfo, Network, RootState, WalletId } from './types';
 
 export const CHAIN_LOCK: { [key: string]: boolean } = {};
 
@@ -96,7 +97,6 @@ export async function getPrices(baseCurrencies: string[], toCurrency: string) {
   );
   let prices = mapKeys(data, (_, coinGeckoId) => findKey(cryptoassets, (asset) => asset.coinGeckoId === coinGeckoId));
   prices = mapValues(prices, (rates) => mapKeys(rates, (_, k) => k.toUpperCase()));
-
   for (const baseCurrency of baseCurrencies) {
     if (!prices[baseCurrency] && cryptoassets[baseCurrency]?.matchingAsset) {
       prices[baseCurrency] = prices[cryptoassets[baseCurrency].matchingAsset!];
@@ -105,3 +105,76 @@ export async function getPrices(baseCurrencies: string[], toCurrency: string) {
   const symbolPrices = mapValues(prices, (rates) => rates[toCurrency.toUpperCase()]);
   return symbolPrices;
 }
+
+export async function getCurrenciesInfo(baseCurrencies: string[]): Promise<CurrenciesInfo> {
+  const coindIds = baseCurrencies
+    .filter((currency) => cryptoassets[currency]?.coinGeckoId)
+    .map((currency) => ({
+      asset: currency,
+      coinGeckoId: cryptoassets[currency].coinGeckoId,
+    }));
+
+  const data = (
+    await Promise.all([
+      HttpClient.get(
+        `${COIN_GECKO_API}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false`
+      ),
+      HttpClient.get(
+        `${COIN_GECKO_API}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=2&sparkline=false`
+      ),
+    ])
+  ).flat();
+
+  return coindIds.reduce((acc, currValue) => {
+    const { coinGeckoId, asset } = currValue;
+    const coinInfo = data.find((coin) => coin.id === coinGeckoId);
+
+    return (acc = {
+      ...acc,
+      [asset]: coinInfo ? new BN(coinInfo.market_cap) : new BN(0),
+    });
+  }, {});
+}
+
+/*
+  First goes with dollar
+  second goes with token balance
+  third goes with market cap
+
+  if no dollar, first goes token balance, second market cap, third dollar value
+
+  if no token balance, first goes market cap, second dollar value and third token balance
+*/
+
+export const orderAssets = (
+  hasFiat: boolean,
+  hasTokenBalance: boolean,
+  sortedAssetsByFiat: AssetInfo[],
+  sortedAssetsByMarketCap: AssetInfo[],
+  sortedAssetsByTokenBalance: AssetInfo[]
+) => {
+  let orderedAssets = [];
+
+  if (hasFiat) {
+    orderedAssets = [...sortedAssetsByFiat];
+    if (hasTokenBalance) {
+      orderedAssets = [...orderedAssets, ...sortedAssetsByTokenBalance, ...sortedAssetsByMarketCap];
+    } else {
+      orderedAssets = [...orderedAssets, ...sortedAssetsByMarketCap, ...sortedAssetsByTokenBalance];
+    }
+  } else if (hasTokenBalance) {
+    orderedAssets = [...sortedAssetsByTokenBalance, ...sortedAssetsByMarketCap, ...sortedAssetsByFiat];
+  } else {
+    orderedAssets = [...sortedAssetsByMarketCap, ...sortedAssetsByFiat, ...sortedAssetsByTokenBalance];
+  }
+
+  const nativeAssetIdx = orderedAssets.findIndex((asset: any) => asset.type === 'native');
+
+  if (nativeAssetIdx !== -1) {
+    const nativeAsset = orderedAssets.splice(nativeAssetIdx, 1)[0];
+
+    return [nativeAsset, ...orderedAssets].map((asset) => asset.asset);
+  }
+
+  return orderedAssets.map((asset) => asset.asset);
+};
