@@ -209,7 +209,10 @@ export const tokenDetailProviders: {
   },
   polygon: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, 'https://polygon-rpc.com');
+      return await fetchTokenDetails(
+        contractAddress,
+        'https://matic-mainnet--jsonrpc.datahub.figment.io/apikey/b57f511c387b1ccb24801bb0aae38721'
+      );
     },
   },
   rsk: {
