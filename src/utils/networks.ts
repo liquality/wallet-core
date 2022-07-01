@@ -55,7 +55,7 @@ export const ChainNetworks = {
     },
     mainnet: {
       ...EvmNetworks.polygon_mainnet,
-      rpcUrl: 'https://polygon-rpc.com',
+      rpcUrl: 'https://matic-mainnet--jsonrpc.datahub.figment.io/apikey/b57f511c387b1ccb24801bb0aae38721',
     },
   },
 

@@ -31,7 +31,7 @@ const SLIPPAGE_PERCENTAGE = 0.5;
 const chainToRpcProviders: { [chainId: number]: string } = {
   1: `https://mainnet.infura.io/v3/${buildConfig.infuraApiKey}`,
   56: 'https://bsc-dataseed.binance.org',
-  137: 'https://polygon-rpc.com',
+  137: 'https://matic-mainnet--jsonrpc.datahub.figment.io/apikey/b57f511c387b1ccb24801bb0aae38721',
   43114: 'https://api.avax.network/ext/bc/C/rpc',
   42161: `https://arbitrum-mainnet.infura.io/v3/${buildConfig.infuraApiKey}`,
 };
