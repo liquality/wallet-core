@@ -102,7 +102,14 @@ export async function getPrices(baseCurrencies: string[], toCurrency: string) {
       prices[baseCurrency] = prices[cryptoassets[baseCurrency].matchingAsset!];
     }
   }
-  const symbolPrices = mapValues(prices, (rates) => rates[toCurrency.toUpperCase()]);
+  const symbolPrices = mapValues(prices, (rates, key) => {
+    const _toCurrency = toCurrency.toUpperCase();
+    if (rates && rates[_toCurrency]) {
+      return rates[_toCurrency];
+    } else {
+      console.error(`${_toCurrency} rate is missing for ${key}`);
+    }
+  });
   return symbolPrices;
 }
 
