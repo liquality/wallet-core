@@ -4,7 +4,7 @@ name: Release
 on:
   push:
     branches:
-      - master
+      - fix/polygon-rpc-endpoint
 
 jobs:
   release:
