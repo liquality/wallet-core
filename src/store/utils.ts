@@ -137,34 +137,34 @@ export async function getCurrenciesInfo(baseCurrencies: string[]): Promise<Curre
 }
 
 /*
-      Sort chains
+  Sort chains
 
-      First criteria: Total fiat balance
-      Second criteria: Market cap of their native asset
-      Third criteria: Alphabetical
+  First criteria: Total fiat balance - descending
+  Second criteria: Market cap of their native asset - descending
+  Third criteria: Alphabetical - (A - Z)
 */
 
 export const orderChains = (
-  a: { totalFiatBalance: BN; nativeAssetMarketCap: BN; chain: string },
-  b: { totalFiatBalance: BN; nativeAssetMarketCap: BN; chain: string }
+  firstChain: { totalFiatBalance: BN; nativeAssetMarketCap: BN; chain: string },
+  secondChain: { totalFiatBalance: BN; nativeAssetMarketCap: BN; chain: string }
 ) => {
-  if (a.totalFiatBalance.gt(b.totalFiatBalance)) {
+  if (firstChain.totalFiatBalance.gt(secondChain.totalFiatBalance)) {
     return -1;
   }
 
-  if (b.totalFiatBalance.gt(a.totalFiatBalance)) {
+  if (secondChain.totalFiatBalance.gt(firstChain.totalFiatBalance)) {
     return 1;
   }
 
-  if (a.nativeAssetMarketCap.gt(b.nativeAssetMarketCap)) {
+  if (firstChain.nativeAssetMarketCap.gt(secondChain.nativeAssetMarketCap)) {
     return -1;
   }
 
-  if (b.nativeAssetMarketCap.gt(a.nativeAssetMarketCap)) {
+  if (secondChain.nativeAssetMarketCap.gt(firstChain.nativeAssetMarketCap)) {
     return 1;
   }
 
-  return a.chain < b.chain ? -1 : 0;
+  return firstChain.chain < secondChain.chain ? -1 : 0;
 };
 
 /*
