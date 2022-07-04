@@ -1,6 +1,6 @@
 import { Client } from '@chainify/client';
 import { Nullable } from '@chainify/types';
-import { Asset, assets as cryptoassets, ChainId, unitToCurrency } from '@liquality/cryptoassets';
+import { Asset, assets as cryptoassets, AssetTypes, ChainId, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
 import { rootGetterContext } from '.';
@@ -251,7 +251,7 @@ export default {
                 hasFiat = true;
                 assetsWithFiat.push({ asset, type, amount: fiat });
               } else if (marketCap) {
-                if (type === 'native' && !matchingAsset) {
+                if (type === AssetTypes.native && !matchingAsset) {
                   nativeAssetMarketCap = marketCap;
                 }
 
