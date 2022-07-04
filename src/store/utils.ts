@@ -164,7 +164,7 @@ export const orderChains = (
     return 1;
   }
 
-  return firstChain.chain < secondChain.chain ? -1 : 0;
+  return firstChain.chain < secondChain.chain ? -1 : 1;
 };
 
 /*
