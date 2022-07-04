@@ -3,13 +3,16 @@ import { EvmNetworks } from '@chainify/evm';
 import { NearNetworks } from '@chainify/near';
 import { SolanaNetworks } from '@chainify/solana';
 import { TerraNetworks } from '@chainify/terra';
+import { Network as ChainifyNetwork } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
 import { buildConfig } from '..';
 import { Network } from '../store/types';
 
 export const Networks = [Network.Mainnet, Network.Testnet];
 
-export const ChainNetworks = {
+export type ChainNetworksType = Record<string, { mainnet: ChainifyNetwork; testnet: ChainifyNetwork }>;
+
+export const ChainNetworks: ChainNetworksType = {
   [ChainId.Bitcoin]: {
     testnet: BitcoinNetworks.bitcoin_testnet,
     mainnet: BitcoinNetworks.bitcoin,
@@ -51,11 +54,11 @@ export const ChainNetworks = {
   [ChainId.Polygon]: {
     testnet: {
       ...EvmNetworks.polygon_testnet,
-      rpcUrl: 'https://matic-testnet-archive-rpc.bwarelabs.com',
+      rpcUrl: 'https://matic-mumbai--jsonrpc.datahub.figment.io/apikey/b57f511c387b1ccb24801bb0aae38721',
     },
     mainnet: {
       ...EvmNetworks.polygon_mainnet,
-      rpcUrl: 'https://polygon-rpc.com',
+      rpcUrl: 'https://matic-mainnet--jsonrpc.datahub.figment.io/apikey/b57f511c387b1ccb24801bb0aae38721',
     },
   },
 
@@ -114,3 +117,11 @@ export const ChainNetworks = {
     mainnet: { ...EvmNetworks.fuse_mainnet, rpcUrl: 'https://rpc.fuse.io' },
   },
 };
+
+export function getRpcUrl(chainId: ChainId, network = Network.Mainnet) {
+  const rpcUrl = ChainNetworks[chainId][network].rpcUrl;
+  if (!rpcUrl) {
+    throw new Error(`RPC for ${chainId} ${network} not defined`);
+  }
+  return rpcUrl;
+}

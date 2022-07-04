@@ -1,9 +1,9 @@
 import { HttpClient } from '@chainify/client';
 import { AssetTypes, ChainId, chains, isEthereumChain as _isEthereumChain } from '@liquality/cryptoassets';
 import * as ethers from 'ethers';
-import buildConfig from '../build.config';
 import { Asset, Network } from '../store/types';
 import cryptoassets from '../utils/cryptoassets';
+import { getRpcUrl } from './networks';
 import tokenABI from './tokenABI.json';
 
 type ExplorerMap = { [key in ChainId]?: { [key in Network]: { tx: string; address: string } } };
@@ -197,6 +197,7 @@ export interface TokenDetails {
   symbol: string;
 }
 
+// TODO: get rid of this. Use `client.chain.getTokenDetails` instead
 export const tokenDetailProviders: {
   [key in ChainId]?: {
     getDetails(contractAddress: string): Promise<TokenDetails>;
@@ -204,27 +205,27 @@ export const tokenDetailProviders: {
 } = {
   ethereum: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, `https://mainnet.infura.io/v3/${buildConfig.infuraApiKey}`);
+      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Ethereum, Network.Mainnet));
     },
   },
   polygon: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, 'https://polygon-rpc.com');
+      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Polygon, Network.Mainnet));
     },
   },
   rsk: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, buildConfig.rskRpcUrls.mainnet);
+      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Rootstock, Network.Mainnet));
     },
   },
   bsc: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, 'https://bsc-dataseed.binance.org');
+      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.BinanceSmartChain, Network.Mainnet));
     },
   },
   arbitrum: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, 'https://arb1.arbitrum.io/rpc');
+      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Arbitrum, Network.Mainnet));
     },
   },
   terra: {
@@ -234,12 +235,12 @@ export const tokenDetailProviders: {
   },
   avalanche: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, 'https://api.avax.network/ext/bc/C/rpc');
+      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Avalanche, Network.Mainnet));
     },
   },
   fuse: {
     async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, 'https://rpc.fuse.io');
+      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Fuse, Network.Mainnet));
     },
   },
 };

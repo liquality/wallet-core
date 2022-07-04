@@ -71,6 +71,7 @@ class UniswapSwapProvider extends SwapProvider {
     return [];
   }
 
+  // TODO: get rid of this. Use `client.chain.getProvider()` instead
   getApi(network: Network, asset: Asset) {
     const chainId = this.getChainId(asset, network);
     if (chainId in this._apiCache) {
@@ -362,7 +363,7 @@ class UniswapSwapProvider extends SwapProvider {
   }
 
   async getMin(_quoteRequest: QuoteRequest) {
-    return new BN(0)
+    return new BN(0);
   }
 
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<UniswapSwapHistoryItem>) {

@@ -187,11 +187,12 @@ class AstroportSwapProvider extends SwapProvider {
   }
 
   async getMin(_quoteRequest: QuoteRequest) {
-    return new BN(0)
+    return new BN(0);
   }
 
   // ======== UTILS ========
 
+  // TODO: get rid of this. Use `client.chain.getProvider()` instead
   _getRPC() {
     const { chainId, rpcUrl } = TerraNetworks.terra_mainnet;
     return new LCDClient({ chainID: String(chainId), URL: String(rpcUrl) });
