@@ -6,7 +6,6 @@ import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import BN, { BigNumber } from 'bignumber.js';
 import * as ethers from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
-import buildConfig from '../../build.config';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem } from '../../store/types';
@@ -26,15 +25,20 @@ import {
 } from '../types';
 
 const NATIVE_ASSET_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+
 const SLIPPAGE_PERCENTAGE = 0.5;
-const chainToRpcProviders: { [chainId: number]: string } = {
-  1: `https://mainnet.infura.io/v3/${buildConfig.infuraApiKey}`,
-  56: 'https://bsc-dataseed.binance.org',
-  137: 'https://polygon-rpc.com',
-  43114: 'https://api.avax.network/ext/bc/C/rpc',
-  42161: `https://arbitrum-mainnet.infura.io/v3/${buildConfig.infuraApiKey}`,
+
+// TODO: this should not be defined here, instead we need a "supportedChains" interface
+const supportedChains: { [chainId: number]: boolean } = {
+  1: true,
+  56: true,
+  137: true,
+  43114: true,
+  42161: true,
 };
 
+// TODO: this should not be defined here, but rather than as a global configuration for each chain
+// No swap provider should have such kind of specific configuration
 const chainToGasMultiplier: { [chainId: number]: number } = {
   1: 1.5,
   56: 1.5,
@@ -96,7 +100,9 @@ class OneinchSwapProvider extends SwapProvider {
     const chainIdFrom: number = ChainNetworks[cryptoassets[from].chain][network].chainId;
     // @ts-ignore TODO: Fix chain networks
     const chainIdTo: number = ChainNetworks[cryptoassets[to].chain][network].chainId;
-    if (chainIdFrom !== chainIdTo || !chainToRpcProviders[chainIdFrom]) return null;
+    if (chainIdFrom !== chainIdTo || !supportedChains[chainIdFrom]) {
+      return null;
+    }
 
     const trade = await this._getQuote(chainIdFrom, from, to, fromAmountInUnit.toNumber());
     const toAmountInUnit = new BN(trade?.toTokenAmount);
@@ -113,10 +119,14 @@ class OneinchSwapProvider extends SwapProvider {
     const toChain = cryptoassets[quote.to].chain;
     // @ts-ignore TODO: Fix chain networks
     const chainId = ChainNetworks[fromChain][network].chainId;
-    if (fromChain !== toChain || !chainToRpcProviders[chainId]) return null;
+    if (fromChain !== toChain || !supportedChains[Number(chainId)]) {
+      return null;
+    }
 
-    const api = new ethers.providers.StaticJsonRpcProvider(chainToRpcProviders[chainId]);
-    const erc20 = new ethers.Contract(cryptoassets[quote.from].contractAddress!, ERC20.abi, api);
+    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
+    const provider = client.chain.getProvider();
+
+    const erc20 = new ethers.Contract(cryptoassets[quote.from].contractAddress!, ERC20.abi, provider);
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     const fromAddress = chains[fromChain].formatAddress(fromAddressRaw);
     const allowance = await erc20.allowance(fromAddress, this.config.routerAddress);
@@ -132,7 +142,6 @@ class OneinchSwapProvider extends SwapProvider {
       amount: inputAmount.toString(),
     });
 
-    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const approveTx = await client.wallet.sendTransaction({
       to: callData?.to,
       value: callData?.value,
@@ -152,8 +161,9 @@ class OneinchSwapProvider extends SwapProvider {
     const fromChain = cryptoassets[quote.from].chain;
     // @ts-ignore TODO: Fix chain networks
     const chainId = ChainNetworks[toChain][network].chainId;
-    if (toChain !== fromChain || !chainToRpcProviders[chainId])
+    if (toChain !== fromChain || !supportedChains[Number(chainId)]) {
       throw new Error(`Route ${fromChain} - ${toChain} not supported`);
+    }
 
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
@@ -214,7 +224,7 @@ class OneinchSwapProvider extends SwapProvider {
     const chain = cryptoassets[quote.from].chain;
 
     // @ts-ignore TODO: Fix chain networks
-    const chainId = ChainNetworks[chain][network].chainId;
+    const chainId: number = ChainNetworks[chain][network].chainId;
     const nativeAsset = chains[chain].nativeAsset;
 
     if (txType in this._txTypes()) {
@@ -232,7 +242,7 @@ class OneinchSwapProvider extends SwapProvider {
   }
 
   async getMin(_quoteRequest: QuoteRequest) {
-    return new BN(0)
+    return new BN(0);
   }
 
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<OneinchSwapHistoryItem>) {

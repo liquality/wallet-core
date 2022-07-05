@@ -291,6 +291,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const chainNetwork = ChainNetworks[fromChain];
     const chainId = chainNetwork[network].chainId;
 
+    // TODO: use chainify clients, i.e. `chain.client.getProvider`
     const api = new ethers.providers.InfuraProvider(chainId, buildConfig.infuraApiKey);
     const erc20 = new ethers.Contract(cryptoassets[swap.from].contractAddress!, ERC20.abi, api);
 
@@ -503,9 +504,8 @@ class ThorchainSwapProvider extends SwapProvider {
     return null;
   }
 
-
   async getMin(_quoteRequest: QuoteRequest) {
-    return new BN(0)
+    return new BN(0);
   }
 
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<ThorchainSwapHistoryItem>) {

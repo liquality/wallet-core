@@ -44,6 +44,7 @@ export interface HopSwapHistoryItem extends SwapHistoryItem {
   fromFundHash: string;
 }
 
+// TODO: refactor to use chainify clients e.g. `client.wallet, client.chain`
 class HopSwapProvider extends SwapProvider {
   config: HopSwapProviderConfig;
   graphqlURLs: { [key: string]: string };
@@ -315,7 +316,7 @@ class HopSwapProvider extends SwapProvider {
   }
 
   async getMin(_quoteRequest: QuoteRequest) {
-    return new BN(0)
+    return new BN(0);
   }
 
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<HopSwapHistoryItem>) {

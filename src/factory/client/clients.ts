@@ -3,6 +3,7 @@ import {
   BitcoinFeeApiProvider,
   BitcoinHDWalletProvider,
   BitcoinSwapEsploraProvider,
+  BitcoinTypes,
 } from '@chainify/bitcoin';
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
 import { Client, Fee } from '@chainify/client';
@@ -69,7 +70,7 @@ export function createBtcClient(
   account?: Nullable<Account>
 ) {
   const isMainnet = network === 'mainnet';
-  const bitcoinNetwork = ChainNetworks.bitcoin[network];
+  const bitcoinNetwork = ChainNetworks.bitcoin[network] as BitcoinTypes.BitcoinNetwork;
   const esploraApi = buildConfig.exploraApis[network];
   const batchEsploraApi = buildConfig.batchEsploraApis[network];
 
