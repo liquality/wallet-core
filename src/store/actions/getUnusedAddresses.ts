@@ -44,7 +44,7 @@ export const getUnusedAddresses = async (
         } else {
           updatedAddresses = [address];
         }
-
+        
         commit.UPDATE_ACCOUNT_ADDRESSES({
           network,
           accountId: account.id,

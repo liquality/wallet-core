@@ -9,13 +9,12 @@ export const accountCreator = (payload: {
   account: AccountDefinition;
 }): Account => {
   const { network, walletId, account } = payload;
-  const { name, alias, chain, index, addresses, assets, balances, type, color } = account;
+  const { name, alias, chain, index, addresses, assets, balances, type, color, chainCode, publicKey } = account;
 
   const enabled = account.enabled !== null && account.enabled !== undefined ? account.enabled : true;
 
   const _addresses = addresses.map((a) => {
-    const address = chains[chain].formatAddress(a, network);
-    return address.startsWith('0x') ? address.substring(2, address.length) : address;
+    return chains[chain].formatAddress(a);
   });
 
   const derivationPath = account.derivationPath
@@ -39,6 +38,8 @@ export const accountCreator = (payload: {
     createdAt,
     color,
     enabled,
+    chainCode, 
+    publicKey
   };
 };
 

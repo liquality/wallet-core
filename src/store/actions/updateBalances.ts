@@ -36,19 +36,13 @@ export const updateBalances = async (context: ActionContext, request: UpdateBala
       const account = getters.accountItem(accountId);
 
       if (account) {
-        const { assets, type, chain } = account;
+        const { assets, chain } = account;
         let addresses: Address[] = [];
 
         const nativeAsset = chains[chain].nativeAsset;
         const client = getClient({ network, walletId, asset: nativeAsset, accountId: account.id });
 
-        if (type.includes('ledger')) {
-          addresses = account.addresses
-            .filter((a) => typeof a === 'string')
-            .map((address) => new Address({ address: `${address}` }));
-        } else {
-          addresses = await client.wallet.getUsedAddresses();
-        }
+        addresses = await client.wallet.getUsedAddresses();
 
         // if there are no addresses set balance to 0
         if (addresses.length === 0) {

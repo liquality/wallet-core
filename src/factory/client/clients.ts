@@ -18,17 +18,17 @@ import {
   OpenSeaNftProvider,
 } from '@chainify/evm';
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
-import { WebHidTransportCreator } from '@chainify/hw-ledger';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
 import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
-import { Network as ChainifyNetwork, Nullable } from '@chainify/types';
+import { Address, Network as ChainifyNetwork } from '@chainify/types';
 import { BaseProvider, StaticJsonRpcProvider } from '@ethersproject/providers';
 import buildConfig from '../../build.config';
-import { Account, AccountType, Network, NftProviderType } from '../../store/types';
+import { AccountInfo, AccountType, Network, NftProviderType } from '../../store/types';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
-const ledgerTransportCreator = new WebHidTransportCreator();
+import { walletOptionsStore } from '../../walletOptions';
+
 
 function getNftProvider(
   providerType: NftProviderType,
@@ -65,9 +65,7 @@ function getNftProvider(
 export function createBtcClient(
   network: Network,
   mnemonic: string,
-  accountType: AccountType,
-  baseDerivationPath: string,
-  account?: Nullable<Account>
+  accountInfo: AccountInfo
 ) {
   const isMainnet = network === 'mainnet';
   const bitcoinNetwork = ChainNetworks.bitcoin[network] as BitcoinTypes.BitcoinNetwork;
@@ -92,20 +90,23 @@ export function createBtcClient(
   });
 
   // TODO: make sure Ledger works
-  if (accountType.includes('bitcoin_ledger')) {
-    const option = LEDGER_BITCOIN_OPTIONS.find((o) => o.name === accountType);
+  if (accountInfo.type.includes('bitcoin_ledger')) {
+    const option = LEDGER_BITCOIN_OPTIONS.find((o) => o.name === accountInfo.type);
     if (!option) {
-      throw new Error(`Account type ${accountType} not an option`);
+      throw new Error(`Account type ${accountInfo.type} not an option`);
     }
     const { addressType } = option;
+    if (!walletOptionsStore.walletOptions.ledgerTransportCreator) {
+      throw new Error('Wallet Options: ledgerTransportCreator is not defined - unable to build ledger client');
+    }
     const ledgerProvider = new BitcoinLedgerProvider(
       {
         network: bitcoinNetwork,
         addressType,
-        baseDerivationPath,
-        basePublicKey: account?.publicKey,
-        baseChainCode: account?.chainCode,
-        transportCreator: ledgerTransportCreator,
+        baseDerivationPath: accountInfo.derivationPath,
+        basePublicKey: accountInfo?.publicKey,
+        baseChainCode: accountInfo?.chainCode,
+        transportCreator: walletOptionsStore.walletOptions.ledgerTransportCreator,
       },
       chainProvider
     );
@@ -113,7 +114,7 @@ export function createBtcClient(
   } else {
     const walletOptions = {
       network: bitcoinNetwork,
-      baseDerivationPath,
+      baseDerivationPath: accountInfo.derivationPath,
       mnemonic,
     };
     const walletProvider = new BitcoinHDWalletProvider(walletOptions, chainProvider);
@@ -127,8 +128,7 @@ export function createEVMClient(
   ethereumNetwork: ChainifyNetwork,
   feeProvider: Fee,
   mnemonic: string,
-  accountType: AccountType,
-  derivationPath: string,
+  accountInfo: AccountInfo,
   swapOptions: EvmTypes.EvmSwapOptions,
   ethersProvider?: StaticJsonRpcProvider,
   nftProviderType?: NftProviderType
@@ -137,17 +137,28 @@ export function createEVMClient(
   const swapProvider = new EvmSwapProvider(swapOptions);
 
   let walletProvider;
-  if (accountType === AccountType.EthereumLedger || accountType === AccountType.RskLedger) {
+  if (accountInfo.type === AccountType.EthereumLedger || accountInfo.type === AccountType.RskLedger) {
+    let addressCache;
+    if (accountInfo && accountInfo.publicKey && accountInfo.address) {
+      addressCache = new Address({
+        publicKey: accountInfo?.publicKey,
+        address: accountInfo.address
+      });
+    }
+    if (!walletOptionsStore.walletOptions.ledgerTransportCreator) {
+      throw new Error('Wallet Options: ledgerTransportCreator is not defined - unable to build ledger client');
+    }
     walletProvider = new EvmLedgerProvider(
       {
         network: ethereumNetwork,
-        derivationPath,
-        transportCreator: ledgerTransportCreator,
+        derivationPath: accountInfo.derivationPath,
+        addressCache,
+        transportCreator: walletOptionsStore.walletOptions.ledgerTransportCreator,
       },
       chainProvider
     );
   } else {
-    const walletOptions = { derivationPath, mnemonic };
+    const walletOptions = { derivationPath: accountInfo.derivationPath, mnemonic };
     walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
   }
   swapProvider.setWallet(walletProvider);
@@ -162,28 +173,28 @@ export function createEVMClient(
   return client;
 }
 
-export function createNearClient(network: Network, mnemonic: string, derivationPath: string) {
+export function createNearClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const nearNetwork = ChainNetworks.near[network] as NearTypes.NearNetwork;
-  const walletOptions = { mnemonic, derivationPath, helperUrl: nearNetwork.helperUrl };
+  const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath, helperUrl: nearNetwork.helperUrl };
   const chainProvider = new NearChainProvider(nearNetwork);
   const walletProvider = new NearWalletProvider(walletOptions, chainProvider);
   const swapProvider = new NearSwapProvider(nearNetwork.helperUrl, walletProvider);
   return new Client().connect(swapProvider);
 }
 
-export function createTerraClient(network: Network, mnemonic: string, derivationPath: string) {
+export function createTerraClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const terraNetwork = ChainNetworks.terra[network] as TerraTypes.TerraNetwork;
   const { helperUrl } = terraNetwork;
-  const walletOptions = { mnemonic, derivationPath, helperUrl };
+  const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath, helperUrl };
   const chainProvider = new TerraChainProvider(terraNetwork);
   const walletProvider = new TerraWalletProvider(walletOptions, chainProvider);
   const swapProvider = new TerraSwapProvider(helperUrl, walletProvider);
   return new Client().connect(swapProvider);
 }
 
-export function createSolanaClient(network: Network, mnemonic: string, derivationPath: string) {
+export function createSolanaClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const solanaNetwork = ChainNetworks.solana[network];
-  const walletOptions = { mnemonic, derivationPath };
+  const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath };
   const chainProvider = new SolanaChainProvider(solanaNetwork);
   const walletProvider = new SolanaWalletProvider(walletOptions, chainProvider);
   return new Client().connect(walletProvider);
