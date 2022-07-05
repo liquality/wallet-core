@@ -15,7 +15,6 @@ export * from './enableAssets';
 export * from './enableEthereumInjection';
 export * from './exportPrivateKey';
 export * from './forgetDappConnections';
-export * from './getLiqualityLiquidityForAsset';
 export * from './getLockForAsset';
 export * from './getQuotes';
 export * from './getUnusedAddresses';
