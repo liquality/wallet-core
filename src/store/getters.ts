@@ -245,7 +245,13 @@ export default {
               const fiat = assetFiatBalance(asset, new BN(balance));
               const marketCap = assetMarketCap(asset);
               const tokenBalance = account.balances[asset];
-              const { type, matchingAsset } = cryptoassets[asset];
+              let type = AssetTypes.erc20;
+              let matchingAsset;
+
+              if (cryptoassets[asset]) {
+                type = cryptoassets[asset].type;
+                matchingAsset = cryptoassets[asset].matchingAsset;
+              }
 
               if (fiat) {
                 hasFiat = true;
