@@ -44,6 +44,11 @@ export const performNextAction = async (
     updates = { error: e.toString() };
   }
   if (updates) {
+    if (!updates.error) {
+      // if no error accured overwrite previous errors in history
+      updates.error = null;
+    }
+
     commit.UPDATE_HISTORY({
       network,
       walletId,
@@ -55,6 +60,7 @@ export const performNextAction = async (
       ...item,
       ...updates,
     } as HistoryItem);
+
     if (!updates.error) {
       dispatch.performNextAction({ network, walletId, id });
     }
