@@ -88,6 +88,17 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     return this._httpClient.nodeGet('/api/swap/marketinfo', null, { headers });
   }
 
+  async getAssetLiquidity(asset: string): Promise<number> {
+    const assetsInfo = await this._httpClient.nodeGet('api/swap/assetinfo');
+    const assetInfo = assetsInfo.find(({ code }: { code: string }) => code === asset);
+
+    if (!assetInfo) {
+      return 0;
+    }
+
+    return assetInfo.balance;
+  }
+
   public async getSupportedPairs() {
     const markets = await this.getMarketInfo();
     const pairs = markets
@@ -245,15 +256,15 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   }
 
   async getMin(quoteRequest: QuoteRequest) {
-    if(quoteRequest){
-      const pairs = await this.getSupportedPairs()
-      for(const pair of pairs){
-        if(pair.from == quoteRequest.from && pair.to == quoteRequest.to ){
+    if (quoteRequest) {
+      const pairs = await this.getSupportedPairs();
+      for (const pair of pairs) {
+        if (pair.from == quoteRequest.from && pair.to == quoteRequest.to) {
           return new BN(pair.min);
         }
       }
     }
-    return new BN(0)
+    return new BN(0);
   }
 
   public async updateOrder(order: LiqualitySwapHistoryItem) {
