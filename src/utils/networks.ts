@@ -54,11 +54,11 @@ export const ChainNetworks: ChainNetworksType = {
   [ChainId.Polygon]: {
     testnet: {
       ...EvmNetworks.polygon_testnet,
-      rpcUrl: 'https://matic-mumbai--jsonrpc.datahub.figment.io/apikey/b57f511c387b1ccb24801bb0aae38721',
+      rpcUrl: 'https://matic-testnet-archive-rpc.bwarelabs.com',
     },
     mainnet: {
       ...EvmNetworks.polygon_mainnet,
-      rpcUrl: 'https://matic-mainnet--jsonrpc.datahub.figment.io/apikey/b57f511c387b1ccb24801bb0aae38721',
+      rpcUrl: 'https://polygon-rpc.com',
     },
   },
 
