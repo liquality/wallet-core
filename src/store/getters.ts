@@ -1,6 +1,6 @@
 import { Client } from '@chainify/client';
 import { Nullable } from '@chainify/types';
-import { Asset, assets as cryptoassets, ChainId, unitToCurrency } from '@liquality/cryptoassets';
+import { Asset, assets as cryptoassets, AssetTypes, ChainId, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
 import { rootGetterContext } from '.';
@@ -23,7 +23,7 @@ import {
   NFTWithAccount,
   WalletId,
 } from './types';
-import { orderAssets } from './utils';
+import { orderAssets, orderChains } from './utils';
 
 const clientCache: { [key: string]: Client } = {};
 
@@ -246,17 +246,22 @@ export default {
             let assetsMarketCap: CurrenciesInfo = {} as any;
             let hasFiat = false;
             let hasTokenBalance = false;
+            let nativeAssetMarketCap = new BN(0);
 
             const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
               const fiat = assetFiatBalance(asset, new BN(balance));
               const marketCap = assetMarketCap(asset);
               const tokenBalance = account.balances[asset];
-              const { type } = cryptoassets[asset];
+              const { type, matchingAsset } = cryptoassets[asset];
 
               if (fiat) {
                 hasFiat = true;
                 assetsWithFiat.push({ asset, type, amount: fiat });
               } else if (marketCap) {
+                if (type === AssetTypes.native && !matchingAsset) {
+                  nativeAssetMarketCap = marketCap;
+                }
+
                 assetsWithMarketCap.push({ asset, type, amount: marketCap || new BN(0) });
               } else {
                 if (!hasTokenBalance) {
@@ -292,12 +297,13 @@ export default {
             return {
               ...account,
               assets: orderedAssets.length ? orderedAssets : account.assets,
-              marketCap: assetsMarketCap,
+              nativeAssetMarketCap,
+              assetsMarketCap,
               fiatBalances,
               totalFiatBalance,
             };
           })
-          .sort((a, b) => (a.totalFiatBalance.gt(b.totalFiatBalance) ? -1 : 1))
+          .sort(orderChains)
           .reduce((acc: { [key: string]: Account[] }, account) => {
             /*
                 Group sorted assets by chain / multiaccount ordering
