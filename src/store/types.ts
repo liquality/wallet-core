@@ -1,4 +1,4 @@
-import { FeeDetails, NFTAsset, Transaction } from '@chainify/types';
+import { FeeDetails, NFTAsset, Nullable, Transaction } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
 
 export type NetworkWalletIdMap<T> = Partial<Record<Network, Record<WalletId, T>>>;
@@ -120,7 +120,7 @@ export interface BaseHistoryItem {
   to: Asset;
   type: TransactionType;
   walletId: WalletId;
-  error?: string;
+  error?: Nullable<string>;
   waitingForLock?: boolean;
 }
 
