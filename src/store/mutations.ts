@@ -220,7 +220,7 @@ export default {
     { sender, recipient, timestamp, message }: { sender: any; recipient: string; timestamp: number; message: string }
   ) {
     state.messages[recipient] = state.messages[recipient] ?? [];
-    state.messages[recipient].push({ sender, recipient, timestamp, message });
+    state.messages[recipient] = [...state.messages[recipient], { sender, recipient, timestamp, message }];
   },
   UPDATE_MARKET_DATA(state: RootState, { network, marketData }: { network: Network; marketData: MarketData[] }) {
     Vue.set(state.marketData, network, marketData);
