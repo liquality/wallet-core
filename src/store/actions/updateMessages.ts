@@ -22,12 +22,13 @@ export const updateMessages = async (
   }
 
   const _message = { sender: myAddress, recipient, timestamp, message };
-  console.log('send message');
+
   socket.emit('SEND_MESSAGE', { recipient, sender: myAddress });
   commit.UPDATE_MESSAGES({ ..._message });
 
   socket.on('SEND_MESSAGE', (payload) => {
     if (payload.recipient === myAddress) {
+      console.log('hit');
       commit.UPDATE_MESSAGES({ ...payload });
     }
   });
