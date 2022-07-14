@@ -22,9 +22,6 @@ export const updateMessages = async (
       reconnectionDelayMax: 10000,
     });
 
-    socket.emit('SEND_MESSAGE', { recipient, sender: myAddress, message, timestamp: _message.timestamp });
-    commit.UPDATE_MESSAGES({ ..._message });
-
     socket.on('SEND_MESSAGE_ACK', async (payload) => {
       console.log('SEND_MESSAGE_ACK', payload);
       if (payload.recipient === myAddress) {
@@ -35,6 +32,9 @@ export const updateMessages = async (
       }
     });
   }
+
+  socket.emit('SEND_MESSAGE', { recipient, sender: myAddress, message, timestamp: _message.timestamp });
+  commit.UPDATE_MESSAGES({ ..._message });
 
   return _message;
 };
