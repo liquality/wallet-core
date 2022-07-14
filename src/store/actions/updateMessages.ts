@@ -16,7 +16,7 @@ export const updateMessages = async (
 
   if (!socket) {
     console.log('in');
-    socket = io('https://ca89-85-196-181-2.eu.ngrok.io/', {
+    socket = io('https://9dee-85-196-181-2.eu.ngrok.io', {
       reconnectionDelayMax: 10000,
     });
   }
@@ -27,12 +27,12 @@ export const updateMessages = async (
   commit.UPDATE_MESSAGES({ ..._message });
 
   socket.on('SEND_MESSAGE_ACK', async (payload) => {
-    console.log('SEND_MESSAGE_ACK');
+    console.log('SEND_MESSAGE_ACK', payload);
     if (payload.recipient === myAddress) {
       console.log('hit');
 
       // TODO: get private key
-      commit.UPDATE_MESSAGES({ ...payload });
+      commit.UPDATE_MESSAGES({ ...payload, recipient: payload.sender });
     }
   });
 
