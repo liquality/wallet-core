@@ -45,6 +45,7 @@
     "bignumber.js": "^9.0.2",
     "detect-circular-deps": "^3.0.0",
     "direct-vuex": "^0.12.1",
+    "eth-crypto": "^2.3.0",
     "graphql": "^16.4.0",
     "human-standard-token-abi": "^2.0.0",
     "moment": "^2.29.1",
