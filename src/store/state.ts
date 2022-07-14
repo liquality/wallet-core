@@ -22,6 +22,8 @@ const initialState: RootState = {
 
   fiatRates: {},
   currenciesInfo: {},
+  notebook: [],
+  messages: {},
   fees: {},
   history: {},
   marketData: {},

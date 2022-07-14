@@ -40,5 +40,7 @@ export * from './updateCurrenciesInfo';
 export * from './updateFees';
 export * from './updateFiatRates';
 export * from './updateMarketData';
+export * from './updateMessages';
 export * from './updateNFTs';
+export * from './updateNotebook';
 export * from './updateTransactionFee';

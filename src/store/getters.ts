@@ -120,13 +120,13 @@ export default {
       }
 
       const { mnemonic } = wallet;
-      const accountInfo: AccountInfo = { 
-        type: _accountType, 
+      const accountInfo: AccountInfo = {
+        type: _accountType,
         derivationPath,
         chainCode: account?.chainCode,
         publicKey: account?.publicKey,
-        address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined
-      }
+        address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined,
+      };
       const client = createClient(asset, network, mnemonic, accountInfo);
       clientCache[cacheKey] = client;
 
@@ -363,6 +363,12 @@ export default {
       }
       return null;
     };
+  },
+  getNotebook(...context: GetterContext): string[] {
+    const { state } = rootGetterContext(context);
+    const { notebook } = state;
+
+    return notebook;
   },
   chainAssets(...context: GetterContext): { [key in ChainId]?: AssetType[] } {
     // Sort crypto assets

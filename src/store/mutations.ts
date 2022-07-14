@@ -212,6 +212,17 @@ export default {
   UPDATE_CURRENCIES_INFO(state: RootState, { currenciesInfo }: { currenciesInfo: CurrenciesInfo }) {
     state.currenciesInfo = Object.assign({}, state.currenciesInfo, currenciesInfo);
   },
+  UPDATE_NOTEBOOK(state: RootState, { address }: { address: string }) {
+    state.notebook = [...state.notebook, address];
+  },
+  UPDATE_MESSAGES(
+    state: RootState,
+    { sender, recipient, timestamp, message }: { sender: any; recipient: string; timestamp: number; message: string }
+  ) {
+    console.log('sender', sender);
+    state.messages[recipient] = state.messages[recipient] ?? [];
+    state.messages[recipient] = [...state.messages[recipient], { recipient, timestamp, message }];
+  },
   UPDATE_MARKET_DATA(state: RootState, { network, marketData }: { network: Network; marketData: MarketData[] }) {
     Vue.set(state.marketData, network, marketData);
   },

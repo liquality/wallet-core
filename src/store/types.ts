@@ -75,7 +75,6 @@ export interface AccountInfo {
   address?: string;
 }
 
-
 export interface Account extends AccountDefinition {
   id: AccountId;
   walletId: WalletId;
@@ -227,6 +226,8 @@ export interface RootState {
 
   fiatRates: FiatRates;
   currenciesInfo: CurrenciesInfo;
+  notebook: string[];
+  messages: any;
   fees: NetworkWalletIdMap<Record<Asset, FeeDetails>>;
   history: NetworkWalletIdMap<HistoryItem[]>;
   marketData: Partial<Record<Network, MarketData[]>>;
