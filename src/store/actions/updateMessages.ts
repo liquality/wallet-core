@@ -23,7 +23,7 @@ export const updateMessages = async (
 
   const _message = { sender: myAddress, recipient, timestamp, message };
 
-  socket.emit('SEND_MESSAGE', { recipient, sender: myAddress, message });
+  socket.emit('SEND_MESSAGE', { recipient, sender: myAddress, message, timestamp: _message.timestamp });
   commit.UPDATE_MESSAGES({ ..._message });
 
   socket.on('SEND_MESSAGE_ACK', async (payload) => {
