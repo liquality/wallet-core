@@ -18,7 +18,7 @@ export const updateMessages = async (
 
   if (!socket) {
     console.log('in');
-    socket = io('https://47e5-85-196-181-2.eu.ngrok.io/', {
+    socket = io('http://localhost:3000', {
       reconnectionDelayMax: 10000,
     });
 
@@ -26,8 +26,6 @@ export const updateMessages = async (
       console.log('SEND_MESSAGE_ACK', payload);
       if (payload.recipient === myAddress) {
         console.log('hit');
-
-        // TODO: get private key
         commit.UPDATE_MESSAGES({ ...payload, recipient: payload.sender });
       }
     });
