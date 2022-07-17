@@ -1,5 +1,5 @@
 import { Client } from '@chainify/client';
-import { Nullable } from '@chainify/types';
+import { FeeDetails, Nullable } from '@chainify/types';
 import { Asset, assets as cryptoassets, AssetTypes, ChainId, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
@@ -120,8 +120,8 @@ export default {
       }
 
       const { mnemonic } = wallet;
-      const accountInfo: AccountInfo = { 
-        type: _accountType, 
+      const accountInfo: AccountInfo = {
+        type: _accountType,
         derivationPath,
         chainCode: account?.chainCode,
         publicKey: account?.publicKey,
@@ -201,6 +201,12 @@ export default {
       return account;
     };
   },
+  assetFees(...context: GetterContext) {
+    const { state } = rootGetterContext(context);
+    return (asset: AssetType): FeeDetails | undefined => {
+      return state.fees?.[state.activeNetwork]?.[state.activeWalletId]?.[asset]
+    }
+  },
   accountsWithBalance(...context: GetterContext): Account[] {
     const { getters } = rootGetterContext(context);
     const { accountsData } = getters;
@@ -226,101 +232,102 @@ export default {
     const { accounts, activeNetwork, activeWalletId, enabledChains } = state;
     const { accountFiatBalance, assetFiatBalance, assetMarketCap } = getters;
 
+
     const _accounts = accounts[activeWalletId]?.[activeNetwork]
       ? accounts[activeWalletId]![activeNetwork].filter(
-          (account) =>
-            account.assets &&
-            account.enabled &&
-            account.assets.length > 0 &&
-            enabledChains[activeWalletId]?.[activeNetwork]?.includes(account.chain)
-        )
-          .map((account) => {
-            /*
-                Calculate fiat balances and asset balances
-                Sort and group assets by dollar value / token amount / market cap
-            */
-            const totalFiatBalance = accountFiatBalance(activeWalletId, activeNetwork, account.id);
-            const assetsWithFiat: AssetInfo[] = [];
-            const assetsWithMarketCap: AssetInfo[] = [];
-            const assetsWithTokenBalance: AssetInfo[] = [];
-            let assetsMarketCap: CurrenciesInfo = {} as any;
-            let hasFiat = false;
-            let hasTokenBalance = false;
-            let nativeAssetMarketCap = new BN(0);
+        (account) =>
+          account.assets &&
+          account.enabled &&
+          account.assets.length > 0 &&
+          enabledChains[activeWalletId]?.[activeNetwork]?.includes(account.chain)
+      )
+        .map((account) => {
+          /*
+              Calculate fiat balances and asset balances
+              Sort and group assets by dollar value / token amount / market cap
+          */
+          const totalFiatBalance = accountFiatBalance(activeWalletId, activeNetwork, account.id);
+          const assetsWithFiat: AssetInfo[] = [];
+          const assetsWithMarketCap: AssetInfo[] = [];
+          const assetsWithTokenBalance: AssetInfo[] = [];
+          let assetsMarketCap: CurrenciesInfo = {} as any;
+          let hasFiat = false;
+          let hasTokenBalance = false;
+          let nativeAssetMarketCap = new BN(0);
 
-            const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
-              const fiat = assetFiatBalance(asset, new BN(balance));
-              const marketCap = assetMarketCap(asset);
-              const tokenBalance = account.balances[asset];
-              let type = AssetTypes.erc20;
-              let matchingAsset;
+          const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
+            const fiat = assetFiatBalance(asset, new BN(balance));
+            const marketCap = assetMarketCap(asset);
+            const tokenBalance = account.balances[asset];
+            let type = AssetTypes.erc20;
+            let matchingAsset;
 
-              if (cryptoassets[asset]) {
-                type = cryptoassets[asset].type;
-                matchingAsset = cryptoassets[asset].matchingAsset;
+            if (cryptoassets[asset]) {
+              type = cryptoassets[asset].type;
+              matchingAsset = cryptoassets[asset].matchingAsset;
+            }
+
+            if (fiat) {
+              hasFiat = true;
+              assetsWithFiat.push({ asset, type, amount: fiat });
+            } else if (marketCap) {
+              if (type === AssetTypes.native && !matchingAsset) {
+                nativeAssetMarketCap = marketCap;
               }
 
-              if (fiat) {
-                hasFiat = true;
-                assetsWithFiat.push({ asset, type, amount: fiat });
-              } else if (marketCap) {
-                if (type === AssetTypes.native && !matchingAsset) {
-                  nativeAssetMarketCap = marketCap;
-                }
-
-                assetsWithMarketCap.push({ asset, type, amount: marketCap || new BN(0) });
-              } else {
-                if (!hasTokenBalance) {
-                  hasTokenBalance = new BN(tokenBalance).gt(0);
-                }
-
-                assetsWithTokenBalance.push({ asset, type, amount: new BN(tokenBalance) });
+              assetsWithMarketCap.push({ asset, type, amount: marketCap || new BN(0) });
+            } else {
+              if (!hasTokenBalance) {
+                hasTokenBalance = new BN(tokenBalance).gt(0);
               }
 
-              assetsMarketCap = {
-                ...assetsMarketCap,
-                [asset]: marketCap || new BN(0),
-              };
+              assetsWithTokenBalance.push({ asset, type, amount: new BN(tokenBalance) });
+            }
 
-              return {
-                ...accum,
-                [asset]: fiat,
-              };
-            }, {});
-
-            const sortedAssetsByFiat = orderBy(assetsWithFiat, 'amount', 'desc');
-            const sortedAssetsByMarketCap = orderBy(assetsWithMarketCap, 'amount', 'desc');
-            const sortedAssetsByTokenBalance = orderBy(assetsWithTokenBalance, 'amount', 'desc');
-
-            const orderedAssets = orderAssets(
-              hasFiat,
-              hasTokenBalance,
-              sortedAssetsByFiat,
-              sortedAssetsByMarketCap,
-              sortedAssetsByTokenBalance
-            );
+            assetsMarketCap = {
+              ...assetsMarketCap,
+              [asset]: marketCap || new BN(0),
+            };
 
             return {
-              ...account,
-              assets: orderedAssets.length ? orderedAssets : account.assets,
-              nativeAssetMarketCap,
-              assetsMarketCap,
-              fiatBalances,
-              totalFiatBalance,
+              ...accum,
+              [asset]: fiat,
             };
-          })
-          .sort(orderChains)
-          .reduce((acc: { [key: string]: Account[] }, account) => {
-            /*
-                Group sorted assets by chain / multiaccount ordering
-            */
-            const { chain } = account;
+          }, {});
 
-            acc[chain] = acc[chain] ?? [];
-            acc[chain].push(account);
+          const sortedAssetsByFiat = orderBy(assetsWithFiat, 'amount', 'desc');
+          const sortedAssetsByMarketCap = orderBy(assetsWithMarketCap, 'amount', 'desc');
+          const sortedAssetsByTokenBalance = orderBy(assetsWithTokenBalance, 'amount', 'desc');
 
-            return acc;
-          }, {})
+          const orderedAssets = orderAssets(
+            hasFiat,
+            hasTokenBalance,
+            sortedAssetsByFiat,
+            sortedAssetsByMarketCap,
+            sortedAssetsByTokenBalance
+          );
+
+          return {
+            ...account,
+            assets: orderedAssets.length ? orderedAssets : account.assets,
+            nativeAssetMarketCap,
+            assetsMarketCap,
+            fiatBalances,
+            totalFiatBalance,
+          };
+        })
+        .sort(orderChains)
+        .reduce((acc: { [key: string]: Account[] }, account) => {
+          /*
+              Group sorted assets by chain / multiaccount ordering
+          */
+          const { chain } = account;
+
+          acc[chain] = acc[chain] ?? [];
+          acc[chain].push(account);
+
+          return acc;
+        }, {})
       : [];
     return Object.values(_accounts).flat();
   },
