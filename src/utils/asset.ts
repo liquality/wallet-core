@@ -280,27 +280,50 @@ export const fetchTerraToken = async (address: string) => {
   };
 };
 
-const NFT_ASSETS_MAP: { [key in ChainId]?: { [key in Network]: { url: string; transfer: string } } } = {
+const NFT_ASSETS_MAP: {
+  [key in ChainId]?: { [key in Network]: { marketplaceName: string; url: string; transfer: string } };
+} = {
   ethereum: {
     testnet: {
+      marketplaceName: 'OpenSea',
       url: `https://testnet.opensea.io/`,
       transfer: `https://testnets.opensea.io/assets/{contract_address}/{token_id}`,
     },
     mainnet: {
+      marketplaceName: 'OpenSea',
       url: `https://opensea.io/`,
       transfer: `https://opensea.io/assets/{chain}/{contract_address}/{token_id}`,
     },
   },
   polygon: {
     testnet: {
+      marketplaceName: 'OpenSea',
       url: `https://testnet.opensea.io/`,
       transfer: `https://testnets.opensea.io/assets/{contract_address}/{token_id}`,
     },
     mainnet: {
+      marketplaceName: 'OpenSea',
       url: `https://opensea.io/`,
       transfer: `https://opensea.io/assets/{asset}/{contract_address}/{token_id}`,
     },
   },
+  arbitrum: {
+    testnet: {
+      marketplaceName: 'StratosNFT',
+      url: `https://testnet.stratosnft.io/`,
+      transfer: `https://testnets.stratosnft.io/asset/{contract_address}/{token_id}`,
+    },
+    mainnet: {
+      marketplaceName: 'StratosNFT',
+      url: `https://stratosnft.io/`,
+      transfer: `https://stratosnft.io/asset/{contract_address}/{token_id}`,
+    },
+  },
+};
+
+export const getMarketplaceName = (asset: Asset, network: Network) => {
+  const chain = cryptoassets[asset].chain;
+  return NFT_ASSETS_MAP[chain]![network].marketplaceName;
 };
 
 export const getNftTransferLink = (asset: Asset, network: Network, tokenId: string, contract_address: string) => {
