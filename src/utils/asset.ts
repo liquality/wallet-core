@@ -321,26 +321,31 @@ const NFT_ASSETS_MAP: {
   },
 };
 
+const getNftAssetMap = (chainId: ChainId) => {
+  const nftAssetsMap = NFT_ASSETS_MAP[chainId];
+  if (!nftAssetsMap) {
+    return null;
+  }
+  return nftAssetsMap;
+};
+
 export const getMarketplaceName = (asset: Asset, network: Network) => {
   const chainId = cryptoassets[asset].chain;
-  const nftAssetsMap = NFT_ASSETS_MAP[chainId];
+  const nftAssetsMap = getNftAssetMap(chainId);
 
   if (!nftAssetsMap) {
     throw new Error(`Marketplace name for ${chainId} ${network} not defined`);
   }
   const marketplaceName = nftAssetsMap[network].marketplaceName;
-  if (!marketplaceName) {
-    throw new Error(`Marketplace name for ${chainId} ${network} not defined`);
-  }
   return marketplaceName;
 };
 
 export const getNftTransferLink = (asset: Asset, network: Network, tokenId: string, contract_address: string) => {
   const chainId = cryptoassets[asset].chain;
-  const nftAssetsMap = NFT_ASSETS_MAP[chainId];
+  const nftAssetsMap = getNftAssetMap(chainId);
 
   if (!nftAssetsMap) {
-    throw new Error(`Marketplace name for ${chainId} ${network} not defined`);
+    throw new Error(`Transfer link for ${chainId} ${network} not defined`);
   }
   const transferLink = nftAssetsMap[network].transfer;
   return transferLink
@@ -352,7 +357,7 @@ export const getNftTransferLink = (asset: Asset, network: Network, tokenId: stri
 
 export const getNftLink = (asset: Asset, network: Network) => {
   const chainId = cryptoassets[asset].chain;
-  const nftAssetsMap = NFT_ASSETS_MAP[chainId];
+  const nftAssetsMap = getNftAssetMap(chainId);
 
   if (!nftAssetsMap) {
     throw new Error(`Nft link for ${chainId} ${network} not defined`);
