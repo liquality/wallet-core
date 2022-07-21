@@ -18,7 +18,7 @@ export const updateMessages = async (
 
   if (!socket) {
     console.log('in');
-    socket = io('http://localhost:3000', {
+    socket = io('https://a2f7-85-196-181-2.eu.ngrok.io/', {
       reconnectionDelayMax: 10000,
     });
 
