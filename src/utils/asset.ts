@@ -335,9 +335,10 @@ export const getMarketplaceName = (asset: Asset, network: Network) => {
 
   if (!nftAssetsMap) {
     throw new Error(`Marketplace Name for ${chainId} ${network} not defined`);
+  } else {
+    const marketplaceName = nftAssetsMap[network].marketplaceName;
+    return marketplaceName;
   }
-  const marketplaceName = nftAssetsMap[network].marketplaceName;
-  return marketplaceName;
 };
 
 export const getNftTransferLink = (asset: Asset, network: Network, tokenId: string, contract_address: string) => {
@@ -346,13 +347,14 @@ export const getNftTransferLink = (asset: Asset, network: Network, tokenId: stri
 
   if (!nftAssetsMap) {
     throw new Error(`Transfer Link for ${chainId} ${network} not defined`);
+  } else {
+    const transferLink = nftAssetsMap[network].transfer;
+    return transferLink
+      .replace('{contract_address}', contract_address)
+      .replace('{chain}', chainId)
+      .replace('{asset}', asset)
+      .replace('{token_id}', tokenId);
   }
-  const transferLink = nftAssetsMap[network].transfer;
-  return transferLink
-    .replace('{contract_address}', contract_address)
-    .replace('{chain}', chainId)
-    .replace('{asset}', asset)
-    .replace('{token_id}', tokenId);
 };
 
 export const getNftLink = (asset: Asset, network: Network) => {
@@ -361,9 +363,10 @@ export const getNftLink = (asset: Asset, network: Network) => {
 
   if (!nftAssetsMap) {
     throw new Error(`Nft Explorer Link for ${chainId} ${network} not defined`);
+  } else {
+    const url = nftAssetsMap[network].url;
+    return url;
   }
-  const url = nftAssetsMap[network].url;
-  return url;
 };
 
 export const openseaLink = (network: Network) => {
