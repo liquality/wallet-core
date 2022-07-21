@@ -351,7 +351,7 @@ export const getNftTransferLink = (asset: Asset, network: Network, tokenId: stri
 
 export const getNftLink = (asset: Asset, network: Network) => {
   const chainId = cryptoassets[asset].chain;
-  const nftAssetsMap = getNftAssetsMap(chainId, network, 'NFT link');
+  const nftAssetsMap = getNftAssetsMap(chainId, network, 'Explorer link');
 
   const url = nftAssetsMap[network].url;
   return url;
