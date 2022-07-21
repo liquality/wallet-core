@@ -322,15 +322,22 @@ const NFT_ASSETS_MAP: {
 };
 
 export const getMarketplaceName = (asset: Asset, network: Network) => {
-  const chain = cryptoassets[asset].chain;
-  return NFT_ASSETS_MAP[chain]![network].marketplaceName;
+  const chainId = cryptoassets[asset].chain;
+  const marketplaceName = NFT_ASSETS_MAP[chainId]![network].marketplaceName;
+  if (!marketplaceName) {
+    throw new Error(`Marketplace name for ${chainId} ${network} not defined`);
+  }
+  return marketplaceName;
 };
 
 export const getNftTransferLink = (asset: Asset, network: Network, tokenId: string, contract_address: string) => {
   const chainId = cryptoassets[asset].chain;
-  const transfer = NFT_ASSETS_MAP[chainId]![network].transfer;
+  const transferLink = NFT_ASSETS_MAP[chainId]![network].transfer;
 
-  return transfer
+  if (!transferLink) {
+    throw new Error(`Marketplace name for ${chainId} ${network} not defined`);
+  }
+  return transferLink
     .replace('{contract_address}', contract_address)
     .replace('{chain}', chainId)
     .replace('{asset}', asset)
@@ -341,6 +348,9 @@ export const getNftLink = (asset: Asset, network: Network) => {
   const chainId = cryptoassets[asset].chain;
   const url = NFT_ASSETS_MAP[chainId]![network].url;
 
+  if (!url) {
+    throw new Error(`Nft link for ${chainId} ${network} not defined`);
+  }
   return url;
 };
 
