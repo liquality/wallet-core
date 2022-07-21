@@ -321,52 +321,40 @@ const NFT_ASSETS_MAP: {
   },
 };
 
-const getNftAssetsMap = (chainId: ChainId) => {
+const getNftAssetsMap = (chainId: ChainId, network: Network, action: string) => {
   const nftAssetsMap = NFT_ASSETS_MAP[chainId];
   if (!nftAssetsMap) {
-    return null;
+    throw new Error(`${action} for ${chainId} ${network} is not defined`);
   }
   return nftAssetsMap;
 };
 
 export const getMarketplaceName = (asset: Asset, network: Network) => {
   const chainId = cryptoassets[asset].chain;
-  const nftAssetsMap = getNftAssetsMap(chainId);
+  const nftAssetsMap = getNftAssetsMap(chainId, network, 'Marketplace Name');
 
-  if (!nftAssetsMap) {
-    throw new Error(`Marketplace Name for ${chainId} ${network} not defined`);
-  } else {
-    const marketplaceName = nftAssetsMap[network].marketplaceName;
-    return marketplaceName;
-  }
+  const marketplaceName = nftAssetsMap[network].marketplaceName;
+  return marketplaceName;
 };
 
 export const getNftTransferLink = (asset: Asset, network: Network, tokenId: string, contract_address: string) => {
   const chainId = cryptoassets[asset].chain;
-  const nftAssetsMap = getNftAssetsMap(chainId);
+  const nftAssetsMap = getNftAssetsMap(chainId, network, 'Transfer Link');
 
-  if (!nftAssetsMap) {
-    throw new Error(`Transfer Link for ${chainId} ${network} not defined`);
-  } else {
-    const transferLink = nftAssetsMap[network].transfer;
-    return transferLink
-      .replace('{contract_address}', contract_address)
-      .replace('{chain}', chainId)
-      .replace('{asset}', asset)
-      .replace('{token_id}', tokenId);
-  }
+  const transferLink = nftAssetsMap[network].transfer;
+  return transferLink
+    .replace('{contract_address}', contract_address)
+    .replace('{chain}', chainId)
+    .replace('{asset}', asset)
+    .replace('{token_id}', tokenId);
 };
 
 export const getNftLink = (asset: Asset, network: Network) => {
   const chainId = cryptoassets[asset].chain;
-  const nftAssetsMap = getNftAssetsMap(chainId);
+  const nftAssetsMap = getNftAssetsMap(chainId, network, 'NFT link');
 
-  if (!nftAssetsMap) {
-    throw new Error(`Nft Explorer Link for ${chainId} ${network} not defined`);
-  } else {
-    const url = nftAssetsMap[network].url;
-    return url;
-  }
+  const url = nftAssetsMap[network].url;
+  return url;
 };
 
 export const openseaLink = (network: Network) => {
