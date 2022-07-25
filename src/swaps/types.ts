@@ -31,6 +31,9 @@ export type QuoteRequest = {
   from: string;
   to: string;
   amount: BigNumber;
+  walletId?: string;
+  fromAccountId?: AccountId;
+  toAccountId?: AccountId;
 };
 
 export type SwapRequest<T = SwapHistoryItem> = {

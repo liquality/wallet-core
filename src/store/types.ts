@@ -1,4 +1,5 @@
 import { FeeDetails, NFTAsset, Nullable, Transaction } from '@chainify/types';
+import { Step } from '@lifi/sdk';
 import { ChainId } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 
@@ -75,7 +76,6 @@ export interface AccountInfo {
   address?: string;
 }
 
-
 export interface Account extends AccountDefinition {
   id: AccountId;
   walletId: WalletId;
@@ -121,6 +121,7 @@ export enum SwapProviderType {
   Thorchain = 'thorchain',
   Astroport = 'astroport',
   Hop = 'hop',
+  LiFi = 'lifi',
 }
 
 export interface BaseHistoryItem {
@@ -189,6 +190,7 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   toAmount: string;
   bridgeAsset?: Asset;
   path?: string[];
+  bestRoute?: Step; // LiFi
 }
 
 export type HistoryItem = NFTSendHistoryItem | SendHistoryItem | SwapHistoryItem;

@@ -26,13 +26,13 @@ export abstract class EvmSwapProvider extends SwapProvider {
     super(config);
   }
 
-  async approve(swapRequest: SwapRequest, approveMax = true) {
+  async requiresApproval(swapRequest: SwapRequest, approvalAddress?: string) {
     const { quote, network, walletId } = swapRequest;
     const fromAsset = assetsAdapter(quote.from)[0];
 
     // only ERC20 tokens allowed
     if (!fromAsset.contractAddress) {
-      return null;
+      return false;
     }
 
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId) as Client<EvmChainProvider>;
@@ -43,29 +43,58 @@ export abstract class EvmSwapProvider extends SwapProvider {
     const userAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     const userAddress = chains[fromAsset.chain].formatAddress(userAddressRaw);
 
-    const allowance = await tokenContract.allowance(userAddress.toLowerCase(), this.config.routerAddress);
-
-    const isLSP = swapRequest.quote.provider === SwapProviderType.Liquality;
+    const _routerAddress = approvalAddress ?? this.config.routerAddress;
+    const allowance = await tokenContract.allowance(userAddress.toLowerCase(), _routerAddress);
 
     // if allowance is enough, no approve is needed
     if (allowance.gte(quote.fromAmount)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public async buildApprovalTx(swapRequest: SwapRequest, approveMax = true, approvalAddress?: string) {
+    const approveRequired = await this.requiresApproval(swapRequest, approvalAddress);
+
+    if (approveRequired) {
+      const { quote, network, walletId } = swapRequest;
+      const fromAsset = assetsAdapter(quote.from)[0];
+
+      // only ERC20 tokens allowed
+      const client = this.getClient(network, walletId, quote.from, quote.fromAccountId) as Client<EvmChainProvider>;
+      const signer = client.wallet.getSigner();
+
+      const tokenContract = Typechain.ERC20__factory.connect(String(fromAsset.contractAddress), signer);
+      const approveAmount = approveMax ? ethers.constants.MaxUint256 : ethers.BigNumber.from(quote.fromAmount);
+      const _routerAddress = approvalAddress ?? this.config.routerAddress;
+
+      return tokenContract.populateTransaction.approve(_routerAddress, approveAmount);
+    }
+  }
+
+  public async approve(swapRequest: SwapRequest, approveMax = true, approvalAddress?: string) {
+    const approveTxData = await this.buildApprovalTx(swapRequest, approveMax, approvalAddress);
+    const { quote, network, walletId } = swapRequest;
+    const isLSP = swapRequest.quote.provider === SwapProviderType.Liquality;
+
+    if (approveTxData) {
+      const client = this.getClient(network, walletId, quote.from, quote.fromAccountId) as Client<EvmChainProvider>;
+      const approveTx = await client.wallet.sendTransaction(toEthereumTxRequest(approveTxData, quote.fee));
+
+      return {
+        status: isLSP ? 'WAITING_FOR_APPROVE_CONFIRMATIONS_LSP' : 'WAITING_FOR_APPROVE_CONFIRMATIONS',
+        approveTx,
+        approveTxHash: approveTx.hash,
+      };
+    } else {
       return {
         status: isLSP ? 'APPROVE_CONFIRMED_LSP' : 'APPROVE_CONFIRMED',
       };
     }
-
-    const approveAmount = approveMax ? ethers.constants.MaxUint256 : ethers.BigNumber.from(quote.fromAmount);
-    const approveTxData = await tokenContract.populateTransaction.approve(this.config.routerAddress, approveAmount);
-    const approveTx = await client.wallet.sendTransaction(toEthereumTxRequest(approveTxData, quote.fee));
-
-    return {
-      status: isLSP ? 'WAITING_FOR_APPROVE_CONFIRMATIONS_LSP' : 'WAITING_FOR_APPROVE_CONFIRMATIONS',
-      approveTx,
-      approveTxHash: approveTx.hash,
-    };
   }
 
-  async waitForApproveConfirmations(swapRequest: NextSwapActionRequest<EvmSwapHistoryItem>) {
+  public async waitForApproveConfirmations(swapRequest: NextSwapActionRequest<EvmSwapHistoryItem>) {
     const { swap, network, walletId } = swapRequest;
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
