@@ -37,7 +37,6 @@ export const updateBalances = async (context: ActionContext, request: UpdateBala
     updateEVMBalances(context, evmAccounts, network, walletId);
 
     await Bluebird.map(
-      // if accountIds is not passed fetch for all enabled account ids
       accountIds,
       async (accountId) => {
         const account = getters.accountItem(accountId);
