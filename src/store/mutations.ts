@@ -198,6 +198,50 @@ export default {
       }
     }
   },
+  UPDATE_MULTIPLE_BALANCES(
+    state: RootState,
+    {
+      network,
+      accountId,
+      walletId,
+      assets,
+      balances,
+    }: {
+      network: Network;
+      accountId: AccountId;
+      walletId: WalletId;
+      assets: Asset[];
+      balances: string[];
+    }
+  ) {
+    const wallet = state.accounts[walletId];
+
+    if (wallet) {
+      const accounts = wallet[network];
+
+      if (accounts) {
+        const index = accounts.findIndex((a) => a.id === accountId);
+
+        if (index >= 0) {
+          const account = accounts[index];
+          const currentBalances = { ...account.balances };
+
+          const updatedBalances = assets.reduce((result, asset, index) => {
+            result[asset] = balances[index];
+            return result;
+          }, {} as Record<string, string>);
+
+          const updatedAccount = {
+            ...account,
+            balances: { ...currentBalances, ...updatedBalances },
+            loadingInitialBalance: false,
+          };
+
+          Vue.set(wallet[network], index, updatedAccount);
+        }
+      }
+    }
+  },
   UPDATE_FEES(
     state: RootState,
     { network, walletId, asset, fees }: { network: Network; walletId: WalletId; asset: Asset; fees: FeeDetails }
