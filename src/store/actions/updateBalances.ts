@@ -219,9 +219,7 @@ const updateEVMBalances = async (
         return result;
       }, [] as EvmTypes.MulticallData[]);
 
-      console.log('multicallCallData', multicallCallData);
       const result = await client.chain.multicall.multicall<BigNumber[]>(multicallCallData);
-      console.log('result', result);
 
       accounts.forEach((acc) => {
         const balances = result.splice(0, acc.assets.length).map((balance, index) => {
@@ -229,11 +227,10 @@ const updateEVMBalances = async (
             return balance.toString();
           } else {
             console.debug(`Balance not fetched: ${acc.assets[index]}`);
-            return '0';
+            return null;
           }
         });
 
-        console.log('balances', acc.assets, balances);
         commit.UPDATE_MULTIPLE_BALANCES({
           network,
           accountId: acc.id,

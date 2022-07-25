@@ -1,4 +1,4 @@
-import { FeeDetails } from '@chainify/types';
+import { FeeDetails, Nullable } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
 import Vue from 'vue';
 import {
@@ -191,7 +191,6 @@ export default {
         const updatedAccount = {
           ..._account,
           balances,
-          loadingInitialBalance: false,
         };
 
         Vue.set(state.accounts[walletId]![network], index, updatedAccount);
@@ -211,7 +210,7 @@ export default {
       accountId: AccountId;
       walletId: WalletId;
       assets: Asset[];
-      balances: string[];
+      balances: Nullable<string>[];
     }
   ) {
     const wallet = state.accounts[walletId];
@@ -227,14 +226,15 @@ export default {
           const currentBalances = { ...account.balances };
 
           const updatedBalances = assets.reduce((result, asset, index) => {
-            result[asset] = balances[index];
+            if (balances[index]) {
+              result[asset] = String(balances[index]);
+            }
             return result;
           }, {} as Record<string, string>);
 
           const updatedAccount = {
             ...account,
             balances: { ...currentBalances, ...updatedBalances },
-            loadingInitialBalance: false,
           };
 
           Vue.set(wallet[network], index, updatedAccount);
