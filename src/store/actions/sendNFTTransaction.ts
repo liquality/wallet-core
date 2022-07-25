@@ -3,14 +3,14 @@ import { chains } from '@liquality/cryptoassets';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
 import { createHistoryNotification } from '../broker/notification';
-import { NFTSendHistoryItem, NFTSendTransactionParams, SendStatus, TransactionType } from '../types';
+import { Account, NFTSendHistoryItem, NFTSendTransactionParams, SendStatus, TransactionType } from '../types';
 
 export const sendNFTTransaction = async (
   context: ActionContext,
   { network, accountId, walletId, receiver, values, fee, feeLabel, nft }: NFTSendTransactionParams
 ): Promise<Transaction> => {
   const { getters, commit, dispatch } = rootActionContext(context);
-  const account = getters.accountItem(accountId)!;
+  const account: Account = getters.accountItem(accountId)!;
   const asset = chains[account.chain].nativeAsset;
   const client = getters.client({
     network,
@@ -24,8 +24,8 @@ export const sendNFTTransaction = async (
     type: TransactionType.NFT,
     network,
     walletId,
-    to: '',
-    from: '',
+    to: asset,
+    from: asset,
     toAddress: receiver,
     fee,
     tx,

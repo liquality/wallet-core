@@ -1,7 +1,7 @@
 import { chains } from '@liquality/cryptoassets';
 import Bluebird from 'bluebird';
 import { ActionContext, rootActionContext } from '..';
-import { AccountId, Network, NFT, WalletId } from '../types';
+import { Account, AccountId, Network, NFT, WalletId } from '../types';
 
 export const updateNFTs = async (
   context: ActionContext,
@@ -20,7 +20,7 @@ export const updateNFTs = async (
   const nfts = await Bluebird.map(
     accountIds,
     async (accountId) => {
-      const account = getters.accountItem(accountId)!;
+      const account: Account = getters.accountItem(accountId)!;
       const asset = chains[account.chain].nativeAsset;
       const client = getters.client({
         network,
@@ -35,8 +35,8 @@ export const updateNFTs = async (
 
       const nftAssetsStoredInState = account.nfts || [];
       const nftAssetsFetched = await client.nft.fetch();
-      const nfts = nftAssetsFetched.map((nftAsset) => {
-        const nftAssetStoredInState = nftAssetsStoredInState.find((asset) => asset.token_id === nftAsset.token_id);
+      const nfts = nftAssetsFetched.map((nftAsset: NFT) => {
+        const nftAssetStoredInState = nftAssetsStoredInState.find((asset: NFT) => asset.token_id === nftAsset.token_id);
         const starred = nftAssetStoredInState ? nftAssetStoredInState.starred : false;
         return {
           ...nftAsset,
