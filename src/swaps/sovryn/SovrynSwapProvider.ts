@@ -313,7 +313,7 @@ class SovrynSwapProvider extends SwapProvider {
   }
 
   async getMin(_quoteRequest: QuoteRequest) {
-    return new BN(0)
+    return new BN(0);
   }
 
   // ======== STATE TRANSITIONS ========

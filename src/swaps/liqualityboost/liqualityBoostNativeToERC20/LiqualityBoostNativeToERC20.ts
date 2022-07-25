@@ -132,7 +132,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       ...result,
       ..._quote,
       slippage: slippagePercentage * 100,
-      bridgeAssetAmount: result.toAmount,
+      bridgeAssetAmount: (result as any).toAmount,
     };
   }
 
@@ -191,7 +191,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
   }
 
   async getMin(quoteRequest: QuoteRequest) {
-    return await this.liqualitySwapProvider.getMin({...quoteRequest, to: getNativeAsset(quoteRequest.to)})
+    return await this.liqualitySwapProvider.getMin({ ...quoteRequest, to: getNativeAsset(quoteRequest.to) });
   }
 
   async finalizeLiqualitySwapAndStartAutomatedMarketMaker({ swapLSP, network, walletId }: BoostNextSwapActionRequest) {

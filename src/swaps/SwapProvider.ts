@@ -41,10 +41,10 @@ export abstract class SwapProvider {
    */
   public abstract getSupportedPairs({ network }: { network: Network }): Promise<PairData[]>;
 
-    /**
+  /**
    * Get min swap amount for given swap provider
    */
-  public abstract getMin(quoteRequest: QuoteRequest) : Promise<BigNumber>
+  public abstract getMin(quoteRequest: QuoteRequest): Promise<BigNumber>;
 
   /**
    * Get a quote for the specified parameters

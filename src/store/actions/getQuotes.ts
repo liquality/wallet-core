@@ -17,7 +17,16 @@ export const getQuotes = async (
     toAccountId,
     // Amount is string because in some contexts, it is passed over messages not supporting full objects
     amount,
-  }: { network: Network; from: Asset; to: Asset; fromAccountId: AccountId; toAccountId: AccountId; amount: string }
+    walletId,
+  }: {
+    network: Network;
+    from: Asset;
+    to: Asset;
+    fromAccountId: AccountId;
+    toAccountId: AccountId;
+    amount: string;
+    walletId?: string;
+  }
 ): Promise<SwapQuote[]> => {
   if (!amount) {
     return [];
@@ -28,7 +37,7 @@ export const getQuotes = async (
       const swapProvider = getSwapProvider(network, provider);
       // Quote errors should not halt the process
       const quote = await swapProvider
-        .getQuote({ network, from, to, amount: new BigNumber(amount) })
+        .getQuote({ network, from, to, amount: new BigNumber(amount), fromAccountId, toAccountId, walletId })
         .catch(console.error);
       return quote ? { ...quote, provider, fromAccountId, toAccountId } : null;
     },
