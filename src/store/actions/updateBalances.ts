@@ -139,23 +139,21 @@ const getEvmAccountsWithMulticalEnabled = (
 
   return accountIds.reduce((result, a) => {
     const acc = getters.accountItem(a);
-    if (acc) {
-      if (chains[acc.chain].evmCompatible) {
-        const nativeAsset = chains[acc.chain].nativeAsset;
-        const client = getters.client({
-          network,
-          walletId,
-          asset: nativeAsset,
-          accountId: a,
-        }) as Client<EvmChainProvider>;
+    if (acc && chains[acc.chain].evmCompatible) {
+      const nativeAsset = chains[acc.chain].nativeAsset;
+      const client = getters.client({
+        network,
+        walletId,
+        asset: nativeAsset,
+        accountId: a,
+      }) as Client<EvmChainProvider>;
 
-        // add only EVM chains that has multicall support
-        if (client.chain.multicall) {
-          if (!result[acc.chain]) {
-            result[acc.chain] = [];
-          }
-          result[acc.chain].push(acc);
+      // add only EVM chains that has multicall support
+      if (client.chain.multicall) {
+        if (!result[acc.chain]) {
+          result[acc.chain] = [];
         }
+        result[acc.chain].push(acc);
       }
     }
 
