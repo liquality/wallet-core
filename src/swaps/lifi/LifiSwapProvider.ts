@@ -99,7 +99,6 @@ class LifiSwapProvider extends EvmSwapProvider {
   }
 
   //  ======== FEES ========
-  // TODO: in case of bridging? and add fee of approval
   async estimateFees(feeRequest: EstimateFeeRequest<string, LifiSwapHistoryItem>) {
     if (feeRequest.txType in this._txTypes()) {
       const fees: EstimateFeeResponse = {};
