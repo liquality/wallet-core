@@ -70,8 +70,8 @@ class LifiSwapProvider extends EvmSwapProvider {
     };
 
     try {
-      const bestRoute = await this._lifiClient.getQuote(quoteRequest);
-      return { from, to, fromAmount: fromAmountInUnit, toAmount: bestRoute.estimate.toAmount, bestRoute: bestRoute };
+      const lifiRoute = await this._lifiClient.getQuote(quoteRequest);
+      return { from, to, fromAmount: fromAmountInUnit, toAmount: lifiRoute.estimate.toAmount, lifiRoute };
     } catch (e) {
       console.warn(e);
       return null;
@@ -79,7 +79,9 @@ class LifiSwapProvider extends EvmSwapProvider {
   }
 
   async newSwap(swap: SwapRequest<LifiSwapHistoryItem>) {
-    const approvalAddress = swap.quote.bestRoute?.estimate.approvalAddress;
+    const route = this.getRoute(swap.quote);
+
+    const approvalAddress = route.estimate.approvalAddress;
     const approveTx = await this.approve(swap, false, approvalAddress);
     const updates = approveTx || (await this.initiateSwap(swap));
 
@@ -87,8 +89,10 @@ class LifiSwapProvider extends EvmSwapProvider {
   }
 
   private async initiateSwap({ network, walletId, quote }: SwapRequest<LifiSwapHistoryItem>) {
+    const route = this.getRoute(quote);
+
     const client = super.getClient(network, walletId, quote.from, quote.fromAccountId);
-    const txData: TransactionRequest = quote.bestRoute?.transactionRequest as TransactionRequest;
+    const txData: TransactionRequest = route.transactionRequest as TransactionRequest;
     const fromFundTx = await client.wallet.sendTransaction(txData);
 
     return {
@@ -100,15 +104,13 @@ class LifiSwapProvider extends EvmSwapProvider {
 
   //  ======== FEES ========
   async estimateFees(feeRequest: EstimateFeeRequest<string, LifiSwapHistoryItem>) {
+    const route = this.getRoute(feeRequest.quote);
+
     if (feeRequest.txType in this._txTypes()) {
       const fees: EstimateFeeResponse = {};
-      const gasCost = (feeRequest.quote.bestRoute?.estimate.gasCosts as GasCost[])[0];
+      const gasCost = (route.estimate.gasCosts as GasCost[])[0];
 
-      const approvalData = await this.buildApprovalTx(
-        feeRequest,
-        false,
-        feeRequest.quote.bestRoute?.estimate.approvalAddress
-      );
+      const approvalData = await this.buildApprovalTx(feeRequest, false, route.estimate.approvalAddress);
 
       let approvalGas = 0;
       if (approvalData) {
@@ -151,10 +153,12 @@ class LifiSwapProvider extends EvmSwapProvider {
 
   // cross chain swaps info can be aquire only via Li.Fi API
   private async getCrossChainSwapStatus(quote: LifiSwapHistoryItem) {
+    const route = this.getRoute(quote);
+
     const result = await this._httpClient.nodeGet('/status', {
-      bridge: quote.bestRoute?.tool,
-      fromChain: this.getChainByID(quote.bestRoute?.action.fromChainId as number),
-      toChain: this.getChainByID(quote.bestRoute?.action.toChainId as number),
+      bridge: route.tool,
+      fromChain: this.getChainByID(route.action.fromChainId as number),
+      toChain: this.getChainByID(route.action.toChainId as number),
       txHash: quote.fromFundHash,
     });
 
@@ -169,17 +173,26 @@ class LifiSwapProvider extends EvmSwapProvider {
   // lifi type of swaps are simillar to boost (combination of multiple single and/or cross chain swaps)
   // check if some of lifi actions contain cross chain swap
   private isCrossSwap(swap: LifiSwapHistoryItem) {
-    switch (swap.bestRoute?.type) {
+    const route = this.getRoute(swap);
+    switch (route.type) {
       case 'swap':
         return false;
       case 'cross':
         return true;
       case 'lifi':
-        return (swap.bestRoute as LifiStep).includedSteps.reduce(
+        return (route as LifiStep).includedSteps.reduce(
           (acc: boolean, action: Step) => action.type === 'cross' || acc,
           false
         );
     }
+  }
+
+  private getRoute(quote: LifiSwapHistoryItem) {
+    if (!quote.lifiRoute) {
+      throw new Error(`LiFiSwapProvider: best route doesn't exist`);
+    }
+
+    return quote.lifiRoute;
   }
 
   // ======== STATE TRANSITIONS ========

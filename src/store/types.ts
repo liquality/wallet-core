@@ -190,7 +190,7 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   toAmount: string;
   bridgeAsset?: Asset;
   path?: string[];
-  bestRoute?: Step; // LiFi
+  lifiRoute?: Step; // LiFi
 }
 
 export type HistoryItem = NFTSendHistoryItem | SendHistoryItem | SwapHistoryItem;
