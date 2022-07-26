@@ -238,7 +238,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       return {
         ...resultLSP,
         ...swapLSP,
-        toAmount: (resultLSP as any).toAmount,
+        toAmount: (resultLSP as LiqualitySwapHistoryItem).toAmount,
         status: resultLSP.status,
       };
     }
