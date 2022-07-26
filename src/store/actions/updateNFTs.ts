@@ -34,12 +34,20 @@ export const updateNFTs = async (
       }
 
       const nftAssetsStoredInState = account.nfts || [];
+      console.log('🚀 ~ file: updateNFTs.ts ~ line 37 ~ nftAssetsStoredInState', nftAssetsStoredInState);
       const nftAssetsFetched = await client.nft.fetch();
+      console.log('🚀 ~ file: updateNFTs.ts ~ line 38 ~ nftAssetsFetched', nftAssetsFetched);
       const nfts = nftAssetsFetched.map((nftAsset: NFT) => {
         const nftAssetStoredInState = nftAssetsStoredInState.find((asset: NFT) => asset.token_id === nftAsset.token_id);
         const starred = nftAssetStoredInState ? nftAssetStoredInState.starred : false;
+        const image = nftAsset?.image_original_url?.includes('ipfs://')
+          ? nftAsset?.image_original_url.replace('ipfs://', 'https://ipfs.io/ipfs/')
+          : nftAsset.image_original_url;
         return {
           ...nftAsset,
+          image_original_url: image,
+          image_preview_url: image,
+          image_thumbnail_url: image,
           starred,
         };
       });
