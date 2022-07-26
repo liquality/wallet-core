@@ -43,8 +43,8 @@ export abstract class EvmSwapProvider extends SwapProvider {
     const userAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     const userAddress = chains[fromAsset.chain].formatAddress(userAddressRaw);
 
-    const _routerAddress = approvalAddress ?? this.config.routerAddress;
-    const allowance = await tokenContract.allowance(userAddress.toLowerCase(), _routerAddress);
+    const _approvalAddress = approvalAddress ?? this.config.routerAddress;
+    const allowance = await tokenContract.allowance(userAddress.toLowerCase(), _approvalAddress);
 
     // if allowance is enough, no approve is needed
     if (allowance.gte(quote.fromAmount)) {
@@ -67,9 +67,9 @@ export abstract class EvmSwapProvider extends SwapProvider {
 
       const tokenContract = Typechain.ERC20__factory.connect(String(fromAsset.contractAddress), signer);
       const approveAmount = approveMax ? ethers.constants.MaxUint256 : ethers.BigNumber.from(quote.fromAmount);
-      const _routerAddress = approvalAddress ?? this.config.routerAddress;
+      const _approvalAddress = approvalAddress ?? this.config.routerAddress;
 
-      return tokenContract.populateTransaction.approve(_routerAddress, approveAmount);
+      return tokenContract.populateTransaction.approve(_approvalAddress, approveAmount);
     }
   }
 
