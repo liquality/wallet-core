@@ -4,6 +4,7 @@ import { Transaction, TransactionRequest, TxStatus } from '@chainify/types';
 import LiFi, { ChainId, GasCost, LifiStep, Order, Orders, Step } from '@lifi/sdk';
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
+import { ethers } from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
@@ -32,12 +33,13 @@ export interface LifiSwapHistoryItem extends EvmSwapHistoryItem {
 }
 
 class LifiSwapProvider extends EvmSwapProvider {
-  readonly config: LifiSwapProviderConfig;
-  readonly _lifiClient: LiFi;
-  private _httpClient: HttpClient;
-  readonly nativeAssetAddress: string = '0x0000000000000000000000000000000000000000';
-  private slippage: number;
-  private order: Order;
+  public readonly config: LifiSwapProviderConfig;
+  public readonly slippage: number;
+  public readonly order: Order;
+  public readonly nativeAssetAddress = ethers.constants.AddressZero;
+
+  private readonly _lifiClient: LiFi;
+  private readonly _httpClient: HttpClient;
 
   constructor(config: LifiSwapProviderConfig) {
     super(config);
@@ -46,12 +48,12 @@ class LifiSwapProvider extends EvmSwapProvider {
     /*
      * Default slippage should be in the range of 3% to 5%
      */
-    this.slippage = config.slippage ?? 5 / 100; // 5%
+    this.slippage = config.slippage ?? 0.05; // 5 / 100 -> 5%
     /*
      * export declare const Orders: readonly ["RECOMMENDED", "FASTEST", "CHEAPEST", "SAFEST"];
      * keep the "RECOMMENDED" as a default
      */
-    this.order = Orders[0]; // 'RECOMMENDED'
+    this.order = config.order ?? Orders[0]; // 'RECOMMENDED'
   }
 
   async getSupportedPairs() {
@@ -97,8 +99,12 @@ class LifiSwapProvider extends EvmSwapProvider {
 
     const approvalAddress = route.estimate.approvalAddress;
     const approveTx = await this.approve(swap, false, approvalAddress);
-    const updates = approveTx || (await this.initiateSwap(swap));
-
+    let updates;
+    if (approveTx) {
+      updates = approveTx;
+    } else {
+      updates = await this.initiateSwap(swap);
+    }
     return { id: uuidv4(), ...updates };
   }
 
