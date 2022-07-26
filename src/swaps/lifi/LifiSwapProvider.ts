@@ -89,7 +89,7 @@ class LifiSwapProvider extends EvmSwapProvider {
       const lifiRoute = await this._lifiClient.getQuote(quoteRequest);
       return { from, to, fromAmount: fromAmountInUnit, toAmount: lifiRoute.estimate.toAmount, lifiRoute };
     } catch (e) {
-      console.warn(e);
+      console.warn('LifiSwapProvider: ', e);
       return null;
     }
   }
@@ -112,8 +112,13 @@ class LifiSwapProvider extends EvmSwapProvider {
     const route = this.getRoute(quote);
 
     const client = super.getClient(network, walletId, quote.from, quote.fromAccountId);
-    const txData: TransactionRequest = route.transactionRequest as TransactionRequest;
-    const fromFundTx = await client.wallet.sendTransaction(txData);
+    const txData = route.transactionRequest as TransactionRequest;
+    const fromFundTx = await client.wallet.sendTransaction({
+      data: txData.data,
+      to: txData.to,
+      value: txData.value,
+      gasLimit: txData.gasLimit,
+    } as TransactionRequest);
 
     return {
       status: 'WAITING_FOR_INITIATION_CONFIRMATIONS',
@@ -258,7 +263,7 @@ class LifiSwapProvider extends EvmSwapProvider {
       }
     } catch (e) {
       // TODO: timeout in case API doesn't respond
-      console.warn(e);
+      console.warn('LifiSwapProvider: ', e);
     }
   }
 
