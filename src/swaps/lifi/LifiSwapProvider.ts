@@ -163,21 +163,27 @@ class LifiSwapProvider extends EvmSwapProvider {
 
     const result = await this._httpClient.nodeGet('/status', {
       bridge: route.tool,
-      fromChain: this.getChainByID(route.action.fromChainId as number),
-      toChain: this.getChainByID(route.action.toChainId as number),
+      fromChain: this.getChainNameByChainID(route.action.fromChainId as number),
+      toChain: this.getChainNameByChainID(route.action.toChainId as number),
       txHash: quote.fromFundHash,
     });
 
     return result;
   }
 
-  private getChainByID(id: number) {
-    const indexOfFromChainId = Object.values(ChainId).indexOf(id as unknown as ChainId);
-    return Object.keys(ChainId)[indexOfFromChainId];
+  private getChainNameByChainID(id: number) {
+    const indexOfChainId = Object.values(ChainId).indexOf(id as unknown as ChainId);
+    return Object.keys(ChainId)[indexOfChainId];
   }
 
-  // lifi type of swaps are simillar to boost (combination of multiple single and/or cross chain swaps)
-  // check if some of lifi actions contain cross chain swap
+  /*
+   * In LiFi 3 types of swaps are available:
+   * 'Swap' -> single chain (for example: uniswap)
+   * 'Cross' -> multi chain / bridging (for example: hop)
+   * 'LiFi' -> some combination of the previous 2 types
+   * (its close to Liquality Boost but more advanced
+   * for example: LiFi swap can include 2 `Swap` actions and 1 `Cross` action)
+   */
   private isCrossSwap(swap: LifiSwapHistoryItem) {
     const route = this.getRoute(swap);
     switch (route.type) {
