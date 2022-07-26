@@ -3,8 +3,7 @@ import Bluebird from 'bluebird';
 import { ActionContext } from '..';
 import buildConfig from '../../build.config';
 import { getSwapProvider } from '../../factory/swap';
-import { SwapQuote } from '../../swaps/types';
-import { AccountId, Asset, Network } from '../types';
+import { QuoteRequestUIData, SwapQuote } from '../../swaps/types';
 
 // TODO: is this an action at this point? Or should it be in utils
 export const getQuotes = async (
@@ -18,15 +17,7 @@ export const getQuotes = async (
     // Amount is string because in some contexts, it is passed over messages not supporting full objects
     amount,
     walletId,
-  }: {
-    network: Network;
-    from: Asset;
-    to: Asset;
-    fromAccountId: AccountId;
-    toAccountId: AccountId;
-    amount: string;
-    walletId?: string;
-  }
+  }: QuoteRequestUIData
 ): Promise<SwapQuote[]> => {
   if (!amount) {
     return [];

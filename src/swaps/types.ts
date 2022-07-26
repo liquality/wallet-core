@@ -36,6 +36,16 @@ export type QuoteRequest = {
   toAccountId?: AccountId;
 };
 
+export type QuoteRequestUIData = {
+  network: Network;
+  from: Asset;
+  to: Asset;
+  fromAccountId: AccountId;
+  toAccountId: AccountId;
+  amount: string;
+  walletId?: string;
+};
+
 export type SwapRequest<T = SwapHistoryItem> = {
   network: Network;
   walletId: string;
