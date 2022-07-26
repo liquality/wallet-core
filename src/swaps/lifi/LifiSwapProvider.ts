@@ -1,7 +1,7 @@
 import { HttpClient } from '@chainify/client';
 import { EvmTypes } from '@chainify/evm';
 import { Transaction, TransactionRequest, TxStatus } from '@chainify/types';
-import LiFi, { ChainId, GasCost, LifiStep, Orders, Step } from '@lifi/sdk';
+import LiFi, { ChainId, GasCost, LifiStep, Order, Orders, Step } from '@lifi/sdk';
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -22,6 +22,8 @@ import {
 
 export interface LifiSwapProviderConfig extends EvmSwapProviderConfig {
   apiURL: string;
+  slippage?: number;
+  order?: Order;
 }
 
 export interface LifiSwapHistoryItem extends EvmSwapHistoryItem {
@@ -34,11 +36,22 @@ class LifiSwapProvider extends EvmSwapProvider {
   readonly _lifiClient: LiFi;
   private _httpClient: HttpClient;
   readonly nativeAssetAddress: string = '0x0000000000000000000000000000000000000000';
+  private slippage: number;
+  private order: Order;
 
   constructor(config: LifiSwapProviderConfig) {
     super(config);
     this._lifiClient = new LiFi();
     this._httpClient = new HttpClient({ baseURL: this.config.apiURL });
+    /*
+     * Default slippage should be in the range of 3% to 5%
+     */
+    this.slippage = config.slippage ?? 5 / 100; // 5%
+    /*
+     * export declare const Orders: readonly ["RECOMMENDED", "FASTEST", "CHEAPEST", "SAFEST"];
+     * keep the "RECOMMENDED" as a default
+     */
+    this.order = Orders[0]; // 'RECOMMENDED'
   }
 
   async getSupportedPairs() {
@@ -66,7 +79,8 @@ class LifiSwapProvider extends EvmSwapProvider {
       toToken: toInfo.contractAddress ?? this.nativeAssetAddress,
       fromAddress: chains[fromInfo.chain].formatAddress(fromAddressRaw),
       toAddress: chains[toInfo.chain].formatAddress(toAddressRaw),
-      ...this.getDefaultRouteOptions(),
+      slippage: this.slippage,
+      order: this.order,
     };
 
     try {
@@ -143,14 +157,6 @@ class LifiSwapProvider extends EvmSwapProvider {
   }
 
   // ======== HELPERS ========
-
-  private getDefaultRouteOptions() {
-    return {
-      slippage: 5 / 100, // 5%
-      order: Orders[0], // 'RECOMMENDED'
-    };
-  }
-
   // cross chain swaps info can be aquire only via Li.Fi API
   private async getCrossChainSwapStatus(quote: LifiSwapHistoryItem) {
     const route = this.getRoute(quote);
