@@ -1,7 +1,6 @@
 import { ChainId } from '@liquality/cryptoassets';
 import Bluebird from 'bluebird';
 import { ActionContext, rootActionContext } from '..';
-import { isEthereumChain } from '../../utils/asset';
 import { AccountId, Asset, Network, WalletId } from '../types';
 
 export const getUnusedAddresses = async (
@@ -33,7 +32,7 @@ export const getUnusedAddresses = async (
           })
           .wallet.getUnusedAddress();
 
-        const address = isEthereumChain(asset) ? result.address.replace('0x', '') : result.address; // TODO: Should not require removing 0x
+        const address = result.address;
         let updatedAddresses: string[] = [];
         if (account.chain === ChainId.Bitcoin) {
           if (!account.addresses.includes(address)) {
@@ -44,7 +43,7 @@ export const getUnusedAddresses = async (
         } else {
           updatedAddresses = [address];
         }
-        
+
         commit.UPDATE_ACCOUNT_ADDRESSES({
           network,
           accountId: account.id,
