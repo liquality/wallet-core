@@ -2222,7 +2222,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lifi/sdk@npm:^1.0.2":
+"@lifi/sdk@npm:1.0.2":
   version: 1.0.2
   resolution: "@lifi/sdk@npm:1.0.2"
   dependencies:
@@ -2294,7 +2294,7 @@ __metadata:
     "@ethersproject/address": 5.6.0
     "@ethersproject/providers": 5.6.0
     "@hop-protocol/sdk": 0.0.1-beta.314
-    "@lifi/sdk": ^1.0.2
+    "@lifi/sdk": 1.0.2
     "@liquality/cryptoassets": 1.13.4
     "@metamask/eth-sig-util": ^4.0.1
     "@terra-money/terra.js": 3.1.3
