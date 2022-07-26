@@ -21,7 +21,7 @@ import {
 } from '../types';
 
 export interface LifiSwapProviderConfig extends EvmSwapProviderConfig {
-  rpcURL: string;
+  apiURL: string;
 }
 
 export interface LifiSwapHistoryItem extends EvmSwapHistoryItem {
@@ -38,7 +38,7 @@ class LifiSwapProvider extends EvmSwapProvider {
   constructor(config: LifiSwapProviderConfig) {
     super(config);
     this._lifiClient = new LiFi();
-    this._httpClient = new HttpClient({ baseURL: this.config.rpcURL });
+    this._httpClient = new HttpClient({ baseURL: this.config.apiURL });
   }
 
   async getSupportedPairs() {

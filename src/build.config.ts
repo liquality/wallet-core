@@ -195,7 +195,7 @@ const config: WalletCoreConfig = {
         name: 'LiFi',
         icon: 'lifi.svg',
         type: SwapProviderType.LiFi,
-        rpcURL: 'https://li.quest/v1/',
+        apiURL: 'https://li.quest/v1/',
       },
     },
   },
