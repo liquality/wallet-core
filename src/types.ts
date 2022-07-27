@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-// import { TransportCreator } from '@chainify/hw-ledger/dist/lib/types';
-=======
 import { LedgerProviderTypes } from '@chainify/hw-ledger';
->>>>>>> master
 import { RootState } from './store/types';
 
 export interface ParsedCipherText {
