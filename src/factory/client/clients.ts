@@ -19,7 +19,7 @@ import {
 } from '@chainify/evm';
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
-import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
+import { SolanaChainProvider, SolanaNftProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
 import { Address, Network as ChainifyNetwork } from '@chainify/types';
 import { BaseProvider, StaticJsonRpcProvider } from '@ethersproject/providers';
@@ -28,7 +28,6 @@ import { AccountInfo, AccountType, Network, NftProviderType } from '../../store/
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
 import { walletOptionsStore } from '../../walletOptions';
-
 
 function getNftProvider(
   providerType: NftProviderType,
@@ -62,11 +61,7 @@ function getNftProvider(
   }
 }
 
-export function createBtcClient(
-  network: Network,
-  mnemonic: string,
-  accountInfo: AccountInfo
-) {
+export function createBtcClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const isMainnet = network === 'mainnet';
   const bitcoinNetwork = ChainNetworks.bitcoin[network] as BitcoinTypes.BitcoinNetwork;
   const esploraApi = buildConfig.exploraApis[network];
@@ -142,7 +137,7 @@ export function createEVMClient(
     if (accountInfo && accountInfo.publicKey && accountInfo.address) {
       addressCache = new Address({
         publicKey: accountInfo?.publicKey,
-        address: accountInfo.address
+        address: accountInfo.address,
       });
     }
     if (!walletOptionsStore.walletOptions.ledgerTransportCreator) {
@@ -197,5 +192,13 @@ export function createSolanaClient(network: Network, mnemonic: string, accountIn
   const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath };
   const chainProvider = new SolanaChainProvider(solanaNetwork);
   const walletProvider = new SolanaWalletProvider(walletOptions, chainProvider);
-  return new Client().connect(walletProvider);
+  const nftProvider = new SolanaNftProvider(walletProvider as any, {
+    url: 'https://ghi7f9miezr7.usemoralis.com:2053/server',
+    appId: 'T94TjnFcaFycYfHqkf227JmpZeEjGXmDWINkfJD2',
+    apiKey: 'iv94v0ZQgQfIkTe09QLple1DDAGbmAD8zX9BeVGo',
+  });
+
+  const client = new Client().connect(walletProvider).connect(nftProvider);
+
+  return client;
 }

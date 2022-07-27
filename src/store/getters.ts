@@ -120,17 +120,17 @@ export default {
       }
 
       const { mnemonic } = wallet;
-      const accountInfo: AccountInfo = { 
-        type: _accountType, 
+      const accountInfo: AccountInfo = {
+        type: _accountType,
         derivationPath,
         chainCode: account?.chainCode,
         publicKey: account?.publicKey,
-        address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined
-      }
+        address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined,
+      };
       const client = createClient(asset, network, mnemonic, accountInfo);
-      clientCache[cacheKey] = client;
+      clientCache[cacheKey] = client as any;
 
-      return client;
+      return client as any;
     };
   },
   historyItemById(...context: GetterContext) {
