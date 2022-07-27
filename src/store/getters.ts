@@ -417,10 +417,10 @@ export default {
   allNftCollections(...context: GetterContext): NFTCollections<NFTWithAccount> {
     const { getters } = rootGetterContext(context);
     const accounts = getters.accountsData;
-    const allNftCollections = accounts.reduce((allCollections: NFTCollections<NFTWithAccount>, account) => {
+    const allNftCollections = accounts.reduce((allCollections: NFTCollections<NFTWithAccount>, account: Account) => {
       const collections = getters.accountNftCollections(account.id);
       const collectionsWithAccount = mapValues(collections, (nfts) => {
-        return nfts.map((nft) => ({ ...nft, accountId: account.id }));
+        return nfts.map((nft: NFT) => ({ ...nft, accountId: account.id }));
       });
       return { ...allCollections, ...collectionsWithAccount };
     }, {});

@@ -302,45 +302,93 @@ export const fetchSolanaTokens = async (address: string) => {
   };
 };
 
-const NFT_ASSETS_MAP: { [key in ChainId]?: { [key in Network]: { url: string; transfer: string } } } = {
+const NFT_ASSETS_MAP: {
+  [key in ChainId]?: { [key in Network]: { marketplaceName: string; url: string; transfer: string } };
+} = {
   ethereum: {
     testnet: {
+      marketplaceName: 'OpenSea',
       url: `https://testnet.opensea.io/`,
       transfer: `https://testnets.opensea.io/assets/{contract_address}/{token_id}`,
     },
     mainnet: {
+      marketplaceName: 'OpenSea',
       url: `https://opensea.io/`,
       transfer: `https://opensea.io/assets/{chain}/{contract_address}/{token_id}`,
     },
   },
   polygon: {
     testnet: {
+      marketplaceName: 'OpenSea',
       url: `https://testnet.opensea.io/`,
       transfer: `https://testnets.opensea.io/assets/{contract_address}/{token_id}`,
     },
     mainnet: {
+      marketplaceName: 'OpenSea',
       url: `https://opensea.io/`,
       transfer: `https://opensea.io/assets/{asset}/{contract_address}/{token_id}`,
     },
   },
+  arbitrum: {
+    testnet: {
+      marketplaceName: 'StratosNFT',
+      url: `https://testnet.stratosnft.io/`,
+      transfer: `https://testnets.stratosnft.io/asset/{contract_address}/{token_id}`,
+    },
+    mainnet: {
+      marketplaceName: 'StratosNFT',
+      url: `https://stratosnft.io/`,
+      transfer: `https://stratosnft.io/asset/{contract_address}/{token_id}`,
+    },
+  },
+};
+
+const getNftAssetsMap = (chainId: ChainId, network: Network) => {
+  const nftAssetsMap = NFT_ASSETS_MAP[chainId];
+  if (!nftAssetsMap) {
+    throw new Error(`NFT asset map for ${chainId} ${network} is not supported`);
+  }
+  return nftAssetsMap;
+};
+
+export const getMarketplaceName = (asset: Asset, network: Network) => {
+  const chainId = cryptoassets[asset].chain;
+  const nftAssetsMap = getNftAssetsMap(chainId, network);
+
+  const marketplaceName = nftAssetsMap[network].marketplaceName;
+  if (!marketplaceName) {
+    throw new Error(`Marketplace name for ${chainId} ${network} not defined`);
+  } else {
+    return marketplaceName;
+  }
 };
 
 export const getNftTransferLink = (asset: Asset, network: Network, tokenId: string, contract_address: string) => {
   const chainId = cryptoassets[asset].chain;
-  const transfer = NFT_ASSETS_MAP[chainId]![network].transfer;
+  const nftAssetsMap = getNftAssetsMap(chainId, network);
 
-  return transfer
-    .replace('{contract_address}', contract_address)
-    .replace('{chain}', chainId)
-    .replace('{asset}', asset)
-    .replace('{token_id}', tokenId);
+  const transferLink = nftAssetsMap[network].transfer;
+  if (!transferLink) {
+    throw new Error(`Transfer link for ${chainId} ${network} not defined`);
+  } else {
+    return transferLink
+      .replace('{contract_address}', contract_address)
+      .replace('{chain}', chainId)
+      .replace('{asset}', asset)
+      .replace('{token_id}', tokenId);
+  }
 };
 
 export const getNftLink = (asset: Asset, network: Network) => {
   const chainId = cryptoassets[asset].chain;
-  const url = NFT_ASSETS_MAP[chainId]![network].url;
+  const nftAssetsMap = getNftAssetsMap(chainId, network);
 
-  return url;
+  const url = nftAssetsMap[network].url;
+  if (!url) {
+    throw new Error(`Nft explorer link for ${chainId} ${network} not defined`);
+  } else {
+    return url;
+  }
 };
 
 export const openseaLink = (network: Network) => {
