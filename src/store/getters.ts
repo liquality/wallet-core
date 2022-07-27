@@ -128,9 +128,9 @@ export default {
         address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined,
       };
       const client = createClient(asset, network, mnemonic, accountInfo);
-      clientCache[cacheKey] = client as any;
+      clientCache[cacheKey] = client;
 
-      return client as any;
+      return client;
     };
   },
   historyItemById(...context: GetterContext) {
