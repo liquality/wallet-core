@@ -193,7 +193,7 @@ class ThorchainSwapProvider extends SwapProvider {
     try {
       return this._httpClient.nodeGet(`/thorchain/tx/${hash}`);
     } catch (e) {
-      // Error means tx not found
+      console.error(`Thorchain get transaction failed ${hash}`, e)
       return null;
     }
   }
@@ -504,7 +504,10 @@ class ThorchainSwapProvider extends SwapProvider {
     return null;
   }
 
-  async getMin(_quoteRequest: QuoteRequest) {
+  async getMin(quote: QuoteRequest) {
+    if (quote.from === 'BTC') { // Thorchain swaps have to be more than 10000 sats
+      return new BN(0.00010001)
+    }
     return new BN(0);
   }
 
