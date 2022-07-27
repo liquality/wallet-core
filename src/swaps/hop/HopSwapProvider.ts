@@ -345,7 +345,7 @@ class HopSwapProvider extends SwapProvider {
         return {
           endTime: Date.now(),
           status:
-            tx.status === 'SUCCESS' || Number(tx.status) === 1 ? 'WAITING_FOR_RECIEVE_SWAP_CONFIRMATIONS' : 'FAILED',
+            tx.status === 'SUCCESS' || Number(tx.status) === 1 ? 'WAITING_FOR_RECEIVE_SWAP_CONFIRMATIONS' : 'FAILED',
         };
       }
     } catch (e) {
@@ -424,7 +424,7 @@ class HopSwapProvider extends SwapProvider {
       case 'WAITING_FOR_SEND_SWAP_CONFIRMATIONS':
         updates = await withInterval(async () => this.waitForSendSwapConfirmations({ swap, network, walletId }));
         break;
-      case 'WAITING_FOR_RECIEVE_SWAP_CONFIRMATIONS':
+      case 'WAITING_FOR_RECEIVE_SWAP_CONFIRMATIONS':
         updates = await withInterval(async () => this.waitForRecieveSwapConfirmations({ swap, network, walletId }));
         break;
     }
@@ -458,7 +458,7 @@ class HopSwapProvider extends SwapProvider {
           };
         },
       },
-      WAITING_FOR_RECIEVE_SWAP_CONFIRMATIONS: {
+      WAITING_FOR_RECEIVE_SWAP_CONFIRMATIONS: {
         step: 2,
         label: 'Swapping {to}',
         filterStatus: 'PENDING',
