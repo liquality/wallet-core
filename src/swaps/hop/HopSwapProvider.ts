@@ -1,6 +1,7 @@
 import { EIP1559Fee } from '@chainify/types';
+import { ensure0x } from '@chainify/utils';
 import { Chain, Hop, HopBridge, TToken } from '@hop-protocol/sdk';
-import { Asset, ChainId, chains, currencyToUnit, unitToCurrency, with0x } from '@liquality/cryptoassets';
+import { Asset, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { ethers, Wallet } from 'ethers';
 import { createClient } from 'urql';
@@ -369,7 +370,7 @@ class HopSwapProvider extends SwapProvider {
         clientGQL = createClient({
           url: `${this.graphqlURLs.url}/${this.graphqlURLs[chainFrom.slug]}`,
         });
-        const { data } = await clientGQL.query(getTransferIdByTxHash(with0x(fromFundHash))).toPromise();
+        const { data } = await clientGQL.query(getTransferIdByTxHash(ensure0x(fromFundHash))).toPromise();
         transferId = data.transferSents?.[0]?.transferId;
         if (!transferId) return;
       }
