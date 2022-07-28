@@ -1,4 +1,5 @@
 import { EIP1559Fee } from '@chainify/types';
+import { ensure0x } from '@chainify/utils';
 import { Chain, Hop, HopBridge, TToken } from '@hop-protocol/sdk';
 import { Asset, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
@@ -369,7 +370,7 @@ class HopSwapProvider extends SwapProvider {
         clientGQL = createClient({
           url: `${this.graphqlURLs.url}/${this.graphqlURLs[chainFrom.slug]}`,
         });
-        const { data } = await clientGQL.query(getTransferIdByTxHash('0x' + fromFundHash)).toPromise();
+        const { data } = await clientGQL.query(getTransferIdByTxHash(ensure0x(fromFundHash))).toPromise();
         transferId = data.transferSents?.[0]?.transferId;
         if (!transferId) return;
       }
@@ -386,11 +387,16 @@ class HopSwapProvider extends SwapProvider {
       const client = this._getClient(network, walletId, to, toAccountId);
       const tx = await client.chain.getTransactionByHash(data[methodName]?.[0]?.transactionHash);
       if (tx && tx.confirmations && tx.confirmations >= 1) {
+        const isSuccessful = tx.status === 'SUCCESS' || Number(tx.status) === 1;
+        if (isSuccessful) {
+          this.updateBalances(network, walletId, [swap.toAccountId]);
+        }
+
         return {
           receiveTxHash: tx.hash,
           receiveTx: tx,
           endTime: Date.now(),
-          status: tx.status === 'SUCCESS' || Number(tx.status) === 1 ? 'SUCCESS' : 'FAILED',
+          status: isSuccessful ? 'SUCCESS' : 'FAILED',
         };
       }
     } catch (e) {
