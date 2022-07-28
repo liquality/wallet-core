@@ -47,6 +47,10 @@ const OUT_MEMO_TO_STATUS = {
   REFUND: 'REFUNDED',
 };
 
+const MINIMUM_SWAP_AMOUNTS: { [asset: string]: string } = {
+  BTC: '0.00010001',
+};
+
 /**
  * Converts a `BaseAmount` string into `PoolData` balance (always `1e8` decimal based)
  */
@@ -193,7 +197,7 @@ class ThorchainSwapProvider extends SwapProvider {
     try {
       return this._httpClient.nodeGet(`/thorchain/tx/${hash}`);
     } catch (e) {
-      // Error means tx not found
+      console.error(`Thorchain get transaction failed ${hash}`, e);
       return null;
     }
   }
@@ -504,8 +508,9 @@ class ThorchainSwapProvider extends SwapProvider {
     return null;
   }
 
-  async getMin(_quoteRequest: QuoteRequest) {
-    return new BN(0);
+  async getMin(quote: QuoteRequest) {
+    const min = MINIMUM_SWAP_AMOUNTS[quote.from] || '0';
+    return new BN(min);
   }
 
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<ThorchainSwapHistoryItem>) {
@@ -545,48 +550,49 @@ class ThorchainSwapProvider extends SwapProvider {
   async waitForReceive({ swap, network, walletId }: NextSwapActionRequest<ThorchainSwapHistoryItem>) {
     try {
       const thorchainTx = await this._getTransaction(swap.fromFundHash);
-      const receiveHash = thorchainTx?.observed_tx?.out_hashes?.[0];
-      if (receiveHash) {
-        const thorchainReceiveTx = await this._getTransaction(receiveHash);
-        if (thorchainReceiveTx) {
-          const memo = thorchainReceiveTx.observed_tx?.tx?.memo;
-          const memoAction = memo.split(':')[0];
+      if (thorchainTx) {
+        const receiveHash = thorchainTx.observed_tx.out_hashes?.[0];
+        if (receiveHash) {
+          const thorchainReceiveTx = await this._getTransaction(receiveHash);
+          if (thorchainReceiveTx) {
+            const memo = thorchainReceiveTx.observed_tx?.tx?.memo;
+            const memoAction = memo.split(':')[0];
 
-          let asset;
-          let accountId;
-          if (memoAction === 'OUT') {
-            asset = swap.to;
-            accountId = swap.toAccountId;
-          } else if (memoAction === 'REFUND') {
-            asset = swap.from;
-            accountId = swap.fromAccountId;
-          } else {
-            throw new Error(`ThorchainSwapProvider: Unknown memo action ${memoAction}.`);
-          }
+            let asset;
+            let accountId;
+            if (memoAction === 'OUT') {
+              asset = swap.to;
+              accountId = swap.toAccountId;
+            } else if (memoAction === 'REFUND') {
+              asset = swap.from;
+              accountId = swap.fromAccountId;
+            } else {
+              throw new Error(`ThorchainSwapProvider: Unknown memo action ${memoAction}.`);
+            }
 
-          const client = this.getClient(network, walletId, asset, accountId);
-          const receiveTx = await client.chain.getTransactionByHash(receiveHash);
+            const client = this.getClient(network, walletId, asset, accountId);
+            const receiveTx = await client.chain.getTransactionByHash(receiveHash);
 
-          if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
-            this.updateBalances(network, walletId, [accountId]);
-            const status = OUT_MEMO_TO_STATUS[memoAction];
-            return {
-              receiveTxHash: receiveTx.hash,
-              receiveTx: receiveTx,
-              endTime: Date.now(),
-              status,
-            };
-          } else {
-            return {
-              receiveTxHash: receiveTx.hash,
-              receiveTx: receiveTx,
-            };
+            if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
+              this.updateBalances(network, walletId, [accountId]);
+              const status = OUT_MEMO_TO_STATUS[memoAction];
+              return {
+                receiveTxHash: receiveTx.hash,
+                receiveTx: receiveTx,
+                endTime: Date.now(),
+                status,
+              };
+            } else {
+              return {
+                receiveTxHash: receiveTx.hash,
+                receiveTx: receiveTx,
+              };
+            }
           }
         }
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
-      else throw e;
+      console.error(`Thorchain waiting for receive failed ${swap.fromFundHash}`, e);
     }
   }
 
