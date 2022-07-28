@@ -202,9 +202,9 @@ class LiqualityBoostERC20toNative extends SwapProvider {
         amount: new BN(amountInNative),
       })) as BoostNativeERC20toNativeSwapQuote;
       const fromMinAmount = unitToCurrency(assets[quoteRequest.from], new BN(quote.toAmount));
-      // increase minimum amount with 5% to minimize calculation
-      // error and price fluctuation
-      return new BN(fromMinAmount).times(1.05);
+      // increase minimum amount with 50% to minimize calculation error and price fluctuation.
+      // When the quote is to small - 1-2$ AMMs are returning less than min and value is incorrect
+      return new BN(fromMinAmount).times(1.5);
     } catch (err) {
       console.warn(err);
       return new BN(0);
