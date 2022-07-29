@@ -30,7 +30,7 @@ export const getQuotes = async (
       const quote = await swapProvider
         .getQuote({ network, from, to, amount: new BigNumber(amount) })
         .catch(console.error);
-      return quote ? { ...quote, provider, fromAccountId, toAccountId } : null;
+      return quote ? { ...quote, from, to, provider, fromAccountId, toAccountId } : null;
     },
     { concurrency: 5 }
   );

@@ -107,8 +107,6 @@ class OneinchSwapProvider extends SwapProvider {
     const trade = await this._getQuote(chainIdFrom, from, to, fromAmountInUnit.toNumber());
     const toAmountInUnit = new BN(trade?.toTokenAmount);
     return {
-      from,
-      to,
       fromAmount: fromAmountInUnit.toFixed(),
       toAmount: toAmountInUnit.toFixed(),
     };
