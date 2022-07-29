@@ -75,7 +75,6 @@ export interface AccountInfo {
   address?: string;
 }
 
-
 export interface Account extends AccountDefinition {
   id: AccountId;
   walletId: WalletId;
@@ -121,6 +120,7 @@ export enum SwapProviderType {
   Thorchain = 'thorchain',
   Astroport = 'astroport',
   Hop = 'hop',
+  Jupiter = 'jupiter',
 }
 
 export interface BaseHistoryItem {

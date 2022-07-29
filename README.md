@@ -19,7 +19,7 @@ Wallet Core is a cryptocurrency wallet library in Typescript. It provides an abs
 - Blockchain communication under a common interface, powered by [Chainify](https://github.com/liquality/chainify)
 - Retriving balances
 - Sending transactions
-- Intra and cross chain swaps supporting a host of decentralised exchanges - Liquality, Thorchain, Uniswap, 1inch, Sovryn, Astroport etc.
+- Intra and cross chain swaps supporting a host of decentralised exchanges - Liquality, Thorchain, Uniswap, 1inch, Sovryn, Astroport, Jupiter etc.
 - Hardware wallet support
 
 # Install
@@ -87,4 +87,4 @@ yarn test
 ## Publish to npm
 
 - GitHub actions will publish to NPM automatically after a successful pull request merge.
-Releases will be listed here: [Releases](https://github.com/liquality/wallet-core/releases)
+  Releases will be listed here: [Releases](https://github.com/liquality/wallet-core/releases)
