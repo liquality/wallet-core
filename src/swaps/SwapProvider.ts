@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import store, { ActionContext } from '../store';
 import { createNotification } from '../store/broker/notification';
-import { AccountId, FiatRates, MarketData, Network, PairData, SwapHistoryItem } from '../store/types';
+import { AccountId, MarketData, Network, PairData, SwapHistoryItem } from '../store/types';
 import {
   ActionStatus,
   BaseSwapProviderConfig,
@@ -44,7 +44,7 @@ export abstract class SwapProvider {
   /**
    * Get min swap amount for given swap provider
    */
-  public abstract getMin(quoteRequest: QuoteRequest, fiatRates: FiatRates): Promise<BigNumber>;
+  public abstract getMin(quoteRequest: QuoteRequest): Promise<BigNumber>;
 
   /**
    * Get a quote for the specified parameters
