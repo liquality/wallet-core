@@ -286,9 +286,8 @@ export const fetchTerraToken = async (address: string) => {
 };
 
 export const fetchSolanaTokens = async (address: string) => {
-  const {
-    data: { tokens },
-  } = await HttpClient.get('https://token-list.solana.com/solana.tokenlist.json');
+  const { tokens } = await HttpClient.get('https://token-list.solana.com/solana.tokenlist.json');
+
   const token = tokens.filter(
     (t: { address: string; decimals: number; name: string; symbol: string }) => t.address === address
   )[0];

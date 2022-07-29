@@ -19,7 +19,7 @@ import {
 } from '@chainify/evm';
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
-import { SolanaChainProvider, SolanaNftProvider, SolanaWalletProvider } from '@chainify/solana';
+import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
 import { Address, Network as ChainifyNetwork } from '@chainify/types';
 import { BaseProvider, StaticJsonRpcProvider } from '@ethersproject/providers';
@@ -192,13 +192,8 @@ export function createSolanaClient(network: Network, mnemonic: string, accountIn
   const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath };
   const chainProvider = new SolanaChainProvider(solanaNetwork);
   const walletProvider = new SolanaWalletProvider(walletOptions, chainProvider);
-  const nftProvider = new SolanaNftProvider(walletProvider as any, {
-    url: 'https://ghi7f9miezr7.usemoralis.com:2053/server',
-    appId: 'T94TjnFcaFycYfHqkf227JmpZeEjGXmDWINkfJD2',
-    apiKey: 'iv94v0ZQgQfIkTe09QLple1DDAGbmAD8zX9BeVGo',
-  });
 
-  const client = new Client().connect(walletProvider).connect(nftProvider);
+  const client = new Client().connect(walletProvider);
 
   return client;
 }

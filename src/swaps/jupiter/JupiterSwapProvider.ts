@@ -137,22 +137,17 @@ class JupiterSwapProvider extends SwapProvider {
       setupTransaction -> swapTransaction -> cleanupTransaction and wait for each to be 'confirmed' before sending the next one.
     */
 
-    console.log(txTypes);
     for (let i = 0; i < txTypes.length; i++) {
       const tx = Transaction.from(Buffer.from(transactions[txTypes[i]], 'base64'));
-      console.log('broadcast', txTypes[i]);
+
       if (txTypes[i] === 'swapTransaction') {
         // @ts-ignore TODO: CAL should allow `any` for data
         swapTx = await client.wallet.sendTransaction({ transaction: tx, value: new BN(quote.fromAmount) });
         await connection.confirmTransaction(swapTx.hash);
-
-        console.log('swap tx', swapTx);
       } else {
         // @ts-ignore TODO: CAL should allow `any` for data
         const transaction = await client.wallet.sendTransaction({ transaction: tx, value: new BN(0) });
-        connection.confirmTransaction(transaction.hash);
-
-        console.log('transaction', transaction);
+        await connection.confirmTransaction(transaction.hash);
       }
     }
 
@@ -196,7 +191,7 @@ class JupiterSwapProvider extends SwapProvider {
   // "We recommend having at least 0.05 SOL for any transaction"
   // https://jup.ag/swap/SOL-USDT
 
-  // Here we are returning `33333333` Lamports because in wallet we multiply be 1.5 which
+  // Here we are returning `33333333` Lamports because in wallet we multiply by 1.5 which
   // output exactly 0.05 SOL
   getExtraAmountToExtractFromBalance() {
     return 33333333;
