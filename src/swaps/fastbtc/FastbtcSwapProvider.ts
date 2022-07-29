@@ -152,8 +152,6 @@ class FastbtcSwapProvider extends SwapProvider {
       currencyToUnit(cryptoassets[to], new BN(amount).minus(unitToCurrency(cryptoassets[from], FAST_BTC_SATOSHI_FEE)))
     ).times(1 - FAST_BTC_PERCENTAGE_FEE / 100);
     return {
-      from,
-      to,
       fromAmount: fromAmountInUnit.toFixed(),
       toAmount: toAmountInUnit.toFixed(),
     };
@@ -207,8 +205,8 @@ class FastbtcSwapProvider extends SwapProvider {
   }
 
   async getMin(_quoteRequest: QuoteRequest) {
-      const validAmountRange = await this._getTxAmount();
-      return new BN(validAmountRange.min)
+    const validAmountRange = await this._getTxAmount();
+    return new BN(validAmountRange.min);
   }
 
   async waitForSendConfirmations({ swap, network, walletId }: NextSwapActionRequest<FastBtcSwapHistoryItem>) {

@@ -196,8 +196,6 @@ class HopSwapProvider extends SwapProvider {
     const sendData = await bridge.getSendData(fromAmountInUnit.toString(), chainFrom, chainTo);
     if (!sendData) return null;
     return {
-      from,
-      to,
       fromAmount: fromAmountInUnit.toFixed(),
       toAmount: new BN(sendData.amountOut.toString()).toFixed(),
       hopAsset: bridgeAsset,
