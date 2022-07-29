@@ -14,39 +14,27 @@ export const enableSolanaChain = {
       enabledChains[walletId] = {};
 
       for (const network of Networks) {
-        const accountExistsAndProperlyInitialized = state.accounts[walletId][network].find(
-          (account: any) => account.chain === ChainId.Solana && account.assets?.length > 0
-        );
-        if (accountExistsAndProperlyInitialized) {
-          accounts[walletId][network] = [...state.accounts[walletId][network]];
-        } else {
-          const chain = chains[ChainId.Solana];
-          const derivationPath = getDerivationPath(ChainId.Solana, network, 0, AccountType.Default);
-          const solanaAccount = accountCreator({
-            walletId,
-            network,
-            account: {
-              name: `${chain.name} 1`,
-              alias: '',
-              chain: ChainId.Solana,
-              addresses: [],
-              assets: ['SOL'],
-              balances: {},
-              type: AccountType.Default,
-              index: 0,
-              derivationPath,
-              color: getNextAccountColor(ChainId.Solana, 0),
-            },
-          });
-          accounts[walletId][network] = [...state.accounts[walletId][network], solanaAccount];
-        }
+        const chain = chains[ChainId.Solana];
+        const derivationPath = getDerivationPath(ChainId.Solana, network, 0, AccountType.Default);
+        const solanaAccount = accountCreator({
+          walletId,
+          network,
+          account: {
+            name: `${chain.name} 1`,
+            alias: '',
+            chain: ChainId.Solana,
+            addresses: [],
+            assets: ['SOL'],
+            balances: {},
+            type: AccountType.Default,
+            index: 0,
+            derivationPath,
+            color: getNextAccountColor(ChainId.Solana, 0),
+          },
+        });
+        accounts[walletId][network] = [...state.accounts[walletId][network], solanaAccount];
 
-        const chainEnabled = state.enabledChains[walletId][network].includes(ChainId.Solana);
-        if (chainEnabled) {
-          enabledChains[walletId][network] = [...state.enabledChains[walletId][network]];
-        } else {
-          enabledChains[walletId][network] = [...state.enabledChains[walletId][network], ChainId.Solana];
-        }
+        enabledChains[walletId][network] = [...state.enabledChains[walletId][network], ChainId.Solana];
       }
     }
 
@@ -55,7 +43,7 @@ export const enableSolanaChain = {
       enabledAssets[network] = {};
       for (const walletId in state.enabledAssets[network]) {
         enabledAssets[network][walletId] = [...state.enabledAssets[network][walletId]];
-        if (!enabledAssets[network][walletId].includes('SOL')) enabledAssets[network][walletId].push('SOL');
+        enabledAssets[network][walletId].push('SOL');
       }
     }
 

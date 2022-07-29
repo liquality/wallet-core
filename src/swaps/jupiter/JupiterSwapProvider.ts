@@ -1,6 +1,6 @@
 import { TxStatus } from '@chainify/types';
 import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { Connection, Transaction } from '@solana/web3.js';
+import { Transaction } from '@solana/web3.js';
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,6 +19,7 @@ import {
   SwapStatus,
 } from '../types';
 
+const SOL_MINT_ADDRESS = 'So11111111111111111111111111111111111111112';
 export interface JupiterSwapHistoryItem extends SwapHistoryItem {
   info: object;
   swapTxHash: string;
@@ -86,10 +87,8 @@ class JupiterSwapProvider extends SwapProvider {
       return null;
     }
 
-    const solMintAddress = 'So11111111111111111111111111111111111111112';
-
-    const fromAddress = fromInfo.contractAddress || solMintAddress;
-    const toAddress = toInfo.contractAddress || solMintAddress;
+    const fromAddress = fromInfo.contractAddress || SOL_MINT_ADDRESS;
+    const toAddress = toInfo.contractAddress || SOL_MINT_ADDRESS;
 
     const fromAmountInUnit = currencyToUnit(fromInfo, new BN(amount)).toFixed();
 
@@ -116,12 +115,9 @@ class JupiterSwapProvider extends SwapProvider {
   }
 
   public async newSwap(quoteInput: SwapRequest<JupiterSwapHistoryItem>) {
-    const connection = new Connection(
-      'https://solana--mainnet.datahub.figment.io/apikey/d7d9844ccf72ad4fef9bc5caaa957a50',
-      'confirmed'
-    );
     const { network, walletId, quote } = quoteInput;
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
+    const connection = client.chain.getProvider();
     const [{ address }] = await client.wallet.getAddresses();
 
     const transactions = await this._getTransactions(quote.info, address);
