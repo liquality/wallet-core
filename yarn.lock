@@ -2375,6 +2375,7 @@ __metadata:
     "@xchainjs/xchain-util": ^0.6.0
     amplitude-js: 8.18.2
     bignumber.js: ^9.0.2
+    chainify: ^2.1.2
     detect-circular-deps: ^3.0.0
     direct-vuex: ^0.12.1
     eslint: ^8.9.0
@@ -4738,6 +4739,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chainify@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "chainify@npm:2.1.2"
+  dependencies:
+    future: 2.x
+    sequence: 2.x
+  checksum: 889dcb2073dfbc942f1cff231cf7e08d4ab3df3701c2293c4bbcf85c34a508506f37561c69a44e74189e6daea64c4b3b56ecb35dd19a736a49f3059797408d66
+  languageName: node
+  linkType: hard
+
 "chalk@npm:^1.1.3":
   version: 1.1.3
   resolution: "chalk@npm:1.1.3"
@@ -6937,6 +6948,13 @@ __metadata:
   version: 1.2.3
   resolution: "functions-have-names@npm:1.2.3"
   checksum: c3f1f5ba20f4e962efb71344ce0a40722163e85bee2101ce25f88214e78182d2d2476aa85ef37950c579eb6cf6ee811c17b3101bb84004bb75655f3e33f3fdb5
+  languageName: node
+  linkType: hard
+
+"future@npm:2.x":
+  version: 2.3.1
+  resolution: "future@npm:2.3.1"
+  checksum: 33e1514629216bd33ea6abd5ebd453544e00540d477ca4b66f6312d9f6d04703517cfd1cd9186b06fbd1fd627599dd54b1c795a76d694a51b1301c5df239d02e
   languageName: node
   linkType: hard
 
@@ -11101,6 +11119,13 @@ __metadata:
     range-parser: ~1.2.1
     statuses: 2.0.1
   checksum: 74fc07ebb58566b87b078ec63e5a3e41ecd987e4272ba67b7467e86c6ad51bc6b0b0154133b6d8b08a2ddda360464f71382f7ef864700f34844a76c8027817a8
+  languageName: node
+  linkType: hard
+
+"sequence@npm:2.x":
+  version: 2.2.1
+  resolution: "sequence@npm:2.2.1"
+  checksum: 4e3bd8697658d29fb92a0c847d54e743b637b22a4e5182e29a0622b6744bc83fa0feef631a97a9e0c78e29e45526ad0c39212d328188661e3d2730095897a0dd
   languageName: node
   linkType: hard
 
