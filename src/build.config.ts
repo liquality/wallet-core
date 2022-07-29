@@ -205,7 +205,6 @@ const config: WalletCoreConfig = {
         name: 'Jupiter',
         icon: 'jupiter.svg',
         type: SwapProviderType.Jupiter,
-        URL: 'https://solana--mainnet.datahub.figment.io/apikey/d7d9844ccf72ad4fef9bc5caaa957a50',
       },
       hop: {
         name: 'Hop',
