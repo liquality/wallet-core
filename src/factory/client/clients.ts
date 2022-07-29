@@ -193,7 +193,5 @@ export function createSolanaClient(network: Network, mnemonic: string, accountIn
   const chainProvider = new SolanaChainProvider(solanaNetwork);
   const walletProvider = new SolanaWalletProvider(walletOptions, chainProvider);
 
-  const client = new Client().connect(walletProvider);
-
-  return client;
+  return new Client().connect(walletProvider);
 }
