@@ -476,7 +476,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/bitcoin-ledger@npm:^1.2.12":
+"@chainify/bitcoin-ledger@npm:1.2.12":
   version: 1.2.12
   resolution: "@chainify/bitcoin-ledger@npm:1.2.12"
   dependencies:
@@ -493,7 +493,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/bitcoin@npm:1.2.12, @chainify/bitcoin@npm:^1.2.12":
+"@chainify/bitcoin@npm:1.2.12":
   version: 1.2.12
   resolution: "@chainify/bitcoin@npm:1.2.12"
   dependencies:
@@ -518,7 +518,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/client@npm:1.2.12, @chainify/client@npm:^1.2.12":
+"@chainify/client@npm:1.2.12":
   version: 1.2.12
   resolution: "@chainify/client@npm:1.2.12"
   dependencies:
@@ -531,7 +531,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/errors@npm:1.2.12, @chainify/errors@npm:^1.2.12":
+"@chainify/errors@npm:1.2.12":
   version: 1.2.12
   resolution: "@chainify/errors@npm:1.2.12"
   dependencies:
@@ -540,7 +540,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/evm-ledger@npm:^1.2.12":
+"@chainify/evm-ledger@npm:1.2.12":
   version: 1.2.12
   resolution: "@chainify/evm-ledger@npm:1.2.12"
   dependencies:
@@ -590,7 +590,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/hw-ledger@npm:1.2.12, @chainify/hw-ledger@npm:^1.2.12":
+"@chainify/hw-ledger@npm:1.2.12":
   version: 1.2.12
   resolution: "@chainify/hw-ledger@npm:1.2.12"
   dependencies:
@@ -611,7 +611,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/near@npm:^1.2.12":
+"@chainify/near@npm:1.2.12":
   version: 1.2.12
   resolution: "@chainify/near@npm:1.2.12"
   dependencies:
@@ -626,7 +626,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/solana@npm:^1.2.12":
+"@chainify/solana@npm:1.2.12":
   version: 1.2.12
   resolution: "@chainify/solana@npm:1.2.12"
   dependencies:
@@ -644,7 +644,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/terra@npm:^1.2.12":
+"@chainify/terra@npm:1.2.12":
   version: 1.2.12
   resolution: "@chainify/terra@npm:1.2.12"
   dependencies:
@@ -672,7 +672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/utils@npm:1.2.12, @chainify/utils@npm:^1.2.12":
+"@chainify/utils@npm:1.2.12":
   version: 1.2.12
   resolution: "@chainify/utils@npm:1.2.12"
   dependencies:
@@ -2254,18 +2254,18 @@ __metadata:
   dependencies:
     "@babel/types": ^7.17.0
     "@blobfishkate/sovryncontracts": 1.3.27
-    "@chainify/bitcoin": ^1.2.12
-    "@chainify/bitcoin-ledger": ^1.2.12
-    "@chainify/client": ^1.2.12
-    "@chainify/errors": ^1.2.12
+    "@chainify/bitcoin": 1.2.12
+    "@chainify/bitcoin-ledger": 1.2.12
+    "@chainify/client": 1.2.12
+    "@chainify/errors": 1.2.12
     "@chainify/evm": 1.2.12
-    "@chainify/evm-ledger": ^1.2.12
-    "@chainify/hw-ledger": ^1.2.12
-    "@chainify/near": ^1.2.12
-    "@chainify/solana": ^1.2.12
-    "@chainify/terra": ^1.2.12
+    "@chainify/evm-ledger": 1.2.12
+    "@chainify/hw-ledger": 1.2.12
+    "@chainify/near": 1.2.12
+    "@chainify/solana": 1.2.12
+    "@chainify/terra": 1.2.12
     "@chainify/types": 1.2.12
-    "@chainify/utils": ^1.2.12
+    "@chainify/utils": 1.2.12
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
     "@ethersproject/address": 5.6.0
