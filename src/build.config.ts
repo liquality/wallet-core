@@ -195,6 +195,7 @@ const config: WalletCoreConfig = {
   },
   discordUrl: 'https://discord.gg/Xsqw7PW8wk',
   networks: [Network.Mainnet, Network.Testnet],
+  //TODO(Koderholic: There is a discrepancy between this list and another list)
   chains: [
     ChainId.Bitcoin,
     ChainId.Ethereum,

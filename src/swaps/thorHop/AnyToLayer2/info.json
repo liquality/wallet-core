@@ -1,0 +1,7 @@
+{
+  "title": "Thorchain Boost (non-eth Native to Eth Layer 2 Native)",
+  "description": "The most secure, non-custodial way to swap across blockchains. Swap BTC, BNB, DOGE, LTC, BCH, some ERC20 to Layer2 Asset on (Polygon, Gnosis, Optimisim and Arbitrum)",
+  "pros": ["Cross-chain", "Secure", "ERC/native to layer 2 eth"],
+  "cons": ["Low liquidity", "Few pairs"],
+  "fees": ["0.5 - 1.0%", "up to 3% slippage", "$50 - $100 minimum trade size"]
+}

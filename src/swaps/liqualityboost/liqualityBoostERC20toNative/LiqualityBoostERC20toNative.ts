@@ -48,6 +48,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
   constructor(config: LiqualityBoostSwapProviderConfig) {
     super(config);
 
+    // TODO(Koderholic): instead of literals: 'liquality' and 'sovryn',  use SwapProviderType enum
     this.liqualitySwapProvider = getSwapProvider(this.config.network, 'liquality') as LiqualitySwapProvider;
     this.sovrynSwapProvider = getSwapProvider(this.config.network, 'sovryn') as SovrynSwapProvider;
     this.supportedBridgeAssets = this.config.supportedBridgeAssets;
@@ -127,9 +128,11 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       quote: this.swapAutomatedMarketMakerFormat(_quote),
     });
 
+    //TODO(Koderholic): Hopefully overriding some fields in result with those from _quote
+    // to,from and other fields might remain consistent while at the same time allowing status to be be added.
     return {
       ...result,
-      ..._quote,
+      ..._quote, 
       slippage: slippagePercentage * 100,
     };
   }
@@ -267,6 +270,8 @@ class LiqualityBoostERC20toNative extends SwapProvider {
       });
     }
 
+    //TODO(Koderholic): are the possible statuses that warant this if clause so much or hard to know ahead of time that they
+    // Couldn't have been handled in the first if statement?
     if (!updates && !this.lspEndStates.includes(swap.status)) {
       updates = await this.bridgeAssetToAutomatedMarketMaker[swap.bridgeAsset].performNextSwapAction(store, {
         network,

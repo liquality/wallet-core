@@ -40,8 +40,6 @@ const THORCHAIN_DECIMAL = 8;
 const SAFE_FEE_MULTIPLIER = 1.3;
 const MAX_FEE_SLIPPAGE_MULTIPLIER = 3;
 
-const SUPPORTED_CHAINS = [ChainId.Bitcoin, ChainId.Ethereum];
-
 const OUT_MEMO_TO_STATUS = {
   OUT: 'SUCCESS',
   REFUND: 'REFUNDED',
@@ -175,6 +173,8 @@ export interface ThorchainSwapQuote extends SwapQuote {
 class ThorchainSwapProvider extends SwapProvider {
   public config: ThorchainSwapProviderConfig;
   private _httpClient: HttpClient;
+  public readonly SUPPORTED_CHAINS = [ChainId.Bitcoin, ChainId.Ethereum];
+
 
   constructor(config: ThorchainSwapProviderConfig) {
     super(config);
@@ -218,7 +218,7 @@ class ThorchainSwapProvider extends SwapProvider {
 
   async getQuote({ from, to, amount }: QuoteRequest) {
     // Only ethereum, bitcoin and bc chains are supported
-    if (!SUPPORTED_CHAINS.includes(cryptoassets[from].chain) || !SUPPORTED_CHAINS.includes(cryptoassets[to].chain))
+    if (!this.SUPPORTED_CHAINS.includes(cryptoassets[from].chain) || !this.SUPPORTED_CHAINS.includes(cryptoassets[to].chain))
       return null;
 
     const pools = await this._getPools();

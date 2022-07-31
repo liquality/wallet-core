@@ -88,6 +88,7 @@ class HopSwapProvider extends SwapProvider {
     return networkToGasLimit[networkName];
   }
 
+  // TODO(Koderholic): It seems here that Hop will support Gnosis and Optimism which are not part of ChainId enum. Find why
   getChain(chainName: string) {
     const slugToChain: { [key: string]: Chain } = {
       [Hop.Chain.Ethereum.slug]: Hop.Chain.Ethereum,

@@ -23,6 +23,8 @@ export async function withLock<T>(
   }
 }
 
+//TODO(Koderholic): What are the specific usecases that motivated this utility.
+//It feels like it's been used indescrimately
 export async function withInterval<T>(func: HistoryUpdateFunction<T>): Promise<Partial<T>> {
   const updates = await func();
   if (updates) {
