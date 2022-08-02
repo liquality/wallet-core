@@ -1,4 +1,4 @@
-import { FeeDetails } from '@chainify/types';
+import { FeeDetails, Nullable } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
 import Vue from 'vue';
 import {
@@ -191,10 +191,54 @@ export default {
         const updatedAccount = {
           ..._account,
           balances,
-          loadingInitialBalance: false,
         };
 
         Vue.set(state.accounts[walletId]![network], index, updatedAccount);
+      }
+    }
+  },
+  UPDATE_MULTIPLE_BALANCES(
+    state: RootState,
+    {
+      network,
+      accountId,
+      walletId,
+      assets,
+      balances,
+    }: {
+      network: Network;
+      accountId: AccountId;
+      walletId: WalletId;
+      assets: Asset[];
+      balances: Nullable<string>[];
+    }
+  ) {
+    const wallet = state.accounts[walletId];
+
+    if (wallet) {
+      const accounts = wallet[network];
+
+      if (accounts) {
+        const index = accounts.findIndex((a) => a.id === accountId);
+
+        if (index >= 0) {
+          const account = accounts[index];
+          const currentBalances = { ...account.balances };
+
+          const updatedBalances = assets.reduce((result, asset, index) => {
+            if (balances[index]) {
+              result[asset] = String(balances[index]);
+            }
+            return result;
+          }, {} as Record<string, string>);
+
+          const updatedAccount = {
+            ...account,
+            balances: { ...currentBalances, ...updatedBalances },
+          };
+
+          Vue.set(wallet[network], index, updatedAccount);
+        }
       }
     }
   },
