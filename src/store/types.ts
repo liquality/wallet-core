@@ -75,7 +75,6 @@ export interface AccountInfo {
   address?: string;
 }
 
-
 export interface Account extends AccountDefinition {
   id: AccountId;
   walletId: WalletId;
@@ -115,7 +114,7 @@ export enum SwapProviderType {
   LiqualityBoostNativeToERC20 = 'liqualityBoostNativeToERC20',
   LiqualityBoostERC20ToNative = 'liqualityBoostERC20toNative',
   UniswapV2 = 'uniswapV2',
-  FastBTC = 'fastBTC',
+  FastBTCDeposit = 'fastBTC',
   OneInch = 'oneinchV4',
   Sovryn = 'sovryn',
   Thorchain = 'thorchain',
@@ -183,7 +182,7 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   claimFee: number;
   fromAmount: string;
   fromAccountId: AccountId;
-  provider: string;
+  provider: SwapProviderType;
   slippage: number;
   toAccountId: AccountId;
   toAmount: string;

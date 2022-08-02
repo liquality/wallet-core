@@ -17,7 +17,7 @@ export interface WalletCoreConfig {
   };
   swapProviders: {
     [key in Network]: {
-      [providerId: string]: SwapProviderDefinition;
+      [providerType in SwapProviderType]?: SwapProviderDefinition;
     };
   };
   networks: Network[];
@@ -118,33 +118,33 @@ const config: WalletCoreConfig = {
       },
     },
     mainnet: {
-      liquality: {
+      [SwapProviderType.Liquality]: {
         name: 'Liquality',
         icon: 'liquality.svg',
         type: SwapProviderType.Liquality,
         agent: process.env.VUE_APP_AGENT_MAINNET_URL || 'https://mainnet-dev-agent.liq-chainhub.net',
       },
-      liqualityBoostNativeToERC20: {
+      [SwapProviderType.LiqualityBoostNativeToERC20]: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostNativeToERC20,
         network: Network.Mainnet,
         icon: 'liqualityboost.svg',
         supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
-      liqualityBoostERC20toNative: {
+      [SwapProviderType.LiqualityBoostERC20ToNative]: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostERC20ToNative,
         network: Network.Mainnet,
         icon: 'liqualityboost.svg',
         supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
-      uniswapV2: {
+      [SwapProviderType.UniswapV2]: {
         name: 'Uniswap V2',
         icon: 'uniswap.svg',
         type: SwapProviderType.UniswapV2,
         routerAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
       },
-      oneinchV4: {
+      [SwapProviderType.OneInch]: {
         name: 'Oneinch V4',
         icon: 'oneinch.svg',
         type: SwapProviderType.OneInch,
@@ -158,13 +158,13 @@ const config: WalletCoreConfig = {
         },
         referrerFee: 0.3,
       },
-      fastBTC: {
+      [SwapProviderType.FastBTCDeposit]: {
         name: 'FastBTC',
         icon: 'sovryn.svg',
-        type: SwapProviderType.FastBTC,
+        type: SwapProviderType.FastBTCDeposit,
         bridgeEndpoint: 'http://3.131.33.161:3000/',
       },
-      sovryn: {
+      [SwapProviderType.Sovryn]: {
         name: 'Sovryn',
         icon: 'sovryn.svg',
         type: SwapProviderType.Sovryn,
@@ -172,20 +172,20 @@ const config: WalletCoreConfig = {
         routerAddressRBTC: SovrynMainnetAddresses.proxy3,
         rpcURL: 'https://mainnet.sovryn.app/rpc',
       },
-      thorchain: {
+      [SwapProviderType.Thorchain]: {
         name: 'Thorchain',
         icon: 'thorchain.svg',
         type: SwapProviderType.Thorchain,
         thornode: 'https://thornode.thorchain.info',
       },
-      astroport: {
+      [SwapProviderType.Astroport]: {
         name: 'Astroport',
         icon: 'astroport.svg',
         type: SwapProviderType.Astroport,
         URL: 'https://lcd.terra.dev',
         chainID: 'columbus-5',
       },
-      hop: {
+      [SwapProviderType.Hop]: {
         name: 'Hop',
         icon: 'hop.svg',
         type: SwapProviderType.Hop,
