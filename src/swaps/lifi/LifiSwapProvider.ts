@@ -1,7 +1,7 @@
 import { HttpClient } from '@chainify/client';
 import { EvmTypes } from '@chainify/evm';
 import { Transaction, TransactionRequest, TxStatus } from '@chainify/types';
-import LiFi, { ChainId, GasCost, LifiStep, Order, Orders, Step } from '@lifi/sdk';
+import LiFi, { ChainId, ConfigUpdate, GasCost, LifiStep, Order, Orders, RouteOptions, Step } from '@lifi/sdk';
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { ethers } from 'ethers';
@@ -43,17 +43,26 @@ class LifiSwapProvider extends EvmSwapProvider {
 
   constructor(config: LifiSwapProviderConfig) {
     super(config);
-    this._lifiClient = new LiFi();
+
+    const lifiConfig: ConfigUpdate = {
+      defaultRouteOptions: {
+        /*
+         * Default slippage should be in the range of 3% to 5%
+         */
+        slippage: config.slippage ?? 0.05, // 5 / 100 -> 5%
+        /*
+         * export declare const Orders: readonly ["RECOMMENDED", "FASTEST", "CHEAPEST", "SAFEST"];
+         * keep the "RECOMMENDED" as a default
+         */
+        order: config.order ?? Orders[0], // 'RECOMMENDED'
+        bridges: {
+          allow: ['connext'],
+        },
+      } as RouteOptions,
+    };
+
     this._httpClient = new HttpClient({ baseURL: this.config.apiURL });
-    /*
-     * Default slippage should be in the range of 3% to 5%
-     */
-    this.slippage = config.slippage ?? 0.05; // 5 / 100 -> 5%
-    /*
-     * export declare const Orders: readonly ["RECOMMENDED", "FASTEST", "CHEAPEST", "SAFEST"];
-     * keep the "RECOMMENDED" as a default
-     */
-    this.order = config.order ?? Orders[0]; // 'RECOMMENDED'
+    this._lifiClient = new LiFi(lifiConfig);
   }
 
   async getSupportedPairs() {
@@ -87,6 +96,7 @@ class LifiSwapProvider extends EvmSwapProvider {
 
     try {
       const lifiRoute = await this._lifiClient.getQuote(quoteRequest);
+      console.log('lifiRoute: ', lifiRoute);
       return { from, to, fromAmount: fromAmountInUnit, toAmount: lifiRoute.estimate.toAmount, lifiRoute };
     } catch (e) {
       console.warn('LifiSwapProvider: ', e);
@@ -113,11 +123,13 @@ class LifiSwapProvider extends EvmSwapProvider {
 
     const client = super.getClient(network, walletId, quote.from, quote.fromAccountId);
     const txData = route.transactionRequest as TransactionRequest;
+
     const fromFundTx = await client.wallet.sendTransaction({
       data: txData.data,
       to: txData.to,
       value: txData.value,
       gasLimit: txData.gasLimit,
+      fee: quote.fee,
     } as TransactionRequest);
 
     return {
@@ -133,6 +145,7 @@ class LifiSwapProvider extends EvmSwapProvider {
 
     if (feeRequest.txType in this._txTypes()) {
       const fees: EstimateFeeResponse = {};
+      // TODO: this fee is fee of internal step -> switch to gas limit
       const gasCost = (route.estimate.gasCosts as GasCost[])[0];
 
       const approvalData = await this.buildApprovalTx(feeRequest, false, route.estimate.approvalAddress);
@@ -145,7 +158,10 @@ class LifiSwapProvider extends EvmSwapProvider {
           feeRequest.quote.from,
           feeRequest.quote.fromAccountId
         );
-        approvalGas = (await client.chain.getProvider().estimateGas(approvalData)).toNumber();
+
+        approvalGas = (
+          await client.chain.getProvider().estimateGas({ ...approvalData, fee: feeRequest.quote.fee })
+        ).toNumber();
       }
 
       const nativeAsset = chains[cryptoassets[feeRequest.quote.from].chain].nativeAsset;
