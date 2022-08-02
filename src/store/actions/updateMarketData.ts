@@ -1,7 +1,7 @@
 import { ActionContext, rootActionContext } from '..';
 import buildConfig from '../../build.config';
 import { getSwapProvider } from '../../factory/swap';
-import { MarketData, Network } from '../types';
+import { MarketData, Network, SwapProviderType } from '../types';
 
 export const updateMarketData = async (
   context: ActionContext,
@@ -9,7 +9,7 @@ export const updateMarketData = async (
 ): Promise<{ network: Network; marketData: MarketData[] }> => {
   const { commit } = rootActionContext(context);
   const supportedPairResponses = await Promise.allSettled(
-    Object.keys(buildConfig.swapProviders[network]).map((provider) => {
+    Object.keys(buildConfig.swapProviders[network]).map((provider: SwapProviderType) => {
       const swapProvider = getSwapProvider(network, provider);
       return swapProvider.getSupportedPairs({ network }).then((pairs) => pairs.map((pair) => ({ ...pair, provider })));
     })

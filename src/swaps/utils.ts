@@ -18,7 +18,7 @@ const swapProviderInfo = {
   [SwapProviderType.UniswapV2]: uniswapInfo,
   [SwapProviderType.OneInch]: oneinchInfo,
   [SwapProviderType.Thorchain]: thorchainInfo,
-  [SwapProviderType.FastBTC]: fastbtcInfo,
+  [SwapProviderType.FastBTCDeposit]: fastbtcInfo,
   [SwapProviderType.LiqualityBoostNativeToERC20]: liqualityBoostNativeToERC20Info,
   [SwapProviderType.LiqualityBoostERC20ToNative]: liqualityBoostERC20toNativeInfo,
   [SwapProviderType.Sovryn]: sovrynInfo,
@@ -26,12 +26,15 @@ const swapProviderInfo = {
   [SwapProviderType.Hop]: hopInfo,
 };
 
-function getSwapProviderConfig(network: Network, providerId: string) {
+function getSwapProviderConfig(network: Network, providerId: SwapProviderType) {
   return buildConfig.swapProviders[network][providerId];
 }
 
-function getSwapProviderInfo(network: Network, providerId: string) {
+function getSwapProviderInfo(network: Network, providerId: SwapProviderType) {
   const config = getSwapProviderConfig(network, providerId);
+  if (!config) {
+    throw new Error(`Failed to retrieve swap provider config for \`${providerId}\` on ${network}`);
+  }
   return swapProviderInfo[config.type];
 }
 
