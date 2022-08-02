@@ -1,7 +1,7 @@
 import { HttpClient } from '@chainify/client';
 import { EvmTypes } from '@chainify/evm';
 import { Transaction, TransactionRequest, TxStatus } from '@chainify/types';
-import LiFi, { ChainId, ConfigUpdate, GasCost, LifiStep, Order, Orders, RouteOptions, Step } from '@lifi/sdk';
+import LiFi, { ChainId, ConfigUpdate, LifiStep, Order, Orders, RouteOptions, Step } from '@lifi/sdk';
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { ethers } from 'ethers';
@@ -145,23 +145,32 @@ class LifiSwapProvider extends EvmSwapProvider {
 
     if (feeRequest.txType in this._txTypes()) {
       const fees: EstimateFeeResponse = {};
-      // TODO: this fee is fee of internal step -> switch to gas limit
-      const gasCost = (route.estimate.gasCosts as GasCost[])[0];
+
+      const client = this.getClient(
+        feeRequest.network,
+        feeRequest.walletId,
+        feeRequest.quote.from,
+        feeRequest.quote.fromAccountId
+      );
 
       const approvalData = await this.buildApprovalTx(feeRequest, false, route.estimate.approvalAddress);
-
       let approvalGas = 0;
       if (approvalData) {
-        const client = this.getClient(
-          feeRequest.network,
-          feeRequest.walletId,
-          feeRequest.quote.from,
-          feeRequest.quote.fromAccountId
-        );
-
         approvalGas = (
           await client.chain.getProvider().estimateGas({ ...approvalData, fee: feeRequest.quote.fee })
         ).toNumber();
+      }
+
+      const txData = route.transactionRequest;
+      let txGas = 0;
+      try {
+        txGas = (
+          await client.chain
+            .getProvider()
+            .estimateGas({ data: txData?.data, to: txData?.to, from: txData?.from, value: txData?.value })
+        ).toNumber();
+      } catch {
+        txGas = txData?.gasLimit as number;
       }
 
       const nativeAsset = chains[cryptoassets[feeRequest.quote.from].chain].nativeAsset;
@@ -169,8 +178,8 @@ class LifiSwapProvider extends EvmSwapProvider {
       // have only one fee and it cannot be changed by user
       for (const feePrice of feeRequest.feePrices) {
         const gasPrice = new BN(feePrice).times(1e9); // ETH fee price is in gwei
-        const approvalFee = new BN(approvalGas).times(gasPrice);
-        fees[feePrice] = unitToCurrency(cryptoassets[nativeAsset], approvalFee.plus(gasCost.amount));
+        const fee = new BN(approvalGas).plus(txGas).times(1.1).times(gasPrice);
+        fees[feePrice] = unitToCurrency(cryptoassets[nativeAsset], fee);
       }
 
       return fees;
