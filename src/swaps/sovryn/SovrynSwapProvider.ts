@@ -91,8 +91,6 @@ class SovrynSwapProvider extends SwapProvider {
     const rate: ethers.BigNumber = await ssnContract.rateByPath(path, fromAmountInUnit);
 
     return {
-      from,
-      to,
       fromAmount: fromAmountInUnit,
       toAmount: rate.toString(),
       path: path,

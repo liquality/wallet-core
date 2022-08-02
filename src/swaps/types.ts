@@ -12,13 +12,13 @@ export interface LiqualityBoostSwapProviderConfig extends BaseSwapProviderConfig
 }
 
 export interface GetQuoteResult {
-  from: Asset;
-  to: Asset;
   fromAmount: string;
   toAmount: string;
 }
 
 export interface SwapQuote extends GetQuoteResult {
+  from: Asset;
+  to: Asset;
   provider: string;
   fromAccountId: AccountId;
   toAccountId: AccountId;
@@ -28,8 +28,8 @@ export interface SwapQuote extends GetQuoteResult {
 
 export type QuoteRequest = {
   network: Network;
-  from: string;
-  to: string;
+  from: Asset;
+  to: Asset;
   amount: BigNumber;
   walletId?: string;
   fromAccountId?: AccountId;

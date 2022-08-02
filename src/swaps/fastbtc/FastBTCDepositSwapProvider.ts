@@ -55,17 +55,17 @@ export interface FastBtcDepositHistory {
   valueBtc: number;
 }
 
-export interface FastBtcSwapHistoryItem extends SwapHistoryItem {
+export interface FastBtcDepositSwapHistoryItem extends SwapHistoryItem {
   swapTxHash: string;
   swapTx: Transaction<BitcoinTypes.Transaction>;
 }
 
-export interface FastBtcSwapProviderConfig extends BaseSwapProviderConfig {
+export interface FastBtcDepositSwapProviderConfig extends BaseSwapProviderConfig {
   bridgeEndpoint: string;
 }
 
-class FastbtcSwapProvider extends SwapProvider {
-  config: FastBtcSwapProviderConfig;
+class FastBTCDepositSwapProvider extends SwapProvider {
+  config: FastBtcDepositSwapProviderConfig;
   socketConnection: Socket;
 
   async connectSocket() {
@@ -152,8 +152,6 @@ class FastbtcSwapProvider extends SwapProvider {
       currencyToUnit(cryptoassets[to], new BN(amount).minus(unitToCurrency(cryptoassets[from], FAST_BTC_SATOSHI_FEE)))
     ).times(1 - FAST_BTC_PERCENTAGE_FEE / 100);
     return {
-      from,
-      to,
       fromAmount: fromAmountInUnit.toFixed(),
       toAmount: toAmountInUnit.toFixed(),
     };
@@ -207,11 +205,11 @@ class FastbtcSwapProvider extends SwapProvider {
   }
 
   async getMin(_quoteRequest: QuoteRequest) {
-      const validAmountRange = await this._getTxAmount();
-      return new BN(validAmountRange.min)
+    const validAmountRange = await this._getTxAmount();
+    return new BN(validAmountRange.min);
   }
 
-  async waitForSendConfirmations({ swap, network, walletId }: NextSwapActionRequest<FastBtcSwapHistoryItem>) {
+  async waitForSendConfirmations({ swap, network, walletId }: NextSwapActionRequest<FastBtcDepositSwapHistoryItem>) {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
@@ -228,7 +226,7 @@ class FastbtcSwapProvider extends SwapProvider {
     }
   }
 
-  async waitForReceive({ swap, network, walletId }: NextSwapActionRequest<FastBtcSwapHistoryItem>) {
+  async waitForReceive({ swap, network, walletId }: NextSwapActionRequest<FastBtcDepositSwapHistoryItem>) {
     try {
       const toChain = cryptoassets[swap.to].chain;
       const toAddressRaw = await this.getSwapAddress(network, walletId, swap.to, swap.toAccountId);
@@ -274,7 +272,7 @@ class FastbtcSwapProvider extends SwapProvider {
 
   async performNextSwapAction(
     _store: ActionContext,
-    { network, walletId, swap }: NextSwapActionRequest<FastBtcSwapHistoryItem>
+    { network, walletId, swap }: NextSwapActionRequest<FastBtcDepositSwapHistoryItem>
   ) {
     switch (swap.status) {
       case 'WAITING_FOR_SEND_CONFIRMATIONS':
@@ -347,4 +345,4 @@ class FastbtcSwapProvider extends SwapProvider {
   }
 }
 
-export { FastbtcSwapProvider };
+export { FastBTCDepositSwapProvider };

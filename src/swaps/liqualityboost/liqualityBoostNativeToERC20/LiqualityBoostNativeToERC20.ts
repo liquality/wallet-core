@@ -3,7 +3,7 @@ import BN from 'bignumber.js';
 import { getSwapProvider } from '../../../factory';
 import { ActionContext } from '../../../store';
 import { withInterval } from '../../../store/actions/performNextAction/utils';
-import { Asset, Network, SwapHistoryItem, WalletId } from '../../../store/types';
+import { Asset, Network, SwapHistoryItem, SwapProviderType, WalletId } from '../../../store/types';
 import { getNativeAsset, isERC20 } from '../../../utils/asset';
 import { prettyBalance } from '../../../utils/coinFormatter';
 import { AstroportSwapProvider } from '../../astroport/AstroportSwapProvider';
@@ -45,13 +45,19 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
   constructor(config: LiqualityBoostSwapProviderConfig) {
     super(config);
 
-    this.liqualitySwapProvider = getSwapProvider(this.config.network, 'liquality') as LiqualitySwapProvider;
-    this.sovrynSwapProvider = getSwapProvider(this.config.network, 'sovryn') as SovrynSwapProvider;
+    this.liqualitySwapProvider = getSwapProvider(
+      this.config.network,
+      SwapProviderType.Liquality
+    ) as LiqualitySwapProvider;
+    this.sovrynSwapProvider = getSwapProvider(this.config.network, SwapProviderType.Sovryn) as SovrynSwapProvider;
     this.supportedBridgeAssets = this.config.supportedBridgeAssets;
 
     if (this.config.network === 'mainnet') {
-      this.oneinchSwapProvider = getSwapProvider(this.config.network, 'oneinchV4') as OneinchSwapProvider;
-      this.astroportSwapProvider = getSwapProvider(this.config.network, 'astroport') as AstroportSwapProvider;
+      this.oneinchSwapProvider = getSwapProvider(this.config.network, SwapProviderType.OneInch) as OneinchSwapProvider;
+      this.astroportSwapProvider = getSwapProvider(
+        this.config.network,
+        SwapProviderType.Astroport
+      ) as AstroportSwapProvider;
       this.bridgeAssetToAutomatedMarketMaker = {
         MATIC: this.oneinchSwapProvider,
         ETH: this.oneinchSwapProvider,
