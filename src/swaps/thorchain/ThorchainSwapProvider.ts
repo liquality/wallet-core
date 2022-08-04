@@ -2,12 +2,7 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/
 import { Client, HttpClient } from '@chainify/client';
 import { Transaction } from '@chainify/types';
 import { ChainId, chains, currencyToUnit, isEthereumChain, unitToCurrency } from '@liquality/cryptoassets';
-import {
-  getDoubleSwapOutput,
-  getDoubleSwapSlip,
-  getSwapMemo,
-  getValueOfAsset1InAsset2,
-} from '@thorchain/asgardex-util';
+import { getDoubleSwapOutput, getSwapMemo, getValueOfAsset1InAsset2 } from '@thorchain/asgardex-util';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import { assetFromString, BaseAmount, baseAmount, baseToAsset } from '@xchainjs/xchain-util';
 import BN, { BigNumber } from 'bignumber.js';
@@ -15,11 +10,11 @@ import * as ethers from 'ethers';
 import { mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import buildConfig from '../../build.config';
-import { ActionContext } from '../../store';
+import store, { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
 import { isERC20 } from '../../utils/asset';
-import { prettyBalance } from '../../utils/coinFormatter';
+import { fiatToCrypto, prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
 import { ChainNetworks } from '../../utils/networks';
@@ -38,7 +33,6 @@ import {
 // Pool balances are denominated with 8 decimals
 const THORCHAIN_DECIMAL = 8;
 const SAFE_FEE_MULTIPLIER = 1.3;
-const MAX_FEE_SLIPPAGE_MULTIPLIER = 3;
 
 const SUPPORTED_CHAINS = [ChainId.Bitcoin, ChainId.Ethereum];
 
@@ -154,7 +148,6 @@ export enum ThorchainTxTypes {
 
 export interface ThorchainSwapHistoryItem extends SwapHistoryItem {
   receiveFee: string;
-  maxFeeSlippageMultiplier: number;
   approveTxHash: string;
   approveTx: Transaction;
   fromFundHash: string;
@@ -193,7 +186,7 @@ class ThorchainSwapProvider extends SwapProvider {
     try {
       return this._httpClient.nodeGet(`/thorchain/tx/${hash}`);
     } catch (e) {
-      // Error means tx not found
+      console.error(`Thorchain get transaction failed ${hash}`, e);
       return null;
     }
   }
@@ -212,11 +205,17 @@ class ThorchainSwapProvider extends SwapProvider {
     return router;
   }
 
-  async getQuote({ from, to, amount }: QuoteRequest) {
-    // Only ethereum, bitcoin and bc chains are supported
-    if (!SUPPORTED_CHAINS.includes(cryptoassets[from].chain) || !SUPPORTED_CHAINS.includes(cryptoassets[to].chain))
-      return null;
-
+  async getOutput({
+    from,
+    to,
+    fromAmountInUnit,
+    slippage,
+  }: {
+    from: Asset;
+    to: Asset;
+    fromAmountInUnit: BigNumber;
+    slippage: number;
+  }) {
     const pools = await this._getPools();
 
     const fromPoolData = pools.find((pool) => pool.asset === toThorchainAsset(from));
@@ -224,7 +223,7 @@ class ThorchainSwapProvider extends SwapProvider {
 
     if (!fromPoolData || !toPoolData) return null; // Pool doesn't exist
     if (fromPoolData.status.toLowerCase() !== 'available' || toPoolData.status.toLowerCase() !== 'available')
-      return null; // Pool is not available
+      return null; // Pool not available
 
     const getPool = (poolData: ThorchainPool) => {
       return {
@@ -236,14 +235,11 @@ class ThorchainSwapProvider extends SwapProvider {
     const fromPool = getPool(fromPoolData);
     const toPool = getPool(toPoolData);
 
-    const fromAmountInUnit = currencyToUnit(cryptoassets[from], new BN(amount));
     const baseInputAmount = baseAmount(fromAmountInUnit, cryptoassets[from].decimals);
     const inputAmount = convertBaseAmountDecimal(baseInputAmount, 8);
 
     // For RUNE it's `getSwapOutput`
     const swapOutput = getDoubleSwapOutput(inputAmount, fromPool, toPool);
-    // TODO: test slippage
-    const slippage = getDoubleSwapSlip(inputAmount, fromPool, toPool);
 
     const baseNetworkFee = await this.networkFees(to);
     if (!baseNetworkFee) throw new Error(`ThorchainSwapProvider: baseNetworkFee not found while getting quote.`);
@@ -263,14 +259,36 @@ class ThorchainSwapProvider extends SwapProvider {
       SAFE_FEE_MULTIPLIER
     );
     const toAmountInUnit = currencyToUnit(cryptoassets[to], baseToAsset(swapOutput).amount());
+
+    // Substract swap.receiveFee from toAmount as this is the minimum limit that you are going to receive
+    const baseOutputAmount = baseAmount(toAmountInUnit.minus(receiveFeeInUnit), cryptoassets[to].decimals);
+    const slippageCoefficient = new BN(1).minus(slippage);
+    const minimumOutput = baseOutputAmount.amount().multipliedBy(slippageCoefficient).dp(0);
+
+    return minimumOutput;
+  }
+
+  async getQuote(quoteRequest: QuoteRequest) {
+    const { from, to, amount } = quoteRequest;
+    // Only ethereum, bitcoin and bc chains are supported
+    if (!SUPPORTED_CHAINS.includes(cryptoassets[from].chain) || !SUPPORTED_CHAINS.includes(cryptoassets[to].chain))
+      return null;
+
+    // Slippage must be higher for small value swaps
+    const min = await this.getMin(quoteRequest);
+    const slippage = new BN(amount).gt(min.times(2)) ? 0.03 : 0.05;
+
+    const fromAmountInUnit = currencyToUnit(cryptoassets[from], new BN(amount));
+    const toAmountInUnit = await this.getOutput({ from, to, fromAmountInUnit, slippage });
+
+    if (!toAmountInUnit) {
+      return null;
+    }
+
     return {
-      from,
-      to,
       fromAmount: fromAmountInUnit.toFixed(),
       toAmount: toAmountInUnit.toFixed(),
-      receiveFee: receiveFeeInUnit.toFixed(),
-      slippage: slippage.toNumber(),
-      maxFeeSlippageMultiplier: MAX_FEE_SLIPPAGE_MULTIPLIER,
+      slippage: slippage * 1000, // Convert to bips
     };
   }
 
@@ -412,14 +430,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const toChain = cryptoassets[swap.to].chain;
     const toAddressRaw = await this.getSwapAddress(network, walletId, swap.to, swap.toAccountId);
     const toAddress = chains[toChain].formatAddress(toAddressRaw);
-    // Substract swap.receiveFee from toAmount as this is the minimum limit that you are going to receive
-    const baseOutputAmount = baseAmount(
-      new BigNumber(swap.toAmount).minus(swap.receiveFee),
-      cryptoassets[swap.to].decimals
-    );
-    const slippageCoefficient = new BN(1).minus(swap.slippage);
-    const minimumOutput = baseOutputAmount.amount().multipliedBy(slippageCoefficient).dp(0);
-    const limit = convertBaseAmountDecimal(baseAmount(minimumOutput, cryptoassets[swap.to].decimals), 8);
+    const limit = convertBaseAmountDecimal(baseAmount(new BN(swap.toAmount), cryptoassets[swap.to].decimals), 8);
     const thorchainAsset = assetFromString(toThorchainAsset(swap.to));
     if (!thorchainAsset) {
       throw new Error('Thorchain asset does not exist');
@@ -466,7 +477,6 @@ class ThorchainSwapProvider extends SwapProvider {
     return {
       id: uuidv4(),
       fee: quote.fee,
-      slippage: 50,
       ...updates,
     };
   }
@@ -504,8 +514,13 @@ class ThorchainSwapProvider extends SwapProvider {
     return null;
   }
 
-  async getMin(_quoteRequest: QuoteRequest) {
-    return new BN(0);
+  async getMin(quote: QuoteRequest) {
+    const fiatRates = store.state.fiatRates;
+    let min = new BN('0');
+    if (fiatRates && fiatRates[quote.from]) {
+      min = new BN(fiatToCrypto(200, fiatRates[quote.from]));
+    }
+    return min;
   }
 
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<ThorchainSwapHistoryItem>) {
@@ -545,48 +560,49 @@ class ThorchainSwapProvider extends SwapProvider {
   async waitForReceive({ swap, network, walletId }: NextSwapActionRequest<ThorchainSwapHistoryItem>) {
     try {
       const thorchainTx = await this._getTransaction(swap.fromFundHash);
-      const receiveHash = thorchainTx?.observed_tx?.out_hashes?.[0];
-      if (receiveHash) {
-        const thorchainReceiveTx = await this._getTransaction(receiveHash);
-        if (thorchainReceiveTx) {
-          const memo = thorchainReceiveTx.observed_tx?.tx?.memo;
-          const memoAction = memo.split(':')[0];
+      if (thorchainTx) {
+        const receiveHash = thorchainTx.observed_tx.out_hashes?.[0];
+        if (receiveHash) {
+          const thorchainReceiveTx = await this._getTransaction(receiveHash);
+          if (thorchainReceiveTx) {
+            const memo = thorchainReceiveTx.observed_tx?.tx?.memo;
+            const memoAction = memo.split(':')[0];
 
-          let asset;
-          let accountId;
-          if (memoAction === 'OUT') {
-            asset = swap.to;
-            accountId = swap.toAccountId;
-          } else if (memoAction === 'REFUND') {
-            asset = swap.from;
-            accountId = swap.fromAccountId;
-          } else {
-            throw new Error(`ThorchainSwapProvider: Unknown memo action ${memoAction}.`);
-          }
+            let asset;
+            let accountId;
+            if (memoAction === 'OUT') {
+              asset = swap.to;
+              accountId = swap.toAccountId;
+            } else if (memoAction === 'REFUND') {
+              asset = swap.from;
+              accountId = swap.fromAccountId;
+            } else {
+              throw new Error(`ThorchainSwapProvider: Unknown memo action ${memoAction}.`);
+            }
 
-          const client = this.getClient(network, walletId, asset, accountId);
-          const receiveTx = await client.chain.getTransactionByHash(receiveHash);
+            const client = this.getClient(network, walletId, asset, accountId);
+            const receiveTx = await client.chain.getTransactionByHash(receiveHash);
 
-          if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
-            this.updateBalances(network, walletId, [accountId]);
-            const status = OUT_MEMO_TO_STATUS[memoAction];
-            return {
-              receiveTxHash: receiveTx.hash,
-              receiveTx: receiveTx,
-              endTime: Date.now(),
-              status,
-            };
-          } else {
-            return {
-              receiveTxHash: receiveTx.hash,
-              receiveTx: receiveTx,
-            };
+            if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
+              this.updateBalances(network, walletId, [accountId]);
+              const status = OUT_MEMO_TO_STATUS[memoAction];
+              return {
+                receiveTxHash: receiveTx.hash,
+                receiveTx: receiveTx,
+                endTime: Date.now(),
+                status,
+              };
+            } else {
+              return {
+                receiveTxHash: receiveTx.hash,
+                receiveTx: receiveTx,
+              };
+            }
           }
         }
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
-      else throw e;
+      console.error(`Thorchain waiting for receive failed ${swap.fromFundHash}`, e);
     }
   }
 

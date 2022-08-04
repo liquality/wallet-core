@@ -4,7 +4,7 @@ import { ActionContext } from '..';
 import buildConfig from '../../build.config';
 import { getSwapProvider } from '../../factory/swap';
 import { SwapQuote } from '../../swaps/types';
-import { AccountId, Asset, Network } from '../types';
+import { AccountId, Asset, Network, SwapProviderType } from '../types';
 
 // TODO: is this an action at this point? Or should it be in utils
 export const getQuotes = async (
@@ -24,13 +24,13 @@ export const getQuotes = async (
   }
   const quotes = await Bluebird.map(
     Object.keys(buildConfig.swapProviders[network]),
-    async (provider) => {
+    async (provider: SwapProviderType) => {
       const swapProvider = getSwapProvider(network, provider);
       // Quote errors should not halt the process
       const quote = await swapProvider
         .getQuote({ network, from, to, amount: new BigNumber(amount) })
         .catch(console.error);
-      return quote ? { ...quote, provider, fromAccountId, toAccountId } : null;
+      return quote ? { ...quote, from, to, provider, fromAccountId, toAccountId } : null;
     },
     { concurrency: 5 }
   );
