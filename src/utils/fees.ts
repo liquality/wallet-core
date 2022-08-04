@@ -47,7 +47,6 @@ function isEIP1559Fees(chain: ChainId) {
 }
 
 
-//For bitcoin we calculate fee differently thats we we need this
 async function getSendAmountFee(accountId: AccountId, asset: Asset, amount?: BN) {
   const getMax = amount === undefined
   const sendFees: {
