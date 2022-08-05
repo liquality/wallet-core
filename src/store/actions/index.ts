@@ -14,6 +14,7 @@ export * from './disableEthereumInjection';
 export * from './enableAssets';
 export * from './enableEthereumInjection';
 export * from './exportPrivateKey';
+export * from './fetchTokenDetails';
 export * from './forgetDappConnections';
 export * from './getLockForAsset';
 export * from './getQuotes';
