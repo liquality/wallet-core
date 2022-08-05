@@ -1,0 +1,394 @@
+import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider, BitcoinTypes } from '@chainify/bitcoin';
+import { Client } from '@chainify/client';
+import { EvmChainProvider, EvmTypes, EvmWalletProvider } from '@chainify/evm';
+import { Transaction } from '@chainify/types';
+import { JsonRpcProvider } from '@ethersproject/providers';
+import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import BN from 'bignumber.js';
+import * as ethers from 'ethers';
+import { v4 as uuidv4 } from 'uuid';
+import { buildConfig } from '../..';
+import { ActionContext } from '../../store';
+import { withInterval } from '../../store/actions/performNextAction/utils';
+import { Network, SwapHistoryItem, WalletId } from '../../store/types';
+import { prettyBalance } from '../../utils/coinFormatter';
+import cryptoassets from '../../utils/cryptoassets';
+import { ChainNetworks } from '../../utils/networks';
+import { SwapProvider } from '../SwapProvider';
+import {
+  BaseSwapProviderConfig,
+  EstimateFeeRequest,
+  EstimateFeeResponse,
+  NextSwapActionRequest,
+  QuoteRequest,
+  SwapQuote,
+  SwapRequest,
+  SwapStatus,
+} from '../types';
+
+export interface FastBtcWithdrawSwapHistoryItem extends SwapHistoryItem {
+  transferId: string;
+  swapTxHash: string;
+  swapTx: Transaction<EvmTypes.EthersTransactionResponse>;
+  receiveTxHash: string;
+  receiveTx: Transaction<BitcoinTypes.Transaction>;
+}
+
+export interface FastBtcWithdrawSwapProviderConfig extends BaseSwapProviderConfig {
+  network: Network;
+  routerAddress: string;
+}
+
+const BitcoinTransfer =
+  '(address rskAddress, uint8 status, uint8 nonce, uint8 feeStructureIndex, uint32 blockNumber, uint40 totalAmountSatoshi, string btcAddress)';
+
+const ABI = [
+  'event NewBitcoinTransfer(bytes32 indexed transferId, string btcAddress, uint256 nonce, uint256 amountSatoshi, uint256 feeSatoshi, address indexed rskAddress)',
+  'event BitcoinTransferStatusUpdated(bytes32 indexed transferId, uint8 newStatus)',
+  'event BitcoinTransferBatchSending(bytes32 bitcoinTxHash, uint8 transferBatchSize)',
+  'function minTransferSatoshi() view returns (uint40)',
+  'function maxTransferSatoshi() view returns (uint40)',
+  'function calculateCurrentFeeSatoshi(uint256 amountSatoshi) public view returns (uint256)',
+  'function transferToBtc (string calldata btcAddress) external payable',
+  `function getTransferByTransferId(bytes32 transferId) public view returns (${BitcoinTransfer})`,
+];
+
+/// @dev Status of an rBTC-to-BTC transfer.
+enum BitcoinTransferStatus {
+  NOT_APPLICABLE = 0, // the transfer slot has not been initialized
+  NEW, // the transfer was initiated
+  SENDING, // the federators have approved this transfer as part of a transfer batch
+  MINED, // the transfer was confirmedly mined in Bitcoin blockchain
+  REFUNDED, // the transfer was refunded
+  RECLAIMED, // the transfer was reclaimed by the user
+}
+
+interface BitcoinTransfer {
+  rskAddress: string; // source rskAddress
+  status: BitcoinTransferStatus; // the current status
+  nonce: number; // each Bitcoin address can be reused up to 255 times
+  feeStructureIndex: number; // the fee calculation to be applied to this transfer
+  blockNumber: number; // the RSK block number where this was initialized
+  totalAmountSatoshi: number; // the number of BTC satoshis that the user sent
+  btcAddress: string; // the BTC address in legacy or Bech32 encoded format
+}
+
+class FastBTCWithdrawSwapProvider extends SwapProvider {
+  config: FastBtcWithdrawSwapProviderConfig;
+  _provider: JsonRpcProvider;
+
+  constructor(config: FastBtcWithdrawSwapProviderConfig) {
+    super(config);
+    const rpcUrl = buildConfig.rskRpcUrls[this.config.network];
+    const chainId = ChainNetworks[ChainId.Rootstock][this.config.network].chainId;
+    this._provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl, chainId);
+  }
+
+  getFastBtcBridge(provider: JsonRpcProvider) {
+    const fastBtcBridge = new ethers.Contract(this.config.routerAddress, ABI, provider);
+    return fastBtcBridge;
+  }
+
+  async getLimits() {
+    const fastBtcBridge = this.getFastBtcBridge(this._provider);
+    const minInSatoshi = await fastBtcBridge.minTransferSatoshi();
+    const maxInSatosih = await fastBtcBridge.maxTransferSatoshi();
+    const min = unitToCurrency(cryptoassets.BTC, minInSatoshi);
+    const max = unitToCurrency(cryptoassets.BTC, maxInSatosih);
+
+    return { min, max };
+  }
+
+  public getClient(network: Network, walletId: string, asset: string, accountId: string) {
+    return super.getClient(network, walletId, asset, accountId) as Client<EvmChainProvider, EvmWalletProvider>;
+  }
+
+  public getReceiveClient(network: Network, walletId: string, asset: string, accountId: string) {
+    return super.getClient(network, walletId, asset, accountId) as Client<
+      BitcoinEsploraApiProvider,
+      BitcoinBaseWalletProvider
+    >;
+  }
+
+  async getSupportedPairs() {
+    const { min, max } = await this.getLimits();
+    return [
+      {
+        from: 'RBTC',
+        to: 'BTC',
+        rate: '0.998',
+        min: min.toFixed(),
+        max: max.toFixed(),
+      },
+    ];
+  }
+
+  async getQuote(quoteRequest: QuoteRequest) {
+    const { from, to, amount } = quoteRequest;
+    if (from !== 'RBTC' || to !== 'BTC') {
+      return null;
+    }
+
+    const fastBtcBridge = this.getFastBtcBridge(this._provider);
+    const fromAmountInSatoshi = new BN(currencyToUnit(cryptoassets.BTC, new BN(amount)));
+    const feeSatoshi: ethers.BigNumber = await fastBtcBridge.calculateCurrentFeeSatoshi(
+      ethers.BigNumber.from(fromAmountInSatoshi.toFixed())
+    );
+    const fromAmountInUnit = currencyToUnit(cryptoassets[from], new BN(amount));
+    const toAmountInUnit = fromAmountInSatoshi.minus(new BN(feeSatoshi.toString()));
+
+    return {
+      // TODO: Why is from amount being set in every quote call? It should be in one place only (getQuotes action)
+      fromAmount: fromAmountInUnit.toFixed(),
+      toAmount: toAmountInUnit.toFixed(),
+    };
+  }
+
+  async buildSwapTx({ network, walletId, quote }: { network: Network; walletId: WalletId; quote: SwapQuote }) {
+    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
+    const fastBtcBridge = this.getFastBtcBridge(client.chain.getProvider());
+    // Assuming valid bitcoin address
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+    const fromAddress = chains[cryptoassets.RBTC.chain].formatAddress(fromAddressRaw);
+    const toAddress = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
+
+    const data = await fastBtcBridge.interface.encodeFunctionData('transferToBtc', [toAddress]);
+    const swapTx = {
+      from: fromAddress,
+      to: fastBtcBridge.address,
+      value: ethers.BigNumber.from(quote.fromAmount),
+      data,
+    };
+
+    return swapTx;
+  }
+
+  async sendSwap({ network, walletId, quote }: SwapRequest) {
+    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
+    const fastBtcBridge = this.getFastBtcBridge(client.chain.getProvider());
+    // Assuming valid bitcoin address
+    const toAddress = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
+
+    await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
+    const data = await fastBtcBridge.interface.encodeFunctionData('transferToBtc', [toAddress]);
+    const swapTx = await client.wallet.sendTransaction({
+      to: fastBtcBridge.address,
+      value: new BN(quote.fromAmount),
+      data,
+    });
+
+    return {
+      status: 'WAITING_FOR_SEND_CONFIRMATIONS',
+      swapTx,
+      swapTxHash: swapTx.hash,
+    };
+  }
+
+  async newSwap({ network, walletId, quote }: SwapRequest) {
+    const updates = await this.sendSwap({ network, walletId, quote });
+
+    return {
+      id: uuidv4(),
+      fee: quote.fee,
+      slippage: 50,
+      ...updates,
+    };
+  }
+
+  async estimateFees({ network, walletId, quote, feePrices }: EstimateFeeRequest) {
+    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
+    const swapTx = await this.buildSwapTx({ network, walletId, quote });
+    const gasLimit = await client.chain.getProvider().estimateGas(swapTx);
+    const fees: EstimateFeeResponse = {};
+    for (const feePrice of feePrices) {
+      const gasPrice = new BN(feePrice).times(1e9); // ETH fee price is in gwei
+      const fee = new BN(gasLimit.toString()).times(1.1).times(gasPrice);
+      fees[feePrice] = unitToCurrency(cryptoassets.RBTC, fee);
+    }
+
+    return fees;
+  }
+
+  /**
+   * TODO: this is called very often from clients, so making a network call each time will be very intensive
+   * The same case for other providers
+   */
+  async getMin() {
+    const { min } = await this.getLimits();
+    return min;
+  }
+
+  async waitForSendConfirmations({ swap, network, walletId }: NextSwapActionRequest<FastBtcWithdrawSwapHistoryItem>) {
+    const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
+
+    try {
+      const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
+      if (tx && tx.confirmations && tx.confirmations > 0) {
+        if (!tx.logs) {
+          throw new Error('FastBTC logs missing');
+        }
+        const receipt = await client.chain.getProvider().getTransactionReceipt(swap.swapTxHash);
+        const fastBtcBridge = this.getFastBtcBridge(client.chain.getProvider());
+        const events = receipt.logs.map((log) => fastBtcBridge.interface.parseLog(log));
+        const event = events.find((event) => event.name === 'NewBitcoinTransfer');
+        if (!event) {
+          throw new Error('FastBTC NewBitcoinTransfer event not found');
+        }
+        const transferId: string = event.args.transferId;
+
+        return {
+          transferId,
+          status: 'WAITING_FOR_RECEIVE',
+        };
+      }
+    } catch (e) {
+      if (e.name === 'TxNotFoundError') console.warn(e);
+      else throw e;
+    }
+  }
+
+  async waitForReceive({ swap, network, walletId }: NextSwapActionRequest<FastBtcWithdrawSwapHistoryItem>) {
+    try {
+      const fastBtcBridge = this.getFastBtcBridge(this._provider);
+      const statusUpdateFilter = fastBtcBridge.filters.BitcoinTransferStatusUpdated(swap.transferId);
+      const stausUpdateEvents = await fastBtcBridge.queryFilter(statusUpdateFilter, swap.swapTx.blockNumber);
+      if (stausUpdateEvents.length > 0) {
+        for (const statusUpdateEvent of stausUpdateEvents) {
+          if (statusUpdateEvent.args!.newStatus === BitcoinTransferStatus.SENDING) {
+            const transferBlockNumber = statusUpdateEvent.blockNumber;
+            const transferFilter = fastBtcBridge.filters.BitcoinTransferBatchSending();
+            const transferEvents = await fastBtcBridge.queryFilter(
+              transferFilter,
+              transferBlockNumber,
+              transferBlockNumber
+            );
+            const transferEvent = transferEvents[0];
+            const receiveTxHash = transferEvent.args!.bitcoinTxHash.replace('0x', '');
+            const receiveClient = this.getReceiveClient(network, walletId, 'BTC', swap.toAccountId);
+            const receiveTx = await receiveClient.chain.getTransactionByHash(receiveTxHash);
+            if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
+              return {
+                receiveTxHash,
+                receiveTx,
+                endTime: Date.now(),
+                status: 'SUCCESS',
+              };
+            }
+            return {
+              receiveTxHash,
+              receiveTx,
+              status: 'WAITING_FOR_RECEIVE_CONFIRMATIONS',
+            };
+          }
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async waitForReceiveConfirmations({
+    swap,
+    network,
+    walletId,
+  }: NextSwapActionRequest<FastBtcWithdrawSwapHistoryItem>) {
+    const client = this.getReceiveClient(network, walletId, 'BTC', swap.toAccountId);
+
+    try {
+      const tx = await client.chain.getTransactionByHash(swap.receiveTxHash);
+      if (tx && tx.confirmations && tx.confirmations > 0) {
+        return {
+          receiveTx: tx,
+          endTime: Date.now(),
+          status: 'SUCCESS',
+        };
+      }
+    } catch (e) {
+      if (e.name === 'TxNotFoundError') console.warn(e);
+      else throw e;
+    }
+  }
+
+  async performNextSwapAction(
+    _store: ActionContext,
+    { network, walletId, swap }: NextSwapActionRequest<FastBtcWithdrawSwapHistoryItem>
+  ) {
+    switch (swap.status) {
+      case 'WAITING_FOR_SEND_CONFIRMATIONS':
+        return withInterval(async () => this.waitForSendConfirmations({ swap, network, walletId }));
+      case 'WAITING_FOR_RECEIVE':
+        return withInterval(async () => this.waitForReceive({ swap, network, walletId }));
+      case 'WAITING_FOR_RECEIVE_CONFIRMATIONS':
+        return withInterval(async () => this.waitForReceiveConfirmations({ swap, network, walletId }));
+    }
+  }
+
+  protected _getStatuses(): Record<string, SwapStatus> {
+    return {
+      WAITING_FOR_SEND_CONFIRMATIONS: {
+        step: 0,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
+        notification() {
+          return {
+            message: 'Swap initiated',
+          };
+        },
+      },
+      WAITING_FOR_RECEIVE: {
+        step: 1,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
+      },
+      WAITING_FOR_RECEIVE_CONFIRMATIONS: {
+        step: 2,
+        label: 'Swapping {from}',
+        filterStatus: 'PENDING',
+      },
+      SUCCESS: {
+        step: 3,
+        label: 'Completed',
+        filterStatus: 'COMPLETED',
+        notification(swap: any) {
+          return {
+            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
+          };
+        },
+      },
+      FAILED: {
+        step: 3,
+        label: 'Swap Failed',
+        filterStatus: 'REFUNDED',
+        notification() {
+          return {
+            message: 'Swap failed',
+          };
+        },
+      },
+    };
+  }
+
+  protected _txTypes() {
+    return {
+      SWAP: 'SWAP',
+    };
+  }
+
+  protected _fromTxType(): string | null {
+    return this._txTypes().SWAP;
+  }
+
+  protected _toTxType(): string | null {
+    return null;
+  }
+
+  protected _timelineDiagramSteps(): string[] {
+    return ['SWAP', 'RECEIVE'];
+  }
+
+  protected _totalSteps(): number {
+    return 4;
+  }
+}
+
+export { FastBTCWithdrawSwapProvider };
