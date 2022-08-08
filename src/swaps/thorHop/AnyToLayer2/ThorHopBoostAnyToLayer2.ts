@@ -33,15 +33,19 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
     super(config);
 
     this.thorchainSwapProvider = getSwapProvider(Network.Mainnet, SwapProviderType.Thorchain) as ThorchainSwapProvider;
-    this.hopSwapProvider = getSwapProvider(Network.Testnet, SwapProviderType.Hop) as HopSwapProvider;
+    this.hopSwapProvider = getSwapProvider(Network.Mainnet, SwapProviderType.Hop) as HopSwapProvider;
 
   }
   
 
   async getQuote({ network, from, to, amount }: QuoteRequest) {
+
+    console.log('Came here');
     // Validate input
     const bridgeAsset = cryptoassets[to].matchingAsset as string;
-    if (network === Network.Testnet || amount.lte(0) || (!isEthereumNativeAsset(to) && !isERC20(to)) || !bridgeAsset) return null;
+    if (network === Network.Testnet || amount.lte(0) || (!isEthereumNativeAsset(to) && !isERC20(to)) || !bridgeAsset || from === bridgeAsset) return null;
+
+    console.log('passed validation');
 
     // Get rate for swap from non-Eth Native or ETH / ERC20 to Mainnet Eth or ERC20
     const quote = (await this.thorchainSwapProvider.getQuote({
@@ -51,9 +55,15 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
       amount,
     }));
     if (!quote) return null;
+    console.log('from  ==>', from);
+    console.log('bridgeAsset ==>  ',bridgeAsset);
+
+    console.log('scaled through first leg');
 
     // Get rate for transfer from ETH / ERC20 mainnet to ETH / ERC20 Layer2
+    console.log('ToAmount ==> ', quote.toAmount);
     const toAssetQuantity = unitToCurrency(assets[bridgeAsset], new BN(quote.toAmount));
+    console.log('toAssetQuantity ==> ', toAssetQuantity);
     const finalQuote = await this.hopSwapProvider.getQuote({
       network,
       from: bridgeAsset,
@@ -61,6 +71,9 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
       amount: toAssetQuantity,
     });
     if (!finalQuote) return null;
+
+    console.log('scaled through  seconnd leg');
+    console.log('finalquote==> ', finalQuote);
 
     return {
       from,

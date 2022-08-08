@@ -195,7 +195,7 @@ const config: WalletCoreConfig = {
         name: 'ThorHop Boost',
         type: SwapProviderType.ThorHopBoostAnyToLayer2,
         network: Network.Mainnet,
-        icon: 'thorHopBoost.svg',
+        icon: 'hop.svg',
         supportedBridgeAssets: ['ETH','USDC','USDT','DAI'],
       },
     },
