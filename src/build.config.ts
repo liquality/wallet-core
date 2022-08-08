@@ -34,6 +34,9 @@ export interface WalletCoreConfig {
   rskRpcUrls: {
     [key in Network]: string;
   };
+  resolutionService: string;
+  tldAPI: string;
+  alchemyKey: string;
 }
 
 const config: WalletCoreConfig = {
@@ -208,6 +211,9 @@ const config: WalletCoreConfig = {
     ChainId.Avalanche,
   ],
   supportedBridgeAssets: ['MATIC', 'RBTC', 'AVAX'],
+  resolutionService : 'https://unstoppabledomains.g.alchemy.com/domains/',
+  tldAPI : 'https://resolve.unstoppabledomains.com/supported_tlds',
+  alchemyKey : 'bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa'
 };
 
 export default config;
