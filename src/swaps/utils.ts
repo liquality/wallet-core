@@ -11,6 +11,7 @@ import oneinchInfo from '../swaps/oneinch/info.json';
 import sovrynInfo from '../swaps/sovryn/info.json';
 import thorchainInfo from '../swaps/thorchain/info.json';
 import uniswapInfo from '../swaps/uniswap/info.json';
+import thorHopAnyToLayer2Info from '../swaps/thorHop/AnyToLayer2/info.json';
 import { LiqualitySwapProvider } from './liquality/LiqualitySwapProvider';
 
 const swapProviderInfo = {
@@ -24,6 +25,7 @@ const swapProviderInfo = {
   [SwapProviderType.Sovryn]: sovrynInfo,
   [SwapProviderType.Astroport]: astroportInfo,
   [SwapProviderType.Hop]: hopInfo,
+  [SwapProviderType.ThorHopBoostAnyToLayer2]: thorHopAnyToLayer2Info,
 };
 
 function getSwapProviderConfig(network: Network, providerId: string) {
