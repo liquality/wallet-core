@@ -3,7 +3,7 @@ import BN from 'bignumber.js';
 import { getSwapProvider } from '../../../factory';
 import { ActionContext } from '../../../store';
 import { withInterval } from '../../../store/actions/performNextAction/utils';
-import { Asset, Network, SwapHistoryItem, WalletId } from '../../../store/types';
+import { Asset, Network, SwapHistoryItem, SwapProviderType, WalletId } from '../../../store/types';
 import { getNativeAsset, isERC20 } from '../../../utils/asset';
 import { prettyBalance } from '../../../utils/coinFormatter';
 import { AstroportSwapProvider } from '../../astroport/AstroportSwapProvider';
@@ -48,13 +48,19 @@ class LiqualityBoostERC20toNative extends SwapProvider {
   constructor(config: LiqualityBoostSwapProviderConfig) {
     super(config);
 
-    this.liqualitySwapProvider = getSwapProvider(this.config.network, 'liquality') as LiqualitySwapProvider;
-    this.sovrynSwapProvider = getSwapProvider(this.config.network, 'sovryn') as SovrynSwapProvider;
+    this.liqualitySwapProvider = getSwapProvider(
+      this.config.network,
+      SwapProviderType.Liquality
+    ) as LiqualitySwapProvider;
+    this.sovrynSwapProvider = getSwapProvider(this.config.network, SwapProviderType.Sovryn) as SovrynSwapProvider;
     this.supportedBridgeAssets = this.config.supportedBridgeAssets;
 
     if (this.config.network === Network.Mainnet) {
-      this.oneinchSwapProvider = getSwapProvider(this.config.network, 'oneinchV4') as OneinchSwapProvider;
-      this.astroportSwapProvider = getSwapProvider(this.config.network, 'astroport') as AstroportSwapProvider;
+      this.oneinchSwapProvider = getSwapProvider(this.config.network, SwapProviderType.OneInch) as OneinchSwapProvider;
+      this.astroportSwapProvider = getSwapProvider(
+        this.config.network,
+        SwapProviderType.Astroport
+      ) as AstroportSwapProvider;
       this.bridgeAssetToAutomatedMarketMaker = {
         MATIC: this.oneinchSwapProvider,
         ETH: this.oneinchSwapProvider,
@@ -202,9 +208,9 @@ class LiqualityBoostERC20toNative extends SwapProvider {
         amount: new BN(amountInNative),
       })) as BoostNativeERC20toNativeSwapQuote;
       const fromMinAmount = unitToCurrency(assets[quoteRequest.from], new BN(quote.toAmount));
-      // increase minimum amount with 5% to minimize calculation
-      // error and price fluctuation
-      return new BN(fromMinAmount).times(1.05);
+      // increase minimum amount with 50% to minimize calculation error and price fluctuation.
+      // When the quote is to small - 1-2$ AMMs are returning less than min and value is incorrect
+      return new BN(fromMinAmount).times(1.5);
     } catch (err) {
       console.warn(err);
       return new BN(0);

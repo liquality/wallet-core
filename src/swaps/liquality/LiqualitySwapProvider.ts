@@ -127,8 +127,6 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     const toAmount = currencyToUnit(cryptoassets[to], new BN(amount).times(new BN(market.rate)));
 
     return {
-      from,
-      to,
       fromAmount: fromAmount.toFixed(),
       toAmount: toAmount.toFixed(),
       min: new BN(market.min),

@@ -1,7 +1,7 @@
 import buildConfig from '../../build.config';
 import { Network, SwapProviderType } from '../../store/types';
 import { AstroportSwapProvider } from '../../swaps/astroport/AstroportSwapProvider';
-import { FastbtcSwapProvider } from '../../swaps/fastbtc/FastbtcSwapProvider';
+import { FastBTCDepositSwapProvider } from '../../swaps/fastbtc/FastBTCDepositSwapProvider';
 import { HopSwapProvider } from '../../swaps/hop/HopSwapProvider';
 import { JupiterSwapProvider } from '../../swaps/jupiter/JupiterSwapProvider';
 import { LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
@@ -20,15 +20,18 @@ const providers = {
   [SwapProviderType.Thorchain]: ThorchainSwapProvider,
   [SwapProviderType.LiqualityBoostNativeToERC20]: LiqualityBoostNativeToERC20,
   [SwapProviderType.LiqualityBoostERC20ToNative]: LiqualityBoostERC20toNative,
-  [SwapProviderType.FastBTC]: FastbtcSwapProvider,
+  [SwapProviderType.FastBTCDeposit]: FastBTCDepositSwapProvider,
   [SwapProviderType.Sovryn]: SovrynSwapProvider,
   [SwapProviderType.Astroport]: AstroportSwapProvider,
   [SwapProviderType.Hop]: HopSwapProvider,
   [SwapProviderType.Jupiter]: JupiterSwapProvider,
 };
 
-const createSwapProvider = (network: Network, providerId: string) => {
+const createSwapProvider = (network: Network, providerId: SwapProviderType) => {
   const swapProviderConfig = buildConfig.swapProviders[network][providerId];
+  if (!swapProviderConfig) {
+    throw new Error(`Failed to retrieve swap provider config for \`${providerId}\` on ${network}`);
+  }
   const SwapProvider = providers[swapProviderConfig.type];
   // @ts-ignore TODO: i'll fix it
   return new SwapProvider({ ...swapProviderConfig, providerId });
@@ -41,9 +44,9 @@ const mapLegacyProvidersToSupported: { [index: string]: string } = {
 
 const swapProviderCache: { [key: string]: SwapProvider } = {};
 
-function getSwapProvider(network: Network, providerId: string): SwapProvider {
+function getSwapProvider(network: Network, providerId: SwapProviderType): SwapProvider {
   const supportedProviderId = mapLegacyProvidersToSupported[providerId]
-    ? mapLegacyProvidersToSupported[providerId]
+    ? (mapLegacyProvidersToSupported[providerId] as SwapProviderType)
     : providerId;
   const cacheKey = [network, supportedProviderId].join('-');
 

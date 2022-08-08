@@ -71,8 +71,6 @@ class AstroportSwapProvider extends SwapProvider {
     }
 
     return {
-      from,
-      to,
       fromAmount: fromAmountInUnit,
       toAmount: rate.amount?.toString() || rate.return_amount?.toString(),
       fromTokenAddress,

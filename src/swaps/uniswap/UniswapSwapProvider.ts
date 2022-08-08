@@ -152,8 +152,6 @@ class UniswapSwapProvider extends SwapProvider {
 
     const toAmountInUnit = currencyToUnit(cryptoassets[to], new BN(trade.outputAmount.toExact()));
     return {
-      from,
-      to,
       fromAmount: fromAmountInUnit.toFixed(),
       toAmount: toAmountInUnit.toFixed(),
     };
