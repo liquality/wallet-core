@@ -29,7 +29,7 @@ import cryptoassets from '../../../utils/cryptoassets';
 
 const slippagePercentage = 3;
 
-class ThorHopBoostAnyToLayer2EVM extends SwapProvider {
+class ThorHopBoostAnyToLayer2 extends SwapProvider {
 
   config: BaseSwapProviderConfig;
   private thorchainSwapProvider: ThorchainSwapProvider;
@@ -344,4 +344,4 @@ class ThorHopBoostAnyToLayer2EVM extends SwapProvider {
   }
 }
 
-export { ThorHopBoostAnyToLayer2EVM };
+export { ThorHopBoostAnyToLayer2 };

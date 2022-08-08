@@ -10,6 +10,7 @@ import { OneinchSwapProvider } from '../../swaps/oneinch/OneinchSwapProvider';
 import { SovrynSwapProvider } from '../../swaps/sovryn/SovrynSwapProvider';
 import { SwapProvider } from '../../swaps/SwapProvider';
 import { ThorchainSwapProvider } from '../../swaps/thorchain/ThorchainSwapProvider';
+import { ThorHopBoostAnyToLayer2 } from '../../swaps/thorHop/AnyToLayer2/ThorHopBoostAnyToLayer2';
 import { UniswapSwapProvider } from '../../swaps/uniswap/UniswapSwapProvider';
 
 const providers = {
@@ -23,6 +24,7 @@ const providers = {
   [SwapProviderType.Sovryn]: SovrynSwapProvider,
   [SwapProviderType.Astroport]: AstroportSwapProvider,
   [SwapProviderType.Hop]: HopSwapProvider,
+  [SwapProviderType.ThorHopBoostAnyToLayer2]: ThorHopBoostAnyToLayer2,
 };
 
 const createSwapProvider = (network: Network, providerId: string) => {

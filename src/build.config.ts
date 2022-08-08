@@ -191,6 +191,13 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.Hop,
         graphqlBaseURL: 'https://api.thegraph.com/subgraphs/name/hop-protocol',
       },
+      thorHopBoostAnyToLayer2: {
+        name: 'ThorHop Boost',
+        type: SwapProviderType.ThorHopBoostAnyToLayer2,
+        network: Network.Mainnet,
+        icon: 'thorHopBoost.svg',
+        supportedBridgeAssets: ['ETH','USDC','USDT','DAI'],
+      },
     },
   },
   discordUrl: 'https://discord.gg/Xsqw7PW8wk',

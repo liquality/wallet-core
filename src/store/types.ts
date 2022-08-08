@@ -121,6 +121,7 @@ export enum SwapProviderType {
   Thorchain = 'thorchain',
   Astroport = 'astroport',
   Hop = 'hop',
+  ThorHopBoostAnyToLayer2 = "thorHopBoostAnyToLayer2"
 }
 
 export interface BaseHistoryItem {
