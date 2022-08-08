@@ -1,4 +1,5 @@
 import { HttpClient } from '@chainify/client';
+import { Nullable } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
 import { Resolution } from '@unstoppabledomains/resolution';
 import buildConfig from '../build.config';
@@ -7,8 +8,8 @@ const reg = RegExp('^[.a-z0-9-]+$')
 const resolution = new Resolution()
 
 interface NameResolver {
-    reverseLookup(address: string): Promise<string | null>
-    lookupDomain(address: string, chainId: ChainId): Promise<string | null>
+    reverseLookup(address: string): Promise<Nullable<string>>
+    lookupDomain(address: string, chainId: ChainId): Promise<Nullable<string>>
     isValidTLD(domain: string): Promise<boolean>
 }
 
@@ -49,7 +50,7 @@ export class UNSResolver implements NameResolver {
 
     }
 
-    async lookupDomain(address: string, chainId: ChainId): Promise<string | null> {
+    async lookupDomain(address: string, chainId: ChainId): Promise<Nullable<string>> {
         try {
             const domain = this.preparedDomain(address)
             if (await this.isValidTLD(domain)) {
@@ -85,7 +86,7 @@ export class UNSResolver implements NameResolver {
         return retVal
     }
 
-    async reverseLookup(address: string): Promise<string | null> {
+    async reverseLookup(address: string): Promise<Nullable<string>> {
         try {
             const domain = await resolution.reverse(address)
             return domain

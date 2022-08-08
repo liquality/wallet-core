@@ -2291,7 +2291,7 @@ __metadata:
     "@uniswap/v2-core": ^1.0.1
     "@uniswap/v2-periphery": ^1.1.0-beta.0
     "@uniswap/v2-sdk": ^3.0.1
-    "@unstoppabledomains/resolution": ^8.3.1
+    "@unstoppabledomains/resolution": 8.3.1
     "@xchainjs/xchain-util": ^0.6.0
     amplitude-js: 8.18.2
     bignumber.js: ^9.0.2
@@ -3287,7 +3287,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unstoppabledomains/resolution@npm:^8.3.1":
+"@unstoppabledomains/resolution@npm:8.3.1":
   version: 8.3.1
   resolution: "@unstoppabledomains/resolution@npm:8.3.1"
   dependencies:
