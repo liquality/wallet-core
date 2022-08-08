@@ -344,12 +344,12 @@ const NFT_ASSETS_MAP: {
     testnet: {
       marketplaceName: 'OpenSea',
       url: `https://testnet.opensea.io/`,
-      transfer: `https://testnets.opensea.io/assets/{contract_address}/{token_id}`,
+      transfer: `https://testnets.opensea.io/assets/{contract_address}`,
     },
     mainnet: {
       marketplaceName: 'OpenSea',
       url: `https://opensea.io/`,
-      transfer: `https://opensea.io/assets/{asset}/{contract_address}/{token_id}`,
+      transfer: `https://opensea.io/assets/{chain}/{contract_address}`,
     },
   },
 };
