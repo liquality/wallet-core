@@ -1,28 +1,21 @@
-import { Chain } from '@hop-protocol/sdk';
-import { assets, ChainId, chains, unitToCurrency } from '@liquality/cryptoassets';
+import { assets, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { getSwapProvider } from '../../../factory';
 import { ActionContext } from '../../../store';
-import { Network, SwapHistoryItem, SwapProviderType, WalletId } from '../../../store/types';
+import { Network, SwapProviderType, WalletId } from '../../../store/types';
 import { HopSwapHistoryItem, HopSwapProvider, HopTxTypes } from '../../hop/HopSwapProvider';
-import {
-  LiqualitySwapHistoryItem,
-} from '../../liquality/LiqualitySwapProvider';
 import { SwapProvider } from '../../SwapProvider';
-import { ThorchainSwapHistoryItem, ThorchainSwapProvider, ThorchainSwapProviderConfig, ThorchainSwapQuote, ThorchainTxTypes } from '../../thorchain/ThorchainSwapProvider';
+import { ThorchainSwapHistoryItem, ThorchainSwapProvider, ThorchainSwapQuote, ThorchainTxTypes } from '../../thorchain/ThorchainSwapProvider';
 import {
   BaseSwapProviderConfig,
   EstimateFeeRequest,
-  EstimateFeeResponse,
   NextSwapActionRequest,
   QuoteRequest,
-  SwapQuote,
   SwapRequest,
   SwapStatus
 } from '../../types';
 import { BoostHistoryItem, BoostNextSwapActionRequest } from '../types';
 import { BoostStage } from '../types';
-import { update } from 'lodash';
 import { withInterval } from '../../../store/actions/performNextAction/utils';
 import { isERC20, isEthereumNativeAsset } from '../../../utils/asset';
 import cryptoassets from '../../../utils/cryptoassets';
