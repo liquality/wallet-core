@@ -10,7 +10,8 @@ import { HopSwapHistoryItem } from '../hop/HopSwapProvider';
 import { TransactionResponse } from '@ethersproject/providers';
 
 export interface BoostHistoryItem extends EvmSwapHistoryItem {
-  approveTx: Transaction |TransactionResponse;
+  approveTx: Transaction;
+  approveTxOnHop: TransactionResponse;
   hopAsset: TToken;
   hopChainFrom: Chain;
   hopChainTo: Chain;
@@ -30,14 +31,10 @@ export interface BoostNextSwapActionRequest extends Partial<NextSwapActionReques
   swapHop?: HopSwapHistoryItem;
 }
 
-//ThorHop
-
 // Boost config
 export interface ThorHopSwapProviderConfig extends ThorchainSwapProviderConfig {
   graphqlBaseURL: string;
 }
-
-
 export interface ThorHopBoostSwapQuote extends ThorchainSwapQuote {
   from: string;
   to: string;

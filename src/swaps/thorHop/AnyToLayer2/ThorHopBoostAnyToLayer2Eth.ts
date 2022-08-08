@@ -1,15 +1,15 @@
 import { Chain } from '@hop-protocol/sdk';
 import { assets, ChainId, chains, unitToCurrency } from '@liquality/cryptoassets';
-import BN from 'bignumber.js';
+import BN, { BigNumber } from 'bignumber.js';
 import { getSwapProvider } from '../../../factory';
 import { ActionContext } from '../../../store';
 import { Network, SwapHistoryItem, SwapProviderType, WalletId } from '../../../store/types';
-import { HopSwapHistoryItem, HopSwapProvider } from '../../hop/HopSwapProvider';
+import { HopSwapHistoryItem, HopSwapProvider, HopTxTypes } from '../../hop/HopSwapProvider';
 import {
   LiqualitySwapHistoryItem,
 } from '../../liquality/LiqualitySwapProvider';
 import { SwapProvider } from '../../SwapProvider';
-import { ThorchainSwapHistoryItem, ThorchainSwapProvider, ThorchainSwapProviderConfig, ThorchainSwapQuote } from '../../thorchain/ThorchainSwapProvider';
+import { ThorchainSwapHistoryItem, ThorchainSwapProvider, ThorchainSwapProviderConfig, ThorchainSwapQuote, ThorchainTxTypes } from '../../thorchain/ThorchainSwapProvider';
 import {
   BaseSwapProviderConfig,
   EstimateFeeRequest,
@@ -89,7 +89,7 @@ class ThorHopBoostAnyToLayer2EVM extends SwapProvider {
     const result = await this.thorchainSwapProvider.newSwap({
       network,
       walletId,
-      quote: this.swapThorchainFormat(_quote),
+      quote: this.swapThorchainFormat(_quote) as  ThorchainSwapHistoryItem,
     });
 
     _quote.currentSwapLeg = BoostStage.FirstLeg
@@ -108,8 +108,8 @@ class ThorHopBoostAnyToLayer2EVM extends SwapProvider {
     if (swap.currentSwapLeg === BoostStage.FirstLeg && swap.status === 'WAITING_FOR_RECEIVE') {
       updates = await withInterval(async () =>
         this.finalizeFirstSwapLegAndStartSecondLeg({
-          swapThor: this.swapThorchainFormat(swap),
-          swapHop: this.swapHopFormat(swap),
+          swapThor: this.swapThorchainFormat(swap) as ThorchainSwapHistoryItem,
+          swapHop: this.swapHopFormat(swap) as HopSwapHistoryItem,
           network,
           walletId,
         })
@@ -119,11 +119,11 @@ class ThorHopBoostAnyToLayer2EVM extends SwapProvider {
       (await this.thorchainSwapProvider.performNextSwapAction(store, {
         network,
         walletId,
-        swap: this.swapThorchainFormat(swap),
+        swap: this.swapThorchainFormat(swap) as ThorchainSwapHistoryItem,
       })) : (await this.hopSwapProvider.performNextSwapAction(store, {
         network,
         walletId,
-        swap: this.swapHopFormat(swap),
+        swap: this.swapHopFormat(swap) as HopSwapHistoryItem,
       }))
     }
 
@@ -158,16 +158,20 @@ class ThorHopBoostAnyToLayer2EVM extends SwapProvider {
     });
 
     if (resultThor?.status === 'SUCCESS') {
-      const resultHop = await this.hopSwapProvider.newSwap({
+      const resultHop: any = await this.hopSwapProvider.newSwap({
         network: _network,
         walletId: _walletId,
         quote: swapHop as HopSwapHistoryItem,
       });
 
+      const approveTxOnHop = resultHop.approveTx;
+      delete resultHop.approveTx;
+
       return {
         ...resultThor,
         ...resultHop,
-        toAmount: resultHop.toAmount,
+        approveTxOnHop,
+        toAmount: (resultHop as HopSwapHistoryItem).toAmount,
         status: resultHop.status,
         currentSwapLeg: BoostStage.SecondLeg
       };
@@ -176,10 +180,8 @@ class ThorHopBoostAnyToLayer2EVM extends SwapProvider {
   }
 
 
-
-
-  // On FROM_CHAIN calculate fees from AMM swap and `swap initiation` on LSP
-  // On TO_CHAIN calculate fees from `swap claim` in LSP
+  // On FROM_CHAIN calculate fees based on Thorchain swap
+  // On BRIDGE_CHAIN calculate fees based on Hop swap
   async estimateFees({
     network,
     walletId,
@@ -192,56 +194,47 @@ class ThorHopBoostAnyToLayer2EVM extends SwapProvider {
     const input = { network, walletId, asset, txType, quote, feePrices, max };
 
     if (txType === this.fromTxType) {
-      // swap initiation fee
-      const liqualityFees = await this.thorchainSwapProvider.estimateFees({
+      // Thorchain fee
+      const thorchainFees = await this.thorchainSwapProvider.estimateFees({
         ...input,
-        asset: quote.bridgeAsset,
-        txType: this.thorchainSwapProvider.fromTxType as LiqualityTxTypes,
-        quote: this.swapLiqualityFormat(quote),
+        txType: this.thorchainSwapProvider.fromTxType as ThorchainTxTypes,
+        quote: this.swapThorchainFormat(quote) as ThorchainSwapHistoryItem,
       });
 
-      // amm fee
-      const automatedMarketMakerFees = await this.bridgeAssetToAutomatedMarketMaker[quote.bridgeAsset].estimateFees({
-        ...input,
-        // all AMMs have the same fromTxType
-        txType: this.hopSwapProvider.fromTxType as string,
-        quote: this.swapThorchainFormat(quote),
-      });
+      return thorchainFees;
 
-      const combinedFees: EstimateFeeResponse = {};
-      for (const key in automatedMarketMakerFees) {
-        combinedFees[Number(key)] = new BN(automatedMarketMakerFees[Number(key)]).plus(liqualityFees[Number(key)]);
-      }
-
-      return combinedFees;
     } else if (txType === this.toTxType) {
-      // swap claim fee
-      const liqualityFees = await this.thorchainSwapProvider.estimateFees({
+      // Hop fee
+      const hopFees = await this.hopSwapProvider.estimateFees({
         ...input,
-        txType: this.thorchainSwapProvider.toTxType as LiqualityTxTypes,
-        quote: this.swapLiqualityFormat(quote),
+        txType: this.hopSwapProvider.fromTxType as HopTxTypes,
+        quote: this.swapHopFormat(quote) as HopSwapHistoryItem,
       });
 
-      return liqualityFees;
+      return hopFees;
     } else {
       // unknown tx type
       return null;
     }
   }
 
+  // Walk backward from toAsset -> BridgeAsset -> fromAsset to determine the minimum amount of fromAsset needed
   async getMin(quoteRequest: QuoteRequest) {
     try {
-      const amountInNative = await this.thorchainSwapProvider.getMin({
+      const bridgeAsset = cryptoassets[quoteRequest.to].matchingAsset as string;
+      const fromAsset = quoteRequest.from;
+
+      const minBridgeAssetAmount = await this.hopSwapProvider.getMin({
         ...quoteRequest,
-        from: getNativeAsset(quoteRequest.from),
+        from: bridgeAsset,
       });
-      const quote = (await this.bridgeAssetToAutomatedMarketMaker[getNativeAsset(quoteRequest.from)].getQuote({
+      const quote = (await this.thorchainSwapProvider.getQuote({
         network: quoteRequest.network,
-        from: getNativeAsset(quoteRequest.from),
-        to: quoteRequest.from,
-        amount: new BN(amountInNative),
-      })) as ThorHopBoostSwapQuote;
-      const fromMinAmount = unitToCurrency(assets[quoteRequest.from], new BN(quote.toAmount));
+        from: bridgeAsset,
+        to: fromAsset,
+        amount: new BN(minBridgeAssetAmount),
+      })) as Partial<ThorchainSwapQuote>;
+      const fromMinAmount = unitToCurrency(assets[fromAsset], new BN(quote.toAmount as BigNumber.Value));
       // increase minimum amount with 5% to minimize calculation
       // error and price fluctuation
       return new BN(fromMinAmount).times(1.05);
@@ -311,7 +304,7 @@ class ThorHopBoostAnyToLayer2EVM extends SwapProvider {
   protected _txTypes(): Record<string, string | null> {
     return {
       FROM_CHAIN: 'FROM_CHAIN',
-      TO_CHAIN: 'TO_CHAIN',
+      BRIDGE_CHAIN: 'BRIDGE_CHAIN',
     };
   }
 
@@ -320,44 +313,32 @@ class ThorHopBoostAnyToLayer2EVM extends SwapProvider {
   }
 
   protected _toTxType(): string | null {
-    return this._txTypes().TO_CHAIN;
+    return this._txTypes().BRIDGE_CHAIN;
   }
 
   protected _timelineDiagramSteps(): string[] {
-    // remove approval step because bridge asset is always native and doesn't need approval
-    const lspTimeline = this.thorchainSwapProvider.timelineDiagramSteps;
-    if (lspTimeline[0] === 'APPROVE') {
-      lspTimeline.shift();
-    }
-
-    return this.hopSwapProvider.timelineDiagramSteps.concat(lspTimeline);
+    return this.thorchainSwapProvider.timelineDiagramSteps.concat(this.hopSwapProvider.timelineDiagramSteps);
   }
 
   protected _totalSteps(): number {
-    let lspSteps = this.thorchainSwapProvider.totalSteps;
-    if (this.thorchainSwapProvider.timelineDiagramSteps[0] === 'APPROVE') {
-      lspSteps -= 1;
-    }
-
-    return this.hopSwapProvider.totalSteps + lspSteps;
+    return this.hopSwapProvider.totalSteps + this.thorchainSwapProvider.totalSteps;
   }
 
-  private swapThorchainFormat(swap: any) {
+  private swapThorchainFormat(swap: BoostHistoryItem) {
     return {
       ...swap,
       to: swap.bridgeAsset,
       toAmount: swap.bridgeAssetAmount,
-      toAccountId: swap.fromAccountId, // AMM swaps happen on same account
       slippagePercentage,
     };
   }
 
-  private swapHopFormat(swap: any) {
+  private swapHopFormat(swap: BoostHistoryItem) {
     return {
       ...swap,
-      to: swap.bridgeAsset,
-      toAmount: swap.bridgeAssetAmount,
-      toAccountId: swap.fromAccountId, // AMM swaps happen on same account
+      from: swap.bridgeAsset,
+      fromAmount: swap.bridgeAssetAmount,
+      approveTx: swap.approveTxOnHop,
       slippagePercentage,
     };
   }
