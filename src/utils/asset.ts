@@ -1,10 +1,7 @@
-import { HttpClient } from '@chainify/client';
 import { AssetTypes, ChainId, chains, isEthereumChain as _isEthereumChain } from '@liquality/cryptoassets';
 import * as ethers from 'ethers';
 import { Asset, Network } from '../store/types';
 import cryptoassets from '../utils/cryptoassets';
-import { getRpcUrl } from './networks';
-import tokenABI from './tokenABI.json';
 
 type ExplorerMap = { [key in ChainId]?: { [key in Network]: { tx: string; address: string } } };
 
@@ -194,69 +191,6 @@ export const getExplorerTransactionHash = (asset: Asset, hash: string) => {
   }
 };
 
-export interface TokenDetails {
-  name: string;
-  decimals: number;
-  symbol: string;
-}
-
-// TODO: get rid of this. Use `client.chain.getTokenDetails` instead
-export const tokenDetailProviders: {
-  [key in ChainId]?: {
-    getDetails(contractAddress: string): Promise<TokenDetails>;
-  };
-} = {
-  ethereum: {
-    async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Ethereum, Network.Mainnet));
-    },
-  },
-  polygon: {
-    async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Polygon, Network.Mainnet));
-    },
-  },
-  rsk: {
-    async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Rootstock, Network.Mainnet));
-    },
-  },
-  bsc: {
-    async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.BinanceSmartChain, Network.Mainnet));
-    },
-  },
-  arbitrum: {
-    async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Arbitrum, Network.Mainnet));
-    },
-  },
-  terra: {
-    async getDetails(contractAddress) {
-      return await fetchTerraToken(contractAddress);
-    },
-  },
-  avalanche: {
-    async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Avalanche, Network.Mainnet));
-    },
-  },
-  fuse: {
-    async getDetails(contractAddress) {
-      return await fetchTokenDetails(contractAddress, getRpcUrl(ChainId.Fuse, Network.Mainnet));
-    },
-  },
-};
-
-const fetchTokenDetails = async (contractAddress: string, rpcUrl: string) => {
-  const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl);
-  const contract = new ethers.Contract(contractAddress.toLowerCase(), tokenABI, provider);
-
-  const [decimals, name, symbol] = await Promise.all([contract.decimals(), contract.name(), contract.symbol()]);
-
-  return { decimals, name, symbol };
-};
-
 export const estimateGas = async ({ data, to, value }: { data: string; to: string; value: ethers.BigNumber }) => {
   const paramsForGasEstimate = {
     data,
@@ -267,20 +201,6 @@ export const estimateGas = async ({ data, to, value }: { data: string; to: strin
   const provider = ethers.getDefaultProvider();
 
   return await provider.estimateGas(paramsForGasEstimate);
-};
-
-export const fetchTerraToken = async (address: string) => {
-  const {
-    data: { mainnet: tokens },
-  } = await HttpClient.get('https://assets.terra.money/cw20/tokens.json');
-  const token = tokens[address];
-  const { symbol } = token;
-
-  return {
-    name: symbol,
-    symbol,
-    decimals: 6,
-  };
 };
 
 const NFT_ASSETS_MAP: {
