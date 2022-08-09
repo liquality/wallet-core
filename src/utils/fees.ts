@@ -84,7 +84,6 @@ async function getSendAmountFee(accountId: AccountId, asset: Asset, amount?: BN)
         console.error(e)
       }
     }
-
     return sendFees
   }
 }
