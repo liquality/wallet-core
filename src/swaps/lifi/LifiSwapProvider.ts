@@ -34,8 +34,6 @@ export interface LifiSwapHistoryItem extends EvmSwapHistoryItem {
 
 class LifiSwapProvider extends EvmSwapProvider {
   public readonly config: LifiSwapProviderConfig;
-  public readonly slippage: number;
-  public readonly order: Order;
   public readonly nativeAssetAddress = ethers.constants.AddressZero;
 
   private readonly _lifiClient: LiFi;
@@ -90,8 +88,6 @@ class LifiSwapProvider extends EvmSwapProvider {
       toToken: toInfo.contractAddress ?? this.nativeAssetAddress,
       fromAddress: chains[fromInfo.chain].formatAddress(fromAddressRaw),
       toAddress: chains[toInfo.chain].formatAddress(toAddressRaw),
-      slippage: this.slippage,
-      order: this.order,
     };
 
     try {
