@@ -155,7 +155,10 @@ export const getNativeAsset = (asset: Asset) => {
 };
 
 export const getFeeAsset = (asset: Asset) => {
-  return cryptoassets[asset]?.feeAsset;
+  if (!cryptoassets[asset]) {
+    throw new Error('Asset does not exist')
+  }
+  return cryptoassets[asset].feeAsset;
 };
 
 export const getAssetColorStyle = (asset: Asset) => {
