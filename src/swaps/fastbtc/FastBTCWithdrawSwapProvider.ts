@@ -25,6 +25,7 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
+import { BitcoinTransferStatus, BRIDGE_CONTRACT_ABI } from './fastBtcBridgeContract';
 
 export interface FastBtcWithdrawSwapHistoryItem extends SwapHistoryItem {
   transferId: string;
@@ -39,43 +40,15 @@ export interface FastBtcWithdrawSwapProviderConfig extends BaseSwapProviderConfi
   routerAddress: string;
 }
 
-const BitcoinTransfer =
-  '(address rskAddress, uint8 status, uint8 nonce, uint8 feeStructureIndex, uint32 blockNumber, uint40 totalAmountSatoshi, string btcAddress)';
-
-const ABI = [
-  'event NewBitcoinTransfer(bytes32 indexed transferId, string btcAddress, uint256 nonce, uint256 amountSatoshi, uint256 feeSatoshi, address indexed rskAddress)',
-  'event BitcoinTransferStatusUpdated(bytes32 indexed transferId, uint8 newStatus)',
-  'event BitcoinTransferBatchSending(bytes32 bitcoinTxHash, uint8 transferBatchSize)',
-  'function minTransferSatoshi() view returns (uint40)',
-  'function maxTransferSatoshi() view returns (uint40)',
-  'function calculateCurrentFeeSatoshi(uint256 amountSatoshi) public view returns (uint256)',
-  'function transferToBtc (string calldata btcAddress) external payable',
-  `function getTransferByTransferId(bytes32 transferId) public view returns (${BitcoinTransfer})`,
-];
-
-/// @dev Status of an rBTC-to-BTC transfer.
-enum BitcoinTransferStatus {
-  NOT_APPLICABLE = 0, // the transfer slot has not been initialized
-  NEW, // the transfer was initiated
-  SENDING, // the federators have approved this transfer as part of a transfer batch
-  MINED, // the transfer was confirmedly mined in Bitcoin blockchain
-  REFUNDED, // the transfer was refunded
-  RECLAIMED, // the transfer was reclaimed by the user
-}
-
-interface BitcoinTransfer {
-  rskAddress: string; // source rskAddress
-  status: BitcoinTransferStatus; // the current status
-  nonce: number; // each Bitcoin address can be reused up to 255 times
-  feeStructureIndex: number; // the fee calculation to be applied to this transfer
-  blockNumber: number; // the RSK block number where this was initialized
-  totalAmountSatoshi: number; // the number of BTC satoshis that the user sent
-  btcAddress: string; // the BTC address in legacy or Bech32 encoded format
+export interface BuildSwapOptions {
+  network: Network;
+  walletId: WalletId;
+  quote: SwapQuote;
 }
 
 class FastBTCWithdrawSwapProvider extends SwapProvider {
   config: FastBtcWithdrawSwapProviderConfig;
-  _provider: JsonRpcProvider;
+  private _provider: JsonRpcProvider;
 
   constructor(config: FastBtcWithdrawSwapProviderConfig) {
     super(config);
@@ -85,7 +58,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
   }
 
   getFastBtcBridge(provider: JsonRpcProvider) {
-    const fastBtcBridge = new ethers.Contract(this.config.routerAddress, ABI, provider);
+    const fastBtcBridge = new ethers.Contract(this.config.routerAddress, BRIDGE_CONTRACT_ABI, provider);
     return fastBtcBridge;
   }
 
@@ -144,7 +117,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
     };
   }
 
-  async buildSwapTx({ network, walletId, quote }: { network: Network; walletId: WalletId; quote: SwapQuote }) {
+  async buildSwapTx({ network, walletId, quote }: BuildSwapOptions) {
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const fastBtcBridge = this.getFastBtcBridge(client.chain.getProvider());
     // Assuming valid bitcoin address
