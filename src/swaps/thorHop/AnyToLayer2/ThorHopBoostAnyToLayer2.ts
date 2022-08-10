@@ -206,8 +206,10 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
     max,
   }: EstimateFeeRequest<string, BoostHistoryItem>) {
     const input = { network, walletId, asset, txType, quote, feePrices, max };
+    console.log("No Leg FeeEstimate  => ", input);
 
     if (txType === this.fromTxType) {
+      console.log("First Leg FeeEstimate  => ", input);
       // Thorchain fee
       const thorchainFees = await this.thorchainSwapProvider.estimateFees({
         ...input,
@@ -218,6 +220,8 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
       return thorchainFees;
 
     } else if (txType === this.toTxType) {
+      console.log("Second Leg FeeEstimate  => ", input);
+
       // Hop fee
       const hopFees = await this.hopSwapProvider.estimateFees({
         ...input,
@@ -344,6 +348,7 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
       to: swap.bridgeAsset,
       toAmount: swap.bridgeAssetAmount,
       slippagePercentage,
+      toAccountId: swap.bridgeAccountId,
     };
   }
 

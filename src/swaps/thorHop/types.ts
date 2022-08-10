@@ -1,5 +1,5 @@
 import { Transaction } from '@chainify/types';
-import { Asset } from '../../store/types';
+import { AccountId, Asset } from '../../store/types';
 import { ThorchainSwapHistoryItem, ThorchainSwapProviderConfig, ThorchainSwapQuote } from '../thorchain/ThorchainSwapProvider';
 import { NextSwapActionRequest } from '../types';
 import { Chain, TToken } from '@hop-protocol/sdk';
@@ -21,7 +21,8 @@ export interface BoostHistoryItem extends EvmSwapHistoryItem {
   receiveTx: Transaction;
   bridgeAsset: Asset;
   bridgeAssetAmount: string;
-  currentSwapLeg: BoostStage 
+  bridgeAccountId: AccountId;
+  currentSwapLeg: BoostStage; 
 }
 
 export interface BoostNextSwapActionRequest extends Partial<NextSwapActionRequest> {

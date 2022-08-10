@@ -189,6 +189,7 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   toAccountId: AccountId;
   toAmount: string;
   bridgeAsset?: Asset;
+  bridgeAccountId?: AccountId;
   path?: string[];
 }
 
