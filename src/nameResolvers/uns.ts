@@ -6,7 +6,7 @@ import buildConfig from '../build.config';
 
 const reg = RegExp('^[.a-z0-9-]+$')
 const resolution = new Resolution()
-
+const unsConfig = buildConfig.nameResolvers.uns
 interface NameResolver {
     reverseLookup(address: string): Promise<Nullable<string>>
     lookupDomain(address: string, chainId: ChainId): Promise<Nullable<string>>
@@ -55,9 +55,9 @@ export class UNSResolver implements NameResolver {
             const domain = this.preparedDomain(address)
             if (await this.isValidTLD(domain)) {
                 const data = await HttpClient.get(
-                    buildConfig.resolutionService + domain,
+                    unsConfig.resolutionService + domain,
                     {},
-                    { headers: { "Authorization": `Bearer ${buildConfig.alchemyKey}` } }
+                    { headers: { "Authorization": `Bearer ${unsConfig.alchemyKey}` } }
                 )
                 return data?.records[this.getUNSKey(chainId)] ?? null
             }
@@ -69,7 +69,7 @@ export class UNSResolver implements NameResolver {
 
     async isValidTLD(domain: string): Promise<boolean> {
         if (!this.supportedTlds) {
-            const response = await fetch(buildConfig.tldAPI)
+            const response = await fetch(unsConfig.tldAPI)
             const data = await response.json()
             if (data['tlds']) {
                 this.supportedTlds = data['tlds']
