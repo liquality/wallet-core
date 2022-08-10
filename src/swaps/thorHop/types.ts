@@ -1,5 +1,5 @@
 import { Transaction } from '@chainify/types';
-import { AccountId, Asset } from '../../store/types';
+import { Asset } from '../../store/types';
 import { ThorchainSwapHistoryItem, ThorchainSwapProviderConfig, ThorchainSwapQuote } from '../thorchain/ThorchainSwapProvider';
 import { NextSwapActionRequest } from '../types';
 import { Chain, TToken } from '@hop-protocol/sdk';
