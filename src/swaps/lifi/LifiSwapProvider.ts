@@ -25,6 +25,8 @@ import {
   EstimateFeeResponse,
   NextSwapActionRequest,
   QuoteRequest,
+  SwapProviderError,
+  SwapProviderErrorTypes,
   SwapRequest,
   SwapStatus,
 } from '../types';
@@ -38,6 +40,14 @@ export interface LifiSwapProviderConfig extends EvmSwapProviderConfig {
 export interface LifiSwapHistoryItem extends EvmSwapHistoryItem {
   fromFundHash: string;
   fromFundTx: Transaction<EvmTypes.EthersTransactionResponse>;
+}
+
+interface LiFiErrorType {
+  action: any;
+  code: string;
+  errorType: string;
+  message: string;
+  tool: string;
 }
 
 class LifiSwapProvider extends EvmSwapProvider {
@@ -62,12 +72,10 @@ class LifiSwapProvider extends EvmSwapProvider {
 
   // returns rates between tokens
   async getQuote({ network, from, to, amount, fromAccountId, toAccountId, walletId }: QuoteRequest) {
-    const t = await this.getTools();
-    console.log(t);
     const fromInfo = cryptoassets[from];
     const toInfo = cryptoassets[to];
 
-    const fromAmountInUnit = currencyToUnit(fromInfo, new BN(amount)).toFixed();
+    const fromAmountInUnit = currencyToUnit(fromInfo, new BN(amount)).toString(10);
 
     const fromChainId = ChainNetworks[fromInfo.chain][network].chainId;
     const toChainId = ChainNetworks[toInfo.chain][network].chainId;
@@ -87,10 +95,51 @@ class LifiSwapProvider extends EvmSwapProvider {
     };
 
     try {
-      const lifiRoute = await this._lifiClient.getQuote(quoteRequest);
+      const lifiRoute = await this._httpClient.nodeGet('/quote', quoteRequest);
+
       return { from, to, fromAmount: fromAmountInUnit, toAmount: lifiRoute.estimate.toAmount, lifiRoute };
     } catch (e) {
-      console.warn('LifiSwapProvider: ', e);
+      if (!e.errors) {
+        return null;
+      }
+
+      const lowAmmountErrors = e.errors.filter(
+        (error: LiFiErrorType) => error.code === SwapProviderErrorTypes.AMOUNT_TOO_LOW
+      );
+      if (lowAmmountErrors.length > 0) {
+        /*
+         * message format is: 'The amount is too low or too high. The minimum is 20000000 and the maximum is 3500000000000'
+         * pulling all minimum amounts and then taking the lowest one
+         */
+        const min = lowAmmountErrors
+          .map((error: LiFiErrorType) => new BN(error.message.match(/\d+/)?.[0] as string))
+          .sort((a: BN, b: BN) => a.minus(b))[0];
+
+        return {
+          from,
+          to,
+          fromAmount: fromAmountInUnit,
+          toAmount: '0',
+          swapProviderError: {
+            code: SwapProviderErrorTypes.AMOUNT_TOO_LOW,
+            min: unitToCurrency(toInfo, min),
+          } as SwapProviderError,
+        };
+      }
+
+      const feesHigherThanAmountError = e.errors.find(
+        (error: LiFiErrorType) => error.code === SwapProviderErrorTypes.FEES_HIGHER_THAN_AMOUNT
+      );
+      if (feesHigherThanAmountError) {
+        return {
+          from,
+          to,
+          fromAmount: fromAmountInUnit,
+          toAmount: '0',
+          swapProviderError: { code: SwapProviderErrorTypes.FEES_HIGHER_THAN_AMOUNT } as SwapProviderError,
+        };
+      }
+
       return null;
     }
   }
@@ -241,32 +290,15 @@ class LifiSwapProvider extends EvmSwapProvider {
     if (!this._lifiTools) {
       const tools = await this._lifiClient.getTools();
 
-      console.log('tools:', tools);
-
       if (!tools || !tools.bridges || !tools.exchanges) {
         throw new Error('LifiSwapProvider: bridges and exchanges not available');
       }
 
       this._lifiTools = {
         allowBridges: tools.bridges.map((bridge) => bridge.key),
-        // allowExchanges: tools.exchanges.map((exchange) => exchange.key),
+        allowExchanges: tools.exchanges.map((exchange) => exchange.key),
       };
     }
-
-    // const bugged = [
-    //   'quickswap',
-    //   'pancakeswap',
-    //   'honeyswap',
-    //   'spookyswap',
-    //   'spiritswap',
-    //   'solarbeam',
-    //   'jswap',
-    //   'cronaswap',
-    //   'voltage',
-    //   'ubeswap',
-    //   'sushiswap',
-    // ];
-    // this._lifiTools.allowExchanges = this._lifiTools.allowExchanges?.filter((exchange) => !bugged.includes(exchange));
 
     return this._lifiTools;
   }
@@ -291,7 +323,6 @@ class LifiSwapProvider extends EvmSwapProvider {
       };
     }
 
-    console.log(this._lifiConfig);
     return this._lifiConfig;
   }
 

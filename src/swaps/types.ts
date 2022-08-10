@@ -83,3 +83,15 @@ export type ActionStatus = {
   endTime: number;
   status: string;
 };
+
+export type SwapProviderError = {
+  code: SwapProviderErrorTypes;
+  message?: string;
+  min?: BigNumber;
+  max?: BigNumber;
+};
+
+export enum SwapProviderErrorTypes {
+  AMOUNT_TOO_LOW = 'AMOUNT_TOO_LOW',
+  FEES_HIGHER_THAN_AMOUNT = 'FEES_HIGHER_THAN_AMOUNT',
+}

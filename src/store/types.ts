@@ -2,6 +2,7 @@ import { FeeDetails, NFTAsset, Nullable, Transaction } from '@chainify/types';
 import { Step } from '@lifi/sdk';
 import { ChainId } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
+import { SwapProviderError } from '../swaps/types';
 
 export type NetworkWalletIdMap<T> = Partial<Record<Network, Record<WalletId, T>>>;
 export type WalletIdNetworkMap<T> = Partial<Record<WalletId, Record<Network, T>>>;
@@ -191,6 +192,7 @@ export interface SwapHistoryItem extends BaseHistoryItem {
   bridgeAsset?: Asset;
   path?: string[];
   lifiRoute?: Step; // LiFi
+  swapProviderError?: SwapProviderError;
 }
 
 export type HistoryItem = NFTSendHistoryItem | SendHistoryItem | SwapHistoryItem;
