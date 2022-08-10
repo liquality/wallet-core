@@ -20,6 +20,7 @@ const swapProviderInfo = {
   [SwapProviderType.OneInch]: oneinchInfo,
   [SwapProviderType.Thorchain]: thorchainInfo,
   [SwapProviderType.FastBTCDeposit]: fastbtcInfo,
+  [SwapProviderType.FastBTCWithdraw]: fastbtcInfo,
   [SwapProviderType.LiqualityBoostNativeToERC20]: liqualityBoostNativeToERC20Info,
   [SwapProviderType.LiqualityBoostERC20ToNative]: liqualityBoostERC20toNativeInfo,
   [SwapProviderType.Sovryn]: sovrynInfo,

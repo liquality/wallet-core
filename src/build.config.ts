@@ -34,6 +34,13 @@ export interface WalletCoreConfig {
   rskRpcUrls: {
     [key in Network]: string;
   };
+  nameResolvers:{
+    uns: {
+      resolutionService: string;
+      tldAPI: string;
+      alchemyKey: string;
+    }
+  };
 }
 
 const config: WalletCoreConfig = {
@@ -75,46 +82,53 @@ const config: WalletCoreConfig = {
   },
   swapProviders: {
     testnet: {
-      liquality: {
+      [SwapProviderType.Liquality]: {
         name: 'Liquality',
         icon: 'liquality.svg',
         type: SwapProviderType.Liquality,
         routerAddress: HTLC_CONTRACT_ADDRESS,
         agent: process.env.VUE_APP_AGENT_TESTNET_URL || 'https://testnet-dev-agent.liq-chainhub.net',
       },
-      liqualityBoostNativeToERC20: {
+      [SwapProviderType.LiqualityBoostNativeToERC20]: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostNativeToERC20,
         network: Network.Testnet,
         icon: 'liqualityboost.svg',
         supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
-      liqualityBoostERC20toNative: {
+      [SwapProviderType.LiqualityBoostERC20ToNative]: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostERC20ToNative,
         network: Network.Testnet,
         icon: 'liqualityboost.svg',
         supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
       },
-      uniswapV2: {
+      [SwapProviderType.UniswapV2]: {
         name: 'Uniswap V2',
         icon: 'uniswap.svg',
         type: SwapProviderType.UniswapV2,
         routerAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
       },
-      thorchain: {
+      [SwapProviderType.Thorchain]: {
         name: 'Thorchain',
         icon: 'thorchain.svg',
         type: SwapProviderType.Thorchain,
         thornode: 'https://testnet.thornode.thorchain.info',
       },
-      sovryn: {
+      [SwapProviderType.Sovryn]: {
         name: 'Sovryn',
         icon: 'sovryn.svg',
         type: SwapProviderType.Sovryn,
         routerAddress: SovrynTestnetAddresses.swapNetwork,
         routerAddressRBTC: SovrynTestnetAddresses.proxy3,
         rpcURL: 'https://testnet.sovryn.app/rpc',
+      },
+      [SwapProviderType.FastBTCWithdraw]: {
+        name: 'FastBTC',
+        icon: 'sovryn.svg',
+        type: SwapProviderType.FastBTCWithdraw,
+        network: Network.Testnet,
+        routerAddress: '0x10C848e9495a32acA95F6c23C92eCA2b2bE9903A',
       },
     },
     mainnet: {
@@ -162,7 +176,14 @@ const config: WalletCoreConfig = {
         name: 'FastBTC',
         icon: 'sovryn.svg',
         type: SwapProviderType.FastBTCDeposit,
-        bridgeEndpoint: 'http://3.131.33.161:3000/',
+        bridgeEndpoint: 'https://fastbtc.sovryn.app',
+      },
+      [SwapProviderType.FastBTCWithdraw]: {
+        name: 'FastBTC',
+        icon: 'sovryn.svg',
+        type: SwapProviderType.FastBTCWithdraw,
+        network: Network.Mainnet,
+        routerAddress: '0x0D5006330289336ebdF9d0AC9E0674f91b4851eA',
       },
       [SwapProviderType.Sovryn]: {
         name: 'Sovryn',
@@ -214,6 +235,13 @@ const config: WalletCoreConfig = {
     ChainId.Avalanche,
   ],
   supportedBridgeAssets: ['MATIC', 'RBTC', 'AVAX'],
+  nameResolvers:{
+    uns:{
+      resolutionService : 'https://unstoppabledomains.g.alchemy.com/domains/',
+      tldAPI : 'https://resolve.unstoppabledomains.com/supported_tlds',
+      alchemyKey : 'bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa'
+    }
+  }
 };
 
 export default config;

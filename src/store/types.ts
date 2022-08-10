@@ -117,6 +117,7 @@ export enum SwapProviderType {
   LiqualityBoostERC20ToNative = 'liqualityBoostERC20toNative',
   UniswapV2 = 'uniswapV2',
   FastBTCDeposit = 'fastBTC',
+  FastBTCWithdraw = 'fastBTCWithdraw',
   OneInch = 'oneinchV4',
   Sovryn = 'sovryn',
   Thorchain = 'thorchain',
