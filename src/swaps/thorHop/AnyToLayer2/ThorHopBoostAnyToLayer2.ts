@@ -42,7 +42,11 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
 
     console.log('Came here');
     // Validate input
-    const bridgeAsset = cryptoassets[to].matchingAsset as string;
+    let bridgeAsset = cryptoassets[to].matchingAsset as string;
+
+    // Hop won't hop WETH but it will hop ETH. line below useful if to is PWETH which matches WETH.
+    bridgeAsset = bridgeAsset === 'WETH' ? 'ETH' : bridgeAsset;
+
     if (network === Network.Testnet || amount.lte(0) || (!isEthereumNativeAsset(to) && !isERC20(to)) || !bridgeAsset || from === bridgeAsset) return null;
 
     console.log('passed validation');
@@ -62,13 +66,17 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
 
     // Get rate for transfer from ETH / ERC20 mainnet to ETH / ERC20 Layer2
     console.log('ToAmount ==> ', quote.toAmount);
-    const toAssetQuantity = unitToCurrency(assets[bridgeAsset], new BN(quote.toAmount));
-    console.log('toAssetQuantity ==> ', toAssetQuantity);
+
+    // Default behaviour or toFixed without an argument happens with BN if 0 is the argument
+    // toFixed was already called in thorchain on toAmount but it was in vain
+    const bridgeAssetQtyInUnits = (new BN(quote.toAmount)).toFixed(0); 
+    const bridgeAssetQuantity = unitToCurrency(assets[bridgeAsset], new BN(bridgeAssetQtyInUnits));
+    console.log('toAssetQuantity ==> ', bridgeAssetQuantity);
     const finalQuote = await this.hopSwapProvider.getQuote({
       network,
       from: bridgeAsset,
       to,
-      amount: toAssetQuantity,
+      amount: bridgeAssetQuantity,
     });
     if (!finalQuote) return null;
 
