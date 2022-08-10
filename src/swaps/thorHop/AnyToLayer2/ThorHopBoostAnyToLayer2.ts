@@ -348,7 +348,9 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
       to: swap.bridgeAsset,
       toAmount: swap.bridgeAssetAmount,
       slippagePercentage,
-      toAccountId: swap.bridgeAccountId,
+      
+      //  No bridgeAccountId ==> 1st leg and 2nd leg are initiated on same chain so use decided to use same account
+      toAccountId: swap.bridgeAccountId ? swap.bridgeAccountId : swap.fromAccountId, 
     };
   }
 

@@ -21,7 +21,6 @@ export interface BoostHistoryItem extends EvmSwapHistoryItem {
   receiveTx: Transaction;
   bridgeAsset: Asset;
   bridgeAssetAmount: string;
-  bridgeAccountId: AccountId;
   currentSwapLeg: BoostStage; 
 }
 
