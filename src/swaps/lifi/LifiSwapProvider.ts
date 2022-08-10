@@ -1,7 +1,15 @@
 import { HttpClient } from '@chainify/client';
 import { EvmTypes } from '@chainify/evm';
 import { Transaction, TransactionRequest, TxStatus } from '@chainify/types';
-import LiFi, { ChainId, ConfigUpdate, LifiStep, Order, Orders, RouteOptions, Step } from '@lifi/sdk';
+import LiFi, {
+  ChainId,
+  LifiStep,
+  Order,
+  Orders,
+  QuoteRequest as LifiQuoteRequest,
+  Step,
+  ToolConfiguration,
+} from '@lifi/sdk';
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { ethers } from 'ethers';
@@ -38,29 +46,14 @@ class LifiSwapProvider extends EvmSwapProvider {
 
   private readonly _lifiClient: LiFi;
   private readonly _httpClient: HttpClient;
+  private _lifiTools: ToolConfiguration;
+  private _lifiConfig: Partial<LifiQuoteRequest>;
 
   constructor(config: LifiSwapProviderConfig) {
     super(config);
 
-    const lifiConfig: ConfigUpdate = {
-      defaultRouteOptions: {
-        /*
-         * Default slippage should be in the range of 3% to 5%
-         */
-        slippage: config.slippage ?? 0.05, // 5 / 100 -> 5%
-        /*
-         * export declare const Orders: readonly ["RECOMMENDED", "FASTEST", "CHEAPEST", "SAFEST"];
-         * keep the "RECOMMENDED" as a default
-         */
-        order: config.order ?? Orders[0], // 'RECOMMENDED'
-        bridges: {
-          allow: ['connext'],
-        },
-      } as RouteOptions,
-    };
-
     this._httpClient = new HttpClient({ baseURL: this.config.apiURL });
-    this._lifiClient = new LiFi(lifiConfig);
+    this._lifiClient = new LiFi();
   }
 
   async getSupportedPairs() {
@@ -69,6 +62,8 @@ class LifiSwapProvider extends EvmSwapProvider {
 
   // returns rates between tokens
   async getQuote({ network, from, to, amount, fromAccountId, toAccountId, walletId }: QuoteRequest) {
+    const t = await this.getTools();
+    console.log(t);
     const fromInfo = cryptoassets[from];
     const toInfo = cryptoassets[to];
 
@@ -88,6 +83,7 @@ class LifiSwapProvider extends EvmSwapProvider {
       toToken: toInfo.contractAddress ?? this.nativeAssetAddress,
       fromAddress: chains[fromInfo.chain].formatAddress(fromAddressRaw),
       toAddress: chains[toInfo.chain].formatAddress(toAddressRaw),
+      ...(await this.getConfig()),
     };
 
     try {
@@ -236,6 +232,67 @@ class LifiSwapProvider extends EvmSwapProvider {
     }
 
     return quote.lifiRoute;
+  }
+
+  /*
+   * cache tools
+   */
+  private async getTools() {
+    if (!this._lifiTools) {
+      const tools = await this._lifiClient.getTools();
+
+      console.log('tools:', tools);
+
+      if (!tools || !tools.bridges || !tools.exchanges) {
+        throw new Error('LifiSwapProvider: bridges and exchanges not available');
+      }
+
+      this._lifiTools = {
+        allowBridges: tools.bridges.map((bridge) => bridge.key),
+        // allowExchanges: tools.exchanges.map((exchange) => exchange.key),
+      };
+    }
+
+    // const bugged = [
+    //   'quickswap',
+    //   'pancakeswap',
+    //   'honeyswap',
+    //   'spookyswap',
+    //   'spiritswap',
+    //   'solarbeam',
+    //   'jswap',
+    //   'cronaswap',
+    //   'voltage',
+    //   'ubeswap',
+    //   'sushiswap',
+    // ];
+    // this._lifiTools.allowExchanges = this._lifiTools.allowExchanges?.filter((exchange) => !bugged.includes(exchange));
+
+    return this._lifiTools;
+  }
+
+  /*
+   * LiFi config
+   */
+  private async getConfig() {
+    if (!this._lifiConfig) {
+      this._lifiConfig = {
+        /*
+         * Default slippage should be in the range of 3% to 5%
+         */
+        slippage: this.config.slippage ?? 0.05, // 5 / 100 -> 5%
+        /*
+         * export declare const Orders: readonly ["RECOMMENDED", "FASTEST", "CHEAPEST", "SAFEST"];
+         * keep the "RECOMMENDED" as a default
+         */
+        order: this.config.order ?? Orders[0], // 'RECOMMENDED'
+        integrator: 'Liquality Wallet',
+        ...(await this.getTools()),
+      };
+    }
+
+    console.log(this._lifiConfig);
+    return this._lifiConfig;
   }
 
   // ======== STATE TRANSITIONS ========
