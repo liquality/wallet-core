@@ -38,8 +38,8 @@ export const accountCreator = (payload: {
     createdAt,
     color,
     enabled,
-    chainCode, 
-    publicKey
+    chainCode,
+    publicKey,
   };
 };
 

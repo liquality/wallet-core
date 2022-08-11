@@ -204,8 +204,8 @@ export default {
   assetFees(...context: GetterContext) {
     const { state } = rootGetterContext(context);
     return (asset: AssetType): FeeDetails | undefined => {
-      return state.fees?.[state.activeNetwork]?.[state.activeWalletId]?.[asset]
-    }
+      return state.fees?.[state.activeNetwork]?.[state.activeWalletId]?.[asset];
+    };
   },
   accountsWithBalance(...context: GetterContext): Account[] {
     const { getters } = rootGetterContext(context);
@@ -232,102 +232,101 @@ export default {
     const { accounts, activeNetwork, activeWalletId, enabledChains } = state;
     const { accountFiatBalance, assetFiatBalance, assetMarketCap } = getters;
 
-
     const _accounts = accounts[activeWalletId]?.[activeNetwork]
       ? accounts[activeWalletId]![activeNetwork].filter(
-        (account) =>
-          account.assets &&
-          account.enabled &&
-          account.assets.length > 0 &&
-          enabledChains[activeWalletId]?.[activeNetwork]?.includes(account.chain)
-      )
-        .map((account) => {
-          /*
+          (account) =>
+            account.assets &&
+            account.enabled &&
+            account.assets.length > 0 &&
+            enabledChains[activeWalletId]?.[activeNetwork]?.includes(account.chain)
+        )
+          .map((account) => {
+            /*
               Calculate fiat balances and asset balances
               Sort and group assets by dollar value / token amount / market cap
           */
-          const totalFiatBalance = accountFiatBalance(activeWalletId, activeNetwork, account.id);
-          const assetsWithFiat: AssetInfo[] = [];
-          const assetsWithMarketCap: AssetInfo[] = [];
-          const assetsWithTokenBalance: AssetInfo[] = [];
-          let assetsMarketCap: CurrenciesInfo = {} as any;
-          let hasFiat = false;
-          let hasTokenBalance = false;
-          let nativeAssetMarketCap = new BN(0);
+            const totalFiatBalance = accountFiatBalance(activeWalletId, activeNetwork, account.id);
+            const assetsWithFiat: AssetInfo[] = [];
+            const assetsWithMarketCap: AssetInfo[] = [];
+            const assetsWithTokenBalance: AssetInfo[] = [];
+            let assetsMarketCap: CurrenciesInfo = {} as any;
+            let hasFiat = false;
+            let hasTokenBalance = false;
+            let nativeAssetMarketCap = new BN(0);
 
-          const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
-            const fiat = assetFiatBalance(asset, new BN(balance));
-            const marketCap = assetMarketCap(asset);
-            const tokenBalance = account.balances[asset];
-            let type = AssetTypes.erc20;
-            let matchingAsset;
+            const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
+              const fiat = assetFiatBalance(asset, new BN(balance));
+              const marketCap = assetMarketCap(asset);
+              const tokenBalance = account.balances[asset];
+              let type = AssetTypes.erc20;
+              let matchingAsset;
 
-            if (cryptoassets[asset]) {
-              type = cryptoassets[asset].type;
-              matchingAsset = cryptoassets[asset].matchingAsset;
-            }
-
-            if (fiat) {
-              hasFiat = true;
-              assetsWithFiat.push({ asset, type, amount: fiat });
-            } else if (marketCap) {
-              if (type === AssetTypes.native && !matchingAsset) {
-                nativeAssetMarketCap = marketCap;
+              if (cryptoassets[asset]) {
+                type = cryptoassets[asset].type;
+                matchingAsset = cryptoassets[asset].matchingAsset;
               }
 
-              assetsWithMarketCap.push({ asset, type, amount: marketCap || new BN(0) });
-            } else {
-              if (!hasTokenBalance) {
-                hasTokenBalance = new BN(tokenBalance).gt(0);
+              if (fiat) {
+                hasFiat = true;
+                assetsWithFiat.push({ asset, type, amount: fiat });
+              } else if (marketCap) {
+                if (type === AssetTypes.native && !matchingAsset) {
+                  nativeAssetMarketCap = marketCap;
+                }
+
+                assetsWithMarketCap.push({ asset, type, amount: marketCap || new BN(0) });
+              } else {
+                if (!hasTokenBalance) {
+                  hasTokenBalance = new BN(tokenBalance).gt(0);
+                }
+
+                assetsWithTokenBalance.push({ asset, type, amount: new BN(tokenBalance) });
               }
 
-              assetsWithTokenBalance.push({ asset, type, amount: new BN(tokenBalance) });
-            }
+              assetsMarketCap = {
+                ...assetsMarketCap,
+                [asset]: marketCap || new BN(0),
+              };
 
-            assetsMarketCap = {
-              ...assetsMarketCap,
-              [asset]: marketCap || new BN(0),
-            };
+              return {
+                ...accum,
+                [asset]: fiat,
+              };
+            }, {});
+
+            const sortedAssetsByFiat = orderBy(assetsWithFiat, 'amount', 'desc');
+            const sortedAssetsByMarketCap = orderBy(assetsWithMarketCap, 'amount', 'desc');
+            const sortedAssetsByTokenBalance = orderBy(assetsWithTokenBalance, 'amount', 'desc');
+
+            const orderedAssets = orderAssets(
+              hasFiat,
+              hasTokenBalance,
+              sortedAssetsByFiat,
+              sortedAssetsByMarketCap,
+              sortedAssetsByTokenBalance
+            );
 
             return {
-              ...accum,
-              [asset]: fiat,
+              ...account,
+              assets: orderedAssets.length ? orderedAssets : account.assets,
+              nativeAssetMarketCap,
+              assetsMarketCap,
+              fiatBalances,
+              totalFiatBalance,
             };
-          }, {});
-
-          const sortedAssetsByFiat = orderBy(assetsWithFiat, 'amount', 'desc');
-          const sortedAssetsByMarketCap = orderBy(assetsWithMarketCap, 'amount', 'desc');
-          const sortedAssetsByTokenBalance = orderBy(assetsWithTokenBalance, 'amount', 'desc');
-
-          const orderedAssets = orderAssets(
-            hasFiat,
-            hasTokenBalance,
-            sortedAssetsByFiat,
-            sortedAssetsByMarketCap,
-            sortedAssetsByTokenBalance
-          );
-
-          return {
-            ...account,
-            assets: orderedAssets.length ? orderedAssets : account.assets,
-            nativeAssetMarketCap,
-            assetsMarketCap,
-            fiatBalances,
-            totalFiatBalance,
-          };
-        })
-        .sort(orderChains)
-        .reduce((acc: { [key: string]: Account[] }, account) => {
-          /*
+          })
+          .sort(orderChains)
+          .reduce((acc: { [key: string]: Account[] }, account) => {
+            /*
               Group sorted assets by chain / multiaccount ordering
           */
-          const { chain } = account;
+            const { chain } = account;
 
-          acc[chain] = acc[chain] ?? [];
-          acc[chain].push(account);
+            acc[chain] = acc[chain] ?? [];
+            acc[chain].push(account);
 
-          return acc;
-        }, {})
+            return acc;
+          }, {})
       : [];
     return Object.values(_accounts).flat();
   },

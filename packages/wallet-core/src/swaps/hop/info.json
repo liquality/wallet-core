@@ -7,11 +7,6 @@
     "High liquidity",
     "Fast"
   ],
-  "cons": [
-    "Slippage"
-  ],
-  "fees": [
-    "Additional aggregator fees",
-    "Slippage (up to 3%)"
-  ]
+  "cons": ["Slippage"],
+  "fees": ["Additional aggregator fees", "Slippage (up to 3%)"]
 }
