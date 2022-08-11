@@ -1,5 +1,6 @@
 import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
 import { Client } from '@chainify/client';
+import { EvmUtils } from '@chainify/evm';
 import { FeeDetail, FeeDetails } from '@chainify/types';
 import { ChainId, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
@@ -28,7 +29,10 @@ const FEE_OPTIONS = {
 };
 
 const feePriceInUnit = (asset: Asset, feePrice: number) => {
-  return isEthereumChain(asset) ? new BN(feePrice).times(1e9) : feePrice; // ETH fee price is in gwei
+  /*
+   * Use the same rounding as in chainify because even slightest difference in calculation might break send max functionality.
+   */
+  return isEthereumChain(asset) ? EvmUtils.fromGwei(feePrice) : feePrice; // ETH fee price is in gwei
 };
 
 function getSendFee(asset: Asset, feePrice: number) {
