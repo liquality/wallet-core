@@ -85,13 +85,6 @@ export async function getSwapTimeline(item: SwapHistoryItem, getClient: GetClien
     }
     return item.to;
   }
-  // get to asset when liquality boost provider is swapping from ERC20 to Native
-  function getToAssetWhenSwappingFromERC20() {
-    if (item.provider.includes('liqualityBoost') && isERC20(item.from)) {
-      return item.bridgeAsset!;
-    }
-    return item.to;
-  }
   // get from asset when liquality boost provider is swapping from ERC20 to Native
   function getFromAssetWhenSwappingFromERC20() {
     if (item.provider.includes('liqualityBoost') && isERC20(item.from)) {
@@ -213,7 +206,7 @@ export async function getSwapTimeline(item: SwapHistoryItem, getClient: GetClien
           side,
           (item as UniswapSwapHistoryItem).swapTxHash,
           (item as UniswapSwapHistoryItem).swapTx,
-          getToAssetWhenSwappingFromERC20(),
+          getFromAssetWhenSwappingFromERC20(), // asset
           TimelineAction.SWAP
         );
   }

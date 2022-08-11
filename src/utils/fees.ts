@@ -1,7 +1,11 @@
-import { ChainId, unitToCurrency } from '@liquality/cryptoassets';
+import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
+import { Client } from '@chainify/client';
+import { FeeDetails } from '@chainify/types';
+import { ChainId, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
-import { Asset } from '../store/types';
-import { getNativeAsset, isERC20, isEthereumChain } from './asset';
+import store from '../store';
+import { AccountId, Asset } from '../store/types';
+import { getFeeAsset, getNativeAsset, isERC20, isEthereumChain } from './asset';
 import cryptoassets from './cryptoassets';
 
 type FeeUnits = { [asset: Asset]: number };
@@ -42,4 +46,46 @@ function isEIP1559Fees(chain: ChainId) {
   return chain === ChainId.Ethereum || chain === ChainId.Polygon || chain === ChainId.Avalanche;
 }
 
-export { FEE_OPTIONS, getSendFee, getTxFee, getFeeLabel, isEIP1559Fees };
+
+async function getSendAmountFee(accountId: AccountId, asset: Asset, amount?: BN) {
+  const getMax = amount === undefined
+  const sendFees: {
+    [speed in keyof FeeDetails]: BN
+  } = { slow: new BN(0), average: new BN(0), fast: new BN(0), }
+
+  const assetFees = store.getters.assetFees(asset);
+  const feeAsset = getFeeAsset(asset) || getNativeAsset(asset)
+  if (assetFees) {
+    for (const [speed, fee] of Object.entries(assetFees)) {
+      const feePrice = fee.fee.maxPriorityFeePerGas + fee.fee.suggestedBaseFeePerGas || fee.fee
+      sendFees[speed as keyof FeeDetails] = getSendFee(feeAsset, feePrice)
+    }
+    if (asset === 'BTC') {
+      const client = store.getters.client({
+        network: store.state.activeNetwork,
+        walletId: store.state.activeWalletId,
+        asset: asset,
+        accountId: accountId
+      }) as Client<
+        BitcoinEsploraApiProvider,
+        BitcoinBaseWalletProvider
+      >;
+      const feePerBytes = Object.values(assetFees).map((fee) => fee.fee)
+      const value = getMax ? undefined : currencyToUnit(cryptoassets[asset], amount)
+      try {
+        const txs = feePerBytes.map((fee) => ({ value, fee }))
+
+        const totalFees = await client.wallet.getTotalFees(txs, getMax)
+        for (const [speed, fee] of Object.entries(assetFees)) {
+          const totalFee = unitToCurrency(cryptoassets[asset], totalFees[fee.fee])
+          sendFees[speed as keyof FeeDetails] = totalFee
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    return sendFees
+  }
+}
+
+export { FEE_OPTIONS, getSendFee, getTxFee, getFeeLabel, isEIP1559Fees, getSendAmountFee };
