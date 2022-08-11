@@ -47,12 +47,12 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
     // Hop won't hop WETH but it will hop ETH. line below useful if to is PWETH which matches WETH.
     bridgeAsset = bridgeAsset === 'WETH' ? 'ETH' : bridgeAsset;
 
+    if (network === Network.Testnet || amount.lte(0) || (!isEthereumNativeAsset(to) && !isERC20(to)) || !bridgeAsset || from === bridgeAsset) return null;
+
     const bridgeChainId = cryptoassets[bridgeAsset].chain;
 
     // Get accountId based on bridgeAsset
     const bridgeAccountId = store.getters.accountsWithBalance.find((account) => account.chain === bridgeChainId)?.id;
-
-    if (network === Network.Testnet || amount.lte(0) || (!isEthereumNativeAsset(to) && !isERC20(to)) || !bridgeAsset || from === bridgeAsset) return null;
 
     console.log('passed validation');
 
