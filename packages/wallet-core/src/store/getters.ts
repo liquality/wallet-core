@@ -439,8 +439,8 @@ export default {
       if (!account?.nfts || !account.nfts.length) return {};
 
       return account.nfts.reduce((collections: NFTCollections<NFT>, nft: NFT) => {
-        (collections[nft.collection.name] ||= []).push(nft);
-        collections[nft.collection.name].sort((nftA: NFT, nftB: NFT) => {
+        (collections[nft.collection!.name] ||= []).push(nft);
+        collections[nft.collection!.name].sort((nftA: NFT, nftB: NFT) => {
           return nftA.starred === nftB.starred ? 0 : nftA.starred ? -1 : 1;
         });
         return collections;

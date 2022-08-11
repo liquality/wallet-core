@@ -242,6 +242,18 @@ const NFT_ASSETS_MAP: {
       transfer: `https://stratosnft.io/asset/{contract_address}/{token_id}`,
     },
   },
+  solana: {
+    testnet: {
+      marketplaceName: 'OpenSea',
+      url: `https://testnet.opensea.io/`,
+      transfer: `https://testnets.opensea.io/assets/{contract_address}`,
+    },
+    mainnet: {
+      marketplaceName: 'OpenSea',
+      url: `https://opensea.io/`,
+      transfer: `https://opensea.io/assets/{chain}/{contract_address}`,
+    },
+  },
 };
 
 const getNftAssetsMap = (chainId: ChainId, network: Network) => {

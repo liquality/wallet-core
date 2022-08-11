@@ -509,7 +509,7 @@ export default {
     if (!account) throw new Error(`Tried to update nfts for unknown account ${accountId}`);
 
     const stateNFT = account.nfts?.find((accountNFT) => {
-      return accountNFT.asset_contract.address === nft.asset_contract.address && accountNFT.token_id === nft.token_id;
+      return accountNFT.asset_contract!.address === nft.asset_contract!.address && accountNFT.token_id === nft.token_id;
     });
     if (stateNFT) {
       stateNFT.starred = !stateNFT.starred;
