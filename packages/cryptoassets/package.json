@@ -23,6 +23,6 @@
     "build": "tsc",
     "clean": "rm -rf node_modules .turbo dist",
     "watch": "tsc -w",
-    "test": "jest --coverage"
+    "test": "npx cross-env NODE_ENV=test TS_NODE_FILES=true nyc mocha -r ts-node/register --recursive ./tests/**/*.test.ts"
   }
 }
