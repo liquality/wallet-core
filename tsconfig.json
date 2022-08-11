@@ -6,11 +6,12 @@
     "moduleResolution": "node",
     "alwaysStrict": true,
     "sourceMap": true,
-    "rootDir": ".",
-    "outDir": ".",
     "removeComments": true,
     "resolveJsonModule": true,
     "composite": true,
+    "baseUrl": "./packages"
   },
-  "files": ["package.json"]
+  "exclude": ["node_modules"]
 }
+
+

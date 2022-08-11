@@ -1,3 +1,5 @@
 dist
-coverage
+.turbo
 node_modules
+coverage
+typechain

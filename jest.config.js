@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   testEnvironment: 'node',
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
@@ -23,7 +23,5 @@ module.exports = {
   forceExit: true,
   detectOpenHandles: true,
   verbose: true,
-  setupFiles: [
-    "<rootDir>/jest/setup.js"
-  ]
+  setupFiles: ['<rootDir>/jest/setup.js'],
 };
