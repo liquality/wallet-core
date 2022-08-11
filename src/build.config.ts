@@ -94,14 +94,14 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.LiqualityBoostNativeToERC20,
         network: Network.Testnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
+        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
       },
       [SwapProviderType.LiqualityBoostERC20ToNative]: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostERC20ToNative,
         network: Network.Testnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
+        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
       },
       [SwapProviderType.UniswapV2]: {
         name: 'Uniswap V2',
@@ -143,14 +143,14 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.LiqualityBoostNativeToERC20,
         network: Network.Mainnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
+        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
       },
       [SwapProviderType.LiqualityBoostERC20ToNative]: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostERC20ToNative,
         network: Network.Mainnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
+        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
       },
       [SwapProviderType.UniswapV2]: {
         name: 'Uniswap V2',
@@ -228,7 +228,7 @@ const config: WalletCoreConfig = {
     ChainId.Fuse,
     ChainId.Avalanche,
   ],
-  supportedBridgeAssets: ['MATIC', 'RBTC', 'AVAX'],
+  supportedBridgeAssets: ['RBTC', 'AVAX'],
   nameResolvers:{
     uns:{
       resolutionService : 'https://unstoppabledomains.g.alchemy.com/domains/',
