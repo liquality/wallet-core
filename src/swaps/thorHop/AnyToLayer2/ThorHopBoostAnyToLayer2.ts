@@ -1,7 +1,7 @@
 import { assets, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { getSwapProvider } from '../../../factory';
-import { ActionContext } from '../../../store';
+import store, { ActionContext } from '../../../store';
 import { Network, SwapProviderType, WalletId } from '../../../store/types';
 import { HopSwapHistoryItem, HopSwapProvider, HopTxTypes } from '../../hop/HopSwapProvider';
 import { SwapProvider } from '../../SwapProvider';
@@ -47,6 +47,11 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
     // Hop won't hop WETH but it will hop ETH. line below useful if to is PWETH which matches WETH.
     bridgeAsset = bridgeAsset === 'WETH' ? 'ETH' : bridgeAsset;
 
+    const bridgeChainId = cryptoassets[bridgeAsset].chain;
+
+    // Get accountId based on bridgeAsset
+    const bridgeAccountId = store.getters.accountsWithBalance.find((account) => account.chain === bridgeChainId)?.id;
+
     if (network === Network.Testnet || amount.lte(0) || (!isEthereumNativeAsset(to) && !isERC20(to)) || !bridgeAsset || from === bridgeAsset) return null;
 
     console.log('passed validation');
@@ -89,6 +94,7 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
       fromAmount: quote.fromAmount,
       toAmount: finalQuote.toAmount,
       bridgeAsset,
+      bridgeAccountId,
       bridgeAssetAmount: quote.toAmount,
       hopChainFrom: finalQuote.hopChainFrom,
       hopChainTo: finalQuote.hopChainTo,
