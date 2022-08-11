@@ -314,12 +314,12 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
         filterStatus: 'PENDING',
       },
       WAITING_FOR_RECEIVE_CONFIRMATIONS: {
-        step: 2,
+        step: 1,
         label: 'Swapping {from}',
         filterStatus: 'PENDING',
       },
       SUCCESS: {
-        step: 3,
+        step: 2,
         label: 'Completed',
         filterStatus: 'COMPLETED',
         notification(swap: any) {
@@ -329,7 +329,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
         },
       },
       FAILED: {
-        step: 3,
+        step: 2,
         label: 'Swap Failed',
         filterStatus: 'REFUNDED',
         notification() {
@@ -360,7 +360,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
   }
 
   protected _totalSteps(): number {
-    return 4;
+    return 3;
   }
 }
 
