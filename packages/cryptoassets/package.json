@@ -1,0 +1,28 @@
+{
+  "name": "@liquality/cryptoassets",
+  "version": "1.7.5",
+  "description": "Common library for liquality wallet",
+  "repository": "git@github.com:liquality/wallet-core.git",
+  "author": "monokh <mnokhb@gmail.com>",
+  "license": "MIT",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "dependencies": {
+    "@types/bs58": "^4.0.1",
+    "bignumber.js": "^9.0.2",
+    "bitcoin-address-validation": "^2.2.1",
+    "bs58": "^4.0.1",
+    "cashaddrjs": "^0.4.4",
+    "ethereumjs-util": "^7.1.4",
+    "lodash": "^4.17.11"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf node_modules .turbo dist",
+    "watch": "tsc -w",
+    "test": "npx cross-env NODE_ENV=test TS_NODE_FILES=true nyc mocha -r ts-node/register --recursive ./tests/**/*.test.ts"
+  }
+}
