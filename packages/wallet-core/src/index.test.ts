@@ -1,9 +1,9 @@
 import { ChainId } from '@liquality/cryptoassets';
 import buildConfig from './build.config';
 import { setupWallet } from './index';
+import { LATEST_VERSION } from './store/migrations';
 import { ExperimentType, Network } from './store/types';
 import defaultWalletOptions from './walletOptions/defaultOptions';
-import {LATEST_VERSION} from "./store/migrations";
 
 test('Initial State of wallet setup', async () => {
   let wallet = await setupWallet(defaultWalletOptions);

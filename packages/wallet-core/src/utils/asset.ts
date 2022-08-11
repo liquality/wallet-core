@@ -153,7 +153,7 @@ export const getNativeAsset = (asset: Asset) => {
 
 export const getFeeAsset = (asset: Asset) => {
   if (!cryptoassets[asset]) {
-    throw new Error('Asset does not exist')
+    throw new Error('Asset does not exist');
   }
   return cryptoassets[asset].feeAsset;
 };

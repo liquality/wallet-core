@@ -29,7 +29,6 @@ import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
 import { walletOptionsStore } from '../../walletOptions';
 
-
 function getNftProvider(
   providerType: NftProviderType,
   walletProvider: EvmBaseWalletProvider<BaseProvider>,
@@ -62,11 +61,7 @@ function getNftProvider(
   }
 }
 
-export function createBtcClient(
-  network: Network,
-  mnemonic: string,
-  accountInfo: AccountInfo
-) {
+export function createBtcClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const isMainnet = network === 'mainnet';
   const bitcoinNetwork = ChainNetworks.bitcoin[network] as BitcoinTypes.BitcoinNetwork;
   const esploraApi = buildConfig.exploraApis[network];
@@ -142,7 +137,7 @@ export function createEVMClient(
     if (accountInfo && accountInfo.publicKey && accountInfo.address) {
       addressCache = new Address({
         publicKey: accountInfo?.publicKey,
-        address: accountInfo.address
+        address: accountInfo.address,
       });
     }
     if (!walletOptionsStore.walletOptions.ledgerTransportCreator) {

@@ -34,12 +34,12 @@ export interface WalletCoreConfig {
   rskRpcUrls: {
     [key in Network]: string;
   };
-  nameResolvers:{
+  nameResolvers: {
     uns: {
       resolutionService: string;
       tldAPI: string;
       alchemyKey: string;
-    }
+    };
   };
 }
 
@@ -229,13 +229,13 @@ const config: WalletCoreConfig = {
     ChainId.Avalanche,
   ],
   supportedBridgeAssets: ['MATIC', 'RBTC', 'AVAX'],
-  nameResolvers:{
-    uns:{
-      resolutionService : 'https://unstoppabledomains.g.alchemy.com/domains/',
-      tldAPI : 'https://resolve.unstoppabledomains.com/supported_tlds',
-      alchemyKey : 'bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa'
-    }
-  }
+  nameResolvers: {
+    uns: {
+      resolutionService: 'https://unstoppabledomains.g.alchemy.com/domains/',
+      tldAPI: 'https://resolve.unstoppabledomains.com/supported_tlds',
+      alchemyKey: 'bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa',
+    },
+  },
 };
 
 export default config;
