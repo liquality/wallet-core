@@ -59,7 +59,7 @@ export const getLedgerAccounts = async (
       const btcAccount = await (_client.wallet as BitcoinLedgerProvider).getWalletPublicKey(derivationPath);
       _chainCode = btcAccount.chainCode;
       _publicKey = btcAccount.publicKey;
-    }
+    } 
 
     const addresses = await _client.wallet.getAddresses();
     if (addresses && addresses.length > 0) {

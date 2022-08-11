@@ -36,19 +36,19 @@ describe('disable and enable assets', () => {
     expect(mainnetEnabledAssets?.length).toBeGreaterThan(1);
 
     // disable all mainnet assets
-    await wallet.dispatch.disableAssets({
-      network: Network.Mainnet,
-      walletId: walletId,
-      assets: mainnetEnabledAssets!,
-    });
+      await wallet.dispatch.disableAssets({
+        network: Network.Mainnet,
+        walletId: walletId,
+        assets: mainnetEnabledAssets!,
+      });
     expect(wallet.state.enabledAssets.mainnet?.[walletId].length).toBe(0);
 
     // enable all mainnet assets
-    await wallet.dispatch.enableAssets({
-      network: Network.Mainnet,
-      walletId: walletId,
-      assets: mainnetEnabledAssets!,
-    });
+      await wallet.dispatch.enableAssets({
+        network: Network.Mainnet,
+        walletId: walletId,
+        assets: mainnetEnabledAssets!,
+      });
 
     expect(mainnetEnabledAssets?.length).toBeGreaterThan(1);
   });
@@ -73,19 +73,19 @@ describe('disable and enable assets', () => {
     expect(testnetEnabledAssets?.length).toBeGreaterThan(1);
 
     // disable all testnet assets
-    await wallet.dispatch.disableAssets({
-      network: Network.Testnet,
-      walletId: walletId,
-      assets: testnetEnabledAssets!,
-    });
+      await wallet.dispatch.disableAssets({
+        network: Network.Testnet,
+        walletId: walletId,
+        assets: testnetEnabledAssets!,
+      });
     expect(wallet.state.enabledAssets.testnet?.[walletId].length).toBe(0);
 
     // enable all testnet assets
-    await wallet.dispatch.enableAssets({
-      network: Network.Testnet,
-      walletId: walletId,
-      assets: testnetEnabledAssets!,
-    });
+      await wallet.dispatch.enableAssets({
+        network: Network.Testnet,
+        walletId: walletId,
+        assets: testnetEnabledAssets!,
+  });
     expect(wallet.state.enabledAssets.testnet?.[walletId]?.length).toBeGreaterThan(1);
   });
 });

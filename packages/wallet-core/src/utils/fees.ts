@@ -46,41 +46,45 @@ function isEIP1559Fees(chain: ChainId) {
   return chain === ChainId.Ethereum || chain === ChainId.Polygon || chain === ChainId.Avalanche;
 }
 
+
 async function getSendAmountFee(accountId: AccountId, asset: Asset, amount?: BN) {
-  const getMax = amount === undefined;
+  const getMax = amount === undefined
   const sendFees: {
-    [speed in keyof FeeDetails]: BN;
-  } = { slow: new BN(0), average: new BN(0), fast: new BN(0) };
+    [speed in keyof FeeDetails]: BN
+  } = { slow: new BN(0), average: new BN(0), fast: new BN(0), }
 
   const assetFees = store.getters.assetFees(asset);
-  const feeAsset = getFeeAsset(asset) || getNativeAsset(asset);
+  const feeAsset = getFeeAsset(asset) || getNativeAsset(asset)
   if (assetFees) {
     for (const [speed, fee] of Object.entries(assetFees)) {
-      const feePrice = fee.fee.maxPriorityFeePerGas + fee.fee.suggestedBaseFeePerGas || fee.fee;
-      sendFees[speed as keyof FeeDetails] = getSendFee(feeAsset, feePrice);
+      const feePrice = fee.fee.maxPriorityFeePerGas + fee.fee.suggestedBaseFeePerGas || fee.fee
+      sendFees[speed as keyof FeeDetails] = getSendFee(feeAsset, feePrice)
     }
     if (asset === 'BTC') {
       const client = store.getters.client({
         network: store.state.activeNetwork,
         walletId: store.state.activeWalletId,
         asset: asset,
-        accountId: accountId,
-      }) as Client<BitcoinEsploraApiProvider, BitcoinBaseWalletProvider>;
-      const feePerBytes = Object.values(assetFees).map((fee) => fee.fee);
-      const value = getMax ? undefined : currencyToUnit(cryptoassets[asset], amount);
+        accountId: accountId
+      }) as Client<
+        BitcoinEsploraApiProvider,
+        BitcoinBaseWalletProvider
+      >;
+      const feePerBytes = Object.values(assetFees).map((fee) => fee.fee)
+      const value = getMax ? undefined : currencyToUnit(cryptoassets[asset], amount)
       try {
-        const txs = feePerBytes.map((fee) => ({ value, fee }));
+        const txs = feePerBytes.map((fee) => ({ value, fee }))
 
-        const totalFees = await client.wallet.getTotalFees(txs, getMax);
+        const totalFees = await client.wallet.getTotalFees(txs, getMax)
         for (const [speed, fee] of Object.entries(assetFees)) {
-          const totalFee = unitToCurrency(cryptoassets[asset], totalFees[fee.fee]);
-          sendFees[speed as keyof FeeDetails] = totalFee;
+          const totalFee = unitToCurrency(cryptoassets[asset], totalFees[fee.fee])
+          sendFees[speed as keyof FeeDetails] = totalFee
         }
       } catch (e) {
-        console.error(e);
+        console.error(e)
       }
     }
-    return sendFees;
+    return sendFees
   }
 }
 

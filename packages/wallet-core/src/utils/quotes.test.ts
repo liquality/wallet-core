@@ -1,13 +1,13 @@
 import * as Process from 'process';
 import { setupWallet } from '../index';
-import { Network } from '../store/types';
 import defaultWalletOptions from '../walletOptions/defaultOptions';
-import { calculateQuoteRate, sortQuotes } from './quotes';
+import {Network} from "../store/types";
+import {calculateQuoteRate, sortQuotes} from "./quotes";
 
 describe('quotes utils tests', () => {
   jest.setTimeout(90000);
   const createNotification = jest.fn();
-  const wallet = setupWallet({ ...defaultWalletOptions, createNotification });
+  const wallet = setupWallet({...defaultWalletOptions, createNotification });
 
   let TEST_MNEMONIC = Process.env.TEST_MNEMONIC;
   if (!TEST_MNEMONIC) {
@@ -53,10 +53,12 @@ describe('quotes utils tests', () => {
     expect(quotes.length).toBeGreaterThan(0);
 
     // sort quotes
-    const result = calculateQuoteRate(quotes[0]);
+    const result = calculateQuoteRate(
+        quotes[0]
+    );
     expect(result).toBeDefined();
-    expect(result).not.toBeNaN();
-  });
+    expect(result).not.toBeNaN()
+});
   it('should be able test sortQuotes against testnet', async () => {
     const walletId = wallet.state.activeWalletId;
     expect(walletId).toBeDefined();
@@ -79,10 +81,10 @@ describe('quotes utils tests', () => {
     expect(quotes.length).toBeGreaterThan(0);
 
     // sort quotes
-    let result = sortQuotes(quotes, Network.Testnet);
+    let result = sortQuotes(quotes,Network.Testnet);
     console.log(result);
     expect(result).toBeDefined();
-    expect(result).not.toBeNaN();
+    expect(result).not.toBeNaN()
 
     quotes = await wallet.dispatch.getQuotes({
       network: Network.Testnet,
@@ -96,8 +98,8 @@ describe('quotes utils tests', () => {
     expect(quotes.length).toBeGreaterThan(0);
 
     // sort quotes
-    result = sortQuotes(quotes, Network.Testnet);
+    result = sortQuotes(quotes,Network.Testnet);
     expect(result).toBeDefined();
-    expect(result).not.toBeNaN();
-  });
+    expect(result).not.toBeNaN()
+});
 });

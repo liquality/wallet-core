@@ -34,12 +34,12 @@ export interface WalletCoreConfig {
   rskRpcUrls: {
     [key in Network]: string;
   };
-  nameResolvers: {
+  nameResolvers:{
     uns: {
       resolutionService: string;
       tldAPI: string;
       alchemyKey: string;
-    };
+    }
   };
 }
 
@@ -57,6 +57,7 @@ const config: WalletCoreConfig = {
       'SOV',
       'BNB',
       'NEAR',
+      'SOL',
       'MATIC',
       'PWETH',
       'ARBETH',
@@ -65,7 +66,22 @@ const config: WalletCoreConfig = {
       'LUNA',
       'UST',
     ],
-    testnet: ['BTC', 'ETH', 'DAI', 'RBTC', 'BNB', 'NEAR', 'SOV', 'MATIC', 'PWETH', 'ARBETH', 'AVAX', 'LUNA', 'UST'],
+    testnet: [
+      'BTC',
+      'ETH',
+      'DAI',
+      'RBTC',
+      'BNB',
+      'NEAR',
+      'SOL',
+      'SOV',
+      'MATIC',
+      'PWETH',
+      'ARBETH',
+      'AVAX',
+      'LUNA',
+      'UST',
+    ],
   },
   infuraApiKey: 'da99ebc8c0964bb8bb757b6f8cc40f1f',
   exploraApis: {
@@ -206,6 +222,11 @@ const config: WalletCoreConfig = {
         URL: 'https://lcd.terra.dev',
         chainID: 'columbus-5',
       },
+      [SwapProviderType.Jupiter]: {
+        name: 'Jupiter',
+        icon: 'jupiter.svg',
+        type: SwapProviderType.Jupiter,
+      },
       [SwapProviderType.Hop]: {
         name: 'Hop',
         icon: 'hop.svg',
@@ -227,15 +248,16 @@ const config: WalletCoreConfig = {
     ChainId.Terra,
     ChainId.Fuse,
     ChainId.Avalanche,
+    ChainId.Solana,
   ],
   supportedBridgeAssets: ['MATIC', 'RBTC', 'AVAX'],
-  nameResolvers: {
-    uns: {
-      resolutionService: 'https://unstoppabledomains.g.alchemy.com/domains/',
-      tldAPI: 'https://resolve.unstoppabledomains.com/supported_tlds',
-      alchemyKey: 'bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa',
-    },
-  },
+  nameResolvers:{
+    uns:{
+      resolutionService : 'https://unstoppabledomains.g.alchemy.com/domains/',
+      tldAPI : 'https://resolve.unstoppabledomains.com/supported_tlds',
+      alchemyKey : 'bKmEKAC4HJUEDNlnoYITvXYuhrIshFsa'
+    }
+  }
 };
 
 export default config;

@@ -2,14 +2,14 @@ import { ChainId } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import * as Process from 'process';
 import { setupWallet } from '../../index';
-import { getStatusLabel, getStep } from '../../utils/history';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
-import { FeeLabel, Network } from '../types';
+import {FeeLabel, Network} from '../types';
+import {getStatusLabel, getStep} from "../../utils/history";
 
 describe('sendTransaction tests', () => {
   jest.setTimeout(90000);
   const createNotification = jest.fn();
-  const wallet = setupWallet({ ...defaultWalletOptions, createNotification });
+  const wallet = setupWallet({...defaultWalletOptions, createNotification });
   let TEST_MNEMONIC = Process.env.TEST_MNEMONIC;
   if (!TEST_MNEMONIC) {
     throw new Error('Please set the TEST_MNEMONIC environment variable');

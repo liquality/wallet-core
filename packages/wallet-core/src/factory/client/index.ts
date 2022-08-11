@@ -12,7 +12,12 @@ import {
   createRskClient,
 } from './evm';
 
-export const createClient = (asset: Asset, network: Network, mnemonic: string, accountInfo: AccountInfo) => {
+export const createClient = (
+  asset: Asset,
+  network: Network,
+  mnemonic: string,
+  accountInfo: AccountInfo
+) => {
   const assetData = cryptoassets[asset];
 
   if (!assetData) {

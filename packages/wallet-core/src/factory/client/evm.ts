@@ -14,7 +14,15 @@ export function createEthClient(network: Network, mnemonic: string, accountInfo:
   const provider = new StaticJsonRpcProvider(ethNetwork.rpcUrl, ethNetwork.chainId);
   const feeProvider = new EIP1559FeeProvider(provider);
   const nftProviderType = network === Network.Mainnet ? NftProviderType.OpenSea : NftProviderType.Moralis;
-  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountInfo, defaultSwapOptions, provider, nftProviderType);
+  return createEVMClient(
+    ethNetwork,
+    feeProvider,
+    mnemonic, 
+    accountInfo,
+    defaultSwapOptions,
+    provider,
+    nftProviderType
+  );
 }
 
 export function createRskClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
@@ -91,5 +99,12 @@ export function createFuseClient(network: Network, mnemonic: string, accountInfo
   const fuseNetwork = ChainNetworks.fuse[network];
   const provider = new StaticJsonRpcProvider(fuseNetwork.rpcUrl, fuseNetwork.chainId);
   const feeProvider = new RpcFeeProvider(provider, { slowMultiplier: 1, averageMultiplier: 1, fastMultiplier: 1.25 });
-  return createEVMClient(fuseNetwork, feeProvider, mnemonic, accountInfo, defaultSwapOptions, provider);
+  return createEVMClient(
+    fuseNetwork,
+    feeProvider,
+    mnemonic,
+    accountInfo,
+    defaultSwapOptions,
+    provider
+  );
 }
