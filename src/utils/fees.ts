@@ -60,7 +60,7 @@ function isEIP1559Fees(chain: ChainId) {
   return chain === ChainId.Ethereum || chain === ChainId.Polygon || chain === ChainId.Avalanche;
 }
 
-async function getSendFeeEstimations(accountId: AccountId, asset: Asset, amount?: BN) {
+async function getFeeEstimations(accountId: AccountId, asset: Asset, amount?: BN) {
   const assetChain = cryptoassets[asset]?.chain;
   if (!assetChain) {
     throw new Error(`getSendFeeEstimations: asset chain not available for ${asset}`);
@@ -77,16 +77,16 @@ async function getSendFeeEstimations(accountId: AccountId, asset: Asset, amount?
   }
 
   if (assetChain === ChainId.Bitcoin) {
-    return getFeeEstimationsBTC(accountId, feeAsset, suggestedGasFees, amount);
+    return feeEstimationsBTC(accountId, feeAsset, suggestedGasFees, amount);
   } else {
-    return getFeeEstimations(feeAsset, suggestedGasFees);
+    return feeEstimations(feeAsset, suggestedGasFees);
   }
 }
 
 /*
  * Fee estimation method for all EIP1559 and non EIP1559 chains
  */
-function getFeeEstimations(feeAsset: Asset, suggestedGasFees: FeeDetails, sendFees?: SendFees) {
+function feeEstimations(feeAsset: Asset, suggestedGasFees: FeeDetails, sendFees?: SendFees) {
   const _sendFees = sendFees ?? newSendFees();
 
   for (const [speed, fee] of Object.entries(suggestedGasFees)) {
@@ -106,7 +106,7 @@ function getFeeEstimations(feeAsset: Asset, suggestedGasFees: FeeDetails, sendFe
 /*
  * Fee estimation method for BTC
  */
-async function getFeeEstimationsBTC(
+async function feeEstimationsBTC(
   accountId: AccountId,
   feeAsset: Asset,
   suggestedGasFees: FeeDetails,
@@ -144,4 +144,4 @@ async function getFeeEstimationsBTC(
   return _sendFees;
 }
 
-export { FEE_OPTIONS, getSendFee, getTxFee, getFeeLabel, isEIP1559Fees, getSendFeeEstimations };
+export { FEE_OPTIONS, getSendFee, getTxFee, getFeeLabel, isEIP1559Fees, getFeeEstimations };
