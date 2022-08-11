@@ -11,4 +11,5 @@ export const CHAINS_WITH_FETCH_TOKEN_DETAILS = [
   { chainId: ChainId.Fuse, label: 'Fuse (FUSE)' },
   // NON-EVM
   { chainId: ChainId.Terra, label: 'Terra (LUNA)' },
+  { chainId: ChainId.Solana, label: 'Solana' },
 ];
