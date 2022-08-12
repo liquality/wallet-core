@@ -212,7 +212,6 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
     max,
   }: EstimateFeeRequest<string, BoostHistoryItem>) {
     const input = { network, walletId, asset, txType, quote, feePrices, max };
-    console.log("No Leg FeeEstimate  => ", input);
 
     if (txType === this.fromTxType) {
       console.log("First Leg FeeEstimate  => ", input);
@@ -226,7 +225,7 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
       return thorchainFees;
 
     } else if (txType === this.toTxType) {
-      console.log("Second Leg FeeEstimate  => ", input);
+
 
       // Hop fee
       const hopFees = await this.hopSwapProvider.estimateFees({
@@ -252,16 +251,24 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
         ...quoteRequest,
         from: bridgeAsset,
       });
+
+      let minThorSwapAmount = await this.thorchainSwapProvider.getMin({
+        ...quoteRequest,
+        to: bridgeAsset
+      });
+
       const quote = (await this.thorchainSwapProvider.getQuote({
         network: quoteRequest.network,
         from: bridgeAsset,
         to: fromAsset,
         amount: new BN(minBridgeAssetAmount),
       })) as Partial<ThorchainSwapQuote>;
-      const fromMinAmount = unitToCurrency(assets[fromAsset], new BN(quote.toAmount as BigNumber.Value));
+      let fromMinAmount = unitToCurrency(assets[fromAsset], new BN(quote.toAmount as BigNumber.Value));
       // increase minimum amount with 5% to minimize calculation
       // error and price fluctuation
-      return new BN(fromMinAmount).times(1.05);
+      fromMinAmount = new BN(fromMinAmount).times(1.05);
+      minThorSwapAmount = new BN(minThorSwapAmount);
+      return fromMinAmount.gt(minThorSwapAmount) ? fromMinAmount : minThorSwapAmount;
     } catch (err) {
       console.warn(err);
       return new BN(0);
