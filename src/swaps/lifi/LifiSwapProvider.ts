@@ -1,15 +1,7 @@
 import { HttpClient } from '@chainify/client';
 import { EvmTypes } from '@chainify/evm';
 import { Transaction, TransactionRequest, TxStatus } from '@chainify/types';
-import LiFi, {
-  ChainId,
-  LifiStep,
-  Order,
-  Orders,
-  QuoteRequest as LifiQuoteRequest,
-  Step,
-  ToolConfiguration,
-} from '@lifi/sdk';
+import LiFi, { ChainId, ConfigUpdate, LifiStep, Order, Orders, RouteOptions, Step } from '@lifi/sdk';
 import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { ethers } from 'ethers';
@@ -25,8 +17,6 @@ import {
   EstimateFeeResponse,
   NextSwapActionRequest,
   QuoteRequest,
-  SwapProviderError,
-  SwapProviderErrorTypes,
   SwapRequest,
   SwapStatus,
 } from '../types';
@@ -42,28 +32,39 @@ export interface LifiSwapHistoryItem extends EvmSwapHistoryItem {
   fromFundTx: Transaction<EvmTypes.EthersTransactionResponse>;
 }
 
-interface LiFiErrorType {
-  action: any;
-  code: string;
-  errorType: string;
-  message: string;
-  tool: string;
-}
-
 class LifiSwapProvider extends EvmSwapProvider {
   public readonly config: LifiSwapProviderConfig;
   public readonly nativeAssetAddress = ethers.constants.AddressZero;
 
   private readonly _lifiClient: LiFi;
   private readonly _httpClient: HttpClient;
-  private _lifiTools: ToolConfiguration;
-  private _lifiConfig: Partial<LifiQuoteRequest>;
 
   constructor(config: LifiSwapProviderConfig) {
     super(config);
 
+    const lifiConfig: ConfigUpdate = {
+      defaultRouteOptions: {
+        /*
+         * Default slippage should be in the range of 3% to 5%
+         */
+        slippage: config.slippage ?? 0.05, // 5 / 100 -> 5%
+        /*
+         * export declare const Orders: readonly ["RECOMMENDED", "FASTEST", "CHEAPEST", "SAFEST"];
+         * keep the "RECOMMENDED" as a default
+         */
+        order: config.order ?? Orders[0], // 'RECOMMENDED'
+        integrator: 'Liquality Wallet',
+        /*
+         * Connext adds additional 8 seconds to fetching quote time. Disable it for now.
+         */
+        bridges: {
+          deny: ['connext'],
+        },
+      } as RouteOptions,
+    };
+
     this._httpClient = new HttpClient({ baseURL: this.config.apiURL });
-    this._lifiClient = new LiFi();
+    this._lifiClient = new LiFi(lifiConfig);
   }
 
   async getSupportedPairs() {
@@ -91,55 +92,18 @@ class LifiSwapProvider extends EvmSwapProvider {
       toToken: toInfo.contractAddress ?? this.nativeAssetAddress,
       fromAddress: chains[fromInfo.chain].formatAddress(fromAddressRaw),
       toAddress: chains[toInfo.chain].formatAddress(toAddressRaw),
-      ...(await this.getConfig()),
+      order: this._lifiClient.getConfig().defaultRouteOptions.order,
+      slippage: this._lifiClient.getConfig().defaultRouteOptions.slippage,
+      integrator: this._lifiClient.getConfig().defaultRouteOptions.integrator,
+      denyBridges: this._lifiClient.getConfig().defaultRouteOptions.bridges?.deny,
     };
 
     try {
-      const lifiRoute = await this._httpClient.nodeGet('/quote', quoteRequest);
+      const lifiRoute = await this._lifiClient.getQuote(quoteRequest);
 
       return { from, to, fromAmount: fromAmountInUnit, toAmount: lifiRoute.estimate.toAmount, lifiRoute };
     } catch (e) {
-      if (!e.errors) {
-        return null;
-      }
-
-      const lowAmmountErrors = e.errors.filter(
-        (error: LiFiErrorType) => error.code === SwapProviderErrorTypes.AMOUNT_TOO_LOW
-      );
-      if (lowAmmountErrors.length > 0) {
-        /*
-         * message format is: 'The amount is too low or too high. The minimum is 20000000 and the maximum is 3500000000000'
-         * pulling all minimum amounts and then taking the lowest one
-         */
-        const min = lowAmmountErrors
-          .map((error: LiFiErrorType) => new BN(error.message.match(/\d+/)?.[0] as string))
-          .sort((a: BN, b: BN) => a.minus(b))[0];
-
-        return {
-          from,
-          to,
-          fromAmount: fromAmountInUnit,
-          toAmount: '0',
-          swapProviderError: {
-            code: SwapProviderErrorTypes.AMOUNT_TOO_LOW,
-            min: unitToCurrency(toInfo, min),
-          } as SwapProviderError,
-        };
-      }
-
-      const feesHigherThanAmountError = e.errors.find(
-        (error: LiFiErrorType) => error.code === SwapProviderErrorTypes.FEES_HIGHER_THAN_AMOUNT
-      );
-      if (feesHigherThanAmountError) {
-        return {
-          from,
-          to,
-          fromAmount: fromAmountInUnit,
-          toAmount: '0',
-          swapProviderError: { code: SwapProviderErrorTypes.FEES_HIGHER_THAN_AMOUNT } as SwapProviderError,
-        };
-      }
-
+      console.warn('LifiSwapProvider: ', e);
       return null;
     }
   }
@@ -205,9 +169,13 @@ class LifiSwapProvider extends EvmSwapProvider {
       let txGas = 0;
       try {
         txGas = (
-          await client.chain
-            .getProvider()
-            .estimateGas({ data: txData?.data, to: txData?.to, from: txData?.from, value: txData?.value })
+          await client.chain.getProvider().estimateGas({
+            data: txData?.data,
+            to: txData?.to,
+            from: txData?.from,
+            value: txData?.value,
+            fee: feeRequest.quote.fee,
+          })
         ).toNumber();
       } catch {
         txGas = txData?.gasLimit as number;
@@ -281,49 +249,6 @@ class LifiSwapProvider extends EvmSwapProvider {
     }
 
     return quote.lifiRoute;
-  }
-
-  /*
-   * cache tools
-   */
-  private async getTools() {
-    if (!this._lifiTools) {
-      const tools = await this._lifiClient.getTools();
-
-      if (!tools || !tools.bridges || !tools.exchanges) {
-        throw new Error('LifiSwapProvider: bridges and exchanges not available');
-      }
-
-      this._lifiTools = {
-        allowBridges: tools.bridges.map((bridge) => bridge.key),
-        allowExchanges: tools.exchanges.map((exchange) => exchange.key),
-      };
-    }
-
-    return this._lifiTools;
-  }
-
-  /*
-   * LiFi config
-   */
-  private async getConfig() {
-    if (!this._lifiConfig) {
-      this._lifiConfig = {
-        /*
-         * Default slippage should be in the range of 3% to 5%
-         */
-        slippage: this.config.slippage ?? 0.05, // 5 / 100 -> 5%
-        /*
-         * export declare const Orders: readonly ["RECOMMENDED", "FASTEST", "CHEAPEST", "SAFEST"];
-         * keep the "RECOMMENDED" as a default
-         */
-        order: this.config.order ?? Orders[0], // 'RECOMMENDED'
-        integrator: 'Liquality Wallet',
-        ...(await this.getTools()),
-      };
-    }
-
-    return this._lifiConfig;
   }
 
   // ======== STATE TRANSITIONS ========
