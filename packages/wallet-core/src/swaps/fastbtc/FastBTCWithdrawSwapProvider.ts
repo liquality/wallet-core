@@ -102,6 +102,10 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
       return null;
     }
 
+    const { min, max } = await this.getLimits();
+    const isQuoteAmountInTheRange = amount.gte(min) && amount.lte(max);
+    if (!isQuoteAmountInTheRange) return null;
+
     const fastBtcBridge = this.getFastBtcBridge(this._provider);
     const fromAmountInSatoshi = new BN(currencyToUnit(cryptoassets.BTC, new BN(amount)));
     const feeSatoshi: ethers.BigNumber = await fastBtcBridge.calculateCurrentFeeSatoshi(
