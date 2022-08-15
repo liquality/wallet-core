@@ -147,7 +147,9 @@ class FastBTCDepositSwapProvider extends SwapProvider {
     const fromAmountInUnit = new BN(currencyToUnit(cryptoassets[from], new BN(amount)));
     const validAmountRange = await this._getTxAmount();
     const isQuoteAmountInTheRange = amount.lte(validAmountRange.max) && amount.gte(validAmountRange.min);
-    if (!isQuoteAmountInTheRange) return null;
+    if (!isQuoteAmountInTheRange) {
+      return null;
+    }
     const toAmountInUnit = new BN(
       currencyToUnit(cryptoassets[to], new BN(amount).minus(unitToCurrency(cryptoassets[from], FAST_BTC_SATOSHI_FEE)))
     ).times(1 - FAST_BTC_PERCENTAGE_FEE / 100);
