@@ -15,6 +15,8 @@ export interface BoostHistoryItem extends EvmSwapHistoryItem {
   hopChainTo: Chain;
   fromFundHash: string;
   receiveFee: string;
+  hopReceiveFee: string;
+  thorchainReceiveFee: string;
   maxFeeSlippageMultiplier: number;
   fromFundTx: Transaction;
   receiveTxHash: string;

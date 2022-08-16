@@ -51,6 +51,7 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
 
     const bridgeChainId = cryptoassets[bridgeAsset].chain;
 
+    // @TODO to support multi-account feature, bridgeAccountId should be selected by user via UI
     // Get accountId based on bridgeAsset
     const bridgeAccountId = store.getters.accountsWithBalance.find((account) => account.chain === bridgeChainId)?.id;
 
@@ -74,7 +75,7 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
 
     // Default behaviour or toFixed without an argument happens with BN if 0 is the argument
     // toFixed was already called in thorchain on toAmount but it was in vain
-    const bridgeAssetQtyInUnits = (new BN(quote.toAmount)).toFixed(0); 
+    const bridgeAssetQtyInUnits = (new BN(quote.toAmount)).minus(quote.receiveFee).toFixed(0);
     const bridgeAssetQuantity = unitToCurrency(assets[bridgeAsset], new BN(bridgeAssetQtyInUnits));
     console.log('toAssetQuantity ==> ', bridgeAssetQuantity);
     const finalQuote = await this.hopSwapProvider.getQuote({
@@ -100,6 +101,7 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
       hopChainTo: finalQuote.hopChainTo,
       hopReceiveFee: finalQuote.receiveFee,
       thorchainReceiveFee: quote.receiveFee,
+      receiveFee: finalQuote.receiveFee,
       slippage: quote.slippage, // Note this for tes, how slippage should be handled
     };
   }
@@ -247,10 +249,14 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
       const bridgeAsset = cryptoassets[quoteRequest.to].matchingAsset as string;
       const fromAsset = quoteRequest.from;
 
-      const minBridgeAssetAmount = await this.hopSwapProvider.getMin({
+      let minBridgeAssetAmount = await this.hopSwapProvider.getMin({
         ...quoteRequest,
         from: bridgeAsset,
       });
+
+      // Pad up with receiveFee which thorchain will charge.
+      const estimatedThorReceiveFee = await this.thorchainSwapProvider.estimateReceiveFee(fromAsset, bridgeAsset);
+      minBridgeAssetAmount = minBridgeAssetAmount.plus(estimatedThorReceiveFee);
 
       let minThorSwapAmount = await this.thorchainSwapProvider.getMin({
         ...quoteRequest,
@@ -263,9 +269,11 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
         to: fromAsset,
         amount: new BN(minBridgeAssetAmount),
       })) as Partial<ThorchainSwapQuote>;
+
       let fromMinAmount = unitToCurrency(assets[fromAsset], new BN(quote.toAmount as BigNumber.Value));
+
       // increase minimum amount with 5% to minimize calculation
-      // error and price fluctuation
+      // error, price fluctuation
       fromMinAmount = new BN(fromMinAmount).times(1.05);
       minThorSwapAmount = new BN(minThorSwapAmount);
       return fromMinAmount.gt(minThorSwapAmount) ? fromMinAmount : minThorSwapAmount;
@@ -360,6 +368,7 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
       ...swap,
       to: swap.bridgeAsset,
       toAmount: swap.bridgeAssetAmount,
+      receiveFee: swap.thorchainReceiveFee,
       slippagePercentage,
 
       //  No bridgeAccountId ==> 1st leg and 2nd leg are initiated on same chain so use decided to use same account
@@ -373,6 +382,7 @@ class ThorHopBoostAnyToLayer2 extends SwapProvider {
       from: swap.bridgeAsset,
       fromAmount: swap.bridgeAssetAmount,
       approveTx: swap.approveTxOnHop,
+      receiveFee: swap.hopReceiveFee,
       slippagePercentage,
       fromAccountId: swap.bridgeAccountId ? swap.bridgeAccountId : swap.fromAccountId
     };

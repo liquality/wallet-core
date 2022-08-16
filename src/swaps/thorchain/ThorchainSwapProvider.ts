@@ -697,6 +697,47 @@ class ThorchainSwapProvider extends SwapProvider {
   protected _totalSteps(): number {
     return 4;
   }
+
+  async estimateReceiveFee(from: string, to: string): Promise<string> {
+
+    const baseNetworkFee = await this.networkFees(to);
+    if (!baseNetworkFee) throw new Error(`ThorchainSwapProvider: baseNetworkFee not found while getting estimating receiveFee.`);
+    let networkFee = convertBaseAmountDecimal(baseNetworkFee, 8);
+
+    if (isERC20(to)) {
+      // in case of ERC20
+      const pools = await this._getPools();
+
+      const fromPoolData = pools.find((pool) => pool.asset === toThorchainAsset(from));
+      const toPoolData = pools.find((pool) => pool.asset === toThorchainAsset(to));
+  
+      if (!fromPoolData || !toPoolData) 
+        throw new Error(`ThorchainSwapProvider: Pool doesn't exist while estimating receiveFee`);
+      if (fromPoolData.status.toLowerCase() !== 'available' || toPoolData.status.toLowerCase() !== 'available')
+        throw new Error(`ThorchainSwapProvider: Pool is not available while estimating receiveFee`);
+  
+      const getPool = (poolData: ThorchainPool) => {
+        return {
+          assetBalance: toPoolBalance(poolData.balance_asset),
+          runeBalance: toPoolBalance(poolData.balance_rune),
+        };
+      };
+  
+      const fromPool = getPool(fromPoolData);
+      const toPool = getPool(toPoolData);
+      const poolData = pools.find((pool) => pool.asset === 'ETH.ETH');
+      if (!poolData) {
+        throw new Error(`ThorchainSwapProvider: pool data for ETH.ETH not found while estimating receiveFee`);
+      }
+      const ethPool = toThorchainAsset(from) !== 'ETH.ETH' ? getPool(poolData) : fromPool;
+      networkFee = getValueOfAsset1InAsset2(networkFee, ethPool, toPool);
+    }
+
+    const receiveFeeInUnit = currencyToUnit(cryptoassets[to], baseToAsset(networkFee).amount()).times(
+      SAFE_FEE_MULTIPLIER
+    );
+    return receiveFeeInUnit.toFixed(0);
+  }
 }
 
 export { ThorchainSwapProvider };
