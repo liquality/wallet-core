@@ -244,14 +244,14 @@ const NFT_ASSETS_MAP: {
   },
   solana: {
     testnet: {
-      marketplaceName: 'OpenSea',
-      url: `https://testnet.opensea.io/`,
-      transfer: `https://testnets.opensea.io/assets/{contract_address}`,
+      marketplaceName: 'Magic Eden',
+      url: `https://magiceden.io/`,
+      transfer: `https://magiceden.io/item-details/{contract_address}`,
     },
     mainnet: {
-      marketplaceName: 'OpenSea',
-      url: `https://opensea.io/`,
-      transfer: `https://opensea.io/assets/{chain}/{contract_address}`,
+      marketplaceName: 'Magic Eden',
+      url: `https://magiceden.io/`,
+      transfer: `https://magiceden.io/item-details/{contract_address}`,
     },
   },
 };
