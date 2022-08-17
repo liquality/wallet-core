@@ -78,6 +78,10 @@ function maxFeePerUnitEIP1559(suggestedGasFee: EIP1559Fee) {
  * Calculates fee for EIP1559 or returns fee for non EIP1559 chains per gas or byte (unit)
  */
 function feePerUnit(suggestedGasFee: FeeType, chain: ChainId): number {
+  if (suggestedGasFee === undefined || chain === undefined) {
+    throw new Error('feePerUnit: Incorrect input!');
+  }
+
   /*
    * In case it is EIP1559 chain then `maxFeePerGas` will be set.
    * Otherwise its non EIP1559 (this includes both EVM and Non EVM chains) and calculations are done based on `fee`.
@@ -183,4 +187,5 @@ export {
   probableFeePerUnitEIP1559,
   maxFeePerUnitEIP1559,
   feePerUnit,
+  newSendFees,
 };
