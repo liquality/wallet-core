@@ -93,7 +93,7 @@ function feePerUnit(suggestedGasFee: FeeType, chain: ChainId): number {
   return suggestedGasFee as number;
 }
 
-async function getTransactionFee(accountId: AccountId, asset: Asset, amount?: BN) {
+async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN) {
   const assetChain = cryptoassets[asset]?.chain;
   if (!assetChain) {
     throw new Error(`getSendFeeEstimations: asset chain not available for ${asset}`);
@@ -110,16 +110,16 @@ async function getTransactionFee(accountId: AccountId, asset: Asset, amount?: BN
   }
 
   if (assetChain === ChainId.Bitcoin) {
-    return transactionFeeInBTC(accountId, feeAsset, suggestedGasFees, amount);
+    return sendTxFeesInBTC(accountId, feeAsset, suggestedGasFees, amount);
   } else {
-    return transactionFeeInNativeAsset(feeAsset, suggestedGasFees);
+    return sendTxFeesInNativeAsset(feeAsset, suggestedGasFees);
   }
 }
 
 /*
- * Fee estimation method for all EIP1559 and non EIP1559 chains
+ * Send fee estimation method for all EIP1559 and non EIP1559 chains
  */
-function transactionFeeInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetails, sendFees?: SendFees) {
+function sendTxFeesInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetails, sendFees?: SendFees) {
   const assetChain = cryptoassets[feeAsset]?.chain;
   const _sendFees = sendFees ?? newSendFees();
 
@@ -135,9 +135,9 @@ function transactionFeeInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetai
 }
 
 /*
- * Fee estimation method for BTC
+ * Send fee estimation method for BTC
  */
-async function transactionFeeInBTC(
+async function sendTxFeesInBTC(
   accountId: AccountId,
   feeAsset: Asset,
   suggestedGasFees: FeeDetails,
@@ -181,9 +181,9 @@ export {
   getTxFee,
   getFeeLabel,
   isEIP1559Fees,
-  getTransactionFee,
-  transactionFeeInNativeAsset,
-  transactionFeeInBTC,
+  getSendTxFees,
+  sendTxFeesInNativeAsset,
+  sendTxFeesInBTC,
   probableFeePerUnitEIP1559,
   maxFeePerUnitEIP1559,
   feePerUnit,
