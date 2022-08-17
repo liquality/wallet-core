@@ -1,7 +1,7 @@
 import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
 import { Client } from '@chainify/client';
 import { EvmUtils } from '@chainify/evm';
-import { FeeDetail, FeeDetails } from '@chainify/types';
+import { EIP1559Fee, FeeDetail, FeeDetails, FeeType } from '@chainify/types';
 import { ChainId, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import store from '../store';
@@ -60,7 +60,36 @@ function isEIP1559Fees(chain: ChainId) {
   return chain === ChainId.Ethereum || chain === ChainId.Polygon || chain === ChainId.Avalanche;
 }
 
-async function getFeeEstimations(accountId: AccountId, asset: Asset, amount?: BN) {
+/*
+ * Probable fee for EIP1559 (BASE + TIP)
+ */
+function probableFeePerUnitEIP1559(suggestedGasFee: EIP1559Fee) {
+  return suggestedGasFee.suggestedBaseFeePerGas || 0 + suggestedGasFee.maxPriorityFeePerGas;
+}
+
+/*
+ * Max fee for EIP1559
+ */
+function maxFeePerUnitEIP1559(suggestedGasFee: EIP1559Fee) {
+  return suggestedGasFee.maxFeePerGas;
+}
+
+/*
+ * Calculates fee for EIP1559 or returns fee for non EIP1559 chains per gas or byte (unit)
+ */
+function feePerUnit(suggestedGasFee: FeeType, chain: ChainId): number {
+  /*
+   * In case it is EIP1559 chain then `maxFeePerGas` will be set.
+   * Otherwise its non EIP1559 (this includes both EVM and Non EVM chains) and calculations are done based on `fee`.
+   */
+  if (isEIP1559Fees(chain) && (<EIP1559Fee>suggestedGasFee).maxFeePerGas) {
+    return maxFeePerUnitEIP1559(<EIP1559Fee>suggestedGasFee);
+  }
+
+  return suggestedGasFee as number;
+}
+
+async function getTransactionFee(accountId: AccountId, asset: Asset, amount?: BN) {
   const assetChain = cryptoassets[asset]?.chain;
   if (!assetChain) {
     throw new Error(`getSendFeeEstimations: asset chain not available for ${asset}`);
@@ -71,31 +100,29 @@ async function getFeeEstimations(accountId: AccountId, asset: Asset, amount?: BN
     throw new Error(`getSendFeeEstimations: fee asset not available for ${asset}`);
   }
 
-  const suggestedGasFees = store.getters.suggestedGasFees(asset);
+  const suggestedGasFees = store.getters.getSuggestedFeePrices(asset);
   if (!suggestedGasFees) {
     throw new Error(`getSendFeeEstimations: fees not avaibale for ${asset}`);
   }
 
   if (assetChain === ChainId.Bitcoin) {
-    return feeEstimationsBTC(accountId, feeAsset, suggestedGasFees, amount);
+    return transactionFeeInBTC(accountId, feeAsset, suggestedGasFees, amount);
   } else {
-    return feeEstimations(feeAsset, suggestedGasFees);
+    return transactionFeeInNativeAsset(feeAsset, suggestedGasFees);
   }
 }
 
 /*
  * Fee estimation method for all EIP1559 and non EIP1559 chains
  */
-function feeEstimations(feeAsset: Asset, suggestedGasFees: FeeDetails, sendFees?: SendFees) {
+function transactionFeeInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetails, sendFees?: SendFees) {
+  const assetChain = cryptoassets[feeAsset]?.chain;
   const _sendFees = sendFees ?? newSendFees();
 
   for (const [speed, fee] of Object.entries(suggestedGasFees)) {
     const _speed = speed as keyof FeeDetails;
-    /*
-     * In case it is EIP1559 chain then `maxFeePerGas` will be set.
-     * Otherwise its non EIP1559 (this includes both EVM and Non EVM chains) and calculations are done based on `fee`.
-     */
-    const _fee: number = fee.fee.maxFeePerGas || fee.fee;
+
+    const _fee: number = feePerUnit(fee.fee, assetChain);
 
     _sendFees[_speed] = _sendFees[_speed].plus(getSendFee(feeAsset, _fee));
   }
@@ -106,7 +133,7 @@ function feeEstimations(feeAsset: Asset, suggestedGasFees: FeeDetails, sendFees?
 /*
  * Fee estimation method for BTC
  */
-async function feeEstimationsBTC(
+async function transactionFeeInBTC(
   accountId: AccountId,
   feeAsset: Asset,
   suggestedGasFees: FeeDetails,
@@ -144,4 +171,16 @@ async function feeEstimationsBTC(
   return _sendFees;
 }
 
-export { FEE_OPTIONS, getSendFee, getTxFee, getFeeLabel, isEIP1559Fees, getFeeEstimations };
+export {
+  FEE_OPTIONS,
+  getSendFee,
+  getTxFee,
+  getFeeLabel,
+  isEIP1559Fees,
+  getTransactionFee,
+  transactionFeeInNativeAsset,
+  transactionFeeInBTC,
+  probableFeePerUnitEIP1559,
+  maxFeePerUnitEIP1559,
+  feePerUnit,
+};

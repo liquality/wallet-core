@@ -201,7 +201,7 @@ export default {
       return account;
     };
   },
-  suggestedGasFees(...context: GetterContext) {
+  getSuggestedFeePrices(...context: GetterContext) {
     const { state } = rootGetterContext(context);
     return (asset: AssetType): FeeDetails | undefined => {
       return state.fees?.[state.activeNetwork]?.[state.activeWalletId]?.[asset];
