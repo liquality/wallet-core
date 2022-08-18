@@ -64,7 +64,11 @@ function isEIP1559Fees(chain: ChainId) {
  * Probable fee for EIP1559 (BASE + TIP)
  */
 function probableFeePerUnitEIP1559(suggestedGasFee: EIP1559Fee) {
-  return suggestedGasFee.suggestedBaseFeePerGas || 0 + suggestedGasFee.maxPriorityFeePerGas;
+  if (suggestedGasFee.suggestedBaseFeePerGas === undefined) {
+    return suggestedGasFee.maxPriorityFeePerGas;
+  }
+
+  return suggestedGasFee.suggestedBaseFeePerGas + suggestedGasFee.maxPriorityFeePerGas;
 }
 
 /*
@@ -114,7 +118,7 @@ async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN) {
   }
 
   if (assetChain === ChainId.Bitcoin) {
-    return sendTxFeesInBTC(accountId, feeAsset, suggestedGasFees, amount);
+    return sendBitcoinTxFees(accountId, feeAsset, suggestedGasFees, amount);
   } else {
     return sendTxFeesInNativeAsset(feeAsset, suggestedGasFees);
   }
@@ -141,7 +145,7 @@ function sendTxFeesInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetails, 
 /*
  * Send fee estimation method for BTC
  */
-async function sendTxFeesInBTC(
+async function sendBitcoinTxFees(
   accountId: AccountId,
   feeAsset: Asset,
   suggestedGasFees: FeeDetails,
@@ -187,7 +191,7 @@ export {
   isEIP1559Fees,
   getSendTxFees,
   sendTxFeesInNativeAsset,
-  sendTxFeesInBTC,
+  sendBitcoinTxFees,
   probableFeePerUnitEIP1559,
   maxFeePerUnitEIP1559,
   feePerUnit,
