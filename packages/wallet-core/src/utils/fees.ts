@@ -101,7 +101,7 @@ function feePerUnit(suggestedGasFee: FeeType, chain: ChainId): number {
   throw new Error('feePerUnit: suggestedGasFee deos not match chain!');
 }
 
-async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN) {
+async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN, customFee?: FeeType) {
   const assetChain = cryptoassets[asset]?.chain;
   if (!assetChain) {
     throw new Error(`getSendFeeEstimations: asset chain not available for ${asset}`);
@@ -117,22 +117,27 @@ async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN) {
     throw new Error(`getSendFeeEstimations: fees not avaibale for ${asset}`);
   }
 
+  const _suggestedGasFees = suggestedGasFees as FeeDetailsWithCustom;
+  if (customFee) {
+    _suggestedGasFees.custom = { fee: customFee };
+  }
+
   if (assetChain === ChainId.Bitcoin) {
-    return sendBitcoinTxFees(accountId, feeAsset, suggestedGasFees, amount);
+    return sendBitcoinTxFees(accountId, feeAsset, _suggestedGasFees, amount);
   } else {
-    return sendTxFeesInNativeAsset(feeAsset, suggestedGasFees);
+    return sendTxFeesInNativeAsset(feeAsset, _suggestedGasFees);
   }
 }
 
 /*
  * Send fee estimation method for all EIP1559 and non EIP1559 chains
  */
-function sendTxFeesInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetails, sendFees?: SendFees) {
+function sendTxFeesInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetailsWithCustom, sendFees?: SendFees) {
   const assetChain = cryptoassets[feeAsset]?.chain;
   const _sendFees = sendFees ?? newSendFees();
 
   for (const [speed, fee] of Object.entries(suggestedGasFees)) {
-    const _speed = speed as keyof FeeDetails;
+    const _speed = speed as keyof FeeDetailsWithCustom;
 
     const _fee: number = feePerUnit(fee.fee, assetChain);
 
@@ -148,7 +153,7 @@ function sendTxFeesInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetails, 
 async function sendBitcoinTxFees(
   accountId: AccountId,
   feeAsset: Asset,
-  suggestedGasFees: FeeDetails,
+  suggestedGasFees: FeeDetailsWithCustom,
   amount?: BN,
   sendFees?: SendFees
 ) {
@@ -174,7 +179,7 @@ async function sendBitcoinTxFees(
     const totalFees = await client.wallet.getTotalFees(txs, isMax);
     for (const [speed, fee] of Object.entries(suggestedGasFees)) {
       const totalFee = unitToCurrency(cryptoassets[feeAsset], totalFees[fee.fee]);
-      _sendFees[speed as keyof FeeDetails] = totalFee;
+      _sendFees[speed as keyof FeeDetailsWithCustom] = totalFee;
     }
   } catch (e) {
     console.error(e);
