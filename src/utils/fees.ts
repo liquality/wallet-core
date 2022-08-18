@@ -86,11 +86,15 @@ function feePerUnit(suggestedGasFee: FeeType, chain: ChainId): number {
    * In case it is EIP1559 chain then `maxFeePerGas` will be set.
    * Otherwise its non EIP1559 (this includes both EVM and Non EVM chains) and calculations are done based on `fee`.
    */
-  if (isEIP1559Fees(chain) && (<EIP1559Fee>suggestedGasFee).maxFeePerGas) {
-    return maxFeePerUnitEIP1559(<EIP1559Fee>suggestedGasFee);
+  if (!isEIP1559Fees(chain) && typeof suggestedGasFee === 'number') {
+    return suggestedGasFee as number;
   }
 
-  return suggestedGasFee as number;
+  if (isEIP1559Fees(chain) && typeof suggestedGasFee === 'object') {
+    return maxFeePerUnitEIP1559(suggestedGasFee as EIP1559Fee);
+  }
+
+  throw new Error('feePerUnit: suggestedGasFee deos not match chain!');
 }
 
 async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN) {
@@ -104,7 +108,7 @@ async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN) {
     throw new Error(`getSendFeeEstimations: fee asset not available for ${asset}`);
   }
 
-  const suggestedGasFees = store.getters.getSuggestedFeePrices(asset);
+  const suggestedGasFees = store.getters.suggestedFeePrices(asset);
   if (!suggestedGasFees) {
     throw new Error(`getSendFeeEstimations: fees not avaibale for ${asset}`);
   }
