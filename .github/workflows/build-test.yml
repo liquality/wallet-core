@@ -26,4 +26,4 @@ jobs:
           yarn rebuild
           export FORCE_COLOR=true
           export TEST_MNEMONIC=${{ secrets.TEST_MNEMONIC }}
-          yarn test:integration --coverage
+          yarn test

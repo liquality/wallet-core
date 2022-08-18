@@ -1,0 +1,10 @@
+allow-uncaught: false
+ui: 'bdd'
+timeout: 0
+full-trace: true
+color: true
+inline-diffs: true
+parallel: true
+jobs: 10
+recursive: true
+diff: true

@@ -1,0 +1,40 @@
+{
+  "sUSDT": {
+    "name": "sUSDT",
+    "code": "sUSDT",
+    "decimals": 6,
+    "coinGeckoId": "tether",
+    "contractAddress": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+    "matchingAsset": "USDT"
+  },
+  "sUSDC": {
+    "name": "sUSDC",
+    "code": "sUSDC",
+    "decimals": 6,
+    "coinGeckoId": "tether",
+    "contractAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "matchingAsset": "USDC"
+  },
+  "RAY": {
+    "name": "RAY",
+    "code": "RAY",
+    "decimals": 6,
+    "coinGeckoId": "raydium",
+    "contractAddress": "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R"
+  },
+  "SRM": {
+    "name": "SERUM",
+    "code": "SRM",
+    "decimals": 6,
+    "coinGeckoId": "serum",
+    "contractAddress": "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt"
+  },
+  "soLINK": {
+    "name": "soLINK",
+    "code": "LINK",
+    "decimals": 6,
+    "coinGeckoId": "chainlink",
+    "contractAddress": "CWE8jPTUYhdCTZYWPTe1o5DFqfdjzWKc9WKz6rSjQUdG",
+    "matchingAsset": "LINK"
+  }
+}
