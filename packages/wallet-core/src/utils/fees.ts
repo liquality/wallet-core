@@ -2,10 +2,10 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/
 import { Client } from '@chainify/client';
 import { EvmUtils } from '@chainify/evm';
 import { EIP1559Fee, FeeDetail, FeeDetails, FeeType } from '@chainify/types';
-import { ChainId, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import store from '../store';
-import { AccountId, Asset } from '../store/types';
+import { Account, AccountId, Asset, NFT } from '../store/types';
 import { getFeeAsset, getNativeAsset, isERC20, isEthereumChain } from './asset';
 import cryptoassets from './cryptoassets';
 
@@ -188,6 +188,75 @@ async function sendBitcoinTxFees(
   return _sendFees;
 }
 
+async function estimateTransferNFT(
+  accountId: AccountId,
+  receiver: string,
+  values: number[],
+  nft: NFT,
+  customFee?: FeeType
+): Promise<SendFees> {
+  const account: Account = store.getters.accountItem(accountId)!;
+
+  const feeAsset = chains[account.chain].nativeAsset;
+  if (!feeAsset) {
+    throw new Error(`getSendFeeEstimations: fee asset not available`);
+  }
+
+  const suggestedGasFees = store.getters.suggestedFeePrices(feeAsset);
+  if (!suggestedGasFees) {
+    throw new Error(`getSendFeeEstimations: fees not avaibale for ${feeAsset}`);
+  }
+
+  const _suggestedGasFees = suggestedGasFees as FeeDetailsWithCustom;
+  if (customFee) {
+    _suggestedGasFees.custom = { fee: customFee };
+  }
+
+  const client = store.getters.client({
+    network: store.state.activeNetwork,
+    walletId: store.state.activeWalletId,
+    asset: feeAsset,
+    accountId: accountId,
+  });
+
+  let _receiver = receiver;
+  // create a placeholder fro receiver address in case it is not specified
+  // only for EVM chains
+  if (!receiver && isEthereumChain(feeAsset)) {
+    _receiver = '0x' + 'f'.repeat(40);
+  }
+
+  const _sendFees = newSendFees();
+  try {
+    const estimation = await client.nft.estimateTransfer(
+      nft.asset_contract!.address!,
+      _receiver,
+      [nft.token_id!],
+      values
+    );
+
+    for (const [speed, fee] of Object.entries(suggestedGasFees)) {
+      const _speed = speed as keyof FeeDetailsWithCustom;
+      const _fee: number = feePerUnit(fee.fee, account.chain);
+      _sendFees[_speed] = new BN(estimation).times(_fee).div(1e9);
+    }
+
+    return _sendFees;
+  } catch (e) {
+    // in case method is not implemented (like in Solana), return fee without estimations
+    if (e.name === 'UnsupportedMethodError') {
+      for (const [speed, fee] of Object.entries(suggestedGasFees)) {
+        const _speed = speed as keyof FeeDetailsWithCustom;
+        _sendFees[_speed] = new BN(feePerUnit(fee.fee, account.chain));
+      }
+
+      return _sendFees;
+    }
+
+    throw e;
+  }
+}
+
 export {
   FEE_OPTIONS,
   getSendFee,
@@ -201,4 +270,5 @@ export {
   maxFeePerUnitEIP1559,
   feePerUnit,
   newSendFees,
+  estimateTransferNFT,
 };
