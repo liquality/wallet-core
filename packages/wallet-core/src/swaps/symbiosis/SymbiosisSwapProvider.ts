@@ -1,20 +1,15 @@
-import { ChainId, chains, currencyToUnit } from '@liquality/cryptoassets';
+import { currencyToUnit } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
-import {
-  Chain as SymbiosisChain,
-  ChainId as SymbiosisChainId,
-  getChainById,
-  SwapExactIn,
-  Symbiosis,
-  Token,
-  TokenAmount,
-} from 'symbiosis-js-sdk';
+import { BigNumber, ContractTransaction, Signer } from 'ethers';
+import { Execute, SwapExactIn, Symbiosis, Token, TokenAmount } from 'symbiosis-js-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import store, { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 
-import { Asset, Network, SwapHistoryItem } from '../../store/types';
-import { isERC20, isEthereumNativeAsset } from '../../utils/asset';
+import { MaxUint256 } from '@ethersproject/constants';
+import { Contract } from '@ethersproject/contracts';
+import { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
+import { Network, SwapHistoryItem } from '../../store/types';
 import { fiatToCrypto, prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
@@ -29,6 +24,15 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
+import {
+  ADDRESS_ZERO,
+  APPROVE_ABI,
+  DEFAULT_DEADLINE,
+  DEFAULT_SLIPPAGE,
+  FEE_UNITS,
+  getSymbiosisToken,
+  LIQUALITY_CLIENT_ID,
+} from './utils';
 
 export enum SymbiosisTxTypes {
   SWAP = 'SWAP',
@@ -40,10 +44,15 @@ interface SymbiosisSwapProviderConfig extends BaseSwapProviderConfig {
 }
 
 interface SymbiosisSwapHistoryItem extends SwapHistoryItem {
+  approveResponse: ContractTransaction;
   from: string;
-  to: string;
   fromFundHash: string;
   fromFundTx: string;
+  to: string;
+  execute: (signer: Signer) => Execute;
+  signer: Signer;
+  response: TransactionResponse;
+  receipt: TransactionReceipt;
 }
 
 export interface SymbiosisSwapQuote extends SwapQuote {
@@ -51,112 +60,22 @@ export interface SymbiosisSwapQuote extends SwapQuote {
   slippage: number;
 }
 
-const ADDRESS_ZERO = '0x1111111111111111111111111111111111111111';
-
-const DEFAULT_DEADLINE = Math.floor(Date.now() / 1000) * 20 * 60;
-
-const DEFAULT_SLIPPAGE = 300;
-
-const LIQUALITY_CLIENT_ID = 'liquality';
-
-const FEE_UNITS = {
-  ETH: 200000,
-  BNB: 200000,
-  MATIC: 200000,
-  AVAX: 200000,
-  ERC20: 300000,
-};
-
 class SymbiosisSwapProvider extends SwapProvider {
   public config: SymbiosisSwapProviderConfig;
 
-  private _symbiosis: Symbiosis;
+  private _swapping;
 
   constructor(config: SymbiosisSwapProviderConfig) {
     super(config);
-    this._symbiosis = new Symbiosis(config.network, LIQUALITY_CLIENT_ID);
-  }
+    const symbiosis = new Symbiosis(config.network, LIQUALITY_CLIENT_ID);
 
-  private _getSymbiosisChain(network: Network, chainName: ChainId): SymbiosisChain | undefined {
-    const isMainnet = network === Network.Mainnet;
-    const chains: { [key: string]: SymbiosisChainId } = {
-      [ChainId.Ethereum]: isMainnet ? SymbiosisChainId.ETH_MAINNET : SymbiosisChainId.ETH_RINKEBY,
-      [ChainId.Avalanche]: isMainnet ? SymbiosisChainId.AVAX_MAINNET : SymbiosisChainId.AVAX_TESTNET,
-      [ChainId.BinanceSmartChain]: isMainnet ? SymbiosisChainId.BSC_MAINNET : SymbiosisChainId.BSC_TESTNET,
-      [ChainId.Polygon]: isMainnet ? SymbiosisChainId.MATIC_MAINNET : SymbiosisChainId.MATIC_MUMBAI,
-    };
-
-    const chainId = chains[chainName];
-    if (!chainId) {
-      return;
-    }
-
-    return getChainById(chainId);
-  }
-
-  private _getSymbiosisToken(network: Network, asset: Asset): Token | null {
-    const cryptoAsset = cryptoassets[asset];
-    const chain = this._getSymbiosisChain(network, cryptoAsset.chain);
-
-    if (!chain) {
-      return null;
-    }
-
-    let address;
-    let isNative;
-    if (isEthereumNativeAsset(asset)) {
-      address = '';
-      isNative = true;
-    } else if (isERC20(asset)) {
-      address = cryptoAsset.contractAddress;
-    }
-
-    if (address === undefined) {
-      return null;
-    }
-
-    return new Token({
-      address,
-      chainId: chain.id,
-      decimals: cryptoAsset.decimals,
-      isNative,
-      symbol: asset,
-    });
-  }
-
-  private async _waitForSendSwap({ swap, network, walletId }: NextSwapActionRequest<SymbiosisSwapHistoryItem>) {
-    const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
-
-    try {
-      const tx = await client.chain.getTransactionByHash(swap.fromFundHash);
-      const chainId = cryptoassets[swap.from].chain;
-      if (tx && tx.confirmations && tx.confirmations >= chains[chainId].safeConfirmations) {
-        this.updateBalances(network, walletId, [swap.fromAccountId]);
-        return {
-          endTime: Date.now(),
-          status: tx.status === 'SUCCESS' || Number(tx.status) === 1 ? 'WAITING_FOR_RECEIVE' : 'FAILED',
-        };
-      }
-    } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
-      else throw e;
-    }
-  }
-
-  private _waitForReceiveSwap({ swap, network, walletId }: NextSwapActionRequest<SymbiosisSwapHistoryItem>) {
-    console.log({ swap, network, walletId });
-
-    return {
-      status: 'SUCCESS',
-    };
+    // Create new Swapping instance
+    this._swapping = symbiosis.newSwapping();
   }
 
   private async _exactIn(tokenAmountIn: TokenAmount, tokenOut: Token, account: string): SwapExactIn {
-    // Create new Swapping instance
-    const swapping = this._symbiosis.newSwapping();
-
     // Calculates fee for swapping between networks and get execute function
-    return await swapping.exactIn(
+    return await this._swapping.exactIn(
       tokenAmountIn,
       tokenOut,
       account,
@@ -166,6 +85,30 @@ class SymbiosisSwapProvider extends SwapProvider {
       DEFAULT_DEADLINE, // Symbiosis default deadline - 20 min
       true
     );
+  }
+
+  private async _approveToken(address: string, fromAmount: string, approveTo: string, signer: Signer) {
+    const tokenContract = new Contract(address, JSON.stringify(APPROVE_ABI), signer);
+
+    const allowance = await tokenContract.allowance(address, approveTo);
+    const inputAmount = BigNumber.from(new BN(fromAmount).toFixed());
+
+    if (allowance.gte(inputAmount)) {
+      return { status: 'APPROVE_CONFIRMED' };
+    }
+
+    const approveResponse: ContractTransaction = await tokenContract.approve(approveTo, MaxUint256);
+
+    return {
+      status: 'WAITING_FOR_APPROVE',
+      approveResponse,
+    };
+  }
+
+  private async _waitForApproveConfirmations(approveResponse: ContractTransaction) {
+    await approveResponse.wait(1);
+
+    return { endTime: Date.now(), status: 'APPROVE_CONFIRMED' };
   }
 
   public async getMin(quoteRequest: QuoteRequest) {
@@ -199,8 +142,8 @@ class SymbiosisSwapProvider extends SwapProvider {
     const assetFrom = cryptoassets[from];
     const assetTo = cryptoassets[to];
 
-    const tokenIn = this._getSymbiosisToken(network, from);
-    const tokenOut = this._getSymbiosisToken(network, to);
+    const tokenIn = getSymbiosisToken(network, from);
+    const tokenOut = getSymbiosisToken(network, to);
 
     if (!tokenIn || !tokenOut || tokenIn.chainId === tokenOut.chainId) {
       return null;
@@ -225,13 +168,13 @@ class SymbiosisSwapProvider extends SwapProvider {
     // @@ approve
 
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-    const signer = client.wallet.getSigner();
+    const signer: Signer = client.wallet.getSigner();
 
     // user address
     const account = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
 
-    const tokenIn = this._getSymbiosisToken(network, quote.from);
-    const tokenOut = this._getSymbiosisToken(network, quote.to);
+    const tokenIn = getSymbiosisToken(network, quote.from);
+    const tokenOut = getSymbiosisToken(network, quote.to);
 
     if (!tokenIn || !tokenOut) {
       throw new Error('Symbiosis asset does not exist');
@@ -239,21 +182,29 @@ class SymbiosisSwapProvider extends SwapProvider {
 
     const tokenAmountIn = new TokenAmount(tokenIn, quote.fromAmount);
 
-    const { execute } = await this._exactIn(tokenAmountIn, tokenOut, account);
+    // @ts-ignore
+    const { execute, approveTo } = await this._exactIn(tokenAmountIn, tokenOut, account);
 
-    const { response } = await execute(signer);
+    let updates;
+    if (tokenIn.isNative) {
+      const { response } = await execute(signer);
+      updates = {
+        response,
+        status: 'WAITING_FOR_SEND',
+      };
+    } else {
+      updates = await this._approveToken(account, quote.fromAmount, approveTo, signer);
+    }
 
     return {
       id: uuidv4(),
       fee: quote.fee,
       slippage: quote.slippage,
-      status: 'WAITING_FOR_SEND',
-      fromFundTx: response.from,
-      fromFundHash: response.hash,
+      execute,
+      signer,
+      ...updates,
     };
   }
-
-  // getTransactionExplorerLink
 
   public async performNextSwapAction(
     store: ActionContext,
@@ -263,24 +214,48 @@ class SymbiosisSwapProvider extends SwapProvider {
 
     switch (swap.status) {
       case 'WAITING_FOR_APPROVE':
-        updates = await withInterval(async () => {
-          // approve confirmation
-
-          return { status: 'APPROVE_CONFIRMED' };
-        });
+        updates = await withInterval(async () => this._waitForApproveConfirmations(swap.approveResponse));
         break;
       case 'APPROVE_CONFIRMED':
         updates = await withLock(store, { item: swap, network, walletId, asset: swap.from }, async () => {
-          return {
-            status: 'WAITING_FOR_SEND',
-          };
+          try {
+            const { response } = await swap.execute(swap.signer);
+
+            return {
+              response,
+              status: 'WAITING_FOR_SEND',
+            };
+          } catch (error) {
+            throw new Error(error);
+          }
         });
         break;
       case 'WAITING_FOR_SEND':
-        updates = await withInterval(async () => this._waitForSendSwap({ swap, network, walletId }));
+        updates = await withInterval(async () => {
+          try {
+            const receipt = await swap.response.wait(1);
+
+            return {
+              status: 'WAITING_FOR_RECEIVE',
+              receipt,
+            };
+          } catch (error) {
+            throw new Error(error);
+          }
+        });
         break;
       case 'WAITING_FOR_RECEIVE':
-        updates = await withInterval(async () => this._waitForReceiveSwap({ swap, network, walletId }));
+        updates = await withInterval(async () => {
+          try {
+            await this._swapping.waitForComplete(swap.receipt);
+
+            return {
+              status: 'SUCCESS',
+            };
+          } catch (error) {
+            throw new Error(error);
+          }
+        });
         break;
     }
     return updates;
