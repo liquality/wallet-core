@@ -40,7 +40,7 @@
     "typescript": "^4.5.5"
   },
   "scripts": {
-    "build": "turbo run build --parallel --no-cache",
+    "build": "turbo run build --no-cache",
     "lint": "yarn lint:ts && yarn prettier:check",
     "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
     "prettier:check": "prettier --check \"**/*.{js,json,sol,ts}\"",
