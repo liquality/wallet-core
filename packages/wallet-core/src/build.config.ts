@@ -146,6 +146,13 @@ const config: WalletCoreConfig = {
         network: Network.Testnet,
         routerAddress: '0x10C848e9495a32acA95F6c23C92eCA2b2bE9903A',
       },
+      [SwapProviderType.Symbiosis]: {
+        name: 'Symbiosis',
+        icon: 'symbiosis.svg',
+        type: SwapProviderType.Symbiosis,
+        network: Network.Testnet,
+        minSwapAmountInUsd: 10,
+      },
     },
     mainnet: {
       [SwapProviderType.Liquality]: {
@@ -232,6 +239,13 @@ const config: WalletCoreConfig = {
         icon: 'hop.svg',
         type: SwapProviderType.Hop,
         graphqlBaseURL: 'https://api.thegraph.com/subgraphs/name/hop-protocol',
+      },
+      [SwapProviderType.Symbiosis]: {
+        name: 'Symbiosis',
+        icon: 'symbiosis.svg',
+        type: SwapProviderType.Symbiosis,
+        network: Network.Mainnet,
+        minSwapAmountInUsd: 10,
       },
     },
   },

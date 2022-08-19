@@ -9,6 +9,7 @@ import { LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvid
 import { LiqualityBoostERC20toNative } from '../../swaps/liqualityboost/liqualityBoostERC20toNative/LiqualityBoostERC20toNative';
 import { LiqualityBoostNativeToERC20 } from '../../swaps/liqualityboost/liqualityBoostNativeToERC20/LiqualityBoostNativeToERC20';
 import { OneinchSwapProvider } from '../../swaps/oneinch/OneinchSwapProvider';
+import { SymbiosisSwapProvider } from '../../swaps/symbiosis/SymbiosisSwapProvider';
 import { SovrynSwapProvider } from '../../swaps/sovryn/SovrynSwapProvider';
 import { SwapProvider } from '../../swaps/SwapProvider';
 import { ThorchainSwapProvider } from '../../swaps/thorchain/ThorchainSwapProvider';
@@ -27,6 +28,7 @@ const providers = {
   [SwapProviderType.Astroport]: AstroportSwapProvider,
   [SwapProviderType.Hop]: HopSwapProvider,
   [SwapProviderType.Jupiter]: JupiterSwapProvider,
+  [SwapProviderType.Symbiosis]: SymbiosisSwapProvider,
 };
 
 const createSwapProvider = (network: Network, providerId: SwapProviderType) => {

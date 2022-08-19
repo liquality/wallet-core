@@ -1,0 +1,14 @@
+{
+  "title": "Symbiosis",
+  "description": "Cross-chain swaps and liquidity messaging with Symbiosis.",
+  "pros": [
+    "Cross-chain AMM DEX",
+    "Any to any swaps between EVM and non-EVM chains",
+    "In 1-click to lending and farming protocols",
+    "Fully decentralized",
+    "Just one transaction to sign",
+    "The lowest fees!"
+  ],
+  "cons": ["More functionality to come"],
+  "fees": ["Gas fees", "Liquidity providers’ fees"]
+}

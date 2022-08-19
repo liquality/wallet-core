@@ -10,6 +10,7 @@ import liqualityBoostERC20toNativeInfo from '../swaps/liqualityboost/liqualityBo
 import liqualityBoostNativeToERC20Info from '../swaps/liqualityboost/liqualityBoostNativeToERC20/info.json';
 import oneinchInfo from '../swaps/oneinch/info.json';
 import sovrynInfo from '../swaps/sovryn/info.json';
+import symbiosisInfo from '../swaps/symbiosis/info.json';
 import thorchainInfo from '../swaps/thorchain/info.json';
 import uniswapInfo from '../swaps/uniswap/info.json';
 import { LiqualitySwapProvider } from './liquality/LiqualitySwapProvider';
@@ -27,6 +28,7 @@ const swapProviderInfo = {
   [SwapProviderType.Astroport]: astroportInfo,
   [SwapProviderType.Hop]: hopInfo,
   [SwapProviderType.Jupiter]: jupiterInfo,
+  [SwapProviderType.Symbiosis]: symbiosisInfo,
 };
 
 function getSwapProviderConfig(network: Network, providerId: SwapProviderType) {
