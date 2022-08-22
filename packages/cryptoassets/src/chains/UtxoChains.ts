@@ -38,7 +38,7 @@ export const UTXO_CHAINS: { [key in ChainId]?: IChain } = {
         wif: 0x80,
       },
       rpcUrls: ['https://electrs-mainnet-api.liq-chainhub.net/'],
-      scraperUrl: 'https://electrs-batch-mainnet-api.liq-chainhub.net/',
+      scraperUrl: ['https://electrs-batch-mainnet-api.liq-chainhub.net/'],
     },
     explorerViews: [
       {

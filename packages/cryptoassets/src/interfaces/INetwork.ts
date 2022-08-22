@@ -8,7 +8,7 @@ export interface INetwork {
   networkId?: string | number;
 
   rpcUrls: string[];
-  scraperUrl?: string;
+  scraperUrl?: string[];
   utxo?: IUtxoNetwork;
 }
 
