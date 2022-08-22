@@ -1,16 +1,16 @@
 import { HttpClient } from '@chainify/client';
 import { Nullable } from '@chainify/types';
 import { ChainId, chains } from '@liquality/cryptoassets';
-import { Resolution } from '@unstoppabledomains/resolution';
+import { Resolution, ResolutionResponse } from '@unstoppabledomains/resolution';
 import buildConfig from '../build.config';
+import { NameResolver } from './nameResolver';
 
 const reg = RegExp('^[.a-z0-9-]+$');
 const resolution = new Resolution();
 const unsConfig = buildConfig.nameResolvers.uns;
-interface NameResolver {
-  reverseLookup(address: string): Promise<Nullable<string>>;
-  lookupDomain(address: string, chainId: ChainId): Promise<Nullable<string>>;
-  isValidTLD(domain: string): Promise<boolean>;
+
+interface TldsResponse {
+  tlds: string[];
 }
 
 function getUNSKey(chainId: ChainId) {
@@ -59,12 +59,12 @@ class UNSResolver implements NameResolver {
     try {
       const domain = this.preparedDomain(address);
       if (await this.isValidTLD(domain)) {
-        const data = await HttpClient.get(
+        const data: ResolutionResponse = await HttpClient.get(
           unsConfig.resolutionService + domain,
           {},
           { headers: { Authorization: `Bearer ${unsConfig.alchemyKey}` } }
         );
-        return data?.records[unsKey] ?? null;
+        return data.records[unsKey] ?? null;
       }
       return null;
     } catch (e) {
@@ -74,10 +74,9 @@ class UNSResolver implements NameResolver {
 
   async isValidTLD(domain: string): Promise<boolean> {
     if (!this.supportedTlds) {
-      const response = await fetch(unsConfig.tldAPI);
-      const data = await response.json();
-      if (data['tlds']) {
-        this.supportedTlds = data['tlds'];
+      const data: TldsResponse = await HttpClient.get(unsConfig.tldAPI);
+      if (data.tlds) {
+        this.supportedTlds = data.tlds;
       }
     }
     return this.supportedTlds?.some((tld) => domain.endsWith(tld)) ?? false;
