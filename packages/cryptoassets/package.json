@@ -11,6 +11,8 @@
     "dist/**"
   ],
   "dependencies": {
+    "@chainify/utils": "1.2.23",
+    "@ethersproject/address": "5.7.0",
     "@types/bs58": "^4.0.1",
     "bignumber.js": "^9.0.2",
     "bitcoin-address-validation": "^2.2.1",

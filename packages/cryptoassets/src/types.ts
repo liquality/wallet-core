@@ -2,9 +2,7 @@ export interface Chain {
   name: string;
   code: string;
   nativeAsset: string;
-  fees: {
-    unit: string;
-  };
+  fees: { unit: string };
   safeConfirmations: number;
   txFailureTimeout: number;
   evmCompatible: boolean;
