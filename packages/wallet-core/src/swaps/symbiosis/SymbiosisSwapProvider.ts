@@ -1,14 +1,14 @@
-import { currencyToUnit } from '@liquality/cryptoassets';
-import BN from 'bignumber.js';
-import { BigNumber, ContractTransaction, Signer } from 'ethers';
-import { Execute, SwapExactIn, Symbiosis, Token, TokenAmount } from 'symbiosis-js-sdk';
-import { v4 as uuidv4 } from 'uuid';
-import store, { ActionContext } from '../../store';
-import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
-
 import { MaxUint256 } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { TransactionReceipt, TransactionResponse } from '@ethersproject/providers';
+import { currencyToUnit } from '@liquality/cryptoassets';
+import BN from 'bignumber.js';
+import { BigNumber, ContractTransaction, Signer } from 'ethers';
+import { Execute, Symbiosis, Token, TokenAmount } from 'symbiosis-js-sdk';
+import { BaseSwapping } from 'symbiosis-js-sdk/dist/crosschain/baseSwapping';
+import { v4 as uuidv4 } from 'uuid';
+import store, { ActionContext } from '../../store';
+import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { Network, SwapHistoryItem } from '../../store/types';
 import { fiatToCrypto, prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
@@ -55,10 +55,12 @@ interface SymbiosisSwapHistoryItem extends SwapHistoryItem {
   receipt: TransactionReceipt;
 }
 
-export interface SymbiosisSwapQuote extends SwapQuote {
+interface SymbiosisSwapQuote extends SwapQuote {
   receiveFee: string;
   slippage: number;
 }
+
+type SwapExactIn = ReturnType<BaseSwapping['doExactIn']>;
 
 class SymbiosisSwapProvider extends SwapProvider {
   public config: SymbiosisSwapProviderConfig;
@@ -171,8 +173,6 @@ class SymbiosisSwapProvider extends SwapProvider {
   }
 
   public async newSwap({ network, walletId, quote }: SwapRequest<SymbiosisSwapHistoryItem>) {
-    // @@ approve
-
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const signer: Signer = client.wallet.getSigner();
 
@@ -188,7 +188,6 @@ class SymbiosisSwapProvider extends SwapProvider {
 
     const tokenAmountIn = new TokenAmount(tokenIn, quote.fromAmount);
 
-    // @ts-ignore
     const { execute, approveTo } = await this._exactIn(tokenAmountIn, tokenOut, account);
 
     let updates;
