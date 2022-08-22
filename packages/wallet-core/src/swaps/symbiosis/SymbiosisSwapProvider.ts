@@ -87,8 +87,14 @@ class SymbiosisSwapProvider extends SwapProvider {
     );
   }
 
-  private async _approveToken(address: string, fromAmount: string, approveTo: string, signer: Signer) {
-    const tokenContract = new Contract(address, JSON.stringify(APPROVE_ABI), signer);
+  private async _approveToken(
+    address: string,
+    tokenAddress: string,
+    fromAmount: string,
+    approveTo: string,
+    signer: Signer
+  ) {
+    const tokenContract = new Contract(tokenAddress, JSON.stringify(APPROVE_ABI), signer);
 
     const allowance = await tokenContract.allowance(address, approveTo);
     const inputAmount = BigNumber.from(new BN(fromAmount).toFixed());
@@ -193,7 +199,7 @@ class SymbiosisSwapProvider extends SwapProvider {
         status: 'WAITING_FOR_SEND',
       };
     } else {
-      updates = await this._approveToken(account, quote.fromAmount, approveTo, signer);
+      updates = await this._approveToken(account, tokenIn.address, quote.fromAmount, approveTo, signer);
     }
 
     return {

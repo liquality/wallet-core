@@ -1,8 +1,8 @@
 import { ChainId } from '@liquality/cryptoassets';
-import { Asset, Network } from 'src/store/types';
-import { isERC20, isEthereumNativeAsset } from 'src/utils/asset';
-import cryptoassets from 'src/utils/cryptoassets';
 import { Chain as SymbiosisChain, ChainId as SymbiosisChainId, getChainById, Token } from 'symbiosis-js-sdk';
+import { Asset, Network } from '../../store/types';
+import { isERC20, isEthereumNativeAsset } from '../../utils/asset';
+import cryptoassets from '../../utils/cryptoassets';
 
 export const ADDRESS_ZERO = '0x1111111111111111111111111111111111111111';
 
@@ -31,6 +31,18 @@ export const APPROVE_ABI = [
     outputs: [{ name: '', type: 'bool' }],
     payable: false,
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [
+      { internalType: 'address', name: '', type: 'address' },
+      { internalType: 'address', name: '', type: 'address' },
+    ],
+    name: 'allowance',
+    outputs: [{ name: '', type: 'uint256' }],
+    payable: false,
+    stateMutability: 'view',
     type: 'function',
   },
 ];
