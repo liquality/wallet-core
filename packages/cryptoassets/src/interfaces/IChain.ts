@@ -20,14 +20,14 @@ export interface IChain {
 
   network: INetwork;
 
-  explorerViews: ExplorerView[];
   faucetUrl?: string;
+  explorerViews: ExplorerView[];
 
   multicallSupport: boolean;
 
-  EIP1559: boolean;
-  feeMultiplier?: FeeMultiplier;
-  gasLimit: IGasLimits;
   fees: IFees;
+  EIP1559: boolean;
+  gasLimit: IGasLimits;
   supportCustomFees: boolean;
+  feeMultiplier?: FeeMultiplier;
 }
