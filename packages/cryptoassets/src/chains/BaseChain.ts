@@ -9,39 +9,9 @@ import { ChainId, ExplorerView, FeeMultiplier } from '../types';
 
 export abstract class BaseChain implements IChain {
   constructor(chain: IChain) {
-    this.id = chain.id;
-    this.name = chain.name;
-
-    this.code = chain.code;
-    this.color = chain.color;
-
-    this.nativeAsset = chain.nativeAsset;
-
-    this.isEVM = chain.isEVM;
-    this.hasTokens = chain.hasTokens;
-
-    this.averageBlockTime = chain.averageBlockTime;
-    this.safeConfirmations = chain.safeConfirmations;
-    this.txFailureTimeoutMs = chain.txFailureTimeoutMs;
-
-    this.network = chain.network;
-    this.explorerViews = chain.explorerViews;
-
-    this.multicallSupport = chain.multicallSupport;
-
-    this.EIP1559 = chain.EIP1559;
-    this.gasLimit = chain.gasLimit;
-    this.fees = chain.fees;
-    this.supportCustomFees = chain.supportCustomFees;
-
-    if (chain.faucetUrl) {
-      this.faucetUrl = chain.faucetUrl;
-    }
-
-    if (chain.feeMultiplier) {
-      this.feeMultiplier = chain.feeMultiplier;
-    }
+    Object.assign(this, chain);
   }
+
   public id: ChainId;
   public name: string;
 
