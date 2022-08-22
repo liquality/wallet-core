@@ -1,6 +1,6 @@
 import { HttpClient } from '@chainify/client';
 import { Nullable } from '@chainify/types';
-import { ChainId } from '@liquality/cryptoassets';
+import { ChainId, chains } from '@liquality/cryptoassets';
 import { Resolution } from '@unstoppabledomains/resolution';
 import buildConfig from '../build.config';
 
@@ -13,43 +13,49 @@ interface NameResolver {
   isValidTLD(domain: string): Promise<boolean>;
 }
 
-export class UNSResolver implements NameResolver {
-  supportedTlds: string[] | null;
-  getUNSKey(chainId: ChainId): string {
-    const unsKey = this.chainToUNSKey(chainId);
-    return 'crypto.' + unsKey + '.address';
-  }
+function getUNSKey(chainId: ChainId) {
+  const unsKey = chainToUNSKey(chainId);
+  if (!unsKey) return null;
+  return 'crypto.' + unsKey + '.address';
+}
 
-  chainToUNSKey(chainId: ChainId): string {
-    switch (chainId) {
-      case ChainId.Bitcoin:
-        return 'BTC';
-      case ChainId.Avalanche:
-        return 'AVAX';
-      case ChainId.BinanceSmartChain:
-        return 'BNB';
-      case ChainId.BitcoinCash:
-        return 'BCH';
-      case ChainId.Fuse:
-        return 'FUSE';
-      case ChainId.Near:
-        return 'NEAR';
-      case ChainId.Polygon:
-        return 'MATIC';
-      case ChainId.Solana:
-        return 'SOL';
-      case ChainId.Terra:
-        return 'LUNA';
-      case ChainId.Rootstock:
-        return 'RSK';
-      case ChainId.Ethereum:
-      case ChainId.Arbitrum:
-      default:
-        return 'ETH';
-    }
+function chainToUNSKey(chainId: ChainId) {
+  switch (chainId) {
+    case ChainId.Bitcoin:
+      return 'BTC';
+    case ChainId.Avalanche:
+      return 'AVAX';
+    case ChainId.BinanceSmartChain:
+      return 'BNB';
+    case ChainId.BitcoinCash:
+      return 'BCH';
+    case ChainId.Fuse:
+      return 'FUSE';
+    case ChainId.Near:
+      return 'NEAR';
+    case ChainId.Polygon:
+      return 'MATIC.version.MATIC';
+    case ChainId.Solana:
+      return 'SOL';
+    case ChainId.Terra:
+      return 'LUNA';
+    case ChainId.Rootstock:
+      return 'RSK';
+    case ChainId.Ethereum:
+      return 'ETH';
+    default:
+      return chains[chainId].evmCompatible ? 'ETH' : null;
   }
+}
+
+class UNSResolver implements NameResolver {
+  supportedTlds: string[] | null;
 
   async lookupDomain(address: string, chainId: ChainId): Promise<Nullable<string>> {
+    const unsKey = getUNSKey(chainId);
+    if (!unsKey) {
+      return null; // Chain is not supported for resolving domain
+    }
     try {
       const domain = this.preparedDomain(address);
       if (await this.isValidTLD(domain)) {
@@ -58,7 +64,7 @@ export class UNSResolver implements NameResolver {
           {},
           { headers: { Authorization: `Bearer ${unsConfig.alchemyKey}` } }
         );
-        return data?.records[this.getUNSKey(chainId)] ?? null;
+        return data?.records[unsKey] ?? null;
       }
       return null;
     } catch (e) {
@@ -94,3 +100,5 @@ export class UNSResolver implements NameResolver {
     }
   }
 }
+
+export { UNSResolver, chainToUNSKey, getUNSKey };
