@@ -5,31 +5,10 @@ import { IChain } from '../interfaces/IChain';
 import { IFees } from '../interfaces/IFees';
 import { IGasLimits } from '../interfaces/IGasLimit';
 import { INetwork } from '../interfaces/INetwork';
-import { ChainId } from '../types';
-import { ExplorerView, FeeMultiplier } from './types';
+import { ChainId, ExplorerView, FeeMultiplier } from '../types';
 
 export abstract class BaseChain implements IChain {
-  constructor(chain: {
-    id: ChainId;
-    name: string;
-    code: string;
-    color: string;
-    nativeAsset: IAsset;
-    isEVM: boolean;
-    hasTokens: boolean;
-    averageBlockTime: number;
-    safeConfirmations: number;
-    txFailureTimeoutMs: number;
-    network: INetwork;
-    explorerViews: ExplorerView[];
-    multicallSupport: boolean;
-    EIP1559: boolean;
-    gasLimit: IGasLimits;
-    fees: IFees;
-    supportCustomFees: boolean;
-    faucetUrl?: string;
-    feeMultiplier?: FeeMultiplier;
-  }) {
+  constructor(chain: IChain) {
     this.id = chain.id;
     this.name = chain.name;
 

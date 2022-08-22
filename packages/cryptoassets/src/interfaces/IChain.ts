@@ -1,5 +1,4 @@
-import { ExplorerView, FeeMultiplier } from '../chains/types';
-import { ChainId } from '../types';
+import { ChainId, ExplorerView, FeeMultiplier } from '../types';
 import { IAsset } from './IAsset';
 import { IFees } from './IFees';
 import { IGasLimits } from './IGasLimit';
@@ -31,9 +30,4 @@ export interface IChain {
   gasLimit: IGasLimits;
   fees: IFees;
   supportCustomFees: boolean;
-
-  isValidAddress: (address: string) => boolean;
-  formatAddress: (address: string) => string;
-  isValidTransactionHash: (hash: string) => boolean;
-  formatTransactionHash: (hash: string) => string;
 }
