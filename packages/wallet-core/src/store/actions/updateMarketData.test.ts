@@ -27,7 +27,7 @@ describe('updateMarketData', () => {
     await wallet.dispatch.updateMarketData({
       network: Network.Mainnet,
     });
-    expect(wallet.state.marketData.mainnet?.length).toBeGreaterThan(10);
+    expect(wallet.state.marketData.mainnet?.length).toBeGreaterThan(0);
   });
 
   test('should be able to get marketData for testnet', async () => {
@@ -44,6 +44,6 @@ describe('updateMarketData', () => {
     await wallet.dispatch.updateMarketData({
       network: Network.Testnet,
     });
-    expect(wallet.state.marketData.testnet?.length).toBeGreaterThan(10);
+    expect(wallet.state.marketData.testnet?.length).toBeGreaterThan(0);
   });
 });
