@@ -1,6 +1,6 @@
-import { IChain } from 'src/interfaces/IChain';
 import { MAINNET_SUPPORTED_CHAINS } from '../../chains';
 import { IAsset } from '../../interfaces/IAsset';
+import { IChain } from '../../interfaces/IChain';
 
 export type AssetMap = Record<string, IAsset>;
 

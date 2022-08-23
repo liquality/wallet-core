@@ -64,3 +64,9 @@ export type FeeMultiplier = {
 };
 
 export type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> & Partial<Type>;
+
+// TODO: merge with wallet-core
+export enum Network {
+  Mainnet = 'mainnet',
+  Testnet = 'testnet',
+}

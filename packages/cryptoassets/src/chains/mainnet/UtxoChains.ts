@@ -1,4 +1,4 @@
-import { IChain } from 'src/interfaces/IChain';
+import { IChain } from '../../interfaces/IChain';
 import { AssetTypes, ChainId } from '../../types';
 import { BitcoinChain } from '../UtxoChain';
 
