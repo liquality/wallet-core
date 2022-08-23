@@ -30,7 +30,6 @@ jobs:
       - name: build
         run: |
           yarn
-          yarn build
 
       - name: Get date
         id: date
@@ -42,7 +41,7 @@ jobs:
         id: changesets
         with:
           publish: yarn build-release
-          commit: ":fire: entering prerelease mode"
+          commit: "chore: entering prerelease mode"
           title: ':rocket: Release ${{ steps.date.outputs.date }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
