@@ -24,6 +24,11 @@ export abstract class BaseChain implements IChain {
   }
 }
 
+/**
+ * Use declaration merging to avoid defining all properties from IChain
+ * The BaseChain interface and the BaseChain abstract class are merged into one.
+ * Read more: https://www.typescriptlang.org/docs/handbook/declaration-merging.html
+ */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface BaseChain extends IChain {
   //
