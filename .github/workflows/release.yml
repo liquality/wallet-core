@@ -42,7 +42,7 @@ jobs:
         id: changesets
         with:
           publish: yarn release
-          commit: ":fire: entering prerelease mode ${{ version }}"
+          commit: ":fire: entering prerelease mode"
           title: ':rocket: Release ${{ steps.date.outputs.date }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
