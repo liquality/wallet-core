@@ -97,3 +97,8 @@ yarn changeset
 
 ![Alt text](docs/img_1.png)
 
+Commit those change sets to the branch and github actions will create a release PR automatically.
+
+![Alt text](docs/img_2.png)
+
+
