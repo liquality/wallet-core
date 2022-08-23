@@ -88,3 +88,12 @@ yarn test
 
 - GitHub actions will publish to NPM automatically after a successful pull request merge.
   Releases will be listed here: [Releases](https://github.com/liquality/wallet-core/releases)
+
+```
+yarn changeset
+```
+
+![Alt text](docs/img.png)
+
+![Alt text](docs/img_1.png)
+
