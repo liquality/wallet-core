@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.1
+
+### Patch Changes
+
+- e268c44: fix: added npm token to yarnnc
+
 ## 1.14.0
 
 ### Minor Changes
