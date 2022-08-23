@@ -24,5 +24,5 @@ test('accounts createAccount', async () => {
       name: 'Bitcoin account 2',
     },
   });
-  expect(wallet.state.accounts[walletId!]?.mainnet.length).toBe(12);
+  expect(wallet.state.accounts[walletId!]?.mainnet.length).toBe(13);
 });

@@ -1,64 +1,70 @@
 import { HttpClient } from '@chainify/client';
 import { Nullable } from '@chainify/types';
-import { ChainId } from '@liquality/cryptoassets';
-import { Resolution } from '@unstoppabledomains/resolution';
+import { ChainId, chains } from '@liquality/cryptoassets';
+import { Resolution, ResolutionResponse } from '@unstoppabledomains/resolution';
 import buildConfig from '../build.config';
+import { NameResolver } from './nameResolver';
 
 const reg = RegExp('^[.a-z0-9-]+$');
 const resolution = new Resolution();
 const unsConfig = buildConfig.nameResolvers.uns;
-interface NameResolver {
-  reverseLookup(address: string): Promise<Nullable<string>>;
-  lookupDomain(address: string, chainId: ChainId): Promise<Nullable<string>>;
-  isValidTLD(domain: string): Promise<boolean>;
+
+interface TldsResponse {
+  tlds: string[];
 }
 
-export class UNSResolver implements NameResolver {
-  supportedTlds: string[] | null;
-  getUNSKey(chainId: ChainId): string {
-    const unsKey = this.chainToUNSKey(chainId);
-    return 'crypto.' + unsKey + '.address';
-  }
+function getUNSKey(chainId: ChainId) {
+  const unsKey = chainToUNSKey(chainId);
+  if (!unsKey) return null;
+  return 'crypto.' + unsKey + '.address';
+}
 
-  chainToUNSKey(chainId: ChainId): string {
-    switch (chainId) {
-      case ChainId.Bitcoin:
-        return 'BTC';
-      case ChainId.Avalanche:
-        return 'AVAX';
-      case ChainId.BinanceSmartChain:
-        return 'BNB';
-      case ChainId.BitcoinCash:
-        return 'BCH';
-      case ChainId.Fuse:
-        return 'FUSE';
-      case ChainId.Near:
-        return 'NEAR';
-      case ChainId.Polygon:
-        return 'MATIC';
-      case ChainId.Solana:
-        return 'SOL';
-      case ChainId.Terra:
-        return 'LUNA';
-      case ChainId.Rootstock:
-        return 'RSK';
-      case ChainId.Ethereum:
-      case ChainId.Arbitrum:
-      default:
-        return 'ETH';
-    }
+function chainToUNSKey(chainId: ChainId) {
+  switch (chainId) {
+    case ChainId.Bitcoin:
+      return 'BTC';
+    case ChainId.Avalanche:
+      return 'AVAX';
+    case ChainId.BinanceSmartChain:
+      return 'BNB';
+    case ChainId.BitcoinCash:
+      return 'BCH';
+    case ChainId.Fuse:
+      return 'FUSE';
+    case ChainId.Near:
+      return 'NEAR';
+    case ChainId.Polygon:
+      return 'MATIC.version.MATIC';
+    case ChainId.Solana:
+      return 'SOL';
+    case ChainId.Terra:
+      return 'LUNA';
+    case ChainId.Rootstock:
+      return 'RSK';
+    case ChainId.Ethereum:
+      return 'ETH';
+    default:
+      return chains[chainId].evmCompatible ? 'ETH' : null;
   }
+}
+
+class UNSResolver implements NameResolver {
+  supportedTlds: string[] | null;
 
   async lookupDomain(address: string, chainId: ChainId): Promise<Nullable<string>> {
+    const unsKey = getUNSKey(chainId);
+    if (!unsKey) {
+      return null; // Chain is not supported for resolving domain
+    }
     try {
       const domain = this.preparedDomain(address);
       if (await this.isValidTLD(domain)) {
-        const data = await HttpClient.get(
+        const data: ResolutionResponse = await HttpClient.get(
           unsConfig.resolutionService + domain,
           {},
           { headers: { Authorization: `Bearer ${unsConfig.alchemyKey}` } }
         );
-        return data?.records[this.getUNSKey(chainId)] ?? null;
+        return data.records[unsKey] ?? null;
       }
       return null;
     } catch (e) {
@@ -68,10 +74,9 @@ export class UNSResolver implements NameResolver {
 
   async isValidTLD(domain: string): Promise<boolean> {
     if (!this.supportedTlds) {
-      const response = await fetch(unsConfig.tldAPI);
-      const data = await response.json();
-      if (data['tlds']) {
-        this.supportedTlds = data['tlds'];
+      const data: TldsResponse = await HttpClient.get(unsConfig.tldAPI);
+      if (data.tlds) {
+        this.supportedTlds = data.tlds;
       }
     }
     return this.supportedTlds?.some((tld) => domain.endsWith(tld)) ?? false;
@@ -94,3 +99,5 @@ export class UNSResolver implements NameResolver {
     }
   }
 }
+
+export { UNSResolver, chainToUNSKey, getUNSKey };
