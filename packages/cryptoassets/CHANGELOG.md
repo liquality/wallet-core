@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.2
+
+### Patch Changes
+
+- ec9a3b9: fix: fix the script in package.json
+
 ## 1.14.1
 
 ### Patch Changes
