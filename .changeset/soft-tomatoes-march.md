@@ -3,4 +3,4 @@
 '@liquality/wallet-core': minor
 ---
 
-Both crytpto wallt & wallet core minor bump version
+config: Both crypto wallet & wallet core minor bump version

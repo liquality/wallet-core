@@ -97,7 +97,11 @@ yarn changeset
 
 ![Alt text](docs/img_1.png)
 
-Commit those change sets to the branch and github actions will create a release PR automatically.
+Under [changeset](.changeset/) you will notice a new markdown file (its name is randomly generated), with the change-type and summary.
+
+![Alt text](docs/img_3.png)
+
+Push the file along with the rest of the changes, and let the GitHub actions do the heavy-lifting for you. As for the markdown file, it will be deleted by our GitHub action when the entry that's referencing is added to the changelog.
 
 ![Alt text](docs/img_2.png)
 
