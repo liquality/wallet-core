@@ -13,4 +13,5 @@ function currencyToUnit(asset: Asset, value: number | BigNumber): BigNumber {
   return new BigNumber(value).times(multiplier);
 }
 
+export * from './chains';
 export { MAINNET_ASSETS, dappChains, unitToCurrency, currencyToUnit, Asset, AssetType, AssetTypes, ChainId };
