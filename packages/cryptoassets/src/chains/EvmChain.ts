@@ -1,6 +1,6 @@
-import { ensure0x } from '@chainify/utils';
 import { getAddress, isAddress } from '@ethersproject/address';
 import { toChecksumAddress } from 'ethereumjs-util';
+import { ensure0x } from '../utils';
 import { BaseChain } from './BaseChain';
 
 export class EvmChain extends BaseChain {

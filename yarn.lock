@@ -2377,7 +2377,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@liquality/cryptoassets@workspace:packages/cryptoassets"
   dependencies:
-    "@chainify/utils": 1.2.23
     "@ethersproject/address": 5.7.0
     "@types/bs58": 4.0.1
     bignumber.js: ^9.0.2

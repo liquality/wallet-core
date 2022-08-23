@@ -1,5 +1,5 @@
-import { ensure0x } from '@chainify/utils';
 import validateBitcoinAddress from 'bitcoin-address-validation';
+import { ensure0x } from '../utils';
 import { BaseChain } from './BaseChain';
 
 export abstract class UtxoChain extends BaseChain {

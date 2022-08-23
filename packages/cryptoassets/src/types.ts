@@ -62,3 +62,5 @@ export type FeeMultiplier = {
   averageMultiplier: number;
   fastMultiplier: number;
 };
+
+export type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> & Partial<Type>;

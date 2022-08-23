@@ -1,9 +1,6 @@
-import { chainToTestnetTokenAddressMap, chainToTokenAddressMap, erc20Assets } from './erc20';
+import { CHAIN_TO_MAINNET_TOKEN_ADDRESS_MAP, MAINNET_ERC20_ASSETS } from './mainnet/erc20';
 import { MAINNET_NATIVE_ASSETS } from './mainnet/native';
 
-const assets = {
-  ...MAINNET_NATIVE_ASSETS,
-  ...erc20Assets,
-};
+const MAINNET_ASSETS = { ...MAINNET_NATIVE_ASSETS, ...MAINNET_ERC20_ASSETS };
 
-export { assets, chainToTokenAddressMap, chainToTestnetTokenAddressMap };
+export { MAINNET_ASSETS, CHAIN_TO_MAINNET_TOKEN_ADDRESS_MAP };

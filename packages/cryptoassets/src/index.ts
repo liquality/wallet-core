@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { assets, chainToTestnetTokenAddressMap, chainToTokenAddressMap } from './assets';
+import { MAINNET_ASSETS } from './assets';
 import { dappChains } from './dapps';
 import { Asset, AssetType, AssetTypes, ChainId } from './types';
 
@@ -13,15 +13,4 @@ function currencyToUnit(asset: Asset, value: number | BigNumber): BigNumber {
   return new BigNumber(value).times(multiplier);
 }
 
-export {
-  assets,
-  chainToTokenAddressMap,
-  chainToTestnetTokenAddressMap,
-  dappChains,
-  unitToCurrency,
-  currencyToUnit,
-  Asset,
-  AssetType,
-  AssetTypes,
-  ChainId,
-};
+export { MAINNET_ASSETS, dappChains, unitToCurrency, currencyToUnit, Asset, AssetType, AssetTypes, ChainId };
