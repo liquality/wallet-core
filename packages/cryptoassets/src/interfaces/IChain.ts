@@ -24,6 +24,7 @@ export interface IChain {
   explorerViews: ExplorerView[];
 
   multicallSupport: boolean;
+  ledgerSupport: boolean;
 
   fees: IFees;
   EIP1559: boolean;

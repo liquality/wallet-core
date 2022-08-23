@@ -1,6 +1,6 @@
-import { IChain } from '../interfaces/IChain';
-import { AssetTypes, ChainId } from '../types';
-import { EvmChain } from './EvmChain';
+import { IChain } from '../../interfaces/IChain';
+import { AssetTypes, ChainId } from '../../types';
+import { EvmChain } from '../EvmChain';
 
 export const EVM_CHAINS: { [key in ChainId]?: IChain } = {
   ethereum: new EvmChain({
@@ -43,6 +43,7 @@ export const EVM_CHAINS: { [key in ChainId]?: IChain } = {
       },
     ],
     multicallSupport: true,
+    ledgerSupport: true,
     EIP1559: true,
     gasLimit: {
       send: {

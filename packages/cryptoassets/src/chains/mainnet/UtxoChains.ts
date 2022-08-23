@@ -1,9 +1,9 @@
-import { IChain } from '../interfaces/IChain';
-import { AssetTypes, ChainId } from '../types';
-import { UtxoChain } from './UtxoChain';
+import { IChain } from 'src/interfaces/IChain';
+import { AssetTypes, ChainId } from '../../types';
+import { BitcoinChain } from '../UtxoChain';
 
 export const UTXO_CHAINS: { [key in ChainId]?: IChain } = {
-  bitcoin: new UtxoChain({
+  bitcoin: new BitcoinChain({
     id: ChainId.Bitcoin,
     name: 'Bitcoin',
     code: 'BTC',
@@ -26,6 +26,7 @@ export const UTXO_CHAINS: { [key in ChainId]?: IChain } = {
       name: 'bitcoin',
       coinType: '0',
       isTestnet: false,
+      networkId: 'mainnet',
       utxo: {
         messagePrefix: '\x18Bitcoin Signed Message:\n',
         bech32: 'bc',
@@ -47,6 +48,7 @@ export const UTXO_CHAINS: { [key in ChainId]?: IChain } = {
       },
     ],
     multicallSupport: false,
+    ledgerSupport: true,
     EIP1559: false,
     gasLimit: {
       send: {

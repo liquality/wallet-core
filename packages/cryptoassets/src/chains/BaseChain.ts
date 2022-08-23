@@ -1,5 +1,3 @@
-import { ensure0x } from '@chainify/utils';
-import { getAddress, isAddress } from '@ethersproject/address';
 import { IChain } from '../interfaces/IChain';
 
 export abstract class BaseChain implements IChain {
@@ -7,21 +5,13 @@ export abstract class BaseChain implements IChain {
     Object.assign(this, chain);
   }
 
-  public isValidAddress(address: string) {
-    return isAddress(address);
-  }
+  public abstract isValidAddress(address: string): boolean;
 
-  public formatAddress(address: string) {
-    return getAddress(address);
-  }
+  public abstract formatAddress(address: string): string;
 
-  public isValidTransactionHash(hash: string) {
-    return /^(0x)?([A-Fa-f0-9]{64})$/.test(hash);
-  }
+  public abstract isValidTransactionHash(hash: string): boolean;
 
-  public formatTransactionHash(hash: string) {
-    return ensure0x(hash).toLowerCase();
-  }
+  public abstract formatTransactionHash(hash: string): string;
 }
 
 /**
