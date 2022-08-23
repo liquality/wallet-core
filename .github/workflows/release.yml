@@ -41,7 +41,7 @@ jobs:
         with:
           publish: yarn build-release
           commit: 'chore: entering prerelease mode'
-          title: ':rocket: Release ${{ steps.date.outputs.date }}'
+          title: ':rocket: Release ${{ steps.date.outputs.date }} :rocket:'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
