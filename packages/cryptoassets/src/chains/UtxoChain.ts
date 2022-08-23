@@ -1,6 +1,5 @@
 import { ensure0x } from '@chainify/utils';
 import validateBitcoinAddress from 'bitcoin-address-validation';
-import { isValidHexWithout0xPrefix } from '../common';
 import { BaseChain } from './BaseChain';
 
 export abstract class UtxoChain extends BaseChain {
@@ -9,7 +8,7 @@ export abstract class UtxoChain extends BaseChain {
   }
 
   public isValidTransactionHash(hash: string) {
-    return isValidHexWithout0xPrefix(hash);
+    return /^([A-Fa-f0-9]{64})$/.test(hash);
   }
 
   public formatTransactionHash(hash: string) {

@@ -1,12 +1,5 @@
 import BigNumber from 'bignumber.js';
-import {
-  assets,
-  chainToTestnetTokenAddressMap,
-  chainToTokenAddressMap,
-  getSendGasLimitERC20,
-  testnetAssets,
-} from './assets';
-import { chains, isEthereumChain } from './chains';
+import { assets, chainToTestnetTokenAddressMap, chainToTokenAddressMap } from './assets';
 import { dappChains } from './dapps';
 import { Asset, AssetType, AssetTypes, ChainId } from './types';
 
@@ -23,12 +16,8 @@ function currencyToUnit(asset: Asset, value: number | BigNumber): BigNumber {
 export {
   assets,
   chainToTokenAddressMap,
-  testnetAssets,
   chainToTestnetTokenAddressMap,
-  getSendGasLimitERC20,
-  chains,
   dappChains,
-  isEthereumChain,
   unitToCurrency,
   currencyToUnit,
   Asset,

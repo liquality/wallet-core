@@ -47,7 +47,6 @@ export interface Asset {
   contractAddress?: string; // ERC20 only
   matchingAsset?: string;
   feeAsset?: string;
-  sendGasLimit: number;
 }
 
 export type AssetMap = Record<string, Asset>;

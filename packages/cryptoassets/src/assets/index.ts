@@ -1,15 +1,9 @@
-import { chainToTestnetTokenAddressMap, chainToTokenAddressMap, erc20Assets, testnetErc20Assets } from './erc20';
-import { nativeAssets, testnetNativeAssets } from './native';
-import { getSendGasLimitERC20 } from './sendGasLimits';
+import { chainToTestnetTokenAddressMap, chainToTokenAddressMap, erc20Assets } from './erc20';
+import { MAINNET_NATIVE_ASSETS } from './mainnet/native';
 
 const assets = {
-  ...nativeAssets,
+  ...MAINNET_NATIVE_ASSETS,
   ...erc20Assets,
 };
 
-const testnetAssets = {
-  ...testnetNativeAssets,
-  ...testnetErc20Assets,
-};
-
-export { assets, testnetAssets, chainToTokenAddressMap, chainToTestnetTokenAddressMap, getSendGasLimitERC20 };
+export { assets, chainToTokenAddressMap, chainToTestnetTokenAddressMap };

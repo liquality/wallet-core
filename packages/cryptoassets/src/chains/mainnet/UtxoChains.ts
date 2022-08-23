@@ -8,15 +8,17 @@ export const UTXO_CHAINS: { [key in ChainId]?: IChain } = {
     name: 'Bitcoin',
     code: 'BTC',
     color: '#EAB300',
-    nativeAsset: {
-      name: 'Bitcoin',
-      chain: ChainId.Bitcoin,
-      type: AssetTypes.native,
-      code: 'BTC',
-      priceSource: { coinGeckoId: 'bitcoin' },
-      color: '#f7931a',
-      decimals: 8,
-    },
+    nativeAsset: [
+      {
+        name: 'Bitcoin',
+        chain: ChainId.Bitcoin,
+        type: AssetTypes.native,
+        code: 'BTC',
+        priceSource: { coinGeckoId: 'bitcoin' },
+        color: '#f7931a',
+        decimals: 8,
+      },
+    ],
     isEVM: false,
     hasTokens: false,
     averageBlockTime: 600,
@@ -39,7 +41,7 @@ export const UTXO_CHAINS: { [key in ChainId]?: IChain } = {
         wif: 0x80,
       },
       rpcUrls: ['https://electrs-mainnet-api.liq-chainhub.net/'],
-      scraperUrl: ['https://electrs-batch-mainnet-api.liq-chainhub.net/'],
+      scraperUrls: ['https://electrs-batch-mainnet-api.liq-chainhub.net/'],
     },
     explorerViews: [
       {

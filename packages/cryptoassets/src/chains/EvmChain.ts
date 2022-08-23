@@ -1,5 +1,6 @@
 import { ensure0x } from '@chainify/utils';
 import { getAddress, isAddress } from '@ethersproject/address';
+import { toChecksumAddress } from 'ethereumjs-util';
 import { BaseChain } from './BaseChain';
 
 export class EvmChain extends BaseChain {
@@ -17,5 +18,11 @@ export class EvmChain extends BaseChain {
 
   public formatTransactionHash(hash: string) {
     return ensure0x(hash).toLowerCase();
+  }
+}
+
+export class RskChain extends EvmChain {
+  public formatAddressUI(address: string): string {
+    return toChecksumAddress(ensure0x(address), this.network.chainId);
   }
 }

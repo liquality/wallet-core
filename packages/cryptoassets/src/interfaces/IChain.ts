@@ -9,7 +9,7 @@ export interface IChain {
   name: string;
   code: string;
   color: string;
-  nativeAsset: IAsset;
+  nativeAsset: IAsset[];
 
   isEVM: boolean;
   hasTokens: boolean;

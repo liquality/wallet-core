@@ -9,49 +9,41 @@ import solanaTokens from './solana-tokens.json';
 import terraTokens from './terra-tokens.json';
 
 import { Asset, AssetMap, AssetType, ChainId } from '../../types';
-import { sendGasLimits } from '../sendGasLimits';
-import { TESTNET_CONTRACT_ADDRESSES, TESTNET_TOKENS } from '../testnet';
+import { TESTNET_CONTRACT_ADDRESSES, TESTNET_TOKENS } from '../testnet/native';
 
 const rskTokensData = mapValues(rskTokens, (tokenData) => ({
   ...tokenData,
   chain: ChainId.Rootstock,
-  sendGasLimit: sendGasLimits.ERC20_EVM,
 }));
 
 const ethereumTokensData = mapValues(ethereumTokens, (tokenData) => ({
   ...tokenData,
   chain: ChainId.Ethereum,
-  sendGasLimit: sendGasLimits.ERC20_EVM,
 }));
 
 const polygonTokensData = mapValues(polygonTokens, (tokenData) => ({
   ...tokenData,
   chain: ChainId.Polygon,
-  sendGasLimit: sendGasLimits.ERC20_EVM,
 }));
 
 const avalancheTokensData = mapValues(avalancheTokens, (tokenData) => ({
   ...tokenData,
   chain: ChainId.Avalanche,
-  sendGasLimit: sendGasLimits.ERC20_EVM,
 }));
 
 const terraTokensData = mapValues(terraTokens, (tokenData) => ({
   ...tokenData,
   chain: ChainId.Terra,
-  sendGasLimit: sendGasLimits.TERRA,
 }));
 
 const arbitrumTokensData = mapValues(arbitrumTokens, (tokenData) => ({
   ...tokenData,
   chain: ChainId.Arbitrum,
-  sendGasLimit: sendGasLimits.ARBETH,
 }));
 
 const solanaTokensData = mapValues(solanaTokens, (tokenData) => ({
   ...tokenData,
   chain: ChainId.Solana,
-  sendGasLimit: sendGasLimits.SOL,
 }));
 
 const erc20Assets: AssetMap = mapValues(

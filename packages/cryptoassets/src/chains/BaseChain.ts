@@ -5,6 +5,10 @@ export abstract class BaseChain implements IChain {
     Object.assign(this, chain);
   }
 
+  public formatAddressUI(address: string) {
+    return this.formatAddress(address);
+  }
+
   public abstract isValidAddress(address: string): boolean;
 
   public abstract formatAddress(address: string): string;
