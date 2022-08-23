@@ -40,3 +40,6 @@ dist/
 .yarn/install-state.gz
 .yarn/unplugged
 /.env
+
+.nyc_output
+.turbo
