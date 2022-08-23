@@ -1,5 +1,16 @@
 # @liquality/wallet-core
 
+## 1.29.0
+
+### Minor Changes
+
+- 607345e: fix: UNS should resolve for polygon correctly and test
+
+### Patch Changes
+
+- Updated dependencies [607345e]
+  - @liquality/cryptoassets@1.14.0
+
 ## 1.28.6
 
 ### Patch Changes
