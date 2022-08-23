@@ -41,9 +41,6 @@
     "typescript": "^4.5.5"
   },
   "scripts": {
-    "changelog": "changeset add",
-    "version": "changeset version",
-    "release": "changeset publish",
     "build": "turbo run build --no-cache",
     "lint": "yarn lint:ts && yarn prettier:check",
     "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
@@ -52,7 +49,11 @@
     "test": "turbo run test",
     "postinstall": "husky install",
     "prepack": "pinst --disable",
-    "postpack": "pinst --enable"
+    "postpack": "pinst --enable",
+    "changeset": "changeset",
+    "version": "yarn changeset version",
+    "release": "yarn workspaces foreach --from '@wallet-core/*' npm publish --access public",
+    "build-release": "yarn build --force && yarn release"
   },
   "packageManager": "yarn@3.1.1",
   "publishConfig": {

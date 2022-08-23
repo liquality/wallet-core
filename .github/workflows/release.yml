@@ -41,8 +41,7 @@ jobs:
         uses: changesets/action@v1
         id: changesets
         with:
-          version: yarn version
-          publish: yarn release
+          publish: yarn build-release
           commit: ":fire: entering prerelease mode"
           title: ':rocket: Release ${{ steps.date.outputs.date }}'
         env:
