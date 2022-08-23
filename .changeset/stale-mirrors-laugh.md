@@ -3,4 +3,4 @@
 '@liquality/wallet-core': patch
 ---
 
-chore: just testing patch bump version
+ci: update timestamp

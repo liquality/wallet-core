@@ -33,7 +33,7 @@ jobs:
       - name: Get date
         id: date
         run: |
-          echo "::set-output name=date::$(date +%F)"
+          echo "::set-output name=date::$(date +%Y-%m-%d_%H-%M-%S)"
 
       - name: Create Release Pull Request
         uses: changesets/action@v1
