@@ -8,9 +8,9 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "deploy": {
-      "dependsOn": ["build", "test"],
-      "outputs": []
+    "release": {
+      "cache": false,
+      "dependsOn": ["^build"]
     },
     "dev": {
       "cache": false

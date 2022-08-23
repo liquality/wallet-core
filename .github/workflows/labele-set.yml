@@ -1,8 +1,6 @@
-name: "PR title check & label set"
-
+name: "Pull Request Labeler"
 on:
-  pull_request:
-    types: [opened, reopened, synchronize, edited]
+  - pull_request_target
 
 jobs:
   triage:

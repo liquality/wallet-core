@@ -6,6 +6,8 @@ on:
     branches:
       - feat/semantic_release_ci_setup
 
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -30,24 +32,18 @@ jobs:
           yarn
           yarn build
 
-      - name: Semantic Release wallet core
-        uses: cycjimmy/semantic-release-action@v3.0.0
-        id: semantic_wallet_core
-        with:
-          working_directory: packages/wallet-core
-          branches: |
-            feat/semantic_release_ci_setup
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Get date
+        id: date
+        run: |
+          echo "::set-output name=date::$(date +%F)"
 
-      - name: Semantic Release cryptoassets
-        uses: cycjimmy/semantic-release-action@v3.0.0
-        id: semantic_cryptoassets
+      - name: Create Release Pull Request
+        uses: changesets/action@v1
+        id: changesets
         with:
-          working_directory: packages/cryptoassets
-          branches: |
-            feat/semantic_release_ci_setup
+          publish: yarn release
+          commit: ":fire: entering prerelease mode ${{ version }}"
+          title: ':rocket: Release ${{ steps.date.outputs.date }}'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
