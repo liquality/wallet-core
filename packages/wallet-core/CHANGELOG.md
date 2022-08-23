@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.2
+
+### Patch Changes
+
+- ec9a3b9: fix: fix the script in package.json
+- Updated dependencies [ec9a3b9]
+  - @liquality/cryptoassets@1.14.2
+
 ## 1.29.1
 
 ### Patch Changes
