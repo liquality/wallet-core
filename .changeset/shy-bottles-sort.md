@@ -3,4 +3,4 @@
 '@liquality/wallet-core': patch
 ---
 
-fix: added npm token to yarnnc
+fix: fix the script in package.json

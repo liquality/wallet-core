@@ -52,7 +52,7 @@
     "postpack": "pinst --enable",
     "changeset": "changeset",
     "version": "yarn changeset version",
-    "release": "yarn workspaces foreach --from '@wallet-core/*' npm publish --access public",
+    "release": "yarn workspaces foreach --from '@liquality/*' npm publish --access public",
     "build-release": "yarn build --force && yarn release"
   },
   "packageManager": "yarn@3.1.1",
