@@ -32,9 +32,20 @@ jobs:
 
       - name: Semantic Release wallet core
         uses: cycjimmy/semantic-release-action@v3.0.0
-        id: semantic
+        id: semantic_wallet_core
         with:
           working_directory: packages/wallet-core
+          branches: |
+            feat/semantic_release_ci_setup
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Semantic Release cryptoassets
+        uses: cycjimmy/semantic-release-action@v3.0.0
+        id: semantic_cryptoassets
+        with:
+          working_directory: packages/cryptoassets
           branches: |
             feat/semantic_release_ci_setup
         env:
