@@ -4,7 +4,7 @@ name: Release
 on:
   push:
     branches:
-      - master
+      - feat/semantic_release_ci_setup
 
 jobs:
   release:
@@ -30,9 +30,11 @@ jobs:
           yarn
           yarn build
 
-      - name: Semantic Release
+      - name: Semantic Release wallet core
         uses: cycjimmy/semantic-release-action@v3.0.0
         id: semantic
+        with:
+          working_directory: packages/wallet-core
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

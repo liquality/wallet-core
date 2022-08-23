@@ -46,6 +46,7 @@
     "prettier:check": "prettier --check \"**/*.{js,json,sol,ts}\"",
     "prettier:fix": "prettier --write ./packages",
     "test": "turbo run test",
+    "deploy": "turbo run deploy",
     "postinstall": "husky install",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable"
