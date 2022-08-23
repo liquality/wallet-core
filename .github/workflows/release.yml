@@ -35,7 +35,7 @@ jobs:
         run: |
           echo "::set-output name=date::$(date +%Y-%m-%d_%H-%M-%S)"
 
-      - name: Create Release Pull Request
+      - name: Create Release Pull Request & npm publish
         uses: changesets/action@v1
         id: changesets
         with:
@@ -45,3 +45,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create git tags
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          echo 'steps.changesets.outputs.published'
+          echo ${{ steps.changesets.outputs.published }}
+          echo 'steps.changesets.outputs.published'
+          echo ${{ steps.changesets.outputs.published }}
+#          git tag -a v${{ env.version }} -m ":rocket: Release ${{ steps.date.outputs.date }} :rocket:"
+#          git push origin v${{ env.version }}
+
+
+
