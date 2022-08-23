@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.1
+
+### Patch Changes
+
+- e268c44: fix: added npm token to yarnnc
+- Updated dependencies [e268c44]
+  - @liquality/cryptoassets@1.14.1
+
 ## 1.29.0
 
 ### Minor Changes
