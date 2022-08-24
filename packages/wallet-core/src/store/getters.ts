@@ -1,13 +1,6 @@
 import { Client } from '@chainify/client';
 import { FeeDetails, Nullable } from '@chainify/types';
-import {
-  AssetTypes,
-  ChainId,
-  getAllAssets,
-  getAssetByAssetCode,
-  IAsset,
-  unitToCurrency,
-} from '@liquality/cryptoassets';
+import { AssetTypes, ChainId, getAllAssets, getAsset, IAsset, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
 import { rootGetterContext } from '.';
@@ -229,7 +222,7 @@ export default {
               let type = AssetTypes.erc20;
               let matchingAsset;
 
-              const assetByCode = getAssetByAssetCode(activeNetwork, asset);
+              const assetByCode = getAsset(activeNetwork, asset);
 
               if (assetByCode) {
                 type = assetByCode.type;
@@ -320,7 +313,7 @@ export default {
     const { fiatRates, activeNetwork } = state;
     return (asset: AssetType, balance: BigNumber): BigNumber | null => {
       if (fiatRates && fiatRates[asset] && balance?.gt(0)) {
-        const amount = unitToCurrency(getAssetByAssetCode(activeNetwork, asset), balance);
+        const amount = unitToCurrency(getAsset(activeNetwork, asset), balance);
         // TODO: coinformatter types are messed up and this shouldn't require `as BigNumber`
         return cryptoToFiat(amount, fiatRates[asset]) as BigNumber;
       }

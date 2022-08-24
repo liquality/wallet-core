@@ -1,5 +1,5 @@
 import { TxStatus } from '@chainify/types';
-import { getAssetByAssetCode } from '@liquality/cryptoassets';
+import { getAsset } from '@liquality/cryptoassets';
 import { ActionContext, rootActionContext } from '../..';
 import { Network, SendHistoryItem, SendStatus, WalletId } from '../../types';
 import { withInterval } from './utils';
@@ -21,7 +21,7 @@ async function waitForConfirmations(
 ): Promise<Partial<SendHistoryItem> | undefined> {
   const { getters, dispatch } = rootActionContext(context);
   const { from, accountId } = transaction;
-  const chain = getAssetByAssetCode(network, from).chain;
+  const chain = getAsset(network, from).chain;
   const client = getters.client({ network, walletId, chainId: chain, accountId });
   try {
     const tx = await client.chain.getTransactionByHash(transaction.txHash);

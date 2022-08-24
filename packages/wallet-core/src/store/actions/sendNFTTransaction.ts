@@ -1,5 +1,5 @@
 import { Transaction } from '@chainify/types';
-import { getChainByChainId } from '@liquality/cryptoassets';
+import { getChain } from '@liquality/cryptoassets';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
 import { createHistoryNotification } from '../broker/notification';
@@ -11,7 +11,7 @@ export const sendNFTTransaction = async (
 ): Promise<Transaction> => {
   const { getters, commit, dispatch } = rootActionContext(context);
   const account: Account = getters.accountItem(accountId)!;
-  const asset = getChainByChainId(network, account.chain).nativeAsset[0].code;
+  const asset = getChain(network, account.chain).nativeAsset[0].code;
   const client = getters.client({ network, walletId, chainId: account.chain });
   const tx = await client.nft.transfer(nft.asset_contract!.address!, receiver, [nft.token_id!], values);
 

@@ -1,4 +1,4 @@
-import { ChainId, getAssetByAssetCode, getChainByChainId } from '@liquality/cryptoassets';
+import { ChainId, getAsset, getChain } from '@liquality/cryptoassets';
 import { buildConfig } from '../..';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { AccountType } from '../types';
@@ -16,10 +16,10 @@ export const addMissingAccounts = {
 
       buildConfig.chains.forEach(async (chainId) => {
         const assets = assetKeys.filter((asset) => {
-          return getAssetByAssetCode(network, asset)?.chain === chainId;
+          return getAsset(network, asset)?.chain === chainId;
         });
 
-        const chain = getChainByChainId(network, chainId);
+        const chain = getChain(network, chainId);
         const _account = accountCreator({
           walletId: walletId,
           network,
@@ -43,7 +43,7 @@ export const addMissingAccounts = {
         if (chainId === ChainId.Rootstock) {
           // get the legacy rsk derivation path
           const coinType = network === 'mainnet' ? '137' : '37310';
-          const chain = getChainByChainId(network, ChainId.Rootstock);
+          const chain = getChain(network, ChainId.Rootstock);
           const _account = accountCreator({
             walletId: walletId,
             network,

@@ -2,7 +2,7 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/
 import { Client, HttpClient } from '@chainify/client';
 import { Asset as ChainifyAsset, Transaction } from '@chainify/types';
 import { sha256 } from '@chainify/utils';
-import { currencyToUnit, getChainByChainId, unitToCurrency } from '@liquality/cryptoassets';
+import { currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -640,7 +640,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     if (
       tx &&
       tx.confirmations &&
-      tx.confirmations >= getChainByChainId(network, cryptoassets[swap.to].chain).safeConfirmations
+      tx.confirmations >= getChain(network, cryptoassets[swap.to].chain).safeConfirmations
     ) {
       return {
         status: 'READY_TO_CLAIM',

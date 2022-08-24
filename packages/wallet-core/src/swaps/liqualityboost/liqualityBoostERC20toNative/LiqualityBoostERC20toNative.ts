@@ -1,4 +1,4 @@
-import { getAssetByAssetCode, unitToCurrency } from '@liquality/cryptoassets';
+import { getAsset, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { getSwapProvider } from '../../../factory';
 import { ActionContext } from '../../../store';
@@ -98,7 +98,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
     if (!quote) return null;
 
     // get rate between native asset and 'to' asset (which is native too)
-    const bridgeAssetQuantity = unitToCurrency(getAssetByAssetCode(network, bridgeAsset), new BN(quote.toAmount));
+    const bridgeAssetQuantity = unitToCurrency(getAsset(network, bridgeAsset), new BN(quote.toAmount));
     const finalQuote = await this.liqualitySwapProvider.getQuote({
       network,
       from: bridgeAsset,
@@ -207,10 +207,7 @@ class LiqualityBoostERC20toNative extends SwapProvider {
         to: quoteRequest.from,
         amount: new BN(amountInNative),
       })) as BoostNativeERC20toNativeSwapQuote;
-      const fromMinAmount = unitToCurrency(
-        getAssetByAssetCode(quoteRequest.network, quoteRequest.from),
-        new BN(quote.toAmount)
-      );
+      const fromMinAmount = unitToCurrency(getAsset(quoteRequest.network, quoteRequest.from), new BN(quote.toAmount));
       // increase minimum amount with 50% to minimize calculation error and price fluctuation.
       // When the quote is to small - 1-2$ AMMs are returning less than min and value is incorrect
       return new BN(fromMinAmount).times(1.5);

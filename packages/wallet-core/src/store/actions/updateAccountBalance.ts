@@ -1,4 +1,4 @@
-import { getAssetByAssetCode } from '@liquality/cryptoassets';
+import { getAsset } from '@liquality/cryptoassets';
 import { ActionContext, rootActionContext } from '..';
 import { assetsAdapter } from '../../utils/chainify';
 import { AccountId, Network, WalletId } from '../types';
@@ -15,7 +15,7 @@ export const updateAccountBalance = async (
     const account = accounts[index];
     const { assets } = account;
     assets.forEach(async (asset) => {
-      const chainId = getAssetByAssetCode(network, asset).chain;
+      const chainId = getAsset(network, asset).chain;
       const _client = getters.client({ network, walletId, chainId, accountId });
       const addresses = await _client.wallet.getUsedAddresses();
 

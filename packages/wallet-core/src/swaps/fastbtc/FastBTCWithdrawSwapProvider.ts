@@ -3,7 +3,7 @@ import { Client } from '@chainify/client';
 import { EvmChainProvider, EvmTypes, EvmWalletProvider } from '@chainify/evm';
 import { Transaction } from '@chainify/types';
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { ChainId, currencyToUnit, getChainByChainId, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import * as ethers from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
@@ -128,7 +128,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
     const fastBtcBridge = this.getFastBtcBridge(client.chain.getProvider());
     // Assuming valid bitcoin address
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = getChainByChainId(network, cryptoassets.RBTC.chain).formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, cryptoassets.RBTC.chain).formatAddress(fromAddressRaw);
     const toAddress = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
 
     const data = await fastBtcBridge.interface.encodeFunctionData('transferToBtc', [toAddress]);

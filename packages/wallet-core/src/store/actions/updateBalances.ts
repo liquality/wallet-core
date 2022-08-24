@@ -1,7 +1,7 @@
 import { Client } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Address, AddressType, BigNumber } from '@chainify/types';
-import { ChainId, getChainByChainId } from '@liquality/cryptoassets';
+import { ChainId, getChain } from '@liquality/cryptoassets';
 import Bluebird from 'bluebird';
 import { chunk } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
@@ -139,7 +139,7 @@ const getEvmAccountsWithMulticalEnabled = (
   return accountIds.reduce((result, a) => {
     const acc = getters.accountItem(a);
     if (acc) {
-      const chain = getChainByChainId(network, acc.chain);
+      const chain = getChain(network, acc.chain);
       if (chain.isEVM) {
         const client = getters.client({
           network,

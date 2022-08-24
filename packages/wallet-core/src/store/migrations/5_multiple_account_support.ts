@@ -1,4 +1,4 @@
-import { ChainId, getAllAssets, getAssetByAssetCode, getChainByChainId } from '@liquality/cryptoassets';
+import { ChainId, getAllAssets, getAsset, getChain } from '@liquality/cryptoassets';
 import buildConfig from '../../build.config';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { AccountType, Network } from '../types';
@@ -21,10 +21,10 @@ export const multipleAccountSupport = {
 
       buildConfig.chains.forEach((chainId: ChainId) => {
         const assets = assetKeys.filter((asset: string) => {
-          return getAssetByAssetCode(network, asset).chain === chainId;
+          return getAsset(network, asset).chain === chainId;
         });
 
-        const chain = getChainByChainId(network, chainId);
+        const chain = getChain(network, chainId);
 
         const addresses: string[] = [];
 

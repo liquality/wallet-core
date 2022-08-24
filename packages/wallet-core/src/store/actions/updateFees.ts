@@ -1,5 +1,5 @@
 import { FeeDetails } from '@chainify/types';
-import { getAssetByAssetCode } from '@liquality/cryptoassets';
+import { getAsset } from '@liquality/cryptoassets';
 import { ActionContext, rootActionContext } from '..';
 import { Asset } from '../types';
 
@@ -8,7 +8,7 @@ export const updateFees = async (context: ActionContext, { asset }: { asset: Ass
   const network = state.activeNetwork;
   const walletId = state.activeWalletId;
 
-  const chainId = getAssetByAssetCode(network, asset).chain;
+  const chainId = getAsset(network, asset).chain;
   const fees = await getters.client({ network, walletId, chainId }).chain.getFees();
 
   commit.UPDATE_FEES({ network, walletId, asset, fees });

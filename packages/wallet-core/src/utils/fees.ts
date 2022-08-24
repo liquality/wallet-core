@@ -2,13 +2,7 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/
 import { Client } from '@chainify/client';
 import { EvmUtils } from '@chainify/evm';
 import { EIP1559Fee, FeeDetail, FeeDetails, FeeType } from '@chainify/types';
-import {
-  ChainId,
-  currencyToUnit,
-  getAssetSendGasLimit,
-  getChainByChainId,
-  unitToCurrency,
-} from '@liquality/cryptoassets';
+import { ChainId, currencyToUnit, getAssetSendGasLimit, getChain, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import store from '../store';
 import { Account, AccountId, Asset, Network, NFT } from '../store/types';
@@ -208,7 +202,7 @@ async function estimateTransferNFT(
 ): Promise<SendFees> {
   const account: Account = store.getters.accountItem(accountId)!;
 
-  const feeAsset = getChainByChainId(network, account.chain).nativeAsset[0].code;
+  const feeAsset = getChain(network, account.chain).nativeAsset[0].code;
   if (!feeAsset) {
     throw new Error(`getSendFeeEstimations: fee asset not available`);
   }

@@ -1,4 +1,4 @@
-import { ChainId, getAllSupportedChains, getAssetByAssetCode } from '@liquality/cryptoassets';
+import { ChainId, getAllSupportedChains, getAsset } from '@liquality/cryptoassets';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
 import buildConfig from '../../build.config';
@@ -43,7 +43,7 @@ export const createWallet = async (
         enable: true,
       });
       const assets = assetKeys.filter((asset) => {
-        return getAssetByAssetCode(network, asset)?.chain === chainId;
+        return getAsset(network, asset)?.chain === chainId;
       });
 
       const chain = allChains[network][chainId];

@@ -1,4 +1,4 @@
-import { ChainId, getAssetByAssetCode } from '@liquality/cryptoassets';
+import { ChainId, getAsset } from '@liquality/cryptoassets';
 import Bluebird from 'bluebird';
 import { ActionContext, rootActionContext } from '..';
 import { AccountId, Asset, Network, WalletId } from '../types';
@@ -21,7 +21,7 @@ export const getUnusedAddresses = async (
         throw new Error('getUnusedAddresses: Accounts not found ');
       }
 
-      const chainId = getAssetByAssetCode(network, asset).chain;
+      const chainId = getAsset(network, asset).chain;
       const index = accounts.findIndex((a) => a.id === accountId);
       if (index >= 0 && asset) {
         const account = accounts[index];

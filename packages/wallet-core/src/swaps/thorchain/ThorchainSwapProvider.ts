@@ -1,7 +1,7 @@
 import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
 import { Client, HttpClient } from '@chainify/client';
 import { Transaction } from '@chainify/types';
-import { ChainId, currencyToUnit, getChainByChainId, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
 import { getDoubleSwapOutput, getSwapMemo, getValueOfAsset1InAsset2 } from '@thorchain/asgardex-util';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import { assetFromString, BaseAmount, baseAmount, baseToAsset } from '@xchainjs/xchain-util';
@@ -296,13 +296,13 @@ class ThorchainSwapProvider extends SwapProvider {
 
   async networkFees(asset: Asset, network: Network) {
     const assetCode = isERC20(asset)
-      ? getChainByChainId(network, cryptoassets[asset].chain).nativeAsset[0].code
+      ? getChain(network, cryptoassets[asset].chain).nativeAsset[0].code
       : cryptoassets[asset].code;
 
     const gasRate = (await this.getInboundAddress(assetCode)).gas_rate;
 
     // https://github.com/thorchain/asgardex-electron/issues/1381
-    if (isERC20(asset) && getChainByChainId(network, cryptoassets[asset].chain).isEVM) {
+    if (isERC20(asset) && getChain(network, cryptoassets[asset].chain).isEVM) {
       return baseAmount(new BN(70000).times(gasRate).times(1000000000).times(3), 18);
     }
     if (assetCode === 'ETH') {
@@ -330,7 +330,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const routerAddress = this.getRouterAddress(fromThorchainAsset.chain);
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, swap.from, swap.toAccountId);
-    const fromAddress = getChainByChainId(network, fromChain).formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
     const allowance = await erc20.allowance(fromAddress, routerAddress);
     const inputAmount = ethers.BigNumber.from(new BN(swap.fromAmount).toFixed());
     if (allowance.gte(inputAmount)) {
@@ -439,7 +439,7 @@ class ThorchainSwapProvider extends SwapProvider {
   async makeMemo({ network, walletId, swap }: NextSwapActionRequest<ThorchainSwapQuote>) {
     const toChain = cryptoassets[swap.to].chain;
     const toAddressRaw = await this.getSwapAddress(network, walletId, swap.to, swap.toAccountId);
-    const toAddress = getChainByChainId(network, toChain).formatAddress(toAddressRaw);
+    const toAddress = getChain(network, toChain).formatAddress(toAddressRaw);
     const limit = convertBaseAmountDecimal(baseAmount(new BN(swap.toAmount), cryptoassets[swap.to].decimals), 8);
     const thorchainAsset = assetFromString(toThorchainAsset(swap.to));
     if (!thorchainAsset) {

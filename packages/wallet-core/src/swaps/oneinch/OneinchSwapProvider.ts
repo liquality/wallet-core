@@ -1,7 +1,7 @@
 import { Client, HttpClient } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Transaction, TxStatus } from '@chainify/types';
-import { ChainId, currencyToUnit, getChainByChainId, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import BN, { BigNumber } from 'bignumber.js';
 import * as ethers from 'ethers';
@@ -127,7 +127,7 @@ class OneinchSwapProvider extends SwapProvider {
 
     const erc20 = new ethers.Contract(cryptoassets[quote.from].contractAddress!, ERC20.abi, provider);
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = getChainByChainId(network, fromChain).formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
     const allowance = await erc20.allowance(fromAddress, this.config.routerAddress);
     const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
     if (allowance.gte(inputAmount)) {
@@ -166,7 +166,7 @@ class OneinchSwapProvider extends SwapProvider {
 
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = getChainByChainId(network, toChain).formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, toChain).formatAddress(fromAddressRaw);
 
     // TODO: type
     const swapParams: any = {
@@ -224,7 +224,7 @@ class OneinchSwapProvider extends SwapProvider {
 
     // @ts-ignore TODO: Fix chain networks
     const chainId: number = ChainNetworks[chain][network].chainId;
-    const nativeAsset = getChainByChainId(network, chain).nativeAsset[0].code;
+    const nativeAsset = getChain(network, chain).nativeAsset[0].code;
 
     if (txType in this._txTypes()) {
       const fees: EstimateFeeResponse = {};

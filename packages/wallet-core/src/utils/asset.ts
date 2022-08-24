@@ -1,4 +1,4 @@
-import { AssetTypes, ChainId, getChainByChainId, isEvmChain } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId, getChain, isEvmChain } from '@liquality/cryptoassets';
 import * as ethers from 'ethers';
 import { Asset, Network } from '../store/types';
 import cryptoassets from '../utils/cryptoassets';
@@ -138,7 +138,7 @@ export const isChainEvmCompatible = (asset: Asset, network = Network.Mainnet) =>
 export const isAssetEvmNativeAsset = (asset: Asset, network = Network.Mainnet) => {
   const chainId = cryptoassets[asset]?.chain;
   if (chainId) {
-    const chain = getChainByChainId(network, chainId);
+    const chain = getChain(network, chainId);
 
     if (chain.isEVM && chain.nativeAsset[0].code === asset) {
       return true;
@@ -153,7 +153,7 @@ export const getNativeAsset = (asset: Asset, network = Network.Mainnet) => {
     return asset;
   }
   const chainId = cryptoassets[asset]?.chain;
-  return chainId ? getChainByChainId(network, chainId).nativeAsset[0].code : asset;
+  return chainId ? getChain(network, chainId).nativeAsset[0].code : asset;
 };
 
 export const getFeeAsset = (asset: Asset) => {

@@ -34,11 +34,11 @@ export function getAssetSendGasLimit(asset: IAsset, network: Network) {
   }
 }
 
-export function getAssetByAssetCode(network: Network, asset: string) {
+export function getAsset(network: Network, asset: string) {
   return getAllAssets()[network][asset];
 }
 
-export function getTokenByChainAndAddress(chain: ChainId, tokenAddress: string) {
+export function getToken(chain: ChainId, tokenAddress: string) {
   if (!CHAIN_TO_MAINNET_TOKEN_ADDRESS_MAP[chain]) {
     throw new Error(`Chain not found ${chain}`);
   }

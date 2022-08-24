@@ -1,4 +1,4 @@
-import { getAssetByAssetCode, unitToCurrency } from '@liquality/cryptoassets';
+import { getAsset, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { getSwapProvider } from '../../../factory';
 import { ActionContext } from '../../../store';
@@ -100,7 +100,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       return null;
     }
 
-    const bridgeAssetQuantity = unitToCurrency(getAssetByAssetCode(network, bridgeAsset), new BN(quote.toAmount));
+    const bridgeAssetQuantity = unitToCurrency(getAsset(network, bridgeAsset), new BN(quote.toAmount));
 
     const finalQuote = (await this.bridgeAssetToAutomatedMarketMaker[bridgeAsset].getQuote({
       network,

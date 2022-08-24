@@ -1,14 +1,7 @@
 import { EIP1559Fee } from '@chainify/types';
 import { ensure0x } from '@chainify/utils';
 import { Chain, Hop, HopBridge, TToken } from '@hop-protocol/sdk';
-import {
-  ChainId,
-  currencyToUnit,
-  getChainByChainId,
-  getNativeAssetCode,
-  IAsset,
-  unitToCurrency,
-} from '@liquality/cryptoassets';
+import { ChainId, currencyToUnit, getChain, getNativeAssetCode, IAsset, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { ethers, Wallet } from 'ethers';
 import { createClient } from 'urql';
@@ -346,7 +339,7 @@ class HopSwapProvider extends SwapProvider {
     try {
       const tx = await client.chain.getTransactionByHash(swap.fromFundHash);
       const chainId: ChainId = <ChainId>swap.hopChainFrom.slug.toString();
-      if (tx && tx.confirmations && tx.confirmations >= getChainByChainId(network, chainId).safeConfirmations) {
+      if (tx && tx.confirmations && tx.confirmations >= getChain(network, chainId).safeConfirmations) {
         this.updateBalances(network, walletId, [swap.fromAccountId]);
         return {
           endTime: Date.now(),

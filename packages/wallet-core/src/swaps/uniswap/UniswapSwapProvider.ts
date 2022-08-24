@@ -1,7 +1,7 @@
 import { Client } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Transaction, TxStatus } from '@chainify/types';
-import { ChainId, currencyToUnit, getChainByChainId, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
 import { CurrencyAmount, Fraction, Percent, Token, TradeType, WETH9 } from '@uniswap/sdk-core';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import UniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json';
@@ -165,7 +165,7 @@ class UniswapSwapProvider extends SwapProvider {
     const erc20 = new ethers.Contract(cryptoassets[quote.from].contractAddress!, ERC20.abi, api);
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = getChainByChainId(network, fromChain).formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
     const allowance = await erc20.allowance(fromAddress, this.config.routerAddress);
     const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
     if (allowance.gte(inputAmount)) {
@@ -185,7 +185,7 @@ class UniswapSwapProvider extends SwapProvider {
 
     const fromChain = cryptoassets[quote.from].chain;
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = getChainByChainId(network, fromChain).formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
@@ -241,7 +241,7 @@ class UniswapSwapProvider extends SwapProvider {
     const outputAmountHex = ethers.BigNumber.from(minimumOutputInUnit.toFixed()).toHexString();
 
     const toAddressRaw = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
-    const toAddress = getChainByChainId(network, toChain).formatAddress(toAddressRaw);
+    const toAddress = getChain(network, toChain).formatAddress(toAddressRaw);
 
     const api = this.getApi(network, quote.to);
     const uniswap = new ethers.Contract(this.config.routerAddress, UniswapV2Router.abi, api);
@@ -269,7 +269,7 @@ class UniswapSwapProvider extends SwapProvider {
 
     const fromChain = cryptoassets[quote.from].chain;
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = getChainByChainId(network, fromChain).formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
@@ -313,7 +313,7 @@ class UniswapSwapProvider extends SwapProvider {
       throw new Error(`Invalid tx type ${txType}`);
     }
 
-    const nativeAsset = getChainByChainId(network, cryptoassets[asset].chain).nativeAsset;
+    const nativeAsset = getChain(network, cryptoassets[asset].chain).nativeAsset;
     const account = this.getAccount(quote.fromAccountId);
     if (!account) {
       throw new Error(`UniswapSwapProvider: Account with id ${quote.fromAccountId} not found`);
