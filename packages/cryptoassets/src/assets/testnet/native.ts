@@ -1,24 +1,10 @@
-export const TESTNET_CONTRACT_ADDRESSES = {
-  DAI: '0xad6d458402f60fd3bd25163575031acdce07538d',
-  WBTC: '0x1371597fc11aedbd2446f5390fa1dbf22491752a',
-  SOV: '0x6a9A07972D07E58f0daF5122D11e069288A375fB',
-  PWETH: '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa',
-  SUSHI: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
-} as Record<string, string>;
+import { TESTNET_SUPPORTED_CHAINS } from '../../chains';
+import { IChain } from '../../interfaces/IChain';
+import { AssetMap } from '../../types';
 
-export const TESTNET_TOKENS = Object.keys(TESTNET_CONTRACT_ADDRESSES);
+const TESTNET_NATIVE_ASSETS = Object.values(TESTNET_SUPPORTED_CHAINS).reduce((result: AssetMap, chain: IChain) => {
+  chain.nativeAsset.forEach((asset) => (result[asset.code] = asset));
+  return result;
+}, {});
 
-export const TESTNET_NATIVE = [
-  'BTC',
-  'ETH',
-  'RBTC',
-  'BNB',
-  'NEAR',
-  'MATIC',
-  'ARBETH',
-  'SOL',
-  'LUNA',
-  'UST',
-  'FUSE',
-  'AVAX',
-];
+export { TESTNET_NATIVE_ASSETS };

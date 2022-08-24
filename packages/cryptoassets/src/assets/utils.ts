@@ -1,6 +1,5 @@
 import { IAsset } from '../interfaces/IAsset';
-import { AssetTypes, ChainId, MakeOptional } from '../types';
-import { AssetMap } from './mainnet/native';
+import { AssetMap, AssetTypes, ChainId, MakeOptional } from '../types';
 
 /**
  * Adds the common properties for each token map - type and chain

@@ -6,8 +6,8 @@ import rskTokens from './rsk-tokens';
 import solanaTokens from './solana-tokens';
 import terraTokens from './terra-tokens';
 
-import { transformChainToTokenAddress } from '../../../assets/utils';
-import { AssetMap } from '../native';
+import { AssetMap } from '../../../types';
+import { transformChainToTokenAddress } from '../../utils';
 
 const MAINNET_ERC20_ASSETS: AssetMap = {
   ...arbitrumTokens,
