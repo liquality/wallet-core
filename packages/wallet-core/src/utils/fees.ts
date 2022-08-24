@@ -35,7 +35,7 @@ const feePriceInUnit = (asset: Asset, feePrice: number) => {
   return isEthereumChain(asset) ? EvmUtils.fromGwei(feePrice) : feePrice; // ETH fee price is in gwei
 };
 
-function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number, network?: Network) {
+function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number) {
   const assetInfo = cryptoassets[asset];
   const nativeAsset = cryptoassets[getNativeAsset(asset)];
 
@@ -46,8 +46,11 @@ function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number, network
 
     let l1Fee = new BN(assetInfo.sendGasLimitL1 as number).times(feePriceInUnit(asset, l1FeePrice));
 
+    // TODO: check if you can fetch scalar
     // default scalar for L1 fee in Optimism mainnet -> 1, testnet 1.5
-    if (network && network === 'testnet') l1Fee = l1Fee.times(new BN(1.5));
+    if (store.state.activeNetwork === Network.Testnet) {
+      l1Fee = l1Fee.times(new BN(1.5));
+    }
 
     const l2Fee = new BN(assetInfo.sendGasLimit).times(feePriceInUnit(asset, feePrice));
     return unitToCurrency(nativeAsset, l1Fee.plus(l2Fee));
@@ -156,7 +159,7 @@ function sendTxFeesInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetailsWi
 
     const _fee: number = feePerUnit(fee.fee, assetChain);
 
-    _sendFees[_speed] = _sendFees[_speed].plus(getSendFee(feeAsset, _fee));
+    _sendFees[_speed] = _sendFees[_speed].plus(getSendFee(feeAsset, _fee, fee.multilayerFee?.l1));
   }
 
   return _sendFees;
