@@ -32,6 +32,7 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: false,
     hasTokens: false,
     supportCustomFees: true,
+    isMultiLayered: false,
     // TODO: include network types in validation
     isValidAddress: (address) => !!validateBitcoinAddress(address),
     formatAddress: (address) => address,
@@ -51,6 +52,7 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: false,
     hasTokens: false,
     supportCustomFees: true,
+    isMultiLayered: false,
     // TODO: include network types in validation
     isValidAddress: (address) => isValidBitcoinCashAddress(address),
     formatAddress: (address) => formatBitcoinCashAddress(address),
@@ -70,6 +72,7 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: true,
     hasTokens: true,
     supportCustomFees: true,
+    isMultiLayered: false,
     isValidAddress: (hexAddress: string) => isValidAddress(with0x(hexAddress)),
     formatAddress: (hexAddress: string) => toChecksumAddress(with0x(hexAddress)),
     isValidTransactionHash: (hash: string) => isValidHexWith0xPrefix(hash),
@@ -88,6 +91,7 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: true,
     hasTokens: true,
     supportCustomFees: true,
+    isMultiLayered: false,
     isValidAddress: (hexAddress: string) => isValidAddress(with0x(hexAddress)),
     formatAddress: (hexAddress: string, network: string) =>
       toChecksumAddress(with0x(hexAddress), getRSKChainID(network)),
@@ -107,6 +111,7 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: true,
     hasTokens: true,
     supportCustomFees: true,
+    isMultiLayered: false,
     isValidAddress: (hexAddress: string) => isValidAddress(with0x(hexAddress)),
     formatAddress: (hexAddress: string) => toChecksumAddress(with0x(hexAddress)),
     isValidTransactionHash: (hash: string) => isValidHexWith0xPrefix(hash),
@@ -125,6 +130,7 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: false,
     hasTokens: false,
     supportCustomFees: true,
+    isMultiLayered: false,
     isValidAddress: (address) => isValidNearAddress(address),
     formatAddress: (address) => address,
     isValidTransactionHash: (hash: string) => isValidNearTx(hash),
@@ -143,6 +149,7 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: false,
     hasTokens: false,
     supportCustomFees: false,
+    isMultiLayered: false,
     isValidAddress: (address) => isValidSolanaAddress(address),
     formatAddress: (address) => address,
     isValidTransactionHash: (hash: string) => isValidSolanaTx(hash),
@@ -161,6 +168,7 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: false,
     hasTokens: true,
     supportCustomFees: true,
+    isMultiLayered: false,
     isValidAddress: (address) => isValidTerraAddress(address),
     formatAddress: (address) => address,
     isValidTransactionHash: (hash: string) => isValidTerraTx(hash),
@@ -179,6 +187,7 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: true,
     hasTokens: true,
     supportCustomFees: true,
+    isMultiLayered: false,
     isValidAddress: (hexAddress: string) => isValidAddress(with0x(hexAddress)),
     formatAddress: (hexAddress: string) => toChecksumAddress(with0x(hexAddress)),
     isValidTransactionHash: (hash: string) => isValidHexWith0xPrefix(hash),
@@ -197,6 +206,7 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: true,
     hasTokens: true,
     supportCustomFees: true,
+    isMultiLayered: false,
     isValidAddress: (hexAddress: string) => isValidAddress(with0x(hexAddress)),
     formatAddress: (hexAddress: string) => toChecksumAddress(with0x(hexAddress)),
     isValidTransactionHash: (hash: string) => isValidHexWith0xPrefix(hash),
@@ -215,6 +225,7 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: true,
     hasTokens: true,
     supportCustomFees: true,
+    isMultiLayered: false,
     isValidAddress: (hexAddress: string) => isValidAddress(with0x(hexAddress)),
     formatAddress: (hexAddress: string) => toChecksumAddress(with0x(hexAddress)),
     isValidTransactionHash: (hash: string) => isValidHexWith0xPrefix(hash),
@@ -233,10 +244,29 @@ const chains: { [key in ChainId]: Chain } = {
     evmCompatible: true,
     hasTokens: true,
     supportCustomFees: true,
+    isMultiLayered: false,
     isValidAddress: (hexAddress: string) => isValidAddress(with0x(hexAddress)),
     formatAddress: (hexAddress: string) => toChecksumAddress(with0x(hexAddress)),
     isValidTransactionHash: (hash: string) => isValidHexWith0xPrefix(hash),
     formatTransactionHash: (hash: string) => hash,
+  },
+  [ChainId.Optimism]: {
+    name: 'Optimism',
+    code: 'OPTIMISM',
+    nativeAsset: 'OPTETH',
+    fees: {
+      unit: 'gwei',
+    },
+    safeConfirmations: 0, // instant confirmations
+    txFailureTimeout: 0, // in ms
+    evmCompatible: true,
+    hasTokens: true,
+    supportCustomFees: false,
+    isMultiLayered: true,
+    isValidAddress: (hexAddress: string) => isValidAddress(with0x(hexAddress)),
+    formatAddress: (hexAddress: string) => toChecksumAddress(with0x(hexAddress)),
+    isValidTransactionHash: (hash: string) => isValidHexWith0xPrefix(hash),
+    formatTransactionHash: (hash: string) => toLowerCaseWithout0x(hash),
   },
 };
 
@@ -248,4 +278,12 @@ function hasTokens(chain: ChainId) {
   return chains[chain].hasTokens;
 }
 
-export { chains, isEthereumChain, hasTokens };
+function isMultiLayeredChain(chain: ChainId) {
+  return chains[chain].isMultiLayered;
+}
+
+function supportCustomFees(chain: ChainId) {
+  return chains[chain].supportCustomFees;
+}
+
+export { chains, isEthereumChain, hasTokens, isMultiLayeredChain, supportCustomFees };

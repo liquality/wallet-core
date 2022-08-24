@@ -3,6 +3,7 @@ import { mapValues, transform } from 'lodash';
 import arbitrumTokens from './arbitrum-tokens.json';
 import avalancheTokens from './avalanche-tokens.json';
 import ethereumTokens from './ethereum-tokens.json';
+import optimismTokens from './optimism-tokens.json';
 import polygonTokens from './polygon-tokens.json';
 import rskTokens from './rsk-tokens.json';
 import solanaTokens from './solana-tokens.json';
@@ -54,6 +55,13 @@ const solanaTokensData = mapValues(solanaTokens, (tokenData) => ({
   sendGasLimit: sendGasLimits.SOL,
 }));
 
+const optimismTokensData = mapValues(optimismTokens, (tokenData) => ({
+  ...tokenData,
+  chain: ChainId.Optimism,
+  sendGasLimit: sendGasLimits.ERC20_OPTIMISM_L2,
+  sendGasLimitL1: sendGasLimits.ERC20_OPTIMISM_L1,
+}));
+
 const erc20Assets: AssetMap = mapValues(
   {
     ...rskTokensData,
@@ -63,6 +71,7 @@ const erc20Assets: AssetMap = mapValues(
     ...avalancheTokensData,
     ...arbitrumTokensData,
     ...solanaTokensData,
+    ...optimismTokensData,
   },
   (tokenData) => ({
     ...tokenData,
