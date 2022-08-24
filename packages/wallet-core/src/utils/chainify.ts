@@ -1,5 +1,5 @@
 import { Asset as ChainifyAsset } from '@chainify/types';
-import { Asset, ChainId } from '@liquality/cryptoassets';
+import { ChainId, IAsset } from '@liquality/cryptoassets';
 import cryptoassets from './cryptoassets';
 
 export function assetsAdapter(assets: string | string[]): ChainifyAsset[] {
@@ -19,7 +19,7 @@ export function assetsAdapter(assets: string | string[]): ChainifyAsset[] {
   }
 }
 
-const parseAsset = (asset: Asset) => {
+const parseAsset = (asset: IAsset) => {
   if (asset.type === 'native') {
     return { ...asset, isNative: true } as ChainifyAsset;
   } else {

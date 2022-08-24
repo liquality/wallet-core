@@ -1,7 +1,7 @@
-import { assets as cryptoassets, ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getAllAssets, getAssetByAssetCode, getChainByChainId } from '@liquality/cryptoassets';
 import buildConfig from '../../build.config';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
-import { AccountType } from '../types';
+import { AccountType, Network } from '../types';
 
 export const multipleAccountSupport = {
   // multiple account support
@@ -21,10 +21,10 @@ export const multipleAccountSupport = {
 
       buildConfig.chains.forEach((chainId: ChainId) => {
         const assets = assetKeys.filter((asset: string) => {
-          return cryptoassets[asset]?.chain === chainId;
+          return getAssetByAssetCode(network, asset).chain === chainId;
         });
 
-        const chain = chains[chainId];
+        const chain = getChainByChainId(network, chainId);
 
         const addresses: string[] = [];
 
@@ -32,9 +32,9 @@ export const multipleAccountSupport = {
           state.addresses &&
           state.addresses?.[network] &&
           state.addresses?.[network]?.[walletId] &&
-          state.addresses?.[network]?.[walletId]?.[chain.nativeAsset]
+          state.addresses?.[network]?.[walletId]?.[chain.nativeAsset[0].code]
         ) {
-          addresses.push(state.addresses[network][walletId][chain.nativeAsset]);
+          addresses.push(state.addresses[network][walletId][chain.nativeAsset[0].code]);
         }
 
         const _account = accountCreator({
@@ -78,7 +78,7 @@ export const multipleAccountSupport = {
       },
     };
 
-    const migrateHistory = (state: any, network: string, walletId: string) => {
+    const migrateHistory = (state: any, network: Network, walletId: string) => {
       return (
         state.history[network]?.[walletId]
           // Remove defunct swap statuses
@@ -90,9 +90,9 @@ export const multipleAccountSupport = {
           // Account ids should be assigned to swaps
           .map((item: any) => {
             if (item.type !== 'SWAP') return item;
-
-            const fromChain = cryptoassets[item.from].chain;
-            const toChain = cryptoassets[item.to].chain;
+            const allAssets = getAllAssets();
+            const fromChain = allAssets[network][item.from].chain;
+            const toChain = allAssets[network][item.to].chain;
             const fromAccountId = accounts[walletId][network].find((account: any) => account.chain === fromChain).id;
             const toAccountId = accounts[walletId][network].find((account: any) => account.chain === toChain).id;
 
@@ -103,10 +103,10 @@ export const multipleAccountSupport = {
 
     const history = {
       mainnet: {
-        [walletId]: migrateHistory(state, 'mainnet', walletId),
+        [walletId]: migrateHistory(state, Network.Mainnet, walletId),
       },
       testnet: {
-        [walletId]: migrateHistory(state, 'testnet', walletId),
+        [walletId]: migrateHistory(state, Network.Testnet, walletId),
       },
     };
 

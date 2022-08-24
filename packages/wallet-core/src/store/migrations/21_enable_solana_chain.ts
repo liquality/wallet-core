@@ -1,4 +1,4 @@
-import { ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getChainByChainId } from '@liquality/cryptoassets';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { getDerivationPath } from '../../utils/derivationPath';
 import { Networks } from '../../utils/networks';
@@ -14,7 +14,7 @@ export const enableSolanaChain = {
       enabledChains[walletId] = {};
 
       for (const network of Networks) {
-        const chain = chains[ChainId.Solana];
+        const chain = getChainByChainId(network, ChainId.Solana);
         const derivationPath = getDerivationPath(ChainId.Solana, network, 0, AccountType.Default);
         const solanaAccount = accountCreator({
           walletId,

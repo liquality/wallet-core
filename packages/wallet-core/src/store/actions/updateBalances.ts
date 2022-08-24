@@ -1,7 +1,7 @@
 import { Client } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Address, AddressType, BigNumber } from '@chainify/types';
-import { ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getChainByChainId } from '@liquality/cryptoassets';
 import Bluebird from 'bluebird';
 import { chunk } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
@@ -45,7 +45,7 @@ export const updateBalances = async (context: ActionContext, request: UpdateBala
         if (account && !evmAccounts[account.chain]) {
           const { assets, chain } = account;
 
-          const nativeAsset = chains[chain].nativeAsset;
+          const nativeAsset = getChainByChainId(network, chain).nativeAsset[0].code;
           const client = getters.client({ network, walletId, asset: nativeAsset, accountId: account.id });
 
           const addresses: Address[] = await client.wallet.getUsedAddresses();
@@ -139,21 +139,24 @@ const getEvmAccountsWithMulticalEnabled = (
 
   return accountIds.reduce((result, a) => {
     const acc = getters.accountItem(a);
-    if (acc && chains[acc.chain].evmCompatible) {
-      const nativeAsset = chains[acc.chain].nativeAsset;
-      const client = getters.client({
-        network,
-        walletId,
-        asset: nativeAsset,
-        accountId: a,
-      }) as Client<EvmChainProvider>;
+    if (acc) {
+      const chain = getChainByChainId(network, acc.chain);
+      if (chain.isEVM) {
+        const nativeAsset = chain.nativeAsset[0].code;
+        const client = getters.client({
+          network,
+          walletId,
+          asset: nativeAsset,
+          accountId: a,
+        }) as Client<EvmChainProvider>;
 
-      // add only EVM chains that has multicall support
-      if (client.chain.multicall) {
-        if (!result[acc.chain]) {
-          result[acc.chain] = [];
+        // add only EVM chains that has multicall support
+        if (client.chain.multicall) {
+          if (!result[acc.chain]) {
+            result[acc.chain] = [];
+          }
+          result[acc.chain].push(acc);
         }
-        result[acc.chain].push(acc);
       }
     }
 
@@ -174,7 +177,7 @@ const updateEVMBalances = async (
     async ([chain, accounts]) => {
       // each account for each chain can be used to get a chainify client
       const evmAccount = accounts[0];
-      const nativeAsset = chains[chain as ChainId].nativeAsset;
+      const nativeAsset = getChainByChainId(network, chain as ChainId).nativeAsset[0].code;
 
       // common evm client
       const client = getters.client({

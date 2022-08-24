@@ -1,4 +1,4 @@
-import { ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getChainByChainId } from '@liquality/cryptoassets';
 import { ActionContext, rootActionContext } from '..';
 import { AccountId, Network, WalletId } from '../types';
 
@@ -13,7 +13,7 @@ export const exportPrivateKey = async (
 ): Promise<string> => {
   const { getters } = rootActionContext(context);
 
-  const asset = chains[chainId]?.nativeAsset;
+  const asset = getChainByChainId(network, chainId).nativeAsset[0].code;
   if (!asset) {
     throw new Error(`missing nativeAsset for ${chainId}`);
   }

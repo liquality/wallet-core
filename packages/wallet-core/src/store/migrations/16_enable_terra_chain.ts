@@ -1,4 +1,4 @@
-import { ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getChainByChainId } from '@liquality/cryptoassets';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { getDerivationPath } from '../../utils/derivationPath';
 import { Networks } from '../../utils/networks';
@@ -18,7 +18,7 @@ export const enableTerraChain = {
         if (accountExists) {
           accounts[walletId][network] = [...state.accounts[walletId][network]];
         } else {
-          const chain = chains[ChainId.Terra];
+          const chain = getChainByChainId(network, ChainId.Terra);
           const derivationPath = getDerivationPath(ChainId.Terra, network, 0, AccountType.Default);
           const terraAccount = accountCreator({
             walletId,

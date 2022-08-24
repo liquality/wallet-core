@@ -1,5 +1,4 @@
-import { chains } from '@liquality/cryptoassets';
-import { ChainId } from '@liquality/cryptoassets/src/types';
+import { getChainByChainId } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
@@ -44,7 +43,7 @@ export const sendTransaction = async (
   const _feeAsset = assetsAdapter(feeAsset)[0] || _asset;
 
   const tx = await client.wallet.sendTransaction({
-    to: chains[_asset.chain as ChainId].formatAddress(to),
+    to: getChainByChainId(network, _asset.chain).formatAddress(to),
     value: new BN(amount),
     data,
     gasLimit: gas,

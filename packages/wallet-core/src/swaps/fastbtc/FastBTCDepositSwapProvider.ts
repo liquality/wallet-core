@@ -1,7 +1,7 @@
 import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider, BitcoinTypes } from '@chainify/bitcoin';
 import { Client } from '@chainify/client';
 import { Transaction } from '@chainify/types';
-import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { currencyToUnit, getChainByChainId, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { mapValues } from 'lodash';
 import { io, Socket } from 'socket.io-client';
@@ -167,7 +167,7 @@ class FastBTCDepositSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const toAddressRaw = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
     // don't pass network because Ethers does not support EIP1191
-    const toAddress = chains[toChain].formatAddress(toAddressRaw);
+    const toAddress = getChainByChainId(network, toChain).formatAddress(toAddressRaw);
     const relayAddress = await this._getAddress(toAddress);
 
     await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
@@ -233,7 +233,7 @@ class FastBTCDepositSwapProvider extends SwapProvider {
       const toChain = cryptoassets[swap.to].chain;
       const toAddressRaw = await this.getSwapAddress(network, walletId, swap.to, swap.toAccountId);
       // don't pass network because Ethers does not support EIP1191
-      const toAddress = chains[toChain].formatAddress(toAddressRaw);
+      const toAddress = getChainByChainId(network, toChain).formatAddress(toAddressRaw);
       const addressHistory = (await this._getHistory(toAddress)).sort((a, b) =>
         new Date(a.dateAdded).getTime() > new Date(b.dateAdded).getTime() ? 1 : -1
       );

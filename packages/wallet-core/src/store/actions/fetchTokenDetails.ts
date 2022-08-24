@@ -1,6 +1,6 @@
 import { UnsupportedMethodError } from '@chainify/errors';
 import { Nullable, TokenDetails } from '@chainify/types';
-import { ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getChainByChainId } from '@liquality/cryptoassets';
 import { ActionContext, rootActionContext } from '..';
 import { Network, WalletId } from '../types';
 
@@ -17,7 +17,7 @@ export const fetchTokenDetails = async (
 ): Promise<Nullable<TokenDetails>> => {
   const { walletId, network, chain, contractAddress } = tokenDetailsRequest;
   const { getters } = rootActionContext(context);
-  const asset = chains[chain].nativeAsset;
+  const asset = getChainByChainId(network, chain).nativeAsset[0].code;
 
   const client = getters.client({ network, walletId, asset });
 

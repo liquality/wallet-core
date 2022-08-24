@@ -1,4 +1,4 @@
-import { ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getChainByChainId } from '@liquality/cryptoassets';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { getDerivationPath } from '../../utils/derivationPath';
 import { Networks } from '../../utils/networks';
@@ -37,7 +37,7 @@ export const accountSetDerivationPath = {
           if (account.chain === ChainId.Rootstock && !account.type.includes('ledger')) {
             // get the legacy rsk derivation path
             const coinType = network === 'mainnet' ? '137' : '37310';
-            const chain = chains[ChainId.Rootstock];
+            const chain = getChainByChainId(network, ChainId.Rootstock);
             const _account = accountCreator({
               walletId,
               network,

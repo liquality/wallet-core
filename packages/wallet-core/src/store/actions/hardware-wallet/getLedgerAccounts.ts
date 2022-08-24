@@ -1,5 +1,5 @@
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
-import { assets, ChainId, chains } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId, getAllAssets, getChainByChainId } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { ActionContext, rootActionContext } from '../..';
 import { getDerivationPath } from '../../../utils/derivationPath';
@@ -31,8 +31,13 @@ export const getLedgerAccounts = async (
 ) => {
   const { getters } = rootActionContext(context);
   const { client, networkAccounts, assetFiatBalance } = getters;
-  const { chain } = assets[asset];
-  const chainifyAsset = { ...assets[asset], isNative: assets[asset].type === 'native' };
+  const allAssets = getAllAssets();
+  const { chain } = allAssets[network][asset];
+
+  const chainifyAsset = {
+    ...allAssets[network][asset],
+    isNative: allAssets[network][asset].type === AssetTypes.native,
+  };
 
   const results: LedgerAccountEntry[] = [];
   const existingAccounts = networkAccounts.filter((account) => {
@@ -64,11 +69,11 @@ export const getLedgerAccounts = async (
     const addresses = await _client.wallet.getAddresses();
     if (addresses && addresses.length > 0) {
       const [account] = addresses;
-      const normalizedAddress = chains[chain].formatAddress(account.address, network);
+      const normalizedAddress = getChainByChainId(network, chain).formatAddress(account.address);
 
       // verify if the account exists
       const existingIndex = existingAccounts.findIndex((a) => {
-        const addresses = a.addresses.map((a) => chains[chain].formatAddress(a, network));
+        const addresses = a.addresses.map((a) => getChainByChainId(network, chain).formatAddress(a));
         return addresses.includes(normalizedAddress);
       });
       const exists = existingIndex >= 0;

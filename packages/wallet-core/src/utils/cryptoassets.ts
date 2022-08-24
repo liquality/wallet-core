@@ -1,4 +1,4 @@
-import { Asset } from '@liquality/cryptoassets';
+import { IAsset } from '@liquality/cryptoassets';
 import type { OriginalStore } from '../store';
 
 // Redefine the `cryptoassets` lib to pull from the getter - to include custom tokens
@@ -12,7 +12,7 @@ function getStore() {
   return store;
 }
 
-const cryptoassets: { [asset: string]: Asset } = new Proxy(
+const cryptoassets: { [asset: string]: IAsset } = new Proxy(
   {},
   {
     get(_target, name, receiver) {

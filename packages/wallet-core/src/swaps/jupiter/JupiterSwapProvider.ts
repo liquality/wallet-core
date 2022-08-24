@@ -1,5 +1,5 @@
 import { TxStatus } from '@chainify/types';
-import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, currencyToUnit, getNativeAssetCode, unitToCurrency } from '@liquality/cryptoassets';
 import { Transaction } from '@solana/web3.js';
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
@@ -165,12 +165,13 @@ class JupiterSwapProvider extends SwapProvider {
     txType,
     feePrices,
     asset,
+    network,
   }: EstimateFeeRequest<string, JupiterSwapHistoryItem>): Promise<EstimateFeeResponse | null> {
     if (txType != this.fromTxType) {
       throw new Error(`Invalid tx type ${txType}`);
     }
 
-    const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
+    const nativeAsset = getNativeAssetCode(network, cryptoassets[asset].chain);
 
     const gasLimit = 1000000000;
     const fees: EstimateFeeResponse = {};
