@@ -1,11 +1,11 @@
 import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
 import { Client } from '@chainify/client';
 import { EvmUtils } from '@chainify/evm';
-import { EIP1559Fee, FeeDetail, FeeDetails, FeeType } from '@chainify/types';
-import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, EIP1559Fee, FeeDetail, FeeDetails, FeeType } from '@chainify/types';
+import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import store from '../store';
-import { Account, AccountId, Asset, NFT } from '../store/types';
+import { Account, AccountId, Asset, Network, NFT } from '../store/types';
 import { getFeeAsset, getNativeAsset, isERC20, isEthereumChain } from './asset';
 import cryptoassets from './cryptoassets';
 
@@ -35,11 +35,26 @@ const feePriceInUnit = (asset: Asset, feePrice: number) => {
   return isEthereumChain(asset) ? EvmUtils.fromGwei(feePrice) : feePrice; // ETH fee price is in gwei
 };
 
-function getSendFee(asset: Asset, feePrice: number) {
+function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number, network?: Network) {
   const assetInfo = cryptoassets[asset];
-  const fee = new BN(assetInfo.sendGasLimit).times(feePriceInUnit(asset, feePrice));
+  const nativeAsset = cryptoassets[getNativeAsset(asset)];
 
-  return unitToCurrency(cryptoassets[getNativeAsset(asset)], fee);
+  if (assetInfo.chain === ChainId.Optimism) {
+    if (!l1FeePrice) {
+      throw new Error('l1FeePrice must be specified for Optimism');
+    }
+
+    let l1Fee = new BN(assetInfo.sendGasLimitL1 as number).times(feePriceInUnit(asset, l1FeePrice));
+
+    // default scalar for L1 fee in Optimism mainnet -> 1, testnet 1.5
+    if (network && network === 'testnet') l1Fee = l1Fee.times(new BN(1.5));
+
+    const l2Fee = new BN(assetInfo.sendGasLimit).times(feePriceInUnit(asset, feePrice));
+    return unitToCurrency(nativeAsset, l1Fee.plus(l2Fee));
+  } else {
+    const fee = new BN(assetInfo.sendGasLimit).times(feePriceInUnit(asset, feePrice));
+    return unitToCurrency(nativeAsset, fee);
+  }
 }
 
 function getTxFee(units: FeeUnits, _asset: Asset, _feePrice: number) {

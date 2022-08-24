@@ -65,6 +65,8 @@ const config: WalletCoreConfig = {
       'FISH',
       'LUNA',
       'UST',
+      'OPTETH',
+      'OPTUSDC',
     ],
     testnet: [
       'BTC',
@@ -81,6 +83,8 @@ const config: WalletCoreConfig = {
       'AVAX',
       'LUNA',
       'UST',
+      'OPTETH',
+      'OPTUSDC',
     ],
   },
   infuraApiKey: 'da99ebc8c0964bb8bb757b6f8cc40f1f',
@@ -249,6 +253,7 @@ const config: WalletCoreConfig = {
     ChainId.Fuse,
     ChainId.Avalanche,
     ChainId.Solana,
+    ChainId.Optimism,
   ],
   supportedBridgeAssets: ['RBTC', 'AVAX'],
   nameResolvers: {

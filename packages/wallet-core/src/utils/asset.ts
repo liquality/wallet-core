@@ -116,6 +116,16 @@ const EXPLORERS: ExplorerMap = {
       address: 'https://explorer.fuse.io/address/{hash}',
     },
   },
+  optimism: {
+    testnet: {
+      tx: 'https://kovan-optimistic.etherscan.io/tx/{hash}',
+      address: 'https://kovan-optimistic.etherscan.io/address/{hash}',
+    },
+    mainnet: {
+      tx: 'https://optimistic.etherscan.io/tx/{hash}',
+      address: 'https://optimistic.etherscan.io/address/{hash}',
+    },
+  },
 };
 
 function getChainExplorer(chain: ChainId) {
