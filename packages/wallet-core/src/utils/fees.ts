@@ -130,9 +130,9 @@ async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN, cu
     throw new Error(`getSendFeeEstimations: fee asset not available for ${asset}`);
   }
 
-  const suggestedGasFees = store.getters.suggestedFeePrices(asset);
+  const suggestedGasFees = store.getters.suggestedFeePrices(feeAsset);
   if (!suggestedGasFees) {
-    throw new Error(`getSendFeeEstimations: fees not avaibale for ${asset}`);
+    throw new Error(`getSendFeeEstimations: fees not avaibale for ${feeAsset}`);
   }
 
   const _suggestedGasFees = suggestedGasFees as FeeDetailsWithCustom;
