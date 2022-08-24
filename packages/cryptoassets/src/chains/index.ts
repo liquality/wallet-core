@@ -23,6 +23,11 @@ export function getChainByChainId(network: Network, chainId: ChainId) {
   return chains[network][chainId];
 }
 
+export function getNativeAssetCode(network: Network, chainId: ChainId, index = 0) {
+  const chains = getAllSupportedChains();
+  return chains[network][chainId].nativeAsset[index].code;
+}
+
 export function isEvmChain(network: Network, chainId: ChainId) {
   const chains = getAllSupportedChains();
   return chains[network][chainId].isEVM;
