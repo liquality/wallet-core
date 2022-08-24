@@ -1,6 +1,5 @@
 import { ChainId } from '@liquality/cryptoassets';
-import { AccountInfo, Asset, Network } from '../../store/types';
-import cryptoassets from '../../utils/cryptoassets';
+import { AccountInfo, Network } from '../../store/types';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import {
   createArbitrumClient,
@@ -12,16 +11,8 @@ import {
   createRskClient,
 } from './evm';
 
-export const createClient = (asset: Asset, network: Network, mnemonic: string, accountInfo: AccountInfo) => {
-  const assetData = cryptoassets[asset];
-
-  if (!assetData) {
-    console.info('Asset ', asset);
-    console.info('Asset Data ', assetData);
-    throw new Error('Asset not found');
-  }
-
-  switch (assetData.chain) {
+export const createClient = (chainId: ChainId, network: Network, mnemonic: string, accountInfo: AccountInfo) => {
+  switch (chainId) {
     case ChainId.Bitcoin:
       return createBtcClient(network, mnemonic, accountInfo);
     case ChainId.Rootstock:

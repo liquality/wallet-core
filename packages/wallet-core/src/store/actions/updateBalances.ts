@@ -45,8 +45,7 @@ export const updateBalances = async (context: ActionContext, request: UpdateBala
         if (account && !evmAccounts[account.chain]) {
           const { assets, chain } = account;
 
-          const nativeAsset = getChainByChainId(network, chain).nativeAsset[0].code;
-          const client = getters.client({ network, walletId, asset: nativeAsset, accountId: account.id });
+          const client = getters.client({ network, walletId, chainId: chain, accountId: account.id });
 
           const addresses: Address[] = await client.wallet.getUsedAddresses();
           updateAccountAddresses(context, account, addresses, network, walletId);
@@ -87,7 +86,7 @@ export const updateBalances = async (context: ActionContext, request: UpdateBala
               );
             } catch (err) {
               console.debug('Connected network ', client.chain.getNetwork());
-              console.debug(`Asset: ${nativeAsset} Balance update error:  `, err.message);
+              console.debug(`Chain: ${chain} Balance update error:  `, err.message);
             }
           }
         }
@@ -142,11 +141,10 @@ const getEvmAccountsWithMulticalEnabled = (
     if (acc) {
       const chain = getChainByChainId(network, acc.chain);
       if (chain.isEVM) {
-        const nativeAsset = chain.nativeAsset[0].code;
         const client = getters.client({
           network,
           walletId,
-          asset: nativeAsset,
+          chainId: acc.chain,
           accountId: a,
         }) as Client<EvmChainProvider>;
 
@@ -177,13 +175,12 @@ const updateEVMBalances = async (
     async ([chain, accounts]) => {
       // each account for each chain can be used to get a chainify client
       const evmAccount = accounts[0];
-      const nativeAsset = getChainByChainId(network, chain as ChainId).nativeAsset[0].code;
 
       // common evm client
       const client = getters.client({
         network,
         walletId,
-        asset: nativeAsset,
+        chainId: chain as ChainId,
         accountId: evmAccount.id,
       }) as Client<EvmChainProvider>;
 
@@ -194,7 +191,7 @@ const updateEVMBalances = async (
             .client({
               network,
               walletId,
-              asset: nativeAsset,
+              chainId: a.chain,
               accountId: a.id,
             })
             .wallet.getUsedAddresses();

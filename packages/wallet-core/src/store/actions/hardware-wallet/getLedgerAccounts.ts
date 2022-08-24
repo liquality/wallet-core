@@ -50,14 +50,7 @@ export const getLedgerAccounts = async (
     let _chainCode = null;
     let _publicKey = null;
 
-    const _client = client({
-      network,
-      walletId,
-      asset,
-      accountType,
-      accountIndex: index,
-      useCache: false,
-    });
+    const _client = client({ network, walletId, chainId: chain, accountType, accountIndex: index, useCache: false });
 
     // we need to get the chain code and public key for btc
     if (chain === ChainId.Bitcoin) {

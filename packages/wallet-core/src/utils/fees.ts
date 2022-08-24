@@ -172,10 +172,11 @@ async function sendBitcoinTxFees(
   const isMax: boolean = amount === undefined; // checking if it is a max send
   const _sendFees = sendFees ?? newSendFees();
 
+  const account = store.getters.accountItem(accountId)!;
   const client = store.getters.client({
     network: store.state.activeNetwork,
     walletId: store.state.activeWalletId,
-    asset: feeAsset,
+    chainId: account.chain,
     accountId: accountId,
   }) as Client<BitcoinEsploraApiProvider, BitcoinBaseWalletProvider>;
 
@@ -225,7 +226,7 @@ async function estimateTransferNFT(
   const client = store.getters.client({
     network: store.state.activeNetwork,
     walletId: store.state.activeWalletId,
-    asset: feeAsset,
+    chainId: account.chain,
     accountId: accountId,
   });
 

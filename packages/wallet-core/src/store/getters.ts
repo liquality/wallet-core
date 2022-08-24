@@ -44,7 +44,7 @@ export default {
     return ({
       network,
       walletId,
-      asset,
+      chainId,
       accountId,
       useCache = true,
       accountType = AccountType.Default,
@@ -52,7 +52,7 @@ export default {
     }: {
       network: Network;
       walletId: WalletId;
-      asset: AssetType;
+      chainId: ChainId;
       accountId?: AccountId;
       useCache?: boolean;
       accountType?: AccountType;
@@ -61,21 +61,20 @@ export default {
       const account = accountId ? getters.accountItem(accountId) : null;
       const _accountType = account?.type || accountType;
       const _accountIndex = account?.index || accountIndex;
-      const { chain } = getters.cryptoassets[asset] || getAssetByAssetCode(network, asset);
 
-      if (account && account.chain !== chain) {
-        throw new Error(`asset: ${asset} and accountId: ${accountId} belong to different chains`);
+      if (account && chainId !== account.chain) {
+        throw new Error(`asset: ${chainId} and accountId: ${accountId} belong to different chains`);
       }
 
       let derivationPath: string;
       // when we ask for ledger accounts from the ledger device we don't have the derivation path
       // the !account doesn't exist in this case or if we call the getter with accountId equals to null
       if (_accountType.includes('ledger') || !account) {
-        derivationPath = getDerivationPath(chain, network, _accountIndex, _accountType);
+        derivationPath = getDerivationPath(chainId, network, _accountIndex, _accountType);
       } else {
         derivationPath = account.derivationPath;
       }
-      const cacheKey = [asset, chain, network, walletId, derivationPath, _accountType].join('-');
+      const cacheKey = [chainId, network, walletId, derivationPath, _accountType].join('-');
 
       if (useCache) {
         const cachedClient = clientCache[cacheKey];
@@ -96,7 +95,7 @@ export default {
         publicKey: account?.publicKey,
         address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined,
       };
-      const client = createClient(asset, network, mnemonic, accountInfo);
+      const client = createClient(chainId, network, mnemonic, accountInfo);
       clientCache[cacheKey] = client;
 
       return client;
@@ -301,7 +300,6 @@ export default {
       : [];
     return Object.values(_accounts).flat();
   },
-
   accountFiatBalance(...context: GetterContext) {
     const { state, getters } = rootGetterContext(context);
     const { accounts } = state;

@@ -7,7 +7,6 @@ export * from './changeActiveNetwork';
 export * from './changeActiveWalletId';
 export * from './changePassword';
 export * from './checkPendingActions';
-export * from './clientExec';
 export * from './createWallet';
 export * from './disableAssets';
 export * from './disableEthereumInjection';

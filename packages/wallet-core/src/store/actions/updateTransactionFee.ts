@@ -20,7 +20,9 @@ export const updateTransactionFee = async (
   const { dispatch, commit, getters } = rootActionContext(context);
   const item = getters.historyItemById(network, walletId, id);
 
-  if (!item) throw new Error('updateTransactionFee: Item does not exist');
+  if (!item) {
+    throw new Error('updateTransactionFee: Item does not exist');
+  }
 
   const hashKey = Object.keys(item).find((key: keyof HistoryItem) => item[key] === hash);
 
@@ -39,11 +41,12 @@ export const updateTransactionFee = async (
   }[txKey] as string;
 
   const accountId = item.type === TransactionType.Swap ? item.fromAccountId : item.accountId;
+  const account = getters.accountItem(accountId)!;
 
   const client = getters.client({
     network,
     walletId,
-    asset,
+    chainId: account.chain,
     accountId,
   });
 
