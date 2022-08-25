@@ -2474,9 +2474,9 @@ const TOKENS = {
       coinGeckoId: 'storm',
     },
   },
-  MATIC: {
+  WMATIC: {
     name: 'Matic Token',
-    code: 'MATIC',
+    code: 'WMATIC',
     decimals: 18,
     contractAddress: '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0',
     color: '#2b6def',

@@ -390,7 +390,7 @@ const TOKENS = {
     decimals: 18,
     contractAddress: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
     color: '#2b6cef',
-    matchingAsset: 'MATIC',
+    matchingAsset: 'WMATIC',
     priceSource: {
       coinGeckoId: 'matic-network',
     },

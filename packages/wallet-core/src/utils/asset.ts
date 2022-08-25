@@ -1,4 +1,4 @@
-import { AssetTypes, ChainId, getChain, isEvmChain } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId, getChain, getNativeAssetCode, isEvmChain } from '@liquality/cryptoassets';
 import * as ethers from 'ethers';
 import { Asset, Network } from '../store/types';
 import cryptoassets from '../utils/cryptoassets';
@@ -163,7 +163,7 @@ export const getNativeAsset = (asset: Asset, network = Network.Mainnet) => {
     return asset;
   }
   const chainId = cryptoassets[asset]?.chain;
-  return chainId ? getChain(network, chainId).nativeAsset[0].code : asset;
+  return chainId ? getNativeAssetCode(network, chainId) : asset;
 };
 
 export const getFeeAsset = (asset: Asset) => {
