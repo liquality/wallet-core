@@ -10,6 +10,7 @@ export interface Chain {
   evmCompatible: boolean;
   hasTokens: boolean;
   supportCustomFees: boolean;
+  isMultiLayered: boolean;
   isValidAddress: (address: string, network?: string) => boolean;
   formatAddress: (address: string, network?: string) => string;
   isValidTransactionHash: (hash: string) => boolean;
@@ -36,6 +37,7 @@ export enum ChainId {
   Fuse = 'fuse',
   Terra = 'terra',
   Avalanche = 'avalanche',
+  Optimism = 'optimism',
 }
 
 export interface Asset {
@@ -50,6 +52,7 @@ export interface Asset {
   matchingAsset?: string;
   feeAsset?: string;
   sendGasLimit: number;
+  sendGasLimitL1?: number; // only for multilayer chain assets
 }
 
 export type AssetMap = Record<string, Asset>;

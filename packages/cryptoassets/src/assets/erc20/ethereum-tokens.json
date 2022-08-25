@@ -2209,5 +2209,157 @@
     "contractAddress": "0x4691937a7508860f876c9c0a2a617e7d9e945d4b",
     "color": "#1aa13e",
     "coinGeckoId": "woo-network"
+  },
+  "ENS": {
+    "name": "Ethereum Name Service",
+    "code": "ENS",
+    "decimals": 18,
+    "contractAddress": "0xc18360217d8f7ab5e7c516566761ea12ce7f9d72",
+    "coinGeckoId": "ethereum-name-service"
+  },
+  "LUSD": {
+    "name": "LUSD Stablecoin",
+    "code": "LUSD",
+    "decimals": 18,
+    "contractAddress": "0x5f98805a4e8be255a32880fdec7f6728c6568ba0",
+    "coinGeckoId": "lusd"
+  },
+  "RGT": {
+    "name": "Rari Governance Token",
+    "code": "RGT",
+    "decimals": 18,
+    "contractAddress": "0xd291e7a03283640fdc51b121ac401383a46cc623",
+    "coinGeckoId": "rari-governance-token"
+  },
+  "RAI": {
+    "name": "Rai Reflex Index ",
+    "code": "RAI",
+    "decimals": 18,
+    "contractAddress": "0x03ab458634910AaD20eF5f1C8ee96F1D6ac54919",
+    "coinGeckoId": "rai"
+  },
+  "rETH": {
+    "name": "Rocket Pool ETH ",
+    "code": "rETH",
+    "decimals": 18,
+    "contractAddress": "0xae78736cd615f374d3085123a210448e74fc6393",
+    "coinGeckoId": "rocket-pool-eth"
+  },
+  "PAPER": {
+    "name": "Paper",
+    "code": "PAPER",
+    "decimals": 18,
+    "contractAddress": "0x7ae1d57b58fa6411f32948314badd83583ee0e8c",
+    "coinGeckoId": "paper-fantom"
+  },
+  "SARCO": {
+    "name": "Sarcophagus",
+    "code": "SARCO",
+    "decimals": 18,
+    "contractAddress": "0x7697b462a7c4ff5f8b55bdbc2f4076c2af9cf51a",
+    "coinGeckoId": "sarcophagus"
+  },
+  "BitANT": {
+    "name": "BitANT",
+    "code": "BitANT",
+    "decimals": 18,
+    "contractAddress": "0x15Ee120fD69BEc86C1d38502299af7366a41D1a6",
+    "coinGeckoId": "bitant"
+  },
+  "BitBTC": {
+    "name": "BitBTC",
+    "code": "BitBTC",
+    "decimals": 18,
+    "contractAddress": "0x3C513dB8Bdc3806e4489d62C3d549A5Aaf6A4e97"
+  },
+  "LYRA": {
+    "name": "Lyra",
+    "code": "LYRA",
+    "decimals": 18,
+    "contractAddress": "0x01ba67aac7f75f647d94220cc98fb30fcc5105bf",
+    "coinGeckoId": "lyra-finance"
+  },
+  "PERP": {
+    "name": "Perpetual",
+    "code": "PERP",
+    "decimals": 18,
+    "contractAddress": "0xbC396689893D065F41bc2C6EcbeE5e0085233447",
+    "coinGeckoId": "perpetual-protocol"
+  },
+  "DF": {
+    "name": "dForce",
+    "code": "DF",
+    "decimals": 18,
+    "contractAddress": "0x431ad2ff6a9C365805eBaD47Ee021148d6f7DBe0",
+    "coinGeckoId": "dforce-token"
+  },
+  "USX": {
+    "name": "dForce USD",
+    "code": "USX",
+    "decimals": 18,
+    "contractAddress": "0x0a5e677a6a24b2f1a2bf4f3bffc443231d2fdec8",
+    "coinGeckoId": "token-dforce-usd"
+  },
+  "BOND": {
+    "name": "BarnBridge Governance Token",
+    "code": "BOND",
+    "decimals": 18,
+    "contractAddress": "0x0391D2021f89DC339F60Fff84546EA23E337750f",
+    "coinGeckoId": "barnbridge"
+  },
+  "EST": {
+    "name": "Erica Social Token",
+    "code": "EST",
+    "decimals": 18,
+    "contractAddress": "0x259ab9b9eab62b0fd98729b97be121073d5b3479",
+    "coinGeckoId": "erica-social-token"
+  },
+  "KROM": {
+    "name": "Kromatika",
+    "code": "KROM",
+    "decimals": 18,
+    "contractAddress": "0x3af33bef05c2dcb3c7288b77fe1c8d2aeba4d789",
+    "coinGeckoId": "kromatika"
+  },
+  "DHT": {
+    "name": "dHEDGE DAO Token",
+    "code": "DHT",
+    "decimals": 18,
+    "contractAddress": "0xca1207647Ff814039530D7d35df0e1Dd2e91Fa84",
+    "coinGeckoId": "dhedge-dao"
+  },
+  "LIZ": {
+    "name": "Theranos Coin",
+    "code": "LIZ",
+    "decimals": 18,
+    "contractAddress": "0x102e941b77bcaa7e35d368cafe51ef8f79c8d1ef"
+  },
+  "MASK": {
+    "name": "Mask Network",
+    "code": "MASK",
+    "decimals": 18,
+    "contractAddress": "0x69af81e73a73b40adf4f3d4223cd9b1ece623074",
+    "coinGeckoId": "mask-network"
+  },
+  "THALES": {
+    "name": "Thales",
+    "code": "THALES",
+    "decimals": 18,
+    "contractAddress": "0x8947da500Eb47F82df21143D0C01A29862a8C3c5",
+    "coinGeckoId": "thales"
+  },
+  "EQZ": {
+    "name": "Equalizer",
+    "code": "EQZ",
+    "decimals": 18,
+    "contractAddress": "0x1da87b114f35e1dc91f72bf57fc07a768ad40bb0",
+    "coinGeckoId": "equalizer"
+  },
+  "GYSR": {
+    "name": "Geyser",
+    "code": "GYSR",
+    "decimals": 18,
+    "contractAddress": "0xbEa98c05eEAe2f3bC8c3565Db7551Eb738c8CCAb",
+    "coinGeckoId": "geyser"
   }
 }

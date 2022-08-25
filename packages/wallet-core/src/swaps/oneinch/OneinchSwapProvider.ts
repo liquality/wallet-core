@@ -31,6 +31,7 @@ const SLIPPAGE_PERCENTAGE = 0.5;
 // TODO: this should not be defined here, instead we need a "supportedChains" interface
 const supportedChains: { [chainId: number]: boolean } = {
   1: true,
+  10: true,
   56: true,
   137: true,
   43114: true,
@@ -41,6 +42,7 @@ const supportedChains: { [chainId: number]: boolean } = {
 // No swap provider should have such kind of specific configuration
 const chainToGasMultiplier: { [chainId: number]: number } = {
   1: 1.5,
+  10: 1.5, // TODO?
   56: 1.5,
   137: 1.5,
   43114: 1.5,
