@@ -1,15 +1,18 @@
-import { IChain } from '../interfaces/IChain';
+import { cloneDeep } from 'lodash';
 import { INetwork, IUtxoNetwork } from '../interfaces/INetwork';
 import { ExplorerView } from '../types';
 import { BaseChain } from './BaseChain';
 
 export const transformMainnetToTestnetChain = (
-  chain: IChain,
+  chain: BaseChain,
   network: INetwork,
   explorerViews: ExplorerView[],
   faucetUrl: string
 ): BaseChain => {
-  const testnetChain = { ...chain, network, explorerViews, faucetUrl };
+  const testnetChain = cloneDeep(chain);
+  testnetChain.network = network;
+  testnetChain.explorerViews = explorerViews;
+  testnetChain.faucetUrl = faucetUrl;
 
   if (!testnetChain.network.isTestnet) {
     throw new Error(`isTestnet should be set to true`);
