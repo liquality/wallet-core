@@ -6,7 +6,9 @@ let store: OriginalStore;
 
 // Lazy load the store to prevent cyclic dependencies
 function getStore() {
-  if (store) return store;
+  if (store) {
+    return store;
+  }
 
   store = require('../store').default; // eslint-disable-line
   return store;

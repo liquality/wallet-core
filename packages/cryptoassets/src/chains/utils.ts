@@ -1,13 +1,14 @@
 import { IChain } from '../interfaces/IChain';
 import { INetwork, IUtxoNetwork } from '../interfaces/INetwork';
 import { ExplorerView } from '../types';
+import { BaseChain } from './BaseChain';
 
 export const transformMainnetToTestnetChain = (
   chain: IChain,
   network: INetwork,
   explorerViews: ExplorerView[],
   faucetUrl: string
-): IChain => {
+): BaseChain => {
   const testnetChain = { ...chain, network, explorerViews, faucetUrl };
 
   if (!testnetChain.network.isTestnet) {
@@ -58,7 +59,7 @@ export const transformMainnetToTestnetChain = (
     assertUtxoProps(testnetChain.network.utxo, chain.network.utxo);
   }
 
-  return testnetChain;
+  return testnetChain as BaseChain;
 };
 
 const assertUtxoProps = (testnetUtxo: IUtxoNetwork, mainnetUtxo: IUtxoNetwork) => {
