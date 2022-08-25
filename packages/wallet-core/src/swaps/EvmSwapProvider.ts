@@ -2,7 +2,7 @@ import { Client } from '@chainify/client';
 import { EvmChainProvider, EvmTypes, Typechain } from '@chainify/evm';
 import { toEthereumTxRequest } from '@chainify/evm/dist/lib/utils';
 import { Transaction, TxStatus } from '@chainify/types';
-import { chains } from '@liquality/cryptoassets';
+import { getChain } from '@liquality/cryptoassets';
 import * as ethers from 'ethers';
 import { SwapHistoryItem } from '../store/types';
 import { assetsAdapter } from '../utils/chainify';
@@ -41,7 +41,7 @@ export abstract class EvmSwapProvider extends SwapProvider {
     const tokenContract = Typechain.ERC20__factory.connect(fromAsset.contractAddress, signer);
 
     const userAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const userAddress = chains[fromAsset.chain].formatAddress(userAddressRaw);
+    const userAddress = getChain(network, fromAsset.chain).formatAddress(userAddressRaw);
 
     const allowance = await tokenContract.allowance(userAddress.toLowerCase(), this.config.routerAddress);
 

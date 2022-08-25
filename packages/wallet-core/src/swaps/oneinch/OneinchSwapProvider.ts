@@ -1,7 +1,7 @@
 import { Client, HttpClient } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Transaction, TxStatus } from '@chainify/types';
-import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import BN, { BigNumber } from 'bignumber.js';
 import * as ethers from 'ethers';
@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem } from '../../store/types';
-import { isERC20, isEthereumChain } from '../../utils/asset';
+import { isChainEvmCompatible, isERC20 } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
@@ -94,7 +94,8 @@ class OneinchSwapProvider extends SwapProvider {
   }
 
   async getQuote({ network, from, to, amount }: QuoteRequest) {
-    if (!isEthereumChain(from) || !isEthereumChain(to) || new BigNumber(amount).lte(0)) return null;
+    if (!isChainEvmCompatible(from, network) || !isChainEvmCompatible(to, network) || new BigNumber(amount).lte(0))
+      return null;
     const fromAmountInUnit = new BN(currencyToUnit(cryptoassets[from], new BN(amount)));
     // @ts-ignore TODO: Fix chain networks
     const chainIdFrom: number = ChainNetworks[cryptoassets[from].chain][network].chainId;
@@ -126,7 +127,7 @@ class OneinchSwapProvider extends SwapProvider {
 
     const erc20 = new ethers.Contract(cryptoassets[quote.from].contractAddress!, ERC20.abi, provider);
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
     const allowance = await erc20.allowance(fromAddress, this.config.routerAddress);
     const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
     if (allowance.gte(inputAmount)) {
@@ -165,7 +166,7 @@ class OneinchSwapProvider extends SwapProvider {
 
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = chains[toChain].formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, toChain).formatAddress(fromAddressRaw);
 
     // TODO: type
     const swapParams: any = {
@@ -223,7 +224,7 @@ class OneinchSwapProvider extends SwapProvider {
 
     // @ts-ignore TODO: Fix chain networks
     const chainId: number = ChainNetworks[chain][network].chainId;
-    const nativeAsset = chains[chain].nativeAsset;
+    const nativeAsset = getChain(network, chain).nativeAsset[0].code;
 
     if (txType in this._txTypes()) {
       const fees: EstimateFeeResponse = {};

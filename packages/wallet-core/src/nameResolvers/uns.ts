@@ -28,8 +28,6 @@ export class UNSResolver implements NameResolver {
         return 'AVAX';
       case ChainId.BinanceSmartChain:
         return 'BNB';
-      case ChainId.BitcoinCash:
-        return 'BCH';
       case ChainId.Fuse:
         return 'FUSE';
       case ChainId.Near:

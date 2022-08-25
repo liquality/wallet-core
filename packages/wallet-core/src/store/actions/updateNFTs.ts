@@ -1,4 +1,3 @@
-import { chains } from '@liquality/cryptoassets';
 import Bluebird from 'bluebird';
 import { ActionContext, rootActionContext } from '..';
 import { Account, AccountId, Network, NFT, WalletId } from '../types';
@@ -21,11 +20,10 @@ export const updateNFTs = async (
     accountIds,
     async (accountId) => {
       const account: Account = getters.accountItem(accountId)!;
-      const asset = chains[account.chain].nativeAsset;
       const client = getters.client({
         network,
         walletId,
-        asset,
+        chainId: account.chain,
         accountId: account.id,
       });
 

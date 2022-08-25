@@ -18,7 +18,7 @@ export const TESTNET_SUPPORTED_CHAINS = {
   ...TESTNET_NON_EVM_CHAINS,
 } as Record<ChainId, BaseChain>;
 
-export function getChainByChainId(network: Network, chainId: ChainId) {
+export function getChain(network: Network, chainId: ChainId) {
   const chains = getAllSupportedChains();
   return chains[network][chainId];
 }

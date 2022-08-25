@@ -1,5 +1,5 @@
 import { Network } from '../store/types';
-import { getNativeAsset, getTransactionExplorerLink, isERC20, isEthereumChain } from './asset';
+import { getNativeAsset, getTransactionExplorerLink, isChainEvmCompatible, isERC20 } from './asset';
 
 describe('asset tests', () => {
   test('get native asset test', async () => {
@@ -17,8 +17,8 @@ describe('asset tests', () => {
     expect(isERC20('NEAR')).toBe(false);
   });
 
-  test('is isEthereumChain', async () => {
-    expect(isEthereumChain('ETH')).toBe(true);
+  test('isChainEvmCompatible', async () => {
+    expect(isChainEvmCompatible('ETH')).toBe(true);
     expect(isERC20('DAI')).toBe(true);
     expect(isERC20('USDT')).toBe(true);
     expect(isERC20('WBTC')).toBe(true);

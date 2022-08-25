@@ -1,6 +1,13 @@
 import { TerraNetworks, TerraTypes } from '@chainify/terra';
 import { Transaction, TxStatus } from '@chainify/types';
-import { Asset, AssetTypes, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import {
+  AssetTypes,
+  ChainId,
+  currencyToUnit,
+  getNativeAssetCode,
+  IAsset,
+  unitToCurrency,
+} from '@liquality/cryptoassets';
 import { LCDClient } from '@terra-money/terra.js';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -165,12 +172,12 @@ class AstroportSwapProvider extends SwapProvider {
 
   // ========= FEES ========
 
-  async estimateFees({ asset, txType, quote, feePrices }: EstimateFeeRequest) {
+  async estimateFees({ asset, txType, quote, feePrices, network }: EstimateFeeRequest) {
     if (txType !== this.fromTxType) {
       throw new Error(`Invalid tx type ${txType}`);
     }
 
-    const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
+    const nativeAsset = getNativeAssetCode(network, cryptoassets[asset].chain);
 
     const gasLimit = quote.from === 'UST' || (quote.from === 'LUNA' && quote.to === 'UST') ? 400_000 : 1_500_000;
 
@@ -203,7 +210,7 @@ class AstroportSwapProvider extends SwapProvider {
     }[asset];
   }
 
-  async _getSwapRate(fromAmount: string, fromInfo: Asset, toInfo: Asset) {
+  async _getSwapRate(fromAmount: string, fromInfo: IAsset, toInfo: IAsset) {
     const rpc = this._getRPC();
 
     // Check coin types
