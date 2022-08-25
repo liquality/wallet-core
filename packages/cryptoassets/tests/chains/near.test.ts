@@ -1,10 +1,8 @@
 /* eslint-disable jest/valid-expect */
 import { expect } from 'chai';
-import { chains } from '../../src';
+import near from '../../src/chains/mainnet/non-evm/near';
 
 describe('Near', function () {
-  const near = chains.near;
-
   it('Has correct name', () => {
     expect(near.name).to.be.equal('Near', 'Invalid chain name');
   });
@@ -14,7 +12,7 @@ describe('Near', function () {
   });
 
   it('Has correct native asset', () => {
-    expect(near.nativeAsset).to.be.equal('NEAR', 'Invalid native asset');
+    expect(near.nativeAsset[0].code).to.be.equal('NEAR', 'Invalid native asset');
   });
 
   it('Has correct fee unit', () => {
