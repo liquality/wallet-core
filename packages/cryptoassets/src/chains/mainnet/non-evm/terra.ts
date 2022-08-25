@@ -32,6 +32,7 @@ export default new TerraChain({
 
   isEVM: false,
   hasTokens: true,
+  isMultiLayered: false,
 
   averageBlockTime: 3,
   safeConfirmations: 1,

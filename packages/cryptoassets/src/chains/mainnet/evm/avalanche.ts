@@ -21,6 +21,7 @@ export default new EvmChain({
 
   isEVM: true,
   hasTokens: true,
+  isMultiLayered: false,
 
   averageBlockTime: 3,
   safeConfirmations: 10,

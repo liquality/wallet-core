@@ -17,8 +17,11 @@ export default new BitcoinChain({
       decimals: 8,
     },
   ],
+
   isEVM: false,
   hasTokens: false,
+  isMultiLayered: false,
+
   averageBlockTime: 600,
   safeConfirmations: 1,
   txFailureTimeoutMs: 10_800_000, // 3 hours

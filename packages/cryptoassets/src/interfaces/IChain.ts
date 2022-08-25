@@ -13,6 +13,7 @@ export interface IChain {
 
   isEVM: boolean;
   hasTokens: boolean;
+  isMultiLayered: boolean;
 
   averageBlockTime: number;
   safeConfirmations: number;

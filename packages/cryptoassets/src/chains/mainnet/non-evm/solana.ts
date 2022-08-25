@@ -21,6 +21,7 @@ export default new SolanaChain({
 
   isEVM: false,
   hasTokens: true,
+  isMultiLayered: false,
 
   averageBlockTime: 5,
   safeConfirmations: 10,

@@ -21,6 +21,8 @@ export default new NearChain({
 
   isEVM: false,
   hasTokens: false,
+  isMultiLayered: false,
+
   averageBlockTime: 5,
   safeConfirmations: 10,
   txFailureTimeoutMs: 300_000,

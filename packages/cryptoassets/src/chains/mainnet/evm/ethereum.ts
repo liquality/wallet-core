@@ -17,11 +17,15 @@ export default new EvmChain({
       decimals: 18,
     },
   ],
+
   isEVM: true,
   hasTokens: true,
+  isMultiLayered: false,
+
   averageBlockTime: 15,
   safeConfirmations: 3,
   txFailureTimeoutMs: 3_600_000, // 1 hour
+
   network: {
     name: 'ethereum_mainnet',
     coinType: '60',
@@ -42,8 +46,10 @@ export default new EvmChain({
       token: 'https://etherscan.io/token/',
     },
   ],
+
   multicallSupport: true,
   ledgerSupport: true,
+
   EIP1559: true,
   gasLimit: {
     send: {

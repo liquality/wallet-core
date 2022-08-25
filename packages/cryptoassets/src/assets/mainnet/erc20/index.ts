@@ -1,6 +1,7 @@
 import arbitrumTokens from './arbitrum-tokens';
 import avalancheTokens from './avalanche-tokens';
 import ethereumTokens from './ethereum-tokens';
+import optimismTokens from './optimism-tokens';
 import polygonTokens from './polygon-tokens';
 import rskTokens from './rsk-tokens';
 import solanaTokens from './solana-tokens';
@@ -13,6 +14,7 @@ const MAINNET_ERC20_ASSETS: AssetMap = {
   ...arbitrumTokens,
   ...avalancheTokens,
   ...ethereumTokens,
+  ...optimismTokens,
   ...polygonTokens,
   ...rskTokens,
   ...solanaTokens,

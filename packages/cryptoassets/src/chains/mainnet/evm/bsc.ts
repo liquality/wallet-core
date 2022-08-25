@@ -40,6 +40,7 @@ export default new EvmChain({
 
   multicallSupport: true,
   ledgerSupport: false,
+  isMultiLayered: false,
 
   EIP1559: false,
   gasLimit: {

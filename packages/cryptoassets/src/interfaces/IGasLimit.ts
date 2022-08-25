@@ -3,4 +3,8 @@ export interface IGasLimits {
     native: number;
     nonNative?: number;
   };
+  sendL1?: {
+    native: number;
+    nonNative?: number;
+  };
 }

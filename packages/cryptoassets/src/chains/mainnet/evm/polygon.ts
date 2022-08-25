@@ -17,11 +17,15 @@ export default new EvmChain({
       decimals: 18,
     },
   ],
+
   isEVM: true,
   hasTokens: true,
+  isMultiLayered: false,
+
   averageBlockTime: 3,
   safeConfirmations: 5,
   txFailureTimeoutMs: 600_000,
+
   network: {
     name: 'polygon_mainnet',
     coinType: '60',
