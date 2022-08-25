@@ -1,8 +1,14 @@
 import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
 import { Client } from '@chainify/client';
 import { EvmUtils } from '@chainify/evm';
-import { EIP1559Fee, FeeDetail, FeeDetails, FeeType } from '@chainify/types';
-import { ChainId, currencyToUnit, getAssetSendGasLimit, getChain, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, EIP1559Fee, FeeDetail, FeeDetails, FeeType } from '@chainify/types';
+import {
+  currencyToUnit,
+  getAssetSendGasLimit,
+  getAssetSendL1GasLimit,
+  getNativeAssetCode,
+  unitToCurrency,
+} from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import store from '../store';
 import { Account, AccountId, Asset, Network, NFT } from '../store/types';
@@ -35,14 +41,44 @@ const feePriceInUnit = (asset: Asset, feePrice: number, network = Network.Mainne
   return isChainEvmCompatible(asset, network) ? EvmUtils.fromGwei(feePrice) : feePrice; // ETH fee price is in gwei
 };
 
-function getSendFee(asset: Asset, feePrice: number, network = Network.Mainnet) {
+function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number, network = Network.Mainnet) {
   const assetInfo = cryptoassets[asset];
-  const gasLimit = getAssetSendGasLimit(assetInfo, network);
-  if (!gasLimit) {
-    throw new Error(`${asset} doesn't have gas limit set`);
+  const nativeAssetInfo = cryptoassets[getNativeAsset(asset)];
+
+  if (assetInfo.chain === ChainId.Optimism) {
+    // calculate ETH fees
+    const gasLimitL1 = getAssetSendL1GasLimit(assetInfo, network);
+    if (!gasLimitL1) {
+      throw new Error(`${asset} doesn't have gas limit set`);
+    }
+
+    if (!l1FeePrice) {
+      throw new Error('l1FeePrice must be specified for Optimism');
+    }
+
+    const feeL1 = new BN(gasLimitL1).times(feePriceInUnit(nativeAssetInfo.code, l1FeePrice, network));
+
+    // calculate OP fees
+    const gasLimitL2 = getAssetSendGasLimit(assetInfo, network);
+    if (!gasLimitL2) {
+      throw new Error(`${asset} doesn't have gas limit set`);
+    }
+
+    const feeL2 = new BN(gasLimitL2).times(feePriceInUnit(nativeAssetInfo.code, feePrice, network));
+
+    /**
+     *  ETH (L1) fees + OP (L2) fees
+     * Read more: https://community.optimism.io/docs/developers/build/transaction-fees/
+     * */
+    return unitToCurrency(nativeAssetInfo, feeL1.plus(feeL2));
+  } else {
+    const gasLimitL = getAssetSendGasLimit(assetInfo, network);
+    if (!gasLimitL) {
+      throw new Error(`${asset} doesn't have gas limit set`);
+    }
+    const fee = new BN(gasLimitL).times(feePriceInUnit(nativeAssetInfo.code, feePrice, network));
+    return unitToCurrency(nativeAssetInfo, fee);
   }
-  const fee = new BN(gasLimit).times(feePriceInUnit(asset, feePrice));
-  return unitToCurrency(cryptoassets[getNativeAsset(asset)], fee);
 }
 
 function getTxFee(units: FeeUnits, _asset: Asset, _feePrice: number) {
@@ -115,9 +151,9 @@ async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN, cu
     throw new Error(`getSendFeeEstimations: fee asset not available for ${asset}`);
   }
 
-  const suggestedGasFees = store.getters.suggestedFeePrices(asset);
+  const suggestedGasFees = store.getters.suggestedFeePrices(feeAsset);
   if (!suggestedGasFees) {
-    throw new Error(`getSendFeeEstimations: fees not avaibale for ${asset}`);
+    throw new Error(`getSendFeeEstimations: fees not avaibale for ${feeAsset}`);
   }
 
   const _suggestedGasFees = suggestedGasFees as FeeDetailsWithCustom;
@@ -126,17 +162,17 @@ async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN, cu
   }
 
   if (assetChain === ChainId.Bitcoin) {
-    return sendBitcoinTxFees(accountId, feeAsset, _suggestedGasFees, amount);
+    return sendBitcoinTxFees(accountId, asset, _suggestedGasFees, amount);
   } else {
-    return sendTxFeesInNativeAsset(feeAsset, _suggestedGasFees);
+    return sendTxFeesInNativeAsset(asset, _suggestedGasFees);
   }
 }
 
 /*
  * Send fee estimation method for all EIP1559 and non EIP1559 chains
  */
-function sendTxFeesInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetailsWithCustom, sendFees?: SendFees) {
-  const assetChain = cryptoassets[feeAsset]?.chain;
+function sendTxFeesInNativeAsset(asset: Asset, suggestedGasFees: FeeDetailsWithCustom, sendFees?: SendFees) {
+  const assetChain = cryptoassets[asset]?.chain;
   const _sendFees = sendFees ?? newSendFees();
 
   for (const [speed, fee] of Object.entries(suggestedGasFees)) {
@@ -144,7 +180,7 @@ function sendTxFeesInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetailsWi
 
     const _fee: number = feePerUnit(fee.fee, assetChain);
 
-    _sendFees[_speed] = _sendFees[_speed].plus(getSendFee(feeAsset, _fee));
+    _sendFees[_speed] = _sendFees[_speed].plus(getSendFee(asset, _fee, fee.multilayerFee?.l1));
   }
 
   return _sendFees;
@@ -155,13 +191,13 @@ function sendTxFeesInNativeAsset(feeAsset: Asset, suggestedGasFees: FeeDetailsWi
  */
 async function sendBitcoinTxFees(
   accountId: AccountId,
-  feeAsset: Asset,
+  asset: Asset,
   suggestedGasFees: FeeDetailsWithCustom,
   amount?: BN,
   sendFees?: SendFees
 ) {
-  if (feeAsset != 'BTC') {
-    throw new Error(`getFeeEstimationsBTC: incorrect input asset ${feeAsset}. BTC expected.`);
+  if (asset != 'BTC') {
+    throw new Error(`getFeeEstimationsBTC: incorrect input asset ${asset}. BTC expected.`);
   }
   const isMax: boolean = amount === undefined; // checking if it is a max send
   const _sendFees = sendFees ?? newSendFees();
@@ -175,14 +211,14 @@ async function sendBitcoinTxFees(
   }) as Client<BitcoinEsploraApiProvider, BitcoinBaseWalletProvider>;
 
   const feePerBytes = Object.values(suggestedGasFees).map((fee) => fee.fee);
-  const value = isMax ? undefined : currencyToUnit(cryptoassets[feeAsset], amount as BN);
+  const value = isMax ? undefined : currencyToUnit(cryptoassets[asset], amount as BN);
 
   try {
     const txs = feePerBytes.map((fee) => ({ value, fee }));
 
     const totalFees = await client.wallet.getTotalFees(txs, isMax);
     for (const [speed, fee] of Object.entries(suggestedGasFees)) {
-      const totalFee = unitToCurrency(cryptoassets[feeAsset], totalFees[fee.fee]);
+      const totalFee = unitToCurrency(cryptoassets[asset], totalFees[fee.fee]);
       _sendFees[speed as keyof FeeDetailsWithCustom] = totalFee;
     }
   } catch (e) {
@@ -202,7 +238,7 @@ async function estimateTransferNFT(
 ): Promise<SendFees> {
   const account: Account = store.getters.accountItem(accountId)!;
 
-  const feeAsset = getChain(network, account.chain).nativeAsset[0].code;
+  const feeAsset = getNativeAssetCode(network, account.chain);
   if (!feeAsset) {
     throw new Error(`getSendFeeEstimations: fee asset not available`);
   }

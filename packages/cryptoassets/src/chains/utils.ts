@@ -7,7 +7,7 @@ export const transformMainnetToTestnetChain = (
   network: INetwork,
   explorerViews: ExplorerView[],
   faucetUrl: string
-) => {
+): IChain => {
   const testnetChain = { ...chain, network, explorerViews, faucetUrl };
 
   if (!testnetChain.network.isTestnet) {

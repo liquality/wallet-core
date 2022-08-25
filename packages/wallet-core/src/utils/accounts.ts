@@ -57,6 +57,7 @@ export const accountColors = [
   '#A1E44A',
   '#3AB24D',
   '#8247E5',
+  '#bf0205',
 ];
 
 export const chainDefaultColors: { [key in ChainId]?: string } = {
@@ -71,6 +72,7 @@ export const chainDefaultColors: { [key in ChainId]?: string } = {
   terra: '#008080',
   fuse: '#46e8b6',
   avalanche: '#E84141',
+  optimism: '#bf0205',
 };
 
 export const getNextAccountColor = (chain: ChainId, index: number) => {

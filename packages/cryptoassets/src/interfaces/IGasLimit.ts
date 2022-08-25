@@ -8,3 +8,5 @@ export interface IGasLimits {
     nonNative?: number;
   };
 }
+
+export type GasLimitsType = keyof IGasLimits

@@ -1,5 +1,6 @@
 import { getAllSupportedChains } from '../chains';
 import { IAsset } from '../interfaces/IAsset';
+import { GasLimitsType } from '../interfaces/IGasLimit';
 import { AssetTypes, ChainId, Network } from '../types';
 import { CHAIN_TO_MAINNET_TOKEN_ADDRESS_MAP, MAINNET_ERC20_ASSETS } from './mainnet/erc20';
 import { MAINNET_NATIVE_ASSETS } from './mainnet/native';
@@ -16,7 +17,7 @@ export { MAINNET_ASSETS, MAINNET_NATIVE_ASSETS, MAINNET_ERC20_ASSETS, CHAIN_TO_M
 // Testnet
 export { TESTNET_ASSETS, TESTNET_NATIVE_ASSETS, TESTNET_ERC20_ASSETS, CHAIN_TO_TESTNET_TOKEN_ADDRESS_MAP };
 
-export function getAssetSendGasLimit(asset: IAsset, network: Network) {
+function _getAssetSendGasLimit(asset: IAsset, network: Network, key: GasLimitsType) {
   const chains = getAllSupportedChains();
 
   if (!chains[network]) {
@@ -28,10 +29,18 @@ export function getAssetSendGasLimit(asset: IAsset, network: Network) {
   }
 
   if (asset.type == AssetTypes.native) {
-    return chains[network]![asset.chain]!.gasLimit.send.native;
+    return chains[network]![asset.chain]!.gasLimit[key]?.native;
   } else {
-    return chains[network]![asset.chain]!.gasLimit.send.nonNative;
+    return chains[network]![asset.chain]!.gasLimit[key]?.nonNative;
   }
+}
+
+export function getAssetSendGasLimit(asset: IAsset, network: Network) {
+  return _getAssetSendGasLimit(asset, network, 'send');
+}
+
+export function getAssetSendL1GasLimit(asset: IAsset, network: Network) {
+  return _getAssetSendGasLimit(asset, network, 'sendL1');
 }
 
 export function getAsset(network: Network, asset: string) {

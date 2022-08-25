@@ -65,6 +65,8 @@ const config: WalletCoreConfig = {
       'FISH',
       'LUNA',
       'UST',
+      'OPTETH',
+      'OPTUSDC',
     ],
     testnet: [
       'BTC',
@@ -81,6 +83,8 @@ const config: WalletCoreConfig = {
       'AVAX',
       'LUNA',
       'UST',
+      'OPTETH',
+      'OPTUSDC',
     ],
   },
   infuraApiKey: 'da99ebc8c0964bb8bb757b6f8cc40f1f',
@@ -110,14 +114,14 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.LiqualityBoostNativeToERC20,
         network: Network.Testnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
+        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
       },
       [SwapProviderType.LiqualityBoostERC20ToNative]: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostERC20ToNative,
         network: Network.Testnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
+        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
       },
       [SwapProviderType.UniswapV2]: {
         name: 'Uniswap V2',
@@ -159,14 +163,14 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.LiqualityBoostNativeToERC20,
         network: Network.Mainnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
+        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
       },
       [SwapProviderType.LiqualityBoostERC20ToNative]: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostERC20ToNative,
         network: Network.Mainnet,
         icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'MATIC', 'AVAX', 'LUNA', 'UST'],
+        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
       },
       [SwapProviderType.UniswapV2]: {
         name: 'Uniswap V2',
@@ -249,8 +253,9 @@ const config: WalletCoreConfig = {
     ChainId.Fuse,
     ChainId.Avalanche,
     ChainId.Solana,
+    ChainId.Optimism,
   ],
-  supportedBridgeAssets: ['MATIC', 'RBTC', 'AVAX'],
+  supportedBridgeAssets: ['RBTC', 'AVAX'],
   nameResolvers: {
     uns: {
       resolutionService: 'https://unstoppabledomains.g.alchemy.com/domains/',

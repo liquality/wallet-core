@@ -126,9 +126,10 @@ export function createEVMClient(
   accountInfo: AccountInfo,
   swapOptions: EvmTypes.EvmSwapOptions,
   ethersProvider?: StaticJsonRpcProvider,
-  nftProviderType?: NftProviderType
+  nftProviderType?: NftProviderType,
+  chainProvider?: EvmChainProvider
 ) {
-  const chainProvider = new EvmChainProvider(ethereumNetwork, ethersProvider, feeProvider, true);
+  const _chainProvider = chainProvider ?? new EvmChainProvider(ethereumNetwork, ethersProvider, feeProvider, true);
   const swapProvider = new EvmSwapProvider(swapOptions);
 
   let walletProvider;
@@ -150,11 +151,11 @@ export function createEVMClient(
         addressCache,
         transportCreator: walletOptionsStore.walletOptions.ledgerTransportCreator,
       },
-      chainProvider
+      _chainProvider
     );
   } else {
     const walletOptions = { derivationPath: accountInfo.derivationPath, mnemonic };
-    walletProvider = new EvmWalletProvider(walletOptions, chainProvider);
+    walletProvider = new EvmWalletProvider(walletOptions, _chainProvider);
   }
   swapProvider.setWallet(walletProvider);
 

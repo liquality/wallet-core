@@ -48,10 +48,12 @@ export default new EvmChain({
 
   EIP1559: false,
   gasLimit: {
+    // OP gas limits
     send: {
       native: 21_000,
       nonNative: 100_000,
     },
+    // ETH gas limits
     sendL1: {
       native: 5_000,
       nonNative: 5_500,

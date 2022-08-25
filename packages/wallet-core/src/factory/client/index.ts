@@ -7,6 +7,7 @@ import {
   createBSCClient,
   createEthClient,
   createFuseClient,
+  createOptimismClient,
   createPolygonClient,
   createRskClient,
 } from './evm';
@@ -33,6 +34,8 @@ export const createClient = (chainId: ChainId, network: Network, mnemonic: strin
       return createTerraClient(network, mnemonic, accountInfo);
     case ChainId.Solana:
       return createSolanaClient(network, mnemonic, accountInfo);
+    case ChainId.Optimism:
+      return createOptimismClient(network, mnemonic, accountInfo);
     default:
       return createEthClient(network, mnemonic, accountInfo);
   }

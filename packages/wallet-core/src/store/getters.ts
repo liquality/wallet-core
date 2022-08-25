@@ -148,10 +148,10 @@ export default {
       .filter((a) => a.type === AccountType.Default && a.enabled)
       .map((a) => accountFiatBalance(activeWalletId, activeNetwork, a.id))
       .reduce((accum, rawBalance) => {
-        const convertedBalance = new BN(rawBalance);
+        const convertedBalance = new BigNumber(rawBalance);
         const balance = convertedBalance.isNaN() ? 0 : convertedBalance;
         return accum.plus(balance || 0);
-      }, new BN(0));
+      }, new BigNumber(0));
   },
   accountItem(...context: GetterContext) {
     const { getters } = rootGetterContext(context);
@@ -174,7 +174,7 @@ export default {
     return accountsData
       .map((account) => {
         const balances = Object.entries(account.balances)
-          .filter(([, balance]) => new BN(balance).gt(0))
+          .filter(([, balance]) => new BigNumber(balance).gt(0))
           .reduce((accum, [asset, balance]) => {
             return {
               ...accum,
@@ -213,10 +213,10 @@ export default {
             let assetsMarketCap: CurrenciesInfo = {} as any;
             let hasFiat = false;
             let hasTokenBalance = false;
-            let nativeAssetMarketCap = new BN(0);
+            let nativeAssetMarketCap = new BigNumber(0);
 
             const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
-              const fiat = assetFiatBalance(asset, new BN(balance));
+              const fiat = assetFiatBalance(asset, new BigNumber(balance));
               const marketCap = assetMarketCap(asset);
               const tokenBalance = account.balances[asset];
               let type = AssetTypes.erc20;
@@ -237,18 +237,18 @@ export default {
                   nativeAssetMarketCap = marketCap;
                 }
 
-                assetsWithMarketCap.push({ asset, type, amount: marketCap || new BN(0) });
+                assetsWithMarketCap.push({ asset, type, amount: marketCap || new BigNumber(0) });
               } else {
                 if (!hasTokenBalance) {
-                  hasTokenBalance = new BN(tokenBalance).gt(0);
+                  hasTokenBalance = new BigNumber(tokenBalance).gt(0);
                 }
 
-                assetsWithTokenBalance.push({ asset, type, amount: new BN(tokenBalance) });
+                assetsWithTokenBalance.push({ asset, type, amount: new BigNumber(tokenBalance) });
               }
 
               assetsMarketCap = {
                 ...assetsMarketCap,
-                [asset]: marketCap || new BN(0),
+                [asset]: marketCap || new BigNumber(0),
               };
 
               return {

@@ -6,6 +6,8 @@ on:
     branches:
       - master
 
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -25,14 +27,34 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-build-${{ env.cache-name }}-node${{ env.node-version }}
 
-      - name: build
-        run: |
-          yarn
-          yarn build
+      - name: install dependencies
+        run: yarn
 
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v3.0.0
-        id: semantic
+      - name: Get date
+        id: date
+        run: |
+          echo "::set-output name=date::$(date +%Y-%m-%d_%H-%M-%S)"
+
+      - name: Create Release Pull Request & npm publish
+        uses: changesets/action@v1
+        id: changesets
+        with:
+          publish: yarn build-release
+          commit: 'chore: entering prerelease mode'
+          title: ':rocket: Release ${{ steps.date.outputs.date }} :rocket:'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create git tags
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          echo 'steps.changesets.outputs.published'
+          echo ${{ steps.changesets.outputs.published }}
+          echo 'steps.changesets.outputs.published'
+          echo ${{ steps.changesets.outputs.published }}
+#          git tag -a v${{ env.version }} -m ":rocket: Release ${{ steps.date.outputs.date }} :rocket:"
+#          git push origin v${{ env.version }}
+
+
+

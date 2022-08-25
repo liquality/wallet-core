@@ -78,8 +78,8 @@ test('Should be able to validate enabled chains', async () => {
   const testnetAccounts = wallet.state.enabledChains[walletId]?.testnet;
   expect(mainnetAccounts).toEqual(buildConfig.chains);
   expect(testnetAccounts).toEqual(buildConfig.chains);
-  expect(mainnetAccounts?.length).toEqual(11);
-  expect(testnetAccounts?.length).toEqual(11);
+  expect(mainnetAccounts?.length).toEqual(12);
+  expect(testnetAccounts?.length).toEqual(12);
 });
 
 test('Should be able to validate assets with analytics false', async () => {
