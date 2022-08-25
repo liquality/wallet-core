@@ -9,4 +9,4 @@ export interface IGasLimits {
   };
 }
 
-export type GasLimitsType = keyof IGasLimits
+export type GasLimitsType = keyof IGasLimits;
