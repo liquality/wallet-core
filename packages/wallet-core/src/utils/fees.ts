@@ -118,7 +118,15 @@ function feePerUnit(suggestedGasFee: FeeType, chain: ChainId): number {
     return maxFeePerUnitEIP1559(suggestedGasFee as EIP1559Fee);
   }
 
-  throw new Error('feePerUnit: suggestedGasFee deos not match chain!');
+  /*
+   * TODO: this should be removed after further fee refactoring is completed.
+   * Used in cases of fixed taxes on recieve chains for cross chain swap providers.
+   */
+  if (typeof suggestedGasFee === 'number') {
+    return suggestedGasFee as number;
+  }
+
+  throw new Error('feePerUnit: suggestedGasFee does not match chain!');
 }
 
 async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN, customFee?: FeeType) {
