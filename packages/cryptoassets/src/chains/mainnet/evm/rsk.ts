@@ -54,7 +54,7 @@ export default new RskChain({
   },
   fees: {
     unit: 'gwei',
-    magnitute: 1e9,
+    magnitude: 1e9,
   },
   feeMultiplier: { slowMultiplier: 1, averageMultiplier: 1, fastMultiplier: 1.25 },
   supportCustomFees: true,

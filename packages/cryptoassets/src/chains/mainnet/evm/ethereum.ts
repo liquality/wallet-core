@@ -59,7 +59,7 @@ export default new EvmChain({
   },
   fees: {
     unit: 'gwei',
-    magnitute: 1e9,
+    magnitude: 1e9,
   },
   supportCustomFees: true,
 });

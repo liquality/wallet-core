@@ -52,7 +52,7 @@ export default new SolanaChain({
   },
   fees: {
     unit: 'Lamports',
-    magnitute: 1e9,
+    magnitude: 1e9,
   },
   supportCustomFees: false,
 });

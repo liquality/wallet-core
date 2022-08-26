@@ -65,7 +65,7 @@ export default new TerraChain({
   },
   fees: {
     unit: 'LUNA',
-    magnitute: 1e6,
+    magnitude: 1e6,
   },
   supportCustomFees: false,
 });

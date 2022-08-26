@@ -51,7 +51,7 @@ export default new EvmChain({
   },
   fees: {
     unit: 'gwei',
-    magnitute: 1e9,
+    magnitude: 1e9,
   },
   feeMultiplier: { slowMultiplier: 1, averageMultiplier: 2, fastMultiplier: 2.2 },
   supportCustomFees: true,

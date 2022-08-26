@@ -55,7 +55,7 @@ export default new NearChain({
   },
   fees: {
     unit: 'TGas',
-    magnitute: 1e12,
+    magnitude: 1e12,
   },
   supportCustomFees: false,
 });
