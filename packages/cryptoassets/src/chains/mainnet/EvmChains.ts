@@ -1,5 +1,4 @@
-import { IChain } from '../../interfaces/IChain';
-import { ChainId } from '../../types';
+import { ChainId, ChainsMap } from '../../types';
 
 import ArbitrumChain from './evm/arbitrum';
 import AvalancheChain from './evm/avalanche';
@@ -10,7 +9,7 @@ import OptimismChain from './evm/optimism';
 import PolygonChain from './evm/polygon';
 import RskChain from './evm/rsk';
 
-export const EVM_CHAINS: { [key in ChainId]?: IChain } = {
+export const EVM_CHAINS: ChainsMap = {
   [ChainId.Ethereum]: EthereumChain,
   [ChainId.BinanceSmartChain]: BscChain,
   [ChainId.Polygon]: PolygonChain,

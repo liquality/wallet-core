@@ -1,4 +1,5 @@
 import { IAsset } from './interfaces/IAsset';
+import { IChain } from './interfaces/IChain';
 
 export enum AssetTypes {
   native = 'native',
@@ -43,3 +44,5 @@ export enum Network {
   Mainnet = 'mainnet',
   Testnet = 'testnet',
 }
+
+export type ChainsMap = { [key in ChainId]?: IChain };
