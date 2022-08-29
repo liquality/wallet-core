@@ -300,7 +300,6 @@ class HopSwapProvider extends SwapProvider {
    */
   // eslint-disable-next-line no-unused-vars
   async estimateFees({ asset, txType, quote, feePrices, feePricesL1 }: EstimateFeeRequest<HopTxTypes, HopSwapQuote>) {
-    console.log('estimateFees:', asset, txType, quote, feePrices, feePricesL1);
     if (txType !== this.fromTxType) {
       throw new Error(`Invalid tx type ${txType}`);
     }

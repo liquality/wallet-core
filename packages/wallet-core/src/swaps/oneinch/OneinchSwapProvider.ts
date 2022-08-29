@@ -161,7 +161,6 @@ class OneinchSwapProvider extends SwapProvider {
 
   async estimateFees({
     network,
-    // walletId,
     txType,
     quote,
     feePrices,
