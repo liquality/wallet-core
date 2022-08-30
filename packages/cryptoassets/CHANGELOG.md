@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.3
+
+### Patch Changes
+
+- 457fd1a: feat: optimism chain integration
+
 ## 1.14.2
 
 ### Patch Changes
