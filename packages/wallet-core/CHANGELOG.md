@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.3
+
+### Patch Changes
+
+- 457fd1a: feat: optimism chain integration
+- Updated dependencies [457fd1a]
+  - @liquality/cryptoassets@1.14.3
+
 ## 1.29.2
 
 ### Patch Changes
