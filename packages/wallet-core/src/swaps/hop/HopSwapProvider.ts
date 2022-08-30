@@ -1,7 +1,7 @@
 import { EIP1559Fee } from '@chainify/types';
 import { ensure0x } from '@chainify/utils';
 import { Chain, Hop, HopBridge, TToken } from '@hop-protocol/sdk';
-import { Asset, ChainId, chains, currencyToUnit, isMultiLayeredChain, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, currencyToUnit, getChain, getNativeAssetCode, IAsset, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { ethers, Wallet } from 'ethers';
 import { createClient } from 'urql';
@@ -153,7 +153,7 @@ class HopSwapProvider extends SwapProvider {
     }
   }
 
-  _findAsset(asset: Asset, chain: string, tokens: Record<string, any>, tokenName: string) {
+  _findAsset(asset: IAsset, chain: string, tokens: Record<string, any>, tokenName: string) {
     if (asset.type === 'native') {
       if (asset.code === tokenName || asset.matchingAsset === tokenName) {
         return tokenName;
@@ -170,7 +170,7 @@ class HopSwapProvider extends SwapProvider {
     }
   }
 
-  _getSendInfo(assetFrom: Asset, assetTo: Asset, hop: Hop) {
+  _getSendInfo(assetFrom: IAsset, assetTo: IAsset, hop: Hop) {
     if (!assetFrom || !assetTo) return null;
     const _chainFrom = this.getChain(assetFrom.chain);
     const _chainTo = this.getChain(assetTo.chain);
@@ -299,13 +299,22 @@ class HopSwapProvider extends SwapProvider {
    * @return Object of key feePrice and value fee
    */
   // eslint-disable-next-line no-unused-vars
-  async estimateFees({ asset, txType, quote, feePrices, feePricesL1 }: EstimateFeeRequest<HopTxTypes, HopSwapQuote>) {
+
+  async estimateFees({
+    asset,
+    txType,
+    quote,
+    network,
+    feePrices,
+    feePricesL1,
+  }: EstimateFeeRequest<HopTxTypes, HopSwapQuote>) {
     if (txType !== this.fromTxType) {
       throw new Error(`Invalid tx type ${txType}`);
     }
 
     const chainId = cryptoassets[asset].chain;
-    const nativeAsset = chains[chainId].nativeAsset;
+    const nativeAsset = getNativeAssetCode(network, cryptoassets[asset].chain);
+
     const quoteFromStr: string = quote.hopChainFrom.slug || '';
 
     const limits = this.gasLimit(quoteFromStr);
@@ -317,7 +326,7 @@ class HopSwapProvider extends SwapProvider {
     }
 
     // Gas limit l1
-    const isMultiLayered = isMultiLayeredChain(chainId);
+    const isMultiLayered = getChain(network, chainId).isMultiLayered;
     if (isMultiLayered && (!feePricesL1 || !limits.sendL1 || !limits.approveL1)) {
       throw new Error(`Hop: Layer 1 fee prices and/or limits are not available for a multilayerchain ${chainId}`);
     }
@@ -373,7 +382,7 @@ class HopSwapProvider extends SwapProvider {
     try {
       const tx = await client.chain.getTransactionByHash(swap.fromFundHash);
       const chainId: ChainId = <ChainId>swap.hopChainFrom.slug.toString();
-      if (tx && tx.confirmations && tx.confirmations >= chains[chainId].safeConfirmations) {
+      if (tx && tx.confirmations && tx.confirmations >= getChain(network, chainId).safeConfirmations) {
         this.updateBalances(network, walletId, [swap.fromAccountId]);
         return {
           endTime: Date.now(),

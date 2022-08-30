@@ -1,6 +1,6 @@
 import { Client } from '@chainify/client';
 import { FeeDetails, Nullable } from '@chainify/types';
-import { Asset, assets as cryptoassets, AssetTypes, ChainId, unitToCurrency } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId, getAllAssets, getAsset, IAsset, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
 import { rootGetterContext } from '.';
@@ -27,50 +27,9 @@ import { orderAssets, orderChains } from './utils';
 
 const clientCache: { [key: string]: Client } = {};
 
-const TESTNET_CONTRACT_ADDRESSES: { [asset: string]: string } = {
-  DAI: '0xad6d458402f60fd3bd25163575031acdce07538d',
-  SOV: '0x6a9A07972D07E58f0daF5122D11e069288A375fB',
-  PWETH: '0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa',
-  SUSHI: '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
-  ANC: 'terra1747mad58h0w4y589y3sk84r5efqdev9q4r02pc',
-  OPTUSDC: '0x4e62882864fB8CE54AFfcAf8D899A286762B011B',
-};
-
-const TESTNET_ASSETS: { [asset: string]: Asset } = [
-  'BTC',
-  'ETH',
-  'RBTC',
-  'DAI',
-  'BNB',
-  'SOV',
-  'NEAR',
-  'MATIC',
-  'PWETH',
-  'ARBETH',
-  'AVAX',
-  'SOL',
-  'SUSHI',
-  'LUNA',
-  'UST',
-  'ANC',
-  'FUSE',
-  'OPTETH',
-  'OPTUSDC',
-].reduce((assets, asset) => {
-  const contractAddress = TESTNET_CONTRACT_ADDRESSES[asset];
-  return Object.assign(assets, {
-    [asset]: {
-      ...cryptoassets[asset],
-      contractAddress,
-    },
-  });
-}, {});
-
 type GetterContext = [any, any];
 
-type Cryptoassets = {
-  [asset: string]: Asset;
-};
+type Cryptoassets = { [asset: string]: IAsset };
 
 export default {
   client(...context: GetterContext) {
@@ -78,7 +37,7 @@ export default {
     return ({
       network,
       walletId,
-      asset,
+      chainId,
       accountId,
       useCache = true,
       accountType = AccountType.Default,
@@ -86,7 +45,7 @@ export default {
     }: {
       network: Network;
       walletId: WalletId;
-      asset: AssetType;
+      chainId: ChainId;
       accountId?: AccountId;
       useCache?: boolean;
       accountType?: AccountType;
@@ -95,21 +54,20 @@ export default {
       const account = accountId ? getters.accountItem(accountId) : null;
       const _accountType = account?.type || accountType;
       const _accountIndex = account?.index || accountIndex;
-      const { chain } = getters.cryptoassets[asset] || cryptoassets[asset];
 
-      if (account && account.chain !== chain) {
-        throw new Error(`asset: ${asset} and accountId: ${accountId} belong to different chains`);
+      if (account && chainId !== account.chain) {
+        throw new Error(`asset: ${chainId} and accountId: ${accountId} belong to different chains`);
       }
 
       let derivationPath: string;
       // when we ask for ledger accounts from the ledger device we don't have the derivation path
       // the !account doesn't exist in this case or if we call the getter with accountId equals to null
       if (_accountType.includes('ledger') || !account) {
-        derivationPath = getDerivationPath(chain, network, _accountIndex, _accountType);
+        derivationPath = getDerivationPath(chainId, network, _accountIndex, _accountType);
       } else {
         derivationPath = account.derivationPath;
       }
-      const cacheKey = [asset, chain, network, walletId, derivationPath, _accountType].join('-');
+      const cacheKey = [chainId, network, walletId, derivationPath, _accountType].join('-');
 
       if (useCache) {
         const cachedClient = clientCache[cacheKey];
@@ -130,7 +88,7 @@ export default {
         publicKey: account?.publicKey,
         address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined,
       };
-      const client = createClient(asset, network, mnemonic, accountInfo);
+      const client = createClient(chainId, network, mnemonic, accountInfo);
       clientCache[cacheKey] = client;
 
       return client;
@@ -145,7 +103,7 @@ export default {
     const { state } = rootGetterContext(context);
     const { activeNetwork, activeWalletId } = state;
 
-    const baseAssets = state.activeNetwork === 'testnet' ? TESTNET_ASSETS : cryptoassets;
+    const baseAssets = getAllAssets()[activeNetwork];
 
     const customAssets = state.customTokens[activeNetwork]?.[activeWalletId]?.reduce((assets, token) => {
       return Object.assign(assets, {
@@ -190,10 +148,10 @@ export default {
       .filter((a) => a.type === AccountType.Default && a.enabled)
       .map((a) => accountFiatBalance(activeWalletId, activeNetwork, a.id))
       .reduce((accum, rawBalance) => {
-        const convertedBalance = new BN(rawBalance);
+        const convertedBalance = new BigNumber(rawBalance);
         const balance = convertedBalance.isNaN() ? 0 : convertedBalance;
         return accum.plus(balance || 0);
-      }, new BN(0));
+      }, new BigNumber(0));
   },
   accountItem(...context: GetterContext) {
     const { getters } = rootGetterContext(context);
@@ -216,7 +174,7 @@ export default {
     return accountsData
       .map((account) => {
         const balances = Object.entries(account.balances)
-          .filter(([, balance]) => new BN(balance).gt(0))
+          .filter(([, balance]) => new BigNumber(balance).gt(0))
           .reduce((accum, [asset, balance]) => {
             return {
               ...accum,
@@ -255,18 +213,20 @@ export default {
             let assetsMarketCap: CurrenciesInfo = {} as any;
             let hasFiat = false;
             let hasTokenBalance = false;
-            let nativeAssetMarketCap = new BN(0);
+            let nativeAssetMarketCap = new BigNumber(0);
 
             const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
-              const fiat = assetFiatBalance(asset, new BN(balance));
+              const fiat = assetFiatBalance(asset, new BigNumber(balance));
               const marketCap = assetMarketCap(asset);
               const tokenBalance = account.balances[asset];
               let type = AssetTypes.erc20;
               let matchingAsset;
 
-              if (cryptoassets[asset]) {
-                type = cryptoassets[asset].type;
-                matchingAsset = cryptoassets[asset].matchingAsset;
+              const assetByCode = getAsset(activeNetwork, asset);
+
+              if (assetByCode) {
+                type = assetByCode.type;
+                matchingAsset = assetByCode.matchingAsset;
               }
 
               if (fiat) {
@@ -277,18 +237,18 @@ export default {
                   nativeAssetMarketCap = marketCap;
                 }
 
-                assetsWithMarketCap.push({ asset, type, amount: marketCap || new BN(0) });
+                assetsWithMarketCap.push({ asset, type, amount: marketCap || new BigNumber(0) });
               } else {
                 if (!hasTokenBalance) {
-                  hasTokenBalance = new BN(tokenBalance).gt(0);
+                  hasTokenBalance = new BigNumber(tokenBalance).gt(0);
                 }
 
-                assetsWithTokenBalance.push({ asset, type, amount: new BN(tokenBalance) });
+                assetsWithTokenBalance.push({ asset, type, amount: new BigNumber(tokenBalance) });
               }
 
               assetsMarketCap = {
                 ...assetsMarketCap,
-                [asset]: marketCap || new BN(0),
+                [asset]: marketCap || new BigNumber(0),
               };
 
               return {
@@ -333,7 +293,6 @@ export default {
       : [];
     return Object.values(_accounts).flat();
   },
-
   accountFiatBalance(...context: GetterContext) {
     const { state, getters } = rootGetterContext(context);
     const { accounts } = state;
@@ -351,10 +310,10 @@ export default {
   },
   assetFiatBalance(...context: GetterContext) {
     const { state } = rootGetterContext(context);
-    const { fiatRates } = state;
+    const { fiatRates, activeNetwork } = state;
     return (asset: AssetType, balance: BigNumber): BigNumber | null => {
       if (fiatRates && fiatRates[asset] && balance?.gt(0)) {
-        const amount = unitToCurrency(cryptoassets[asset], balance);
+        const amount = unitToCurrency(getAsset(activeNetwork, asset), balance);
         // TODO: coinformatter types are messed up and this shouldn't require `as BigNumber`
         return cryptoToFiat(amount, fiatRates[asset]) as BigNumber;
       }

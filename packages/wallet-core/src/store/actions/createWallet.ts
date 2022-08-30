@@ -1,4 +1,4 @@
-import { assets as cryptoassets, ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getAsset, getChain } from '@liquality/cryptoassets';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
 import buildConfig from '../../build.config';
@@ -41,10 +41,10 @@ export const createWallet = async (
         enable: true,
       });
       const assets = assetKeys.filter((asset) => {
-        return cryptoassets[asset]?.chain === chainId;
+        return getAsset(network, asset)?.chain === chainId;
       });
 
-      const chain = chains[chainId];
+      const chain = getChain(network, chainId);
       const _account = accountCreator({
         walletId: id,
         network,
@@ -68,7 +68,7 @@ export const createWallet = async (
       if (imported && chainId === ChainId.Rootstock) {
         // get the legacy rsk derivation path
         const coinType = network === 'mainnet' ? '137' : '37310';
-        const chain = chains[ChainId.Rootstock];
+        const chain = getChain(network, ChainId.Rootstock);
         const _account = accountCreator({
           walletId: id,
           network,

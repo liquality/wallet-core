@@ -90,12 +90,14 @@ export const shouldApplyRskLegacyDerivation = async (
 
 export async function getPrices(baseCurrencies: string[], toCurrency: string) {
   const coindIds = baseCurrencies
-    .filter((currency) => cryptoassets[currency]?.coinGeckoId)
-    .map((currency) => cryptoassets[currency].coinGeckoId);
+    .filter((currency) => cryptoassets[currency]?.priceSource.coinGeckoId)
+    .map((currency) => cryptoassets[currency].priceSource.coinGeckoId);
   const data = await HttpClient.get(
     `${COIN_GECKO_API}/simple/price?ids=${coindIds.join(',')}&vs_currencies=${toCurrency}`
   );
-  let prices = mapKeys(data, (_, coinGeckoId) => findKey(cryptoassets, (asset) => asset.coinGeckoId === coinGeckoId));
+  let prices = mapKeys(data, (_, coinGeckoId) =>
+    findKey(cryptoassets, (asset) => asset.priceSource.coinGeckoId === coinGeckoId)
+  );
   prices = mapValues(prices, (rates) => mapKeys(rates, (_, k) => k.toUpperCase()));
   for (const baseCurrency of baseCurrencies) {
     if (!prices[baseCurrency] && cryptoassets[baseCurrency]?.matchingAsset) {
@@ -115,10 +117,10 @@ export async function getPrices(baseCurrencies: string[], toCurrency: string) {
 
 export async function getCurrenciesInfo(baseCurrencies: string[]): Promise<CurrenciesInfo> {
   const coindIds = baseCurrencies
-    .filter((currency) => cryptoassets[currency]?.coinGeckoId)
+    .filter((currency) => cryptoassets[currency]?.priceSource.coinGeckoId)
     .map((currency) => ({
       asset: currency,
-      coinGeckoId: cryptoassets[currency].coinGeckoId,
+      coinGeckoId: cryptoassets[currency].priceSource.coinGeckoId,
     }));
 
   const data = (

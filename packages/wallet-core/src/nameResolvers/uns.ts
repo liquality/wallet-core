@@ -1,8 +1,9 @@
 import { HttpClient } from '@chainify/client';
 import { Nullable } from '@chainify/types';
-import { ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getChain } from '@liquality/cryptoassets';
 import { Resolution, ResolutionResponse } from '@unstoppabledomains/resolution';
 import buildConfig from '../build.config';
+import { Network } from '../store/types';
 import { NameResolver } from './nameResolver';
 
 const reg = RegExp('^[.a-z0-9-]+$');
@@ -27,8 +28,6 @@ function chainToUNSKey(chainId: ChainId) {
       return 'AVAX';
     case ChainId.BinanceSmartChain:
       return 'BNB';
-    case ChainId.BitcoinCash:
-      return 'BCH';
     case ChainId.Fuse:
       return 'FUSE';
     case ChainId.Near:
@@ -44,7 +43,8 @@ function chainToUNSKey(chainId: ChainId) {
     case ChainId.Ethereum:
       return 'ETH';
     default:
-      return chains[chainId].evmCompatible ? 'ETH' : null;
+      // TODO: pass current active network
+      return getChain(Network.Mainnet, chainId).isEVM ? 'ETH' : null;
   }
 }
 

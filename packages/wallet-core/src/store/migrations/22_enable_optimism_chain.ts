@@ -1,4 +1,4 @@
-import { ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getChain } from '@liquality/cryptoassets';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { getDerivationPath } from '../../utils/derivationPath';
 import { Networks } from '../../utils/networks';
@@ -20,7 +20,7 @@ export const enableOptimismChain = {
         if (accountExistsAndProperlyInitialized) {
           accounts[walletId][network] = [...state.accounts[walletId][network]];
         } else {
-          const chain = chains[ChainId.Optimism];
+          const chain = getChain(network, ChainId.Optimism);
           const derivationPath = getDerivationPath(ChainId.Optimism, network, 0, AccountType.Default);
           const optimismAccount = accountCreator({
             walletId,

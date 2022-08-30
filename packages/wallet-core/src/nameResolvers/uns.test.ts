@@ -14,6 +14,8 @@ describe('chainToUNSKey', () => {
 });
 
 describe('uns resolver', () => {
+  jest.setTimeout(90000);
+
   const unsResolver = new UNSResolver();
   it('should resolve polygon address', async () => {
     const address = await unsResolver.lookupDomain('shaista.blockchain', ChainId.Polygon);

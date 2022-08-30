@@ -2,11 +2,17 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/
 import { Client } from '@chainify/client';
 import { EvmUtils } from '@chainify/evm';
 import { ChainId, EIP1559Fee, FeeDetail, FeeDetails, FeeType } from '@chainify/types';
-import { chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import {
+  currencyToUnit,
+  getAssetSendGasLimit,
+  getAssetSendL1GasLimit,
+  getNativeAssetCode,
+  unitToCurrency,
+} from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import store from '../store';
 import { Account, AccountId, Asset, Network, NFT } from '../store/types';
-import { getFeeAsset, getNativeAsset, isERC20, isEthereumChain } from './asset';
+import { getFeeAsset, getNativeAsset, isChainEvmCompatible, isERC20 } from './asset';
 import cryptoassets from './cryptoassets';
 
 type FeeUnits = { [asset: Asset]: number };
@@ -28,36 +34,49 @@ const FEE_OPTIONS = {
   CUSTOM: { name: 'Custom', label: 'Custom' },
 };
 
-const feePriceInUnit = (asset: Asset, feePrice: number) => {
+const feePriceInUnit = (asset: Asset, feePrice: number, network = Network.Mainnet) => {
   /*
    * Use the same rounding as in chainify because even slightest difference in calculation might break send max functionality.
    */
-  return isEthereumChain(asset) ? EvmUtils.fromGwei(feePrice) : feePrice; // ETH fee price is in gwei
+  return isChainEvmCompatible(asset, network) ? EvmUtils.fromGwei(feePrice) : feePrice; // ETH fee price is in gwei
 };
 
-function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number) {
+function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number, network = Network.Mainnet) {
   const assetInfo = cryptoassets[asset];
   const nativeAssetInfo = cryptoassets[getNativeAsset(asset)];
 
   if (assetInfo.chain === ChainId.Optimism) {
+    // calculate ETH fees
+    const gasLimitL1 = getAssetSendL1GasLimit(assetInfo, network);
+    if (!gasLimitL1) {
+      throw new Error(`${asset} doesn't have gas limit set`);
+    }
+
     if (!l1FeePrice) {
       throw new Error('l1FeePrice must be specified for Optimism');
     }
 
-    let l1Fee = new BN(assetInfo.sendGasLimitL1 as number).times(feePriceInUnit(nativeAssetInfo.code, l1FeePrice));
+    const feeL1 = new BN(gasLimitL1).times(feePriceInUnit(nativeAssetInfo.code, l1FeePrice, network));
 
-    // TODO: check if you can fetch scalar
-    // default scalar for L1 fee in Optimism mainnet -> 1, testnet 1.5
-    if (store.state.activeNetwork === Network.Testnet) {
-      l1Fee = l1Fee.times(new BN(1.5));
+    // calculate OP fees
+    const gasLimitL2 = getAssetSendGasLimit(assetInfo, network);
+    if (!gasLimitL2) {
+      throw new Error(`${asset} doesn't have gas limit set`);
     }
 
-    const l2Fee = new BN(assetInfo.sendGasLimit).times(feePriceInUnit(nativeAssetInfo.code, feePrice));
+    const feeL2 = new BN(gasLimitL2).times(feePriceInUnit(nativeAssetInfo.code, feePrice, network));
 
-    return unitToCurrency(nativeAssetInfo, l1Fee.plus(l2Fee));
+    /**
+     *  ETH (L1) fees + OP (L2) fees
+     * Read more: https://community.optimism.io/docs/developers/build/transaction-fees/
+     * */
+    return unitToCurrency(nativeAssetInfo, feeL1.plus(feeL2));
   } else {
-    const fee = new BN(assetInfo.sendGasLimit).times(feePriceInUnit(nativeAssetInfo.code, feePrice));
-
+    const gasLimitL = getAssetSendGasLimit(assetInfo, network);
+    if (!gasLimitL) {
+      throw new Error(`${asset} doesn't have gas limit set`);
+    }
+    const fee = new BN(gasLimitL).times(feePriceInUnit(nativeAssetInfo.code, feePrice, network));
     return unitToCurrency(nativeAssetInfo, fee);
   }
 }
@@ -191,10 +210,11 @@ async function sendBitcoinTxFees(
   const isMax: boolean = amount === undefined; // checking if it is a max send
   const _sendFees = sendFees ?? newSendFees();
 
+  const account = store.getters.accountItem(accountId)!;
   const client = store.getters.client({
     network: store.state.activeNetwork,
     walletId: store.state.activeWalletId,
-    asset,
+    chainId: account.chain,
     accountId: accountId,
   }) as Client<BitcoinEsploraApiProvider, BitcoinBaseWalletProvider>;
 
@@ -218,6 +238,7 @@ async function sendBitcoinTxFees(
 
 async function estimateTransferNFT(
   accountId: AccountId,
+  network: Network,
   receiver: string,
   values: number[],
   nft: NFT,
@@ -225,7 +246,7 @@ async function estimateTransferNFT(
 ): Promise<SendFees> {
   const account: Account = store.getters.accountItem(accountId)!;
 
-  const feeAsset = chains[account.chain].nativeAsset;
+  const feeAsset = getNativeAssetCode(network, account.chain);
   if (!feeAsset) {
     throw new Error(`getSendFeeEstimations: fee asset not available`);
   }
@@ -243,14 +264,14 @@ async function estimateTransferNFT(
   const client = store.getters.client({
     network: store.state.activeNetwork,
     walletId: store.state.activeWalletId,
-    asset: feeAsset,
+    chainId: account.chain,
     accountId: accountId,
   });
 
   let _receiver = receiver;
   // create a placeholder fro receiver address in case it is not specified
   // only for EVM chains
-  if (!receiver && isEthereumChain(feeAsset)) {
+  if (!receiver && isChainEvmCompatible(feeAsset, network)) {
     _receiver = '0x' + 'f'.repeat(40);
   }
 

@@ -1,4 +1,4 @@
-import { ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getChain } from '@liquality/cryptoassets';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { getDerivationPath } from '../../utils/derivationPath';
 import { Networks } from '../../utils/networks';
@@ -20,7 +20,7 @@ export const enableAvalancheChain = {
         if (accountExistsAndProperlyInitialized) {
           accounts[walletId][network] = [...state.accounts[walletId][network]];
         } else {
-          const chain = chains[ChainId.Avalanche];
+          const chain = getChain(network, ChainId.Avalanche);
           const derivationPath = getDerivationPath(ChainId.Avalanche, network, 0, AccountType.Default);
           const avalancheAccount = accountCreator({
             walletId,
