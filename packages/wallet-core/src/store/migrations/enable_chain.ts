@@ -5,8 +5,6 @@ import { Networks } from '../../utils/networks';
 import { AccountType } from '../types';
 
 async function enableChain(state: any, chainId: ChainId) {
-  console.log('enableChain: ', chainId);
-
   const accounts: any = {};
   const enabledChains: any = {};
 
