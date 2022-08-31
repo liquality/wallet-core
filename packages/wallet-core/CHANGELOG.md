@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 1.29.6
+
+### Patch Changes
+
+- 266526d: test: bump wallet core version for testing
+
 ## 1.29.5
 
 ### Patch Changes
