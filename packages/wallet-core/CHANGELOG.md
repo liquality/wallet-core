@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 1.29.4
+
+### Patch Changes
+
+- 3a367a2: ci: added git release flag
+
 ## 1.29.3
 
 ### Patch Changes
