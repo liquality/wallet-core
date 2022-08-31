@@ -18,9 +18,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3.1.1
+      - uses: actions/setup-node@v3.4.1
         with:
-          node-version: 16
+          node-version: 18
+          cache: yarn
 
       # yarn cache
       - name: Get yarn cache directory path
@@ -58,12 +59,10 @@ jobs:
 
       - name: Create git tags
         run: |
-          echo 'steps.changesets.outputs.published'
-          echo ${{ steps.changesets.outputs.published }}
-          echo 'steps.changesets.outputs.published'
-          echo ${{ steps.changesets.outputs.published }}
-#          git tag -a v${{ env.version }} -m ":rocket: Release ${{ steps.date.outputs.date }} :rocket:"
-#          git push origin v${{ env.version }}
+          echo 'steps.changesets.outputs.published - ${{ steps.changesets.outputs.published }}'
+          echo 'steps.changesets.outputs.publishedPackages - ${{ steps.changesets.outputs.publishedPackages }}'
+#         git tag -a v${{ env.version }} -m ":rocket: Release ${{ steps.date.outputs.date }} :rocket:"
+#         git push origin v${{ env.version }}
 
 
 
