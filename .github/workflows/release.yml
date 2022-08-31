@@ -14,14 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2.4.2
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v3.4.1
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v2
         with:
-          node-version: 18
-          cache: yarn
+          node-version: 16.x
 
       # yarn cache
       - name: Get yarn cache directory path
@@ -38,7 +36,7 @@ jobs:
             yarn-cache-folder-
 
       - name: install dependencies
-        run: yarn
+        run: yarn --frozen-lockfile
 
       - name: Get date
         id: date
@@ -52,7 +50,6 @@ jobs:
           publish: yarn build-release
           commit: 'chore: entering prerelease mode'
           title: ':rocket: Release ${{ steps.date.outputs.date }} :rocket:'
-          createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
