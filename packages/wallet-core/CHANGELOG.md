@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 1.29.4
+
+### Patch Changes
+
+- 3c3b4b6: fix: chainfy verion bump
+
 ## 1.29.3
 
 ### Patch Changes
