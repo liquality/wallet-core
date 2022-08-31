@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - develop
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -21,11 +22,19 @@ jobs:
         with:
           node-version: 16
 
-      - uses: actions/cache@v3.0.2
-        id: cache
+      # yarn cache
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Restore yarn cache
+        uses: actions/cache@v3.0.4
+        id: yarn-cache
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-node${{ env.node-version }}
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-cache-folder-${{ hashFiles('**/yarn.lock', '.yarnrc.yml') }}
+          restore-keys: |
+            yarn-cache-folder-
 
       - name: install dependencies
         run: yarn

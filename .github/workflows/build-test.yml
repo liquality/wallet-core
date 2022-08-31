@@ -2,6 +2,10 @@ name: Build Test
 
 on:
   push:
+    paths-ignore:
+      - '**/node_modules/**'
+      - '.github/**'
+      - '.github/*'
   pull_request:
     paths-ignore:
       - '**/node_modules/**'
