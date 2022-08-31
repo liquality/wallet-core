@@ -13,7 +13,6 @@ on:
       - '.github/*'
     branches-ignore:
       - renovate*
-      - feat/semantic_release_ci_setup
 jobs:
   build:
     runs-on: ubuntu-latest
