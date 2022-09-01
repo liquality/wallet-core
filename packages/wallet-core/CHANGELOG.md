@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.9
+
+### Patch Changes
+
+- 62a7f32: test: testing changeset publish
+- Updated dependencies [62a7f32]
+  - @liquality/cryptoassets@1.14.5
+
 ## 1.29.8
 
 ### Patch Changes
