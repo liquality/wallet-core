@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 1.29.7
+
+### Patch Changes
+
+- f80033c: test: testing yarn exit issue
+
 ## 1.29.6
 
 ### Patch Changes
