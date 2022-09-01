@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.8
+
+### Patch Changes
+
+- 76252fd: test: test yarn issue
+- Updated dependencies [76252fd]
+  - @liquality/cryptoassets@1.14.4
+
 ## 1.29.7
 
 ### Patch Changes
