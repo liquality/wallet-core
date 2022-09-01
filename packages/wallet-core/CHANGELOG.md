@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 1.29.10
+
+### Patch Changes
+
+- fa2d81f: test: test publishing single package
+
 ## 1.29.9
 
 ### Patch Changes
