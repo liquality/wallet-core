@@ -6,6 +6,7 @@ on:
       - '**/node_modules/**'
       - '.github/**'
       - '.github/*'
+      - '.changeset/**'
   pull_request:
     paths-ignore:
       - '**/node_modules/**'
