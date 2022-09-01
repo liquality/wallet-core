@@ -47,7 +47,7 @@ jobs:
         uses: changesets/action@v1
         id: changesets
         with:
-          publish: yarn build-release-raj
+          publish: yarn build-release-new
           commit: 'chore: entering prerelease mode'
           title: ':rocket: Release ${{ steps.date.outputs.date }} :rocket:'
           createGithubReleases: true
@@ -57,7 +57,6 @@ jobs:
 
       - name: Create git tags
         run: |
-          echo 'steps.changesets.outputs - ${{ steps.changesets.outputs }}'
           echo 'steps.changesets.outputs.published - ${{ steps.changesets.outputs.published }}'
           echo 'steps.changesets.outputs.publishedPackages - ${{ steps.changesets.outputs.publishedPackages }}'
 #         git tag -a v${{ env.version }} -m ":rocket: Release ${{ steps.date.outputs.date }} :rocket:"
