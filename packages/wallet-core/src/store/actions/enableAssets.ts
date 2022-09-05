@@ -1,4 +1,4 @@
-import { chains } from '@liquality/cryptoassets';
+import { ChainId, getChain } from '@liquality/cryptoassets';
 import { ActionContext, rootActionContext } from '..';
 import { accountCreator, getNextAccountColor } from '../../utils/accounts';
 import { AccountType, Asset, Network, WalletId } from '../types';
@@ -17,8 +17,8 @@ export const enableAssets = async (
     .filter((asset) => !!getters.cryptoassets[asset]?.chain)
     .map((asset) => getters.cryptoassets[asset]?.chain)
     .filter((chainId) => !accountsChains.includes(chainId))
-    .map(async (chainId) => {
-      const chain = chains[chainId];
+    .map(async (chainId: ChainId) => {
+      const chain = getChain(network, chainId);
       const _assets = assets.filter((asset) => getters.cryptoassets[asset]?.chain === chainId);
       const _account = accountCreator({
         walletId,

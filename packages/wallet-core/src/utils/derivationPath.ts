@@ -54,6 +54,10 @@ const derivationPaths: DerivationPathCreator = {
 
     return getEthereumBasedDerivationPath(coinType, index, accountType);
   },
+  [ChainId.Optimism]: (network: Network, index: number) => {
+    const ethNetwork = ChainNetworks[ChainId.Optimism][network];
+    return getEthereumBasedDerivationPath(ethNetwork.coinType, index);
+  },
   // == EVM CHAINS END ==
 
   [ChainId.Bitcoin]: (network: Network, index: number, accountType = AccountType.Default) => {

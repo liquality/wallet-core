@@ -1,7 +1,7 @@
 import { EIP1559Fee } from '@chainify/types';
 import { ensure0x } from '@chainify/utils';
 import { Chain, Hop, HopBridge, TToken } from '@hop-protocol/sdk';
-import { Asset, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, currencyToUnit, getChain, getNativeAssetCode, IAsset, unitToCurrency } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { ethers, Wallet } from 'ethers';
 import { createClient } from 'urql';
@@ -84,6 +84,12 @@ class HopSwapProvider extends SwapProvider {
         send: 300000,
         approve: 300000,
       },
+      optimism: {
+        send: 345000, // ~286000 * 120%
+        sendL1: 6500, // ~5_400 * 120%
+        approve: 65000, // ~54_000 * 120%
+        approveL1: 5600, // ~4_700 * 120%
+      },
     };
     return networkToGasLimit[networkName];
   }
@@ -147,7 +153,7 @@ class HopSwapProvider extends SwapProvider {
     }
   }
 
-  _findAsset(asset: Asset, chain: string, tokens: Record<string, any>, tokenName: string) {
+  _findAsset(asset: IAsset, chain: string, tokens: Record<string, any>, tokenName: string) {
     if (asset.type === 'native') {
       if (asset.code === tokenName || asset.matchingAsset === tokenName) {
         return tokenName;
@@ -164,7 +170,7 @@ class HopSwapProvider extends SwapProvider {
     }
   }
 
-  _getSendInfo(assetFrom: Asset, assetTo: Asset, hop: Hop) {
+  _getSendInfo(assetFrom: IAsset, assetTo: IAsset, hop: Hop) {
     if (!assetFrom || !assetTo) return null;
     const _chainFrom = this.getChain(assetFrom.chain);
     const _chainTo = this.getChain(assetTo.chain);
@@ -293,24 +299,61 @@ class HopSwapProvider extends SwapProvider {
    * @return Object of key feePrice and value fee
    */
   // eslint-disable-next-line no-unused-vars
-  async estimateFees({ asset, txType, quote, feePrices }: EstimateFeeRequest<HopTxTypes, HopSwapQuote>) {
+
+  async estimateFees({
+    asset,
+    txType,
+    quote,
+    network,
+    feePrices,
+    feePricesL1,
+  }: EstimateFeeRequest<HopTxTypes, HopSwapQuote>) {
     if (txType !== this.fromTxType) {
       throw new Error(`Invalid tx type ${txType}`);
     }
 
-    const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
+    const chainId = cryptoassets[asset].chain;
+    const nativeAsset = getNativeAssetCode(network, cryptoassets[asset].chain);
+
     const quoteFromStr: string = quote.hopChainFrom.slug || '';
-    let gasLimit: number = this.gasLimit(quoteFromStr).send;
+
+    const limits = this.gasLimit(quoteFromStr);
+
+    // Gas limit
+    let gasLimit: number = limits.send;
     if (isERC20(quote.from)) {
-      gasLimit += this.gasLimit(quoteFromStr).approve;
+      gasLimit += limits.approve;
+    }
+
+    // Gas limit l1
+    const isMultiLayered = getChain(network, chainId).isMultiLayered;
+    if (isMultiLayered && (!feePricesL1 || !limits.sendL1 || !limits.approveL1)) {
+      throw new Error(`Hop: Layer 1 fee prices and/or limits are not available for a multilayerchain ${chainId}`);
+    }
+
+    let gasLimitL1: number = 0;
+    if (isMultiLayered) {
+      gasLimitL1 = limits.sendL1;
+      if (isERC20(quote.from)) {
+        gasLimitL1 += limits.approveL1;
+      }
     }
 
     const fees: EstimateFeeResponse = {};
-    for (const feePrice of feePrices) {
+    feePrices.forEach((feePrice, index) => {
       const gasPrice = new BN(feePrice).times(1e9); // ETH fee price is in gwei
-      const fee = new BN(gasLimit).times(1.1).times(gasPrice);
+
+      let fee = new BN(gasLimit).times(1.1).times(gasPrice);
+
+      if (isMultiLayered) {
+        const gasPriceL1 = new BN((feePricesL1 as number[])[index]).times(1e9);
+        // Scalar for Optimism is not taken in considaration because on mainnet it is 1.
+        // Increase by 10% to prevent slight miscalculation.
+        fee = fee.plus(new BN(gasLimitL1).times(1.1).times(gasPriceL1));
+      }
+
       fees[feePrice] = unitToCurrency(cryptoassets[nativeAsset], fee);
-    }
+    });
     return fees;
   }
 
@@ -339,7 +382,7 @@ class HopSwapProvider extends SwapProvider {
     try {
       const tx = await client.chain.getTransactionByHash(swap.fromFundHash);
       const chainId: ChainId = <ChainId>swap.hopChainFrom.slug.toString();
-      if (tx && tx.confirmations && tx.confirmations >= chains[chainId].safeConfirmations) {
+      if (tx && tx.confirmations && tx.confirmations >= getChain(network, chainId).safeConfirmations) {
         this.updateBalances(network, walletId, [swap.fromAccountId]);
         return {
           endTime: Date.now(),

@@ -1,6 +1,6 @@
 {
   "name": "@liquality/cryptoassets",
-  "version": "1.13.5",
+  "version": "1.14.5",
   "description": "Common library for liquality wallet",
   "repository": "git@github.com:liquality/wallet-core.git",
   "author": "monokh <mnokhb@gmail.com>",
@@ -11,13 +11,13 @@
     "dist/**"
   ],
   "dependencies": {
-    "@types/bs58": "^4.0.1",
+    "@ethersproject/address": "5.7.0",
+    "@types/bs58": "4.0.1",
     "bignumber.js": "^9.0.2",
-    "bitcoin-address-validation": "^2.2.1",
-    "bs58": "^4.0.1",
-    "cashaddrjs": "^0.4.4",
-    "ethereumjs-util": "^7.1.4",
-    "lodash": "^4.17.11"
+    "bitcoin-address-validation": "2.2.1",
+    "bs58": "4.0.1",
+    "ethereumjs-util": "7.1.5",
+    "lodash": "4.17.21"
   },
   "scripts": {
     "build": "tsc",

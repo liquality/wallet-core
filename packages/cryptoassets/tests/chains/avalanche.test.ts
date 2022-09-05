@@ -1,11 +1,9 @@
 /* eslint-disable jest/valid-expect */
 import { expect } from 'chai';
-import { chains, chainToTokenAddressMap } from '../../src';
+import erc20Assets from '../../src/assets/mainnet/erc20/avalanche-tokens';
+import avalanche from '../../src/chains/mainnet/evm/avalanche';
 
 describe('Avalanche chain tests', function () {
-  const avalanche = chains.avalanche;
-  const erc20Assets = chainToTokenAddressMap.avalanche;
-
   it('Has correct name', () => {
     expect(avalanche.name).to.be.equal('Avalanche', 'Invalid chain name');
   });
@@ -15,7 +13,7 @@ describe('Avalanche chain tests', function () {
   });
 
   it('Has correct native asset', () => {
-    expect(avalanche.nativeAsset).to.be.equal('AVAX', 'Invalid native asset');
+    expect(avalanche.nativeAsset[0].code).to.be.equal('AVAX', 'Invalid native asset');
   });
 
   it('Has correct fee unit', () => {
@@ -23,7 +21,7 @@ describe('Avalanche chain tests', function () {
   });
 
   it('Has correct number of confirmations', () => {
-    expect(avalanche.safeConfirmations).to.be.equal(5, 'Invalid number of confirmation');
+    expect(avalanche.safeConfirmations).to.be.equal(10, 'Invalid number of confirmation');
   });
 
   it('Provides correct address validation', () => {

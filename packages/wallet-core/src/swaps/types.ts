@@ -52,6 +52,7 @@ export type EstimateFeeRequest<T = string, Q = SwapQuote> = {
   txType: T;
   quote: Q;
   feePrices: number[];
+  feePricesL1?: number[];
   max: boolean;
 };
 

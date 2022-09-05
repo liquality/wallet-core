@@ -1,4 +1,4 @@
-import { ChainId, chains } from '@liquality/cryptoassets';
+import { ChainId, getChain } from '@liquality/cryptoassets';
 import { v4 as uuidv4 } from 'uuid';
 import { Account, AccountDefinition, Network, WalletId } from '../store/types';
 import { getDerivationPath } from '../utils/derivationPath';
@@ -14,7 +14,7 @@ export const accountCreator = (payload: {
   const enabled = account.enabled !== null && account.enabled !== undefined ? account.enabled : true;
 
   const _addresses = addresses.map((a) => {
-    return chains[chain].formatAddress(a);
+    return getChain(network, chain).formatAddress(a);
   });
 
   const derivationPath = account.derivationPath
@@ -57,6 +57,7 @@ export const accountColors = [
   '#A1E44A',
   '#3AB24D',
   '#8247E5',
+  '#bf0205',
 ];
 
 export const chainDefaultColors: { [key in ChainId]?: string } = {
@@ -71,6 +72,7 @@ export const chainDefaultColors: { [key in ChainId]?: string } = {
   terra: '#008080',
   fuse: '#46e8b6',
   avalanche: '#E84141',
+  optimism: '#bf0205',
 };
 
 export const getNextAccountColor = (chain: ChainId, index: number) => {

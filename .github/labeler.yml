@@ -1,19 +1,23 @@
 feature:
-  - any: [ 'src/*.ts','src/**/*.ts', '!src/docs/*' ]
+  - src/*.ts
+  - src/**/*.ts
+  - '!src/docs/*'
 
 test:
-  - 'src/factory/*.test.ts'
-  - 'src/utils/*.test.ts'
-  - 'src/store/**/*.test.ts'
-  - 'src/**/*.spec.ts'
-  - 'src/*.test.ts'
+  - src/factory/*.test.ts
+  - src/utils/*.test.ts
+  - src/store/**/*.test.ts
+  - src/**/*.spec.ts
+  - src/*.test.ts
 
 ci-update:
-  - any: [ '.github/**/*.yml', '.github/workflows/*.yml' ,.github/*.yml']
+  - .github/**/*
+  - .github/workflows/*.yml
+  - .github/*.yml
 
 dependencies:
-  - any: [ 'package.json', 'yarn.lock' ]
+  - package.json
+  - yarn.lock
 
 documentation:
-  - any: [ 'README.md' ]
-
+  - README.md

@@ -1,4 +1,5 @@
-import { EIP1559FeeProvider, RpcFeeProvider } from '@chainify/evm';
+import { EIP1559FeeProvider, OptimismChainProvider, RpcFeeProvider } from '@chainify/evm';
+import { asL2Provider } from '@eth-optimism/sdk';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { AccountInfo, Network, NftProviderType } from '../../store/types';
 import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
@@ -92,4 +93,25 @@ export function createFuseClient(network: Network, mnemonic: string, accountInfo
   const provider = new StaticJsonRpcProvider(fuseNetwork.rpcUrl, fuseNetwork.chainId);
   const feeProvider = new RpcFeeProvider(provider, { slowMultiplier: 1, averageMultiplier: 1, fastMultiplier: 1.25 });
   return createEVMClient(fuseNetwork, feeProvider, mnemonic, accountInfo, defaultSwapOptions, provider);
+}
+
+export function createOptimismClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
+  const optimismNetwork = ChainNetworks.optimism[network];
+  const jsonRpcProvider = asL2Provider(new StaticJsonRpcProvider(optimismNetwork.rpcUrl));
+  const chainProvider = new OptimismChainProvider(optimismNetwork, jsonRpcProvider, {
+    slowMultiplier: 1,
+    averageMultiplier: 1,
+    fastMultiplier: 1,
+  });
+
+  return createEVMClient(
+    optimismNetwork,
+    chainProvider.getFeeProvider(),
+    mnemonic,
+    accountInfo,
+    defaultSwapOptions,
+    undefined,
+    undefined,
+    chainProvider
+  );
 }

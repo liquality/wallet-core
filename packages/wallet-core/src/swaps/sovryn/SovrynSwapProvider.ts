@@ -5,7 +5,7 @@ import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-test
 import { Client } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Transaction, TxStatus } from '@chainify/types';
-import { AssetTypes, ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import BN from 'bignumber.js';
 import * as ethers from 'ethers';
@@ -126,7 +126,7 @@ class SovrynSwapProvider extends SwapProvider {
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     // don't pass network because Ethers does not support EIP1191
-    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, fromInfo.chain).formatAddress(fromAddressRaw);
 
     const spender = (
       fromInfo.type === AssetTypes.native || toInfo.type === AssetTypes.native
@@ -160,7 +160,7 @@ class SovrynSwapProvider extends SwapProvider {
     const fromChain = fromInfo.chain;
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     // don't pass network because Ethers does not support EIP1191
-    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
@@ -234,7 +234,7 @@ class SovrynSwapProvider extends SwapProvider {
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     // don't pass network because Ethers does not support EIP1191
-    const fromAddress = chains[fromInfo.chain].formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, fromInfo.chain).formatAddress(fromAddressRaw);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)
@@ -273,7 +273,7 @@ class SovrynSwapProvider extends SwapProvider {
       throw new Error(`Invalid tx type ${txType}`);
     }
 
-    const nativeAsset = chains[cryptoassets[asset].chain].nativeAsset;
+    const nativeAsset = getChain(network, cryptoassets[asset].chain).nativeAsset[0].code;
     const account = this.getAccount(quote.fromAccountId);
     if (!account) throw new Error(`SovrynSwapProvider: Account with id ${quote.fromAccountId} not found`);
     const client = this.getClient(network, walletId, quote.from, account.id);

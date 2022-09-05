@@ -17,5 +17,6 @@
     "rootDir": ".",
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "package.json", "src/**/*.json"]
+  "include": ["src/**/*", "package.json", "src/**/*.json"],
+  "exclude": ["./dist/**/*"]
 }

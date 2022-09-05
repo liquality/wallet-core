@@ -1,4 +1,4 @@
-import { chains } from '@liquality/cryptoassets';
+import { getNativeAssetCode } from '@liquality/cryptoassets';
 import { setupWallet } from '../../index';
 import defaultWalletOptions from '../../walletOptions/defaultOptions';
 import { Network } from '../types';
@@ -21,8 +21,9 @@ describe('updateFees tests', () => {
     expect(wallet.state.wallets.length).toBe(1);
 
     const walletId = wallet.state.activeWalletId;
-    const enabledChains = wallet.state.enabledChains[wallet.state.activeWalletId]![wallet.state.activeNetwork];
-    const assets = enabledChains.map((chain) => chains[chain].nativeAsset);
+    const network = wallet.state.activeNetwork;
+    const enabledChains = wallet.state.enabledChains[wallet.state.activeWalletId]![network];
+    const assets = enabledChains.map((chain) => getNativeAssetCode(network, chain));
     expect(assets).not.toBeNull();
     // mainnet asset fee update
     for (const mainnetAsset of assets) {
@@ -54,8 +55,9 @@ describe('updateFees tests', () => {
 
     await wallet.dispatch.changeActiveNetwork({ network: Network.Testnet });
     const walletId = wallet.state.activeWalletId;
-    const enabledChains = wallet.state.enabledChains[wallet.state.activeWalletId]![wallet.state.activeNetwork];
-    const assets = enabledChains.map((chain) => chains[chain].nativeAsset);
+    const network = wallet.state.activeNetwork;
+    const enabledChains = wallet.state.enabledChains[wallet.state.activeWalletId]![network];
+    const assets = enabledChains.map((chain) => getNativeAssetCode(network, chain));
     expect(assets).not.toBeNull();
     for (const testnetAsset of assets) {
       // Luna testnet is broken

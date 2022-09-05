@@ -1,4 +1,4 @@
-import { AssetTypes, ChainId, chains, isEthereumChain as _isEthereumChain } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId, getChain, getNativeAssetCode, isEvmChain } from '@liquality/cryptoassets';
 import * as ethers from 'ethers';
 import { Asset, Network } from '../store/types';
 import cryptoassets from '../utils/cryptoassets';
@@ -116,6 +116,16 @@ const EXPLORERS: ExplorerMap = {
       address: 'https://explorer.fuse.io/address/{hash}',
     },
   },
+  optimism: {
+    testnet: {
+      tx: 'https://kovan-optimistic.etherscan.io/tx/{hash}',
+      address: 'https://kovan-optimistic.etherscan.io/address/{hash}',
+    },
+    mainnet: {
+      tx: 'https://optimistic.etherscan.io/tx/{hash}',
+      address: 'https://optimistic.etherscan.io/address/{hash}',
+    },
+  },
 };
 
 function getChainExplorer(chain: ChainId) {
@@ -130,25 +140,30 @@ export const isERC20 = (asset: Asset) => {
   return cryptoassets[asset]?.type === AssetTypes.erc20;
 };
 
-export const isEthereumChain = (asset: Asset) => {
-  const chain = cryptoassets[asset]?.chain;
-  return _isEthereumChain(chain);
+export const isChainEvmCompatible = (asset: Asset, network = Network.Mainnet) => {
+  const chainId = cryptoassets[asset]?.chain;
+  return isEvmChain(network, chainId);
 };
 
-export const isEthereumNativeAsset = (asset: Asset) => {
+export const isAssetEvmNativeAsset = (asset: Asset, network = Network.Mainnet) => {
   const chainId = cryptoassets[asset]?.chain;
-  if (chainId && _isEthereumChain(chainId) && chains[chainId].nativeAsset === asset) {
-    return true;
+  if (chainId) {
+    const chain = getChain(network, chainId);
+
+    if (chain.isEVM && chain.nativeAsset[0].code === asset) {
+      return true;
+    }
   }
 
   return false;
 };
 
-export const getNativeAsset = (asset: Asset) => {
-  if (cryptoassets[asset]?.type === AssetTypes.native) return asset;
-
+export const getNativeAsset = (asset: Asset, network = Network.Mainnet) => {
+  if (cryptoassets[asset]?.type === AssetTypes.native) {
+    return asset;
+  }
   const chainId = cryptoassets[asset]?.chain;
-  return chainId ? chains[chainId].nativeAsset : asset;
+  return chainId ? getNativeAssetCode(network, chainId) : asset;
 };
 
 export const getFeeAsset = (asset: Asset) => {

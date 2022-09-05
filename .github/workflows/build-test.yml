@@ -2,6 +2,11 @@ name: Build Test
 
 on:
   push:
+    paths-ignore:
+      - '**/node_modules/**'
+      - '.github/**'
+      - '.github/*'
+      - '.changeset/**'
   pull_request:
     paths-ignore:
       - '**/node_modules/**'
@@ -9,6 +14,7 @@ on:
       - '.github/*'
     branches-ignore:
       - renovate*
+      - changeset-release/develop
 jobs:
   build:
     runs-on: ubuntu-latest

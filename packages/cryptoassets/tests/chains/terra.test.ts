@@ -1,11 +1,9 @@
 /* eslint-disable jest/valid-expect */
 import { expect } from 'chai';
-import { chains, chainToTokenAddressMap } from '../../src';
+import erc20Assets from '../../src/assets/mainnet/erc20/terra-tokens';
+import terra from '../../src/chains/mainnet/non-evm/terra';
 
 describe('Terra chain tests', function () {
-  const terra = chains.terra;
-  const erc20Assets = chainToTokenAddressMap.terra;
-
   it('Has correct name', () => {
     expect(terra.name).to.be.equal('Terra', 'Invalid chain name');
   });
@@ -15,7 +13,7 @@ describe('Terra chain tests', function () {
   });
 
   it('Has correct native asset', () => {
-    expect(terra.nativeAsset).to.be.equal('LUNA', 'Invalid native asset');
+    expect(terra.nativeAsset[0].code).to.be.equal('LUNA', 'Invalid native asset');
   });
 
   it('Has correct fee unit', () => {

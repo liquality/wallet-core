@@ -7,6 +7,7 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/types": "^7.17.0",
+    "@changesets/cli": "^2.24.3",
     "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.2.1",
     "@types/amplitude-js": "^8.16.0",
@@ -40,7 +41,7 @@
     "typescript": "^4.5.5"
   },
   "scripts": {
-    "build": "turbo run build --parallel --no-cache",
+    "build": "turbo run build --no-cache",
     "lint": "yarn lint:ts && yarn prettier:check",
     "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
     "prettier:check": "prettier --check \"**/*.{js,json,sol,ts}\"",
@@ -48,7 +49,12 @@
     "test": "turbo run test",
     "postinstall": "husky install",
     "prepack": "pinst --disable",
-    "postpack": "pinst --enable"
+    "postpack": "pinst --enable",
+    "changeset": "changeset",
+    "version": "yarn changeset version",
+    "release": "yarn workspaces foreach --from '@liquality/*' npm publish --access public",
+    "build-release": "yarn build --force && yarn release",
+    "build-release-new": "yarn build --force && changeset publish --yes"
   },
   "packageManager": "yarn@3.1.1",
   "publishConfig": {

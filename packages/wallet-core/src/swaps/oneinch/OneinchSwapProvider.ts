@@ -1,7 +1,7 @@
 import { Client, HttpClient } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Transaction, TxStatus } from '@chainify/types';
-import { ChainId, chains, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import BN, { BigNumber } from 'bignumber.js';
 import * as ethers from 'ethers';
@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem } from '../../store/types';
-import { isERC20, isEthereumChain } from '../../utils/asset';
+import { isChainEvmCompatible, isERC20 } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { ChainNetworks } from '../../utils/networks';
@@ -31,6 +31,7 @@ const SLIPPAGE_PERCENTAGE = 0.5;
 // TODO: this should not be defined here, instead we need a "supportedChains" interface
 const supportedChains: { [chainId: number]: boolean } = {
   1: true,
+  10: true,
   56: true,
   137: true,
   43114: true,
@@ -41,6 +42,7 @@ const supportedChains: { [chainId: number]: boolean } = {
 // No swap provider should have such kind of specific configuration
 const chainToGasMultiplier: { [chainId: number]: number } = {
   1: 1.5,
+  10: 1.5,
   56: 1.5,
   137: 1.5,
   43114: 1.5,
@@ -62,6 +64,13 @@ export interface OneinchSwapProviderConfig extends BaseSwapProviderConfig {
   referrerFee: number;
 }
 
+// approve: ~54_000 * 120%
+// send: >100_000
+const optimismL1GasLimits = {
+  approve: 6500,
+  send: 100000,
+};
+
 class OneinchSwapProvider extends SwapProvider {
   public config: OneinchSwapProviderConfig;
   private _httpClient: HttpClient;
@@ -79,22 +88,9 @@ class OneinchSwapProvider extends SwapProvider {
     return super.getClient(network, walletId, asset, accountId) as Client<EvmChainProvider>;
   }
 
-  private async _getQuote(chainIdFrom: number, from: Asset, to: Asset, amount: number) {
-    const fromToken = cryptoassets[from].contractAddress;
-    const toToken = cryptoassets[to].contractAddress;
-    const referrerAddress = this.config.referrerAddress?.[cryptoassets[from].chain];
-    const fee = referrerAddress && this.config.referrerFee;
-
-    return await this._httpClient.nodeGet(`/${chainIdFrom}/quote`, {
-      fromTokenAddress: fromToken || NATIVE_ASSET_ADDRESS,
-      toTokenAddress: toToken || NATIVE_ASSET_ADDRESS,
-      amount,
-      fee,
-    });
-  }
-
   async getQuote({ network, from, to, amount }: QuoteRequest) {
-    if (!isEthereumChain(from) || !isEthereumChain(to) || new BigNumber(amount).lte(0)) return null;
+    if (!isChainEvmCompatible(from, network) || !isChainEvmCompatible(to, network) || new BigNumber(amount).lte(0))
+      return null;
     const fromAmountInUnit = new BN(currencyToUnit(cryptoassets[from], new BN(amount)));
     // @ts-ignore TODO: Fix chain networks
     const chainIdFrom: number = ChainNetworks[cryptoassets[from].chain][network].chainId;
@@ -105,6 +101,7 @@ class OneinchSwapProvider extends SwapProvider {
     }
 
     const trade = await this._getQuote(chainIdFrom, from, to, fromAmountInUnit.toNumber());
+
     const toAmountInUnit = new BN(trade?.toTokenAmount);
     return {
       fromAmount: fromAmountInUnit.toFixed(),
@@ -112,38 +109,14 @@ class OneinchSwapProvider extends SwapProvider {
     };
   }
 
-  async approveTokens({ network, walletId, quote }: SwapRequest) {
-    const fromChain = cryptoassets[quote.from].chain;
-    const toChain = cryptoassets[quote.to].chain;
-    // @ts-ignore TODO: Fix chain networks
-    const chainId = ChainNetworks[fromChain][network].chainId;
-    if (fromChain !== toChain || !supportedChains[Number(chainId)]) {
-      return null;
-    }
-
+  async approveTokens({ network, walletId, quote }: SwapRequest<OneinchSwapHistoryItem>) {
+    const approvalData = await this._buildApproval({ network, walletId, quote });
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-    const provider = client.chain.getProvider();
-
-    const erc20 = new ethers.Contract(cryptoassets[quote.from].contractAddress!, ERC20.abi, provider);
-    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = chains[fromChain].formatAddress(fromAddressRaw);
-    const allowance = await erc20.allowance(fromAddress, this.config.routerAddress);
-    const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
-    if (allowance.gte(inputAmount)) {
-      return {
-        status: 'APPROVE_CONFIRMED',
-      };
-    }
-
-    const callData = await this._httpClient.nodeGet(`/${chainId}/approve/transaction`, {
-      tokenAddress: cryptoassets[quote.from].contractAddress,
-      amount: inputAmount.toString(),
-    });
 
     const approveTx = await client.wallet.sendTransaction({
-      to: callData?.to,
-      value: callData?.value,
-      data: callData?.data,
+      to: approvalData?.to,
+      value: approvalData?.value,
+      data: approvalData?.data,
       fee: quote.fee,
     });
 
@@ -155,46 +128,15 @@ class OneinchSwapProvider extends SwapProvider {
   }
 
   async sendSwap({ network, walletId, quote }: SwapRequest<OneinchSwapHistoryItem>) {
-    const toChain = cryptoassets[quote.to].chain;
-    const fromChain = cryptoassets[quote.from].chain;
-    // @ts-ignore TODO: Fix chain networks
-    const chainId = ChainNetworks[toChain][network].chainId;
-    if (toChain !== fromChain || !supportedChains[Number(chainId)]) {
-      throw new Error(`Route ${fromChain} - ${toChain} not supported`);
-    }
-
+    const swapData = await this._buildSwap({ network, walletId, quote });
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const fromAddress = chains[toChain].formatAddress(fromAddressRaw);
-
-    // TODO: type
-    const swapParams: any = {
-      fromTokenAddress: cryptoassets[quote.from].contractAddress || NATIVE_ASSET_ADDRESS,
-      toTokenAddress: cryptoassets[quote.to].contractAddress || NATIVE_ASSET_ADDRESS,
-      amount: quote.fromAmount,
-      fromAddress: fromAddress,
-      slippage: quote.slippagePercentage ? quote.slippagePercentage : SLIPPAGE_PERCENTAGE,
-    };
-
-    const referrerAddress = this.config.referrerAddress?.[cryptoassets[quote.from].chain];
-    if (referrerAddress) {
-      swapParams.referrerAddress = referrerAddress;
-      swapParams.fee = this.config.referrerFee;
-    }
-
-    const trade = await this._httpClient.nodeGet(`/${chainId}/swap`, swapParams);
-
-    if (new BN(quote.toAmount).times(1 - swapParams.slippage / 100).gt(trade?.toTokenAmount)) {
-      throw new Error(
-        `Slippage is too high. You expect ${quote.toAmount} but you are going to receive ${trade?.toTokenAmount} ${quote.to}`
-      );
-    }
 
     await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
+
     const swapTx = await client.wallet.sendTransaction({
-      to: trade?.tx?.to,
-      value: trade?.tx?.value,
-      data: trade?.tx?.data,
+      to: swapData?.tx?.to,
+      value: swapData?.tx?.value,
+      data: swapData?.tx?.data,
       fee: quote.fee,
     });
     return {
@@ -218,21 +160,47 @@ class OneinchSwapProvider extends SwapProvider {
     };
   }
 
-  async estimateFees({ network, txType, quote, feePrices }: EstimateFeeRequest) {
+  async estimateFees({
+    network,
+    txType,
+    quote,
+    feePrices,
+    feePricesL1,
+  }: EstimateFeeRequest<string, OneinchSwapHistoryItem>) {
     const chain = cryptoassets[quote.from].chain;
 
     // @ts-ignore TODO: Fix chain networks
     const chainId: number = ChainNetworks[chain][network].chainId;
-    const nativeAsset = chains[chain].nativeAsset;
+    const nativeAsset = getChain(network, chain).nativeAsset[0].code;
 
     if (txType in this._txTypes()) {
       const fees: EstimateFeeResponse = {};
       const tradeData = await this._getQuote(chainId, quote.from, quote.to, new BigNumber(quote.fromAmount).toNumber());
-      for (const feePrice of feePrices) {
+
+      const isMultiLayered = feePricesL1 && getChain(network, chain).isMultiLayered;
+      const l1GasLimit = isMultiLayered
+        ? isERC20(quote.from)
+          ? new BN(optimismL1GasLimits.approve + optimismL1GasLimits.send)
+          : new BN(optimismL1GasLimits.send)
+        : new BN(0);
+      const multiplier = chainToGasMultiplier[chainId] || 1.5;
+
+      feePrices.forEach((feePrice, index) => {
+        let fee = new BN(0);
+
+        if (isMultiLayered) {
+          const gasPriceL1 = new BN((feePricesL1 as number[])[index]).times(1e9);
+          // fee += l1_gas_estimation * multiplier * l1_gas_price
+          fee = fee.plus(new BN(l1GasLimit).times(multiplier).times(gasPriceL1));
+        }
+
         const gasPrice = new BN(feePrice).times(1e9); // ETH fee price is in gwei
-        const fee = new BN(tradeData?.estimatedGas).times(chainToGasMultiplier[chainId] || 1.5).times(gasPrice);
+        // fee += l2_gas_estimation * muliplier * l2_gas_price
+        fee = fee.plus(new BN(tradeData?.estimatedGas).times(multiplier).times(gasPrice));
+
         fees[feePrice] = unitToCurrency(cryptoassets[nativeAsset], fee);
-      }
+      });
+
       return fees;
     }
 
@@ -243,6 +211,95 @@ class OneinchSwapProvider extends SwapProvider {
     return new BN(0);
   }
 
+  /*
+   * PRIVATE HELPER METHODS
+   */
+  private async _getQuote(chainIdFrom: number, from: Asset, to: Asset, amount: number) {
+    const fromToken = cryptoassets[from].contractAddress;
+    const toToken = cryptoassets[to].contractAddress;
+    const referrerAddress = this.config.referrerAddress?.[cryptoassets[from].chain];
+    const fee = referrerAddress && this.config.referrerFee;
+
+    return await this._httpClient.nodeGet(`/${chainIdFrom}/quote`, {
+      fromTokenAddress: fromToken || NATIVE_ASSET_ADDRESS,
+      toTokenAddress: toToken || NATIVE_ASSET_ADDRESS,
+      amount,
+      fee,
+    });
+  }
+
+  private async _buildApproval({ network, walletId, quote }: SwapRequest<OneinchSwapHistoryItem>) {
+    const fromChain = cryptoassets[quote.from].chain;
+    const toChain = cryptoassets[quote.to].chain;
+    // @ts-ignore TODO: Fix chain networks
+    const chainId = ChainNetworks[fromChain][network].chainId;
+    if (fromChain !== toChain || !supportedChains[Number(chainId)]) {
+      return null;
+    }
+
+    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
+    const provider = client.chain.getProvider();
+
+    const erc20 = new ethers.Contract(cryptoassets[quote.from].contractAddress!, ERC20.abi, provider);
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+    const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
+    const allowance = await erc20.allowance(fromAddress, this.config.routerAddress);
+    const inputAmount = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed());
+    if (allowance.gte(inputAmount)) {
+      return {
+        status: 'APPROVE_CONFIRMED',
+      };
+    }
+
+    const callData = await this._httpClient.nodeGet(`/${chainId}/approve/transaction`, {
+      tokenAddress: cryptoassets[quote.from].contractAddress,
+      amount: inputAmount.toString(),
+    });
+
+    return callData;
+  }
+
+  private async _buildSwap({ network, walletId, quote }: SwapRequest<OneinchSwapHistoryItem>) {
+    const toChain = cryptoassets[quote.to].chain;
+    const fromChain = cryptoassets[quote.from].chain;
+    // @ts-ignore TODO: Fix chain networks
+    const chainId = ChainNetworks[toChain][network].chainId;
+    if (toChain !== fromChain || !supportedChains[Number(chainId)]) {
+      throw new Error(`Route ${fromChain} - ${toChain} not supported`);
+    }
+
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+    const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
+
+    // TODO: type
+    const swapParams: any = {
+      fromTokenAddress: cryptoassets[quote.from].contractAddress || NATIVE_ASSET_ADDRESS,
+      toTokenAddress: cryptoassets[quote.to].contractAddress || NATIVE_ASSET_ADDRESS,
+      amount: quote.fromAmount,
+      fromAddress: fromAddress,
+      slippage: quote.slippagePercentage ? quote.slippagePercentage : SLIPPAGE_PERCENTAGE,
+    };
+
+    const referrerAddress = this.config.referrerAddress?.[cryptoassets[quote.from].chain];
+    if (referrerAddress) {
+      swapParams.referrerAddress = referrerAddress;
+      swapParams.fee = this.config.referrerFee;
+    }
+
+    const swap = await this._httpClient.nodeGet(`/${chainId}/swap`, swapParams);
+
+    if (new BN(quote.toAmount).times(1 - swapParams.slippage / 100).gt(swap?.toTokenAmount)) {
+      throw new Error(
+        `Slippage is too high. You expect ${quote.toAmount} but you are going to receive ${swap?.toTokenAmount} ${quote.to}`
+      );
+    }
+
+    return swap;
+  }
+
+  /*
+   * STATE TRANSITIONS
+   */
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<OneinchSwapHistoryItem>) {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
