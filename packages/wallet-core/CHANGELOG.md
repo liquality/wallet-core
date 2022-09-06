@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.12
+
+### Patch Changes
+
+- 7179204: chore: bump versions with correct script
+- Updated dependencies [7179204]
+  - @liquality/cryptoassets@1.14.7
+
 ## 1.29.11
 
 ### Patch Changes

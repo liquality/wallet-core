@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.7
+
+### Patch Changes
+
+- 7179204: chore: bump versions with correct script
+
 ## 1.14.6
 
 ### Patch Changes
