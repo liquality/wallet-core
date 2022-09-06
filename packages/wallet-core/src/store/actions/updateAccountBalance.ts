@@ -1,4 +1,5 @@
 import { getAsset } from '@liquality/cryptoassets';
+import Bluebird from 'bluebird';
 import { ActionContext, rootActionContext } from '..';
 import { assetsAdapter } from '../../utils/chainify';
 import { AccountId, Network, WalletId } from '../types';
@@ -14,7 +15,7 @@ export const updateAccountBalance = async (
   if (index >= 0) {
     const account = accounts[index];
     const { assets } = account;
-    assets.forEach(async (asset) => {
+    await Bluebird.map(assets, async (asset) => {
       const chainId = getAsset(network, asset).chain;
       const _client = getters.client({ network, walletId, chainId, accountId });
       const addresses = await _client.wallet.getUsedAddresses();
