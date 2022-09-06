@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.6
+
+### Patch Changes
+
+- 9e0c685: core: bump both packages versions
+
 ## 1.14.5
 
 ### Patch Changes

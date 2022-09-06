@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.11
+
+### Patch Changes
+
+- 9e0c685: core: bump both packages versions
+- Updated dependencies [9e0c685]
+  - @liquality/cryptoassets@1.14.6
+
 ## 1.29.10
 
 ### Patch Changes
