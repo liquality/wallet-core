@@ -53,7 +53,8 @@
     "changeset": "changeset",
     "version": "yarn changeset version",
     "release": "yarn workspaces foreach --from '@liquality/*' npm publish --access public",
-    "build-release": "yarn build --force && yarn release"
+    "build-release": "yarn build --force && yarn release",
+    "build-release-new": "yarn build --force && changeset publish --yes"
   },
   "packageManager": "yarn@3.1.1",
   "publishConfig": {

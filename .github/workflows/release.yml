@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - develop
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -13,22 +14,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2.4.2
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v3.1.1
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 16.x
 
-      - uses: actions/cache@v3.0.2
-        id: cache
+      # yarn cache
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Restore yarn cache
+        uses: actions/cache@v3.0.4
+        id: yarn-cache
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-node${{ env.node-version }}
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-cache-folder-${{ hashFiles('**/yarn.lock', '.yarnrc.yml') }}
+          restore-keys: |
+            yarn-cache-folder-
 
       - name: install dependencies
-        run: yarn
+        run: yarn --frozen-lockfile
 
       - name: Get date
         id: date
@@ -39,22 +47,20 @@ jobs:
         uses: changesets/action@v1
         id: changesets
         with:
-          publish: yarn build-release
+          publish: yarn build-release-new
           commit: 'chore: entering prerelease mode'
           title: ':rocket: Release ${{ steps.date.outputs.date }} :rocket:'
+          createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create git tags
-        if: steps.changesets.outputs.published == 'true'
         run: |
-          echo 'steps.changesets.outputs.published'
-          echo ${{ steps.changesets.outputs.published }}
-          echo 'steps.changesets.outputs.published'
-          echo ${{ steps.changesets.outputs.published }}
-#          git tag -a v${{ env.version }} -m ":rocket: Release ${{ steps.date.outputs.date }} :rocket:"
-#          git push origin v${{ env.version }}
+          echo 'steps.changesets.outputs.published - ${{ steps.changesets.outputs.published }}'
+          echo 'steps.changesets.outputs.publishedPackages - ${{ steps.changesets.outputs.publishedPackages }}'
+#         git tag -a v${{ env.version }} -m ":rocket: Release ${{ steps.date.outputs.date }} :rocket:"
+#         git push origin v${{ env.version }}
 
 
 

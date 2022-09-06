@@ -1,5 +1,51 @@
 # @liquality/wallet-core
 
+## 1.29.10
+
+### Patch Changes
+
+- fa2d81f: test: test publishing single package
+
+## 1.29.9
+
+### Patch Changes
+
+- 62a7f32: test: testing changeset publish
+- Updated dependencies [62a7f32]
+  - @liquality/cryptoassets@1.14.5
+
+## 1.29.8
+
+### Patch Changes
+
+- 76252fd: test: test yarn issue
+- Updated dependencies [76252fd]
+  - @liquality/cryptoassets@1.14.4
+
+## 1.29.7
+
+### Patch Changes
+
+- f80033c: test: testing yarn exit issue
+
+## 1.29.6
+
+### Patch Changes
+
+- 266526d: test: bump wallet core version for testing
+
+## 1.29.5
+
+### Patch Changes
+
+- 783263e: feat: bump wallet core for testing
+
+## 1.29.4
+
+### Patch Changes
+
+- 3a367a2: ci: added git release flag
+
 ## 1.29.3
 
 ### Patch Changes

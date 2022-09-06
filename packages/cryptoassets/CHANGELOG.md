@@ -1,5 +1,17 @@
 # @liquality/cryptoassets
 
+## 1.14.5
+
+### Patch Changes
+
+- 62a7f32: test: testing changeset publish
+
+## 1.14.4
+
+### Patch Changes
+
+- 76252fd: test: test yarn issue
+
 ## 1.14.3
 
 ### Patch Changes
