@@ -2694,6 +2694,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@liquality/error-parser@workspace:packages/error-parser":
+  version: 0.0.0-use.local
+  resolution: "@liquality/error-parser@workspace:packages/error-parser"
+  dependencies:
+    "@types/randombytes": ^2.0.0
+    randombytes: ^2.1.0
+  languageName: unknown
+  linkType: soft
+
 "@liquality/fee-suggestions@npm:2.0.2":
   version: 2.0.2
   resolution: "@liquality/fee-suggestions@npm:2.0.2"
@@ -3604,6 +3613,15 @@ __metadata:
   version: 2.7.0
   resolution: "@types/prettier@npm:2.7.0"
   checksum: bf5d0c7c1270909b39399539ac106d20ddaa85fe92eb1d59922dc99159604b4f8d5e41b0045fb29c8011585cf5bca2350b7441ef3d9816c08bd0e10ebd4b31d4
+  languageName: node
+  linkType: hard
+
+"@types/randombytes@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@types/randombytes@npm:2.0.0"
+  dependencies:
+    "@types/node": "*"
+  checksum: 630328f00322b795b69c1a25601f74d1a10192868c762e4028ce6c4851e6604c89c0a62681f9d6b6526812036180f5cbcd80104da69b758c5c91030a58fa82c0
   languageName: node
   linkType: hard
 
