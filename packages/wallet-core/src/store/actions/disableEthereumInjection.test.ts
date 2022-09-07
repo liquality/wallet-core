@@ -3,7 +3,6 @@ import defaultWalletOptions from '../../walletOptions/defaultOptions';
 
 describe('disableEthereumInjection & enableEthereumInjection', () => {
   it('should be able to disable injectEthereumChain', async () => {
-    jest.useFakeTimers();
     const wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
       key: '0x1234567890123456789012345678901234567890',
