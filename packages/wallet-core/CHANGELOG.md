@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.11
+
+### Patch Changes
+
+- f3bb88f: fix: uns name resolving
+- Updated dependencies [f3bb88f]
+  - @liquality/cryptoassets@1.14.6
+
 ## 1.29.10
 
 ### Patch Changes

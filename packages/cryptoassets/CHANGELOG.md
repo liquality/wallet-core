@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.6
+
+### Patch Changes
+
+- f3bb88f: fix: uns name resolving
+
 ## 1.14.5
 
 ### Patch Changes
