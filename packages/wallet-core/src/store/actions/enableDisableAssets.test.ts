@@ -4,6 +4,7 @@ import { Network } from '../types';
 
 let wallet: any;
 describe('disable and enable assets', () => {
+  jest.setTimeout(20000);
   beforeEach(async () => {
     wallet = await setupWallet(defaultWalletOptions);
     await wallet.dispatch.createWallet({
