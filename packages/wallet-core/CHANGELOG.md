@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.13
+
+### Patch Changes
+
+- a45924d: - fix address validation for evm chains
+- Updated dependencies [a45924d]
+  - @liquality/cryptoassets@1.14.8
+
 ## 1.29.12
 
 ### Patch Changes
