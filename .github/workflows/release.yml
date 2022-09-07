@@ -47,7 +47,7 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         uses: changesets/action@v1
         with:
-          publish: build-release-beta
+          publish: yarn build-release-beta
           commit: 'chore: entering prerelease mode'
           title: ':rocket: Release ${{ steps.date.outputs.date }} :rocket:'
           createGithubReleases: true
