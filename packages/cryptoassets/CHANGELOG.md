@@ -4,13 +4,13 @@
 
 ### Patch Changes
 
-- 376246d: test: testing bump versions with beta tag
+- 7179204: chore: bump versions with correct script
 
 ## 1.14.6
 
 ### Patch Changes
 
-- f3bb88f: fix: uns name resolving
+- 9e0c685: core: bump both packages versions
 
 ## 1.14.5
 
