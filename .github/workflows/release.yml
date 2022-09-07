@@ -46,7 +46,6 @@ jobs:
       - name: Create Release Pull Request & npm publish (develop)
         if: github.ref == 'refs/heads/develop'
         uses: changesets/action@v1
-        id: changesets
         with:
           publish: build-release-beta
           commit: 'chore: entering prerelease mode'
@@ -59,7 +58,6 @@ jobs:
       - name: Create Release Pull Request & npm publish (latest)
         if: github.ref == 'refs/heads/master'
         uses: changesets/action@v1
-        id: changesets
         with:
           publish: yarn build-release
           commit: 'chore: entering prerelease mode'
@@ -68,13 +66,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create git tags
-        run: |
-          echo 'steps.changesets.outputs.published - ${{ steps.changesets.outputs.published }}'
-          echo 'steps.changesets.outputs.publishedPackages - ${{ steps.changesets.outputs.publishedPackages }}'
-#         git tag -a v${{ env.version }} -m ":rocket: Release ${{ steps.date.outputs.date }} :rocket:"
-#         git push origin v${{ env.version }}
 
 
 
