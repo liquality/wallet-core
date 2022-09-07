@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.8
+
+### Patch Changes
+
+- c9f3735: - fix address validation for evm chains
+
 ## 1.14.7
 
 ### Patch Changes
