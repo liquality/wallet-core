@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.7
+
+### Patch Changes
+
+- 376246d: test: testing bump versions with beta tag
+
 ## 1.14.6
 
 ### Patch Changes
