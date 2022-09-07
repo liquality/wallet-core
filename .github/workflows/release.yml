@@ -43,7 +43,21 @@ jobs:
         run: |
           echo "::set-output name=date::$(date +%Y-%m-%d_%H-%M-%S)"
 
-      - name: Create Release Pull Request & npm publish
+      - name: Create Release Pull Request & npm publish (develop)
+        if: github.ref == 'refs/heads/develop'
+        uses: changesets/action@v1
+        id: changesets
+        with:
+          publish: build-release-beta
+          commit: 'chore: entering prerelease mode'
+          title: ':rocket: Release ${{ steps.date.outputs.date }} :rocket:'
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create Release Pull Request & npm publish (latest)
+        if: github.ref == 'refs/heads/master'
         uses: changesets/action@v1
         id: changesets
         with:
