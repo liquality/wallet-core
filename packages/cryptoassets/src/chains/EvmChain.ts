@@ -1,4 +1,3 @@
-import { getAddress } from '@ethersproject/address';
 import { toChecksumAddress, isValidAddress } from 'ethereumjs-util';
 import { ensure0x } from '../utils';
 import { BaseChain } from './BaseChain';
@@ -9,7 +8,7 @@ export class EvmChain extends BaseChain {
   }
 
   public formatAddress(address: string) {
-    return getAddress(address);
+    return toChecksumAddress(address);
   }
 
   public isValidTransactionHash(hash: string) {
