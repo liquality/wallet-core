@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.10
+
+### Patch Changes
+
+- 52f0702: - fix RSK address validation
+
 ## 1.14.8
 
 ### Patch Changes
