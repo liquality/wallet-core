@@ -1,6 +1,6 @@
 ---
-'@liquality/cryptoassets': major
-'@liquality/wallet-core': major
+'@liquality/cryptoassets': patch
+'@liquality/wallet-core': patch
 ---
 
 - fix RSK address validation
