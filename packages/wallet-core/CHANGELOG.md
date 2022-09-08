@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.15
+
+### Patch Changes
+
+- 52f0702: - fix RSK address validation
+- Updated dependencies [52f0702]
+  - @liquality/cryptoassets@1.14.10
+
 ## 1.29.13
 
 ### Patch Changes
