@@ -13,6 +13,8 @@ export const sendNFTTransaction = async (
   const account: Account = getters.accountItem(accountId)!;
   const asset = getChain(network, account.chain).nativeAsset[0].code;
   const client = getters.client({ network, walletId, chainId: account.chain });
+
+  commit.REMOVE_NFT_FROM_STATE({ network, walletId, accountId, nft });
   const tx = await client.nft.transfer(nft.asset_contract!.address!, receiver, [nft.token_id!], values);
 
   const transaction: NFTSendHistoryItem = {

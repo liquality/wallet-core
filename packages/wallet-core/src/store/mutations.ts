@@ -131,6 +131,16 @@ export default {
 
     state.history[network]![walletId].push(transaction);
   },
+  REMOVE_NFT_FROM_STATE(
+    state: RootState,
+    { network, walletId, accountId, nft }: { network: Network; walletId: WalletId; accountId: AccountId; nft: NFT }
+  ) {
+    const account = state.accounts[walletId]?.[network]?.find((account) => account.id === accountId);
+    if (account) {
+      account.nfts = account.nfts.filter((nftItem) => nftItem.id !== nft.id);
+      console.log('🚀 ~ file: mutations.ts ~ line 140 ~ account', account);
+    }
+  },
   UPDATE_HISTORY(
     state: RootState,
     {
