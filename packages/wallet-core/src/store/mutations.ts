@@ -138,7 +138,6 @@ export default {
     const account = state.accounts[walletId]?.[network]?.find((account) => account.id === accountId);
     if (account) {
       account.nfts = account.nfts.filter((nftItem) => nftItem.id !== nft.id);
-      console.log('🚀 ~ file: mutations.ts ~ line 140 ~ account', account);
     }
   },
   UPDATE_HISTORY(
