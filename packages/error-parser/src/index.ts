@@ -1,3 +1,3 @@
 export { setReportConfig } from './reporters';
 export { getParser } from './factory';
-export { OneInchSwapErrorParser } from './parsers';
+export { OneInchApproveErrorParser, OneInchQuoteErrorParser, OneInchSwapErrorParser } from './parsers';
