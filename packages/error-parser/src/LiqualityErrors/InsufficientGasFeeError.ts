@@ -1,6 +1,4 @@
 import { LiqualityError } from '.';
-import { ErrorType } from '../types/types';
-
 class InsufficientGasFeeError extends LiqualityError {
   constructor(context?: InsufficientGasFeeErrorContext, lang?: string) {
     super();
@@ -25,6 +23,6 @@ class InsufficientGasFeeError extends LiqualityError {
   }
 }
 
-InsufficientGasFeeError.prototype.name = ErrorType.InsufficientGasFeeError;
+InsufficientGasFeeError.prototype.name = 'InsufficientGasFeeError';
 export type InsufficientGasFeeErrorContext = { currency: string; gasFee?: string };
 export default InsufficientGasFeeError;

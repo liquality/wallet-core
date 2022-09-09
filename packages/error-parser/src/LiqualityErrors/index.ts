@@ -4,7 +4,7 @@ import { ERROR_ID_LENGTH } from '../config';
 import { UserErrorMessage } from '../types/types';
 
 export abstract class LiqualityError extends Error {
-  code: number;
+  source: string;
   userMsg: UserErrorMessage;
   devMsg: { desc: string; data: any };
   rawError: never;

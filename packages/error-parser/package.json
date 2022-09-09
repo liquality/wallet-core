@@ -14,7 +14,8 @@
     "randombytes": "^2.1.0"
   },
   "devDependencies": {
-    "@types/randombytes": "^2.0.0"
+    "@types/randombytes": "^2.0.0",
+    "randexp": "^0.5.3"
   },
   "scripts": {
     "build": "tsc",

@@ -1,6 +1,4 @@
 import { LiqualityError } from '.';
-import { ErrorType } from '../types/types';
-
 class InternalError extends LiqualityError {
   constructor(lang?: string) {
     super();
@@ -19,5 +17,5 @@ class InternalError extends LiqualityError {
   }
 }
 
-InternalError.prototype.name = ErrorType.InternalError;
+InternalError.prototype.name = 'InternalError';
 export default InternalError;

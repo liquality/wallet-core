@@ -1,6 +1,4 @@
 import { LiqualityError } from '.';
-import { ErrorType } from '../types/types';
-
 class InsufficientLiquidityError extends LiqualityError {
   constructor(context?: InsufficientLiquidityErrorContext, lang?: string) {
     super();
@@ -28,7 +26,7 @@ class InsufficientLiquidityError extends LiqualityError {
   }
 }
 
-InsufficientLiquidityError.prototype.name = ErrorType.InsufficientLiquidityError;
+InsufficientLiquidityError.prototype.name = 'InsufficientLiquidityError';
 
 export type InsufficientLiquidityErrorContext = { from: string; to: string; amount: string };
 export default InsufficientLiquidityError;

@@ -2,6 +2,8 @@
 import { LiqualityError } from '../LiqualityErrors';
 
 export abstract class ErrorParser<SourceError, DataType> {
+  errorSource: string;
+
   protected abstract _parseError(error: SourceError, data: DataType): LiqualityError;
 
   wrap<F extends (...args: Array<any>) => any>(func: F, data: DataType): ReturnType<F> | undefined {

@@ -1,6 +1,4 @@
 import { LiqualityError } from '.';
-import { ErrorType } from '../types/types';
-
 class UnknownError extends LiqualityError {
   constructor(lang?: string) {
     super();
@@ -19,6 +17,6 @@ class UnknownError extends LiqualityError {
   }
 }
 
-UnknownError.prototype.name = ErrorType.UnknownError;
+UnknownError.prototype.name = 'UnknownError';
 
 export default UnknownError;
