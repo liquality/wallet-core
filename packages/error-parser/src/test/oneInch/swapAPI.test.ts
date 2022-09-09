@@ -1,14 +1,14 @@
 import { OneInchError, ONE_INCH_ERRORS } from '../../parsers/OneInchAPI';
-import { FAKE_ERROR, getError } from '..';
+import { FAKE_ERROR, getError, getErrorAsync } from '..';
 import { LiqualityError } from '../../LiqualityErrors';
 import RandExp = require('randexp');
 import { getParser, OneInchSwapErrorParser } from '../../';
 import { OneInchSwapParserDataType } from '../../parsers';
-import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
 import InternalError from '../../LiqualityErrors/InternalError';
 import InsufficientFundsError from '../../LiqualityErrors/InsufficientFundsError';
 import InsufficientGasFeeError from '../../LiqualityErrors/InsufficientGasFeeError';
 import InsufficientLiquidityError from '../../LiqualityErrors/InsufficientLiquidityError';
+import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
 import UnknownError from '../../LiqualityErrors/UnknownError';
 
 describe('OneInchSwapAPI parser', () => {
@@ -33,7 +33,7 @@ describe('OneInchSwapAPI parser', () => {
     [ONE_INCH_ERRORS.INVALID_TOKEN_ADDRESS, InternalError.prototype.name],
   ];
 
-  it('should not log anything to console', () => {
+  it('should not log anything to console', async () => {
     const logSpy = jest.spyOn(console, 'log');
 
     getError(() => {
@@ -42,10 +42,16 @@ describe('OneInchSwapAPI parser', () => {
       }, data);
     });
 
+    await getErrorAsync(async () => {
+      return await parser.wrapAync(async () => {
+        throw FAKE_ERROR;
+      }, data);
+    });
+
     expect(logSpy).toHaveBeenCalledTimes(0);
   });
 
-  it.each(errorMap)("should map '%s' => '%s'", (sourceError, liqError) => {
+  it.each(errorMap)("should map '%s' => '%s'", async (sourceError, liqError) => {
     const validError: OneInchError = {
       statusCode: 400,
       error: 'Bad Request',
@@ -70,6 +76,17 @@ describe('OneInchSwapAPI parser', () => {
     expect(error.source).toBe(OneInchSwapErrorParser.prototype.errorSource);
     expect(error.devMsg.data).toBe(data);
     expect(error.rawError).toBe(validError);
+
+    const error1: LiqualityError = await getErrorAsync(async () => {
+      await parser.wrapAync(async () => {
+        throw validError;
+      }, data);
+    });
+
+    expect(error1.name).toBe(liqError);
+    expect(error1.source).toBe(OneInchSwapErrorParser.prototype.errorSource);
+    expect(error1.devMsg.data).toBe(data);
+    expect(error1.rawError).toBe(validError);
   });
 
   const wrongErrors = [
@@ -89,12 +106,19 @@ describe('OneInchSwapAPI parser', () => {
       },
     ],
   ];
-  it.each(wrongErrors)('Should return unknown error when %s', (_test, error) => {
+  it.each(wrongErrors)('Should return unknown error when %s', async (_test, error) => {
     const liqError: LiqualityError = getError(() => {
       parser.wrap(() => {
         throw error;
       }, data);
     });
     expect(liqError.name).toBe(UnknownError.prototype.name);
+
+    const liqError1: LiqualityError = await getErrorAsync(async () => {
+      await parser.wrapAync(() => {
+        throw error;
+      }, data);
+    });
+    expect(liqError1.name).toBe(UnknownError.prototype.name);
   });
 });
