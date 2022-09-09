@@ -12,7 +12,9 @@ export const sendNFTTransaction = async (
   const { getters, commit, dispatch } = rootActionContext(context);
   const account: Account = getters.accountItem(accountId)!;
   const asset = getChain(network, account.chain).nativeAsset[0].code;
-  const client = getters.client({ network, walletId, chainId: account.chain });
+  const client = getters.client({ network, walletId, chainId: account.chain, accountId });
+  // eslint-disable-next-line no-debugger
+  debugger
   const tx = await client.nft.transfer(nft.asset_contract!.address!, receiver, [nft.token_id!], values);
 
   const transaction: NFTSendHistoryItem = {
