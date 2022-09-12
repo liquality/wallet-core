@@ -1,6 +1,4 @@
 import { LiqualityError } from '.';
-import { ErrorType } from '../types/types';
-
 class ThirdPartyError extends LiqualityError {
   constructor(context?: ThirdPartyErrorContext, lang?: string) {
     super();
@@ -25,7 +23,7 @@ class ThirdPartyError extends LiqualityError {
   }
 }
 
-ThirdPartyError.prototype.name = ErrorType.ThirdPartyError;
+ThirdPartyError.prototype.name = 'ThirdPartyError';
 
 export enum UserActivity {
   SWAP = 'SWAP',

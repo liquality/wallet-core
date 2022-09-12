@@ -7,3 +7,11 @@ export function getError(func: () => unknown) {
     return error;
   }
 }
+
+export async function getErrorAsync(func: () => Promise<unknown>) {
+  try {
+    return await func();
+  } catch (error) {
+    return error;
+  }
+}

@@ -1,5 +1,4 @@
 import { LiqualityError } from '.';
-import { ErrorType } from '../types/types';
 
 class InsufficientFundsError extends LiqualityError {
   constructor(context?: InsufficientFundsErrorContext, lang?: string) {
@@ -22,7 +21,7 @@ class InsufficientFundsError extends LiqualityError {
   }
 }
 
-InsufficientFundsError.prototype.name = ErrorType.InsufficientFundsError;
+InsufficientFundsError.prototype.name = 'InsufficientFundsError';
 
 export type InsufficientFundsErrorContext = { availAmt: string; neededAmt: string; currency: string };
 export default InsufficientFundsError;
