@@ -56,6 +56,7 @@
     "version-packages": "changeset version",
     "release": "yarn workspaces foreach --from '@liquality/*' npm publish --access public",
     "release-beta": "yarn workspaces foreach --from '@liquality/*' npm publish --tag beta --access public",
+    "release:prerelease": "yarn changeset pre enter next && yarn changeset version && git add . && git commit -m \"chore: version prerelease packages\"",
     "build-release": "yarn build --force && yarn release",
     "build-prerelease": "yarn build --force && yarn release-beta",
     "build-release-new": "yarn build --force && changeset publish --yes"
