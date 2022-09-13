@@ -1,5 +1,19 @@
 # @liquality/wallet-core
 
+## 1.29.16
+
+### Patch Changes
+
+- 5e73c63: feat: bump all versions from master
+- Updated dependencies [5e73c63]
+  - @liquality/cryptoassets@1.14.11
+
+## 1.29.14
+
+### Patch Changes
+
+- 7f1b399: Add account id for client getter inside NFT send transaction action
+
 ## 1.29.15
 
 ### Patch Changes
@@ -12,6 +26,8 @@
 
 ### Patch Changes
 
+- a45924d: - fix address validation for evm chains
+- Updated dependencies [a45924d]
 - c9f3735: - fix address validation for evm chains
 - Updated dependencies [c9f3735]
   - @liquality/cryptoassets@1.14.8
@@ -20,6 +36,8 @@
 
 ### Patch Changes
 
+- 376246d: test: testing bump versions with beta tag
+- Updated dependencies [376246d]
 - 7179204: chore: bump versions with correct script
 - Updated dependencies [7179204]
   - @liquality/cryptoassets@1.14.7
@@ -28,6 +46,8 @@
 
 ### Patch Changes
 
+- f3bb88f: fix: uns name resolving
+- Updated dependencies [f3bb88f]
 - 9e0c685: core: bump both packages versions
 - Updated dependencies [9e0c685]
   - @liquality/cryptoassets@1.14.6

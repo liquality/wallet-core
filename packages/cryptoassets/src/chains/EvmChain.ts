@@ -1,4 +1,4 @@
-import { toChecksumAddress, isValidAddress } from 'ethereumjs-util';
+import { isValidAddress, toChecksumAddress } from 'ethereumjs-util';
 import { ensure0x } from '../utils';
 import { BaseChain } from './BaseChain';
 
