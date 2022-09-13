@@ -2,9 +2,9 @@
   "mode": "pre",
   "tag": "next",
   "initialVersions": {
-    "@liquality/cryptoassets": "1.14.11",
-    "@liquality/error-parser": "1.0.1",
-    "@liquality/wallet-core": "1.29.16"
+    "@liquality/cryptoassets": "1.14.12-next.0",
+    "@liquality/error-parser": "1.0.2-next.0",
+    "@liquality/wallet-core": "1.29.17-next.0"
   },
   "changesets": [
     "unlucky-fishes-judge"
