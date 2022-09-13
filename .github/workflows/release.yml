@@ -60,6 +60,7 @@ jobs:
         uses: changesets/action@v1
         with:
           publish: yarn build-prerelease
+          version: yarn version-packages
           commit: 'chore: Enter prerelease mode and version packages'
           title: ':rocket: PreRelease ${{ steps.date.outputs.date }} :rocket:'
           createGithubReleases: true
