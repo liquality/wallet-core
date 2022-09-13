@@ -4,6 +4,7 @@ import { Network, SwapProviderType } from '../store/types';
 import astroportInfo from '../swaps/astroport/info.json';
 import fastbtcInfo from '../swaps/fastbtc/info.json';
 import hopInfo from '../swaps/hop/info.json';
+import lifiInfo from '../swaps/lifi/info.json';
 import jupiterInfo from '../swaps/jupiter/info.json';
 import liqualityInfo from '../swaps/liquality/info.json';
 import liqualityBoostERC20toNativeInfo from '../swaps/liqualityboost/liqualityBoostERC20toNative/info.json';
@@ -27,6 +28,7 @@ const swapProviderInfo = {
   [SwapProviderType.Astroport]: astroportInfo,
   [SwapProviderType.Hop]: hopInfo,
   [SwapProviderType.Jupiter]: jupiterInfo,
+  [SwapProviderType.LiFi]: lifiInfo,
 };
 
 function getSwapProviderConfig(network: Network, providerId: SwapProviderType) {
