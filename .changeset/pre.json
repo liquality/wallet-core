@@ -6,7 +6,5 @@
     "@liquality/error-parser": "1.0.2-next.0",
     "@liquality/wallet-core": "1.29.17-next.0"
   },
-  "changesets": [
-    "unlucky-fishes-judge"
-  ]
+  "changesets": []
 }
