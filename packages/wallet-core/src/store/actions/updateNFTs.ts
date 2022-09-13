@@ -1,20 +1,21 @@
 import Bluebird from 'bluebird';
 import { ActionContext, rootActionContext } from '..';
-import { Account, AccountId, Network, NFT, WalletId } from '../types';
+import { Account, Network, NFT, WalletId } from '../types';
 
 export const updateNFTs = async (
   context: ActionContext,
   {
     walletId,
     network,
-    accountIds,
   }: {
     walletId: WalletId;
     network: Network;
-    accountIds: AccountId[];
   }
 ): Promise<NFT[][]> => {
   const { commit, getters } = rootActionContext(context);
+  const accountIds = getters.accountsData.map((account) => {
+    return account.id;
+  });
 
   const nfts = await Bluebird.map(
     accountIds,
@@ -36,6 +37,9 @@ export const updateNFTs = async (
       const nfts = nftAssetsFetched.map((nftAsset: NFT) => {
         const nftAssetStoredInState = nftAssetsStoredInState.find((asset: NFT) => asset.token_id === nftAsset.token_id);
         const starred = nftAssetStoredInState ? nftAssetStoredInState.starred : false;
+        // const image = nftAsset.image_original_url.includes('ipfs://')
+        //   ? parsed.image_original_url.replace('ipfs://', 'https://ipfs.io/ipfs/')
+        //   : parsed.image_original_url;
         return {
           ...nftAsset,
           starred,

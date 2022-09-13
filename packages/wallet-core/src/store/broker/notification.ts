@@ -74,7 +74,9 @@ const createSendNotification = (item: SendHistoryItem) => {
 };
 
 const createSendNFTNotification = (item: NFTSendHistoryItem) => {
-  if (!(item.status in NFT_SEND_STATUS_MAP)) return;
+  if (!(item.status in NFT_SEND_STATUS_MAP)) {
+    return;
+  }
   const notification = NFT_SEND_STATUS_MAP[item.status](item);
 
   return createNotification({
@@ -83,7 +85,11 @@ const createSendNFTNotification = (item: NFTSendHistoryItem) => {
 };
 
 export const createHistoryNotification = (item: HistoryItem) => {
-  if (item.type === 'SEND') return createSendNotification(item);
-  else if (item.type === 'SWAP') return createSwapNotification(item);
-  else if (item.type === 'NFT') return createSendNFTNotification(item);
+  if (item.type === 'SEND') {
+    return createSendNotification(item);
+  } else if (item.type === 'SWAP') {
+    return createSwapNotification(item);
+  } else if (item.type === 'NFT') {
+    return createSendNFTNotification(item);
+  }
 };
