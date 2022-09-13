@@ -20,7 +20,7 @@ const defaultWalletOptions: WalletOptions = {
     },
   },
   createNotification({ message }) {
-    console.log(`Notification: ${message}`);
+    console.warn(`Notification: ${message}`);
   },
 };
 
