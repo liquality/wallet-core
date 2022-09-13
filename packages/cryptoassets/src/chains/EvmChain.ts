@@ -1,4 +1,3 @@
-import { getAddress } from '@ethersproject/address';
 import { isValidAddress, toChecksumAddress } from 'ethereumjs-util';
 import { ensure0x } from '../utils';
 import { BaseChain } from './BaseChain';
