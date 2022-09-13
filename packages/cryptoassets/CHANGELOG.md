@@ -1,22 +1,31 @@
 # @liquality/cryptoassets
 
+## 1.14.10
+
+### Patch Changes
+
+- 52f0702: - fix RSK address validation
+
 ## 1.14.8
 
 ### Patch Changes
 
 - a45924d: - fix address validation for evm chains
 
+
 ## 1.14.7
 
 ### Patch Changes
 
 - 376246d: test: testing bump versions with beta tag
+- 7179204: chore: bump versions with correct script
 
 ## 1.14.6
 
 ### Patch Changes
 
 - f3bb88f: fix: uns name resolving
+- 9e0c685: core: bump both packages versions
 
 ## 1.14.5
 

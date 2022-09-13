@@ -9,7 +9,7 @@ export class EvmChain extends BaseChain {
   }
 
   public formatAddress(address: string) {
-    return getAddress(address);
+    return toChecksumAddress(address);
   }
 
   public isValidTransactionHash(hash: string) {

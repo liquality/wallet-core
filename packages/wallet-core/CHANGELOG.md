@@ -6,12 +6,22 @@
 
 - 7f1b399: Add account id for client getter inside NFT send transaction action
 
+## 1.29.15
+
+### Patch Changes
+
+- 52f0702: - fix RSK address validation
+- Updated dependencies [52f0702]
+  - @liquality/cryptoassets@1.14.10
+
 ## 1.29.13
 
 ### Patch Changes
 
 - a45924d: - fix address validation for evm chains
 - Updated dependencies [a45924d]
+- c9f3735: - fix address validation for evm chains
+- Updated dependencies [c9f3735]
   - @liquality/cryptoassets@1.14.8
 
 ## 1.29.12
@@ -20,14 +30,17 @@
 
 - 376246d: test: testing bump versions with beta tag
 - Updated dependencies [376246d]
+- 7179204: chore: bump versions with correct script
+- Updated dependencies [7179204]
   - @liquality/cryptoassets@1.14.7
 
 ## 1.29.11
 
 ### Patch Changes
-
 - f3bb88f: fix: uns name resolving
 - Updated dependencies [f3bb88f]
+- 9e0c685: core: bump both packages versions
+- Updated dependencies [9e0c685]
   - @liquality/cryptoassets@1.14.6
 
 ## 1.29.10
