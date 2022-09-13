@@ -52,11 +52,12 @@
     "postpack": "pinst --enable",
     "changeset": "changeset",
     "version": "yarn changeset version",
+    "changeset-prerelease-enter": "yarn changeset pre enter next",
     "version-packages": "changeset version",
     "release": "yarn workspaces foreach --from '@liquality/*' npm publish --access public",
     "release-beta": "yarn workspaces foreach --from '@liquality/*' npm publish --tag beta --access public",
     "build-release": "yarn build --force && yarn release",
-    "build-prerelease": "yarn changeset pre enter next && yarn build --force && yarn release-beta",
+    "build-prerelease": "yarn build --force && yarn release-beta",
     "build-release-new": "yarn build --force && changeset publish --yes"
   },
   "packageManager": "yarn@3.1.1",
