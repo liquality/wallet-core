@@ -2,6 +2,8 @@ name: Build Test
 
 on:
   push:
+    branches-ignore:
+      - develop
     paths-ignore:
       - '**/node_modules/**'
       - '.github/**'

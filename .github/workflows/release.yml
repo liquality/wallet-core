@@ -36,7 +36,7 @@ jobs:
             yarn-cache-folder-
 
       - name: install dependencies
-        run: yarn --immutable-cache
+        run: yarn --immutable
 
       - name: Get date
         id: date
