@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.16
+
+### Patch Changes
+
+- 5e73c63: feat: bump all versions from master
+- Updated dependencies [5e73c63]
+  - @liquality/cryptoassets@1.14.11
+
 ## 1.29.14
 
 ### Patch Changes
@@ -37,6 +45,7 @@
 ## 1.29.11
 
 ### Patch Changes
+
 - f3bb88f: fix: uns name resolving
 - Updated dependencies [f3bb88f]
 - 9e0c685: core: bump both packages versions

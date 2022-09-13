@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.11
+
+### Patch Changes
+
+- 5e73c63: feat: bump all versions from master
+
 ## 1.14.10
 
 ### Patch Changes
@@ -11,7 +17,6 @@
 ### Patch Changes
 
 - a45924d: - fix address validation for evm chains
-
 
 ## 1.14.7
 
