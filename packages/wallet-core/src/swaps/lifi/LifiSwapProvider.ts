@@ -32,6 +32,8 @@ export interface LifiSwapHistoryItem extends EvmSwapHistoryItem {
   fromFundTx: Transaction<EvmTypes.EthersTransactionResponse>;
 }
 
+export { Action as LifiToolAction, QuoteRequest as LifiQuoteRequest } from '@lifi/sdk';
+
 class LifiSwapProvider extends EvmSwapProvider {
   public readonly config: LifiSwapProviderConfig;
   public readonly nativeAssetAddress = ethers.constants.AddressZero;
@@ -99,10 +101,14 @@ class LifiSwapProvider extends EvmSwapProvider {
     };
 
     try {
+      console.log('Before getQuote');
       const lifiRoute = await this._lifiClient.getQuote(quoteRequest);
+      console.log('After getQuote');
 
       return { from, to, fromAmount: fromAmountInUnit, toAmount: lifiRoute.estimate.toAmount, lifiRoute };
     } catch (e) {
+      console.log('Catch getQuote');
+
       console.warn('LifiSwapProvider: ', e);
       return null;
     }

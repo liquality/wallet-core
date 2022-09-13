@@ -1,24 +1,24 @@
 import { LiqualityError } from '.';
-class ThirdPartyError extends LiqualityError {
-  public readonly name = 'ThirdPartyError';
 
-  constructor(context?: ThirdPartyErrorContext, lang?: string) {
+class PairNotSupportedError extends LiqualityError {
+  public readonly name = 'PairNotSupportedError';
+
+  constructor(context?: PairNotSupportedErrorContext, lang?: string) {
     super();
     this.wrapUserErrorMessage(context, lang);
   }
 
-  wrapUserErrorMessage(context?: ThirdPartyErrorContext, lang?: string): void {
+  wrapUserErrorMessage(context?: PairNotSupportedErrorContext, lang?: string): void {
     const activity = context?.activity;
     switch (lang) {
       default:
         this.userMsg = {
-          cause: 'Sorry, something went wrong in a third party service we use in processing this transaction',
+          cause: `Sorry, swap provider does not support selected pair`,
           suggestions: [],
         };
         if (activity === UserActivity.SWAP) {
           this.userMsg.suggestions.push('Select a different swap provider');
         }
-        this.userMsg.suggestions.push('Try again at a later time');
         this.userMsg.suggestions.push(this.suggestContactSupport());
         break;
     }
@@ -28,6 +28,6 @@ class ThirdPartyError extends LiqualityError {
 export enum UserActivity {
   SWAP = 'SWAP',
 }
-export type ThirdPartyErrorContext = { activity: string };
+export type PairNotSupportedErrorContext = { activity: string; from?: string; to?: string };
 
-export default ThirdPartyError;
+export default PairNotSupportedError;

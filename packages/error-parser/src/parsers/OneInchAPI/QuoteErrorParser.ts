@@ -1,5 +1,6 @@
 import { OneInchSwapErrorParser } from './SwapErrorParser';
+import { oneInchSwapSourceName } from '.';
 
-export class OneInchQuoteErrorParser extends OneInchSwapErrorParser {}
-
-OneInchQuoteErrorParser.prototype.errorSource = 'OneInchQuoteAPI';
+export class OneInchQuoteErrorParser extends OneInchSwapErrorParser {
+  public static readonly errorSource = oneInchSwapSourceName;
+}
