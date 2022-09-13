@@ -8,7 +8,7 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release:
+  pre-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
