@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16
-      - run: yarn
+      - run: yarn --immutable-cache
       - run: yarn lint
       - run: yarn build
       - name: Run __tests__ (coverage)
