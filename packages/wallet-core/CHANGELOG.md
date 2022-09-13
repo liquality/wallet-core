@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 1.29.14
+
+### Patch Changes
+
+- 7f1b399: Add account id for client getter inside NFT send transaction action
+
 ## 1.29.13
 
 ### Patch Changes
