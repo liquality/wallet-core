@@ -23,6 +23,7 @@ describe('updateNFTs tests', () => {
     const assets = await wallet.dispatch.updateNFTs({
       walletId: wallet.state.activeWalletId,
       network: wallet.state.activeNetwork,
+      accountIds,
     });
     expect(assets).toEqual(Array(accountIds.length).fill([]));
   });
