@@ -39,7 +39,6 @@ export const performNextAction = async (
         walletId,
         transaction: item,
       });
-      dispatch.updateNFTs({ network, walletId, accountIds: [item.accountId] });
     }
   } catch (e) {
     updates = { error: e.toString() };
