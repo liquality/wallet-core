@@ -1,5 +1,17 @@
 # @liquality/cryptoassets
 
+## 1.14.12-next.2
+
+### Patch Changes
+
+- test: test another pre release bump
+
+## 1.14.12-next.1
+
+### Patch Changes
+
+- test: bump another next version from develop branch
+
 ## 1.14.12-next.0
 
 ### Patch Changes

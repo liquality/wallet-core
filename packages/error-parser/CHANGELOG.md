@@ -1,5 +1,17 @@
 # @liquality/error-parser
 
+## 1.0.2-next.2
+
+### Patch Changes
+
+- test: test another pre release bump
+
+## 1.0.2-next.1
+
+### Patch Changes
+
+- test: bump another next version from develop branch
+
 ## 1.0.2-next.0
 
 ### Patch Changes
