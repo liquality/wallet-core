@@ -7,6 +7,7 @@
     "@liquality/wallet-core": "1.29.17-next.0"
   },
   "changesets": [
+    "clever-horses-sell",
     "moody-cameras-fry",
     "pretty-ladybugs-watch"
   ]

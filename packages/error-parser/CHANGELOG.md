@@ -1,5 +1,11 @@
 # @liquality/error-parser
 
+## 1.0.2-next.3
+
+### Patch Changes
+
+- fe656f0: test: testing bump version without running changeset version command local
+
 ## 1.0.2-next.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.12-next.3
+
+### Patch Changes
+
+- fe656f0: test: testing bump version without running changeset version command local
+
 ## 1.14.12-next.2
 
 ### Patch Changes

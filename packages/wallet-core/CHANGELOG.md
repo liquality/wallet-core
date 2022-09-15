@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.17-next.3
+
+### Patch Changes
+
+- fe656f0: test: testing bump version without running changeset version command local
+- Updated dependencies [fe656f0]
+  - @liquality/cryptoassets@1.14.12-next.3
+
 ## 1.29.17-next.2
 
 ### Patch Changes
