@@ -103,4 +103,16 @@ Push the file along with the rest of the changes, and let the GitHub actions do 
 
 ![Alt text](docs/img_2.png)
 
+### How to do prerelease version from a branch
 
+- Create a changed file with the version you want to release, for example `v0.1.0-alpha.1`
+```bash
+ yarn changeset
+```
+- Enter into prerelease mode
+```bash
+yarn changeset pre enter next 
+```
+```bash
+yarn changeset version
+```
