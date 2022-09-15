@@ -13,18 +13,20 @@ class HighInputAmountError extends LiqualityError {
   wrapUserErrorMessage(context: HighInputAmountErrorContext, lang?: string): void {
     const { expectedMaximum, assetCode } = context;
     switch (lang) {
-      default:
+      default: {
+        const inputTooHigh = `Input amount is too high`;
         this.userMsg = {
-          cause: `Input amount is too high`,
+          cause:
+            expectedMaximum && assetCode
+              ? inputTooHigh
+              : inputTooHigh + `, expected maximum amount is ${expectedMaximum} ${assetCode}`,
           suggestions: [],
         };
 
         this.userMsg.suggestions.push('Please decrease input amount');
-        if (expectedMaximum && assetCode) {
-          this.userMsg.suggestions.push(`Expected maximum amount is ${expectedMaximum} ${assetCode}`);
-        }
 
         break;
+      }
     }
   }
 }
