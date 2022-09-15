@@ -47,7 +47,7 @@ jobs:
         id: changesets
         with:
           publish: yarn build-prerelease
-          commit: 'chore: Enter prerelease mode and version packages'
+          commit: 'chore: enter prerelease mode and version packages'
           title: ':rocket: PreRelease ${{ steps.date.outputs.date }} :rocket:'
           createGithubReleases: true
         env:
