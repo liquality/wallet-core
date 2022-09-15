@@ -1,3 +1,4 @@
+import { NftProviderType } from '../../../types';
 import ethereum from '../../../chains/mainnet/evm/ethereum';
 import { transformMainnetToTestnetChain } from '../../../chains/utils';
 
@@ -13,10 +14,11 @@ export default transformMainnetToTestnetChain(
   },
   [
     {
-      tx: 'https://ropsten.etherscan.io/tx/',
-      address: 'https://ropsten.etherscan.io/address/',
-      token: 'https://ropsten.etherscan.io/token/',
+      tx: 'https://ropsten.etherscan.io/tx/{hash}',
+      address: 'https://ropsten.etherscan.io/address/{address}',
+      token: 'https://ropsten.etherscan.io/token/{token}',
     },
   ],
-  'https://faucet.metamask.io/'
+  'https://faucet.metamask.io/',
+  NftProviderType.Moralis
 );

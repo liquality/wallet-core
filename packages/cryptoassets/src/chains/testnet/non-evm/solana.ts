@@ -12,8 +12,8 @@ export default transformMainnetToTestnetChain(
   },
   [
     {
-      tx: 'https://explorer.solana.com/tx/${tx}?cluster=testnet',
-      address: 'https://explorer.solana.com/address/${address}?cluster=testnet',
+      tx: 'https://explorer.solana.com/tx/{hash}?cluster=testnet',
+      address: 'https://explorer.solana.com/address/{address}?cluster=testnet',
     },
   ],
   'https://solfaucet.com/'

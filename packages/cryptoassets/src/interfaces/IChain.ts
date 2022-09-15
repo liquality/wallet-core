@@ -1,8 +1,12 @@
-import { ChainId, ExplorerView, FeeMultiplier } from '../types';
+import { ChainId, ExplorerView, FeeMultiplier, NftProviderType } from '../types';
 import { IAsset } from './IAsset';
 import { IFees } from './IFees';
 import { IGasLimits } from './IGasLimit';
 import { INetwork } from './INetwork';
+
+export interface INameService {
+  uns?: string;
+}
 
 export interface IChain {
   id: ChainId;
@@ -13,11 +17,14 @@ export interface IChain {
 
   isEVM: boolean;
   hasTokens: boolean;
+  nftProviderType?: NftProviderType;
   isMultiLayered: boolean;
 
   averageBlockTime: number;
   safeConfirmations: number;
   txFailureTimeoutMs: number;
+
+  nameService?: INameService;
 
   network: INetwork;
 

@@ -36,11 +36,14 @@ export default new SolanaChain({
   },
   explorerViews: [
     {
-      tx: 'https://explorer.solana.com/tx/',
-      address: 'https://explorer.solana.com/address/',
+      tx: 'https://explorer.solana.com/tx/{hash}',
+      address: 'https://explorer.solana.com/address/{address}',
     },
   ],
 
+  nameService: {
+    uns: 'SOLANA',
+  },
   multicallSupport: false,
   ledgerSupport: false,
 
