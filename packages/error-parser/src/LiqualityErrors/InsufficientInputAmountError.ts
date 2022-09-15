@@ -15,9 +15,11 @@ class InsufficientInputAmountError extends LiqualityError {
     switch (lang) {
       default:
         this.userMsg = {
-          cause: `Input amount is too low, please increase it`,
+          cause: `Input amount is too low`,
           suggestions: [],
         };
+
+        this.userMsg.suggestions.push('Please increase inputAmount');
         if (expectedMinimum && assetCode) {
           this.userMsg.suggestions.push(`Expected minimum amount is ${expectedMinimum} ${assetCode}`);
         }

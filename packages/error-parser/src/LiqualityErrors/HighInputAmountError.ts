@@ -15,9 +15,11 @@ class HighInputAmountError extends LiqualityError {
     switch (lang) {
       default:
         this.userMsg = {
-          cause: `Input amount is too high, please decrease it`,
+          cause: `Input amount is too high`,
           suggestions: [],
         };
+
+        this.userMsg.suggestions.push('Please decrease input amount');
         if (expectedMaximum && assetCode) {
           this.userMsg.suggestions.push(`Expected maximum amount is ${expectedMaximum} ${assetCode}`);
         }
