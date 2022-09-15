@@ -36,18 +36,6 @@ export const updateNFTs = async (
       const nfts = nftAssetsFetched.map((nftAsset: NFT) => {
         const nftAssetStoredInState = nftAssetsStoredInState.find((asset: NFT) => asset.token_id === nftAsset.token_id);
         const starred = nftAssetStoredInState ? nftAssetStoredInState.starred : false;
-        const replaceIPFSUrl = (url: string) => {
-          return url.replace('ipfs://', 'https://ipfs.io/ipfs/');
-        };
-        if (nftAsset.image_original_url) {
-          nftAsset.image_original_url = replaceIPFSUrl(nftAsset.image_original_url);
-        }
-        if (nftAsset.image_thumbnail_url) {
-          nftAsset.image_thumbnail_url = replaceIPFSUrl(nftAsset.image_thumbnail_url);
-        }
-        if (nftAsset.image_preview_url) {
-          nftAsset.image_preview_url = replaceIPFSUrl(nftAsset.image_preview_url);
-        }
 
         return {
           ...nftAsset,
