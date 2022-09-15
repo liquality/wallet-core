@@ -106,13 +106,8 @@ Push the file along with the rest of the changes, and let the GitHub actions do 
 ### How to do prerelease version from a branch
 
 - Create a changed file with the version you want to release, for example `v0.1.0-alpha.1`
+
 ```bash
  yarn changeset
 ```
-- Enter into prerelease mode
-```bash
-yarn changeset pre enter next 
-```
-```bash
-yarn changeset version
-```
+Note: Ensure `pre.json` file is present in the `.changeset` directory of the project, then create a pull request with the changeset file and merge it to the develop branch.
