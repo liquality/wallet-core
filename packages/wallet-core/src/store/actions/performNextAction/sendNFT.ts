@@ -26,9 +26,7 @@ async function waitForConfirmations(
   try {
     const tx = await client.chain.getTransactionByHash(transaction.txHash);
     if (tx && tx.confirmations && tx.confirmations > 0) {
-      if (transaction.type === 'NFT') {
-        dispatch.updateNFTs({ network, walletId, accountIds: [transaction.accountId] });
-      }
+      await dispatch.updateNFTs({ network, walletId, accountIds: [transaction.accountId] });
 
       return {
         endTime: Date.now(),
