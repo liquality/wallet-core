@@ -44,7 +44,19 @@ jobs:
       - run: yarn --immutable
       - run: yarn lint
       - run: yarn build
+
+      - name: Get changed files in the packages folder
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v29.0.7
+        with:
+          files_ignore: |
+            .changeset/**
+            packages/**/package.json
+            packages/**/*.{md,mdx}
+            !*.md
+
       - name: Run __tests__ (coverage)
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: |
           yarn rebuild
           export FORCE_COLOR=true

@@ -50,7 +50,7 @@ jobs:
             .changeset/**
 
       - name: Create Release Pull Request & npm publish (Prereleases)
-        if: github.ref == 'refs/heads/develop' && steps.changed-files-specific.outputs.any_changed == 'true'
+        if: github.ref == 'refs/heads/develop' && steps.changed-files-specific.outputs.any_changed == 'true' || steps.changed-files-specific.outputs.any_deleted == 'true'
         uses: changesets/action@v1
         id: changesets
         with:
