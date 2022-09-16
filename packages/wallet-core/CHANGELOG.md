@@ -1,5 +1,43 @@
 # @liquality/wallet-core
 
+## 1.29.17-next.4
+
+### Patch Changes
+
+- ae1b06b: Wallet core minor bump
+
+## 1.29.17-next.3
+
+### Patch Changes
+
+- fe656f0: test: testing bump version without running changeset version command local
+- Updated dependencies [fe656f0]
+  - @liquality/cryptoassets@1.14.12-next.3
+
+## 1.29.17-next.2
+
+### Patch Changes
+
+- test: test another pre release bump
+- Updated dependencies
+  - @liquality/cryptoassets@1.14.12-next.2
+
+## 1.29.17-next.1
+
+### Patch Changes
+
+- test: bump another next version from develop branch
+- Updated dependencies
+  - @liquality/cryptoassets@1.14.12-next.1
+
+## 1.29.17-next.0
+
+### Patch Changes
+
+- 179f0b4: test: prerelease version bump
+- Updated dependencies [179f0b4]
+  - @liquality/cryptoassets@1.14.12-next.0
+
 ## 1.29.16
 
 ### Patch Changes
