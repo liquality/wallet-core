@@ -87,7 +87,8 @@ yarn test
 ## Publish to npm
 
 - GitHub actions will publish to NPM automatically after a successful pull request merge, follow the below steps to publish to NPM.
-```
+
+```bash
 yarn changeset
 ```
 
