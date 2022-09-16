@@ -1,5 +1,11 @@
 # @liquality/error-parser
 
+## 1.0.3
+
+### Patch Changes
+
+- 1784096: feat: bump version from master after yarn lock file
+
 ## 1.0.2
 
 ### Patch Changes
