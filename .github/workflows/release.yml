@@ -35,7 +35,7 @@ jobs:
             yarn-cache-folder-
 
       - name: install dependencies
-        run: yarn --immutable
+        run: yarn install --frozen-lockfile
 
       - name: Get date
         id: date
