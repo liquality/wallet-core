@@ -1,5 +1,14 @@
 # @liquality/cryptoassets
 
+## 1.14.12
+
+### Patch Changes
+
+- fe656f0: test: testing bump version without running changeset version command local
+- 66038e7: test: bump another next version from develop branch
+- 66038e7: test: test another pre release bump
+- f552f0e: feat: bump patch version from master branch for rc0.73.0
+
 ## 1.14.12-next.3
 
 ### Patch Changes

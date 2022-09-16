@@ -1,5 +1,20 @@
 # @liquality/wallet-core
 
+## 1.29.17
+
+### Patch Changes
+
+- fe656f0: test: testing bump version without running changeset version command local
+- 66038e7: test: bump another next version from develop branch
+- 66038e7: test: test another pre release bump
+- f552f0e: feat: bump patch version from master branch for rc0.73.0
+- ae1b06b: Wallet core minor bump
+- Updated dependencies [fe656f0]
+- Updated dependencies [66038e7]
+- Updated dependencies [66038e7]
+- Updated dependencies [f552f0e]
+  - @liquality/cryptoassets@1.14.12
+
 ## 1.29.17-next.4
 
 ### Patch Changes
