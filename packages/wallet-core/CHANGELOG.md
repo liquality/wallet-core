@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.20
+
+### Patch Changes
+
+- 8f4b740: test: bump version from master test
+- Updated dependencies [8f4b740]
+  - @liquality/cryptoassets@1.14.15
+
 ## 1.29.19
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @liquality/error-parser
 
+## 1.0.5
+
+### Patch Changes
+
+- 8f4b740: test: bump version from master test
+
 ## 1.0.4
 
 ### Patch Changes
