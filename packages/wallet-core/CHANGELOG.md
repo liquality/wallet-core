@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 1.29.17-next.4
+
+### Patch Changes
+
+- ae1b06b: Wallet core minor bump
+
 ## 1.29.17-next.3
 
 ### Patch Changes
