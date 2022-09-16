@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.18
+
+### Patch Changes
+
+- 1784096: feat: bump version from master after yarn lock file
+- Updated dependencies [1784096]
+  - @liquality/cryptoassets@1.14.13
+
 ## 1.29.17
 
 ### Patch Changes
