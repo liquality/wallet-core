@@ -3,133 +3,9 @@ import * as ethers from 'ethers';
 import { Asset, Network } from '../store/types';
 import cryptoassets from '../utils/cryptoassets';
 
-type ExplorerMap = { [key in ChainId]?: { [key in Network]: { tx: string; address: string } } };
-
-const EXPLORERS: ExplorerMap = {
-  ethereum: {
-    testnet: {
-      tx: 'https://ropsten.etherscan.io/tx/{hash}',
-      address: 'https://ropsten.etherscan.io/address/{hash}',
-    },
-    mainnet: {
-      tx: 'https://etherscan.io/tx/{hash}',
-      address: 'https://etherscan.io/address/{hash}',
-    },
-  },
-  bitcoin: {
-    testnet: {
-      tx: 'https://blockstream.info/testnet/tx/{hash}',
-      address: 'https://blockstream.info/testnet/address/{hash}',
-    },
-    mainnet: {
-      tx: 'https://blockstream.info/tx/{hash}',
-      address: 'https://blockstream.info/address/{hash}',
-    },
-  },
-  rsk: {
-    testnet: {
-      tx: 'https://explorer.testnet.rsk.co/tx/{hash}',
-      address: 'https://explorer.testnet.rsk.co/address/{hash}',
-    },
-    mainnet: {
-      tx: 'https://explorer.rsk.co/tx/{hash}',
-      address: 'https://explorer.rsk.co/address/{hash}',
-    },
-  },
-  bsc: {
-    testnet: {
-      tx: 'https://testnet.bscscan.com/tx/{hash}',
-      address: 'https://testnet.bscscan.com/address/{hash}',
-    },
-    mainnet: {
-      tx: 'https://bscscan.com/tx/{hash}',
-      address: 'https://bscscan.com/address/{hash}',
-    },
-  },
-  polygon: {
-    testnet: {
-      tx: 'https://mumbai.polygonscan.com/tx/{hash}',
-      address: 'https://mumbai.polygonscan.com/address/{hash}',
-    },
-    mainnet: {
-      tx: 'https://polygonscan.com/tx/{hash}',
-      address: 'https://polygonscan.com/address/{hash}',
-    },
-  },
-  near: {
-    testnet: {
-      tx: 'https://explorer.testnet.near.org/transactions/{hash}',
-      address: 'https://explorer.testnet.near.org/accounts/{hash}',
-    },
-    mainnet: {
-      tx: 'https://explorer.mainnet.near.org/transactions/{hash}',
-      address: 'https://explorer.mainnet.near.org/accounts/{hash}',
-    },
-  },
-  solana: {
-    testnet: {
-      tx: 'https://explorer.solana.com/tx/{hash}?cluster=devnet',
-      address: 'https://explorer.solana.com/address/{hash}?cluster=devnet',
-    },
-    mainnet: {
-      tx: 'https://explorer.solana.com/tx/{hash}',
-      address: 'https://explorer.solana.com/address/{hash}',
-    },
-  },
-  arbitrum: {
-    testnet: {
-      tx: 'https://rinkeby-explorer.arbitrum.io/tx/{hash}',
-      address: 'https://rinkeby-explorer.arbitrum.io/address/{hash}',
-    },
-    mainnet: {
-      tx: 'https://explorer.arbitrum.io/tx/{hash}',
-      address: 'https://explorer.arbitrum.io/address/{hash}',
-    },
-  },
-  avalanche: {
-    testnet: {
-      tx: 'https://testnet.snowtrace.io/tx/{hash}',
-      address: 'https://testnet.snowtrace.io/address/{hash}',
-    },
-    mainnet: {
-      tx: 'https://snowtrace.io/tx/{hash}',
-      address: 'https://snowtrace.io/address/{hash}',
-    },
-  },
-  terra: {
-    testnet: {
-      tx: 'https://finder.terra.money/bombay-12/tx/{hash}',
-      address: 'https://finder.terra.money/bombay-12/address/{hash}',
-    },
-    mainnet: {
-      tx: 'https://finder.terra.money/columbus-5/tx/{hash}',
-      address: 'https://finder.terra.money/columbus-5/address/{hash}',
-    },
-  },
-  fuse: {
-    testnet: {
-      tx: 'https://explorer.fusespark.io/tx/{hash}',
-      address: 'https://explorer.fusespark.io/address/{hash}',
-    },
-    mainnet: {
-      tx: 'https://explorer.fuse.io/tx/{hash}',
-      address: 'https://explorer.fuse.io/address/{hash}',
-    },
-  },
-  optimism: {
-    testnet: {
-      tx: 'https://kovan-optimistic.etherscan.io/tx/{hash}',
-      address: 'https://kovan-optimistic.etherscan.io/address/{hash}',
-    },
-    mainnet: {
-      tx: 'https://optimistic.etherscan.io/tx/{hash}',
-      address: 'https://optimistic.etherscan.io/address/{hash}',
-    },
-  },
-};
-
-function getChainExplorer(chain: ChainId) {
-  const chainExplorer = EXPLORERS[chain];
+function getChainExplorer(chainId: ChainId, network: Network) {
+  const chain = getChain(network, chainId);
+  const chainExplorer = chain.explorerViews[0];
   if (!chainExplorer) {
     throw new Error(`Explorer definition not found for chain ${chain}`);
   }
@@ -185,16 +61,14 @@ export const getAssetColorStyle = (asset: Asset) => {
 export const getTransactionExplorerLink = (hash: string, asset: Asset, network: Network) => {
   const transactionHash = getExplorerTransactionHash(asset, hash);
   const chain = cryptoassets[asset].chain;
-  const link = `${getChainExplorer(chain)[network].tx}`;
-
+  const link = `${getChainExplorer(chain, network).tx}`;
   return link.replace('{hash}', transactionHash);
 };
 
 export const getAddressExplorerLink = (address: string, asset: Asset, network: Network) => {
   const chain = cryptoassets[asset].chain;
-  const link = `${getChainExplorer(chain)[network].address}`;
-
-  return link.replace('{hash}', address);
+  const link = `${getChainExplorer(chain, network).address}`;
+  return link.replace('{address}', address);
 };
 
 export const getExplorerTransactionHash = (asset: Asset, hash: string) => {

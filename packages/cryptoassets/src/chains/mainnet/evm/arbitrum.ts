@@ -1,5 +1,5 @@
 import { EvmChain } from '../../../chains/EvmChain';
-import { AssetTypes, ChainId } from '../../../types';
+import { AssetTypes, ChainId, NftProviderType } from '../../../types';
 
 export default new EvmChain({
   id: ChainId.Arbitrum,
@@ -23,6 +23,7 @@ export default new EvmChain({
   isEVM: true,
   isMultiLayered: false,
   hasTokens: true,
+  nftProviderType: NftProviderType.Covalent,
 
   averageBlockTime: 3,
   safeConfirmations: 5,
@@ -38,11 +39,15 @@ export default new EvmChain({
   },
   explorerViews: [
     {
-      tx: 'https://arbiscan.io/tx/',
-      address: 'https://arbiscan.io/address/',
-      token: 'https://arbiscan.io/token/',
+      tx: 'https://arbiscan.io/tx/{hash}',
+      address: 'https://arbiscan.io/address/{address}',
+      token: 'https://arbiscan.io/token/{token}',
     },
   ],
+
+  nameService: {
+    uns: 'ERC20',
+  },
 
   multicallSupport: true,
   ledgerSupport: false,

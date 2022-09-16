@@ -13,8 +13,8 @@ export default transformMainnetToTestnetChain(
   },
   [
     {
-      tx: 'https://explorer.testnet.rsk.co/tx/',
-      address: 'https://explorer.testnet.rsk.co/address/',
+      tx: 'https://explorer.testnet.rsk.co/tx/{hash}',
+      address: 'https://explorer.testnet.rsk.co/address/{address}',
     },
   ],
   'https://faucet.rsk.co/'

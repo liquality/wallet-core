@@ -48,11 +48,14 @@ export default new TerraChain({
   },
   explorerViews: [
     {
-      tx: 'https://finder.terra.money/classic/tx/',
-      address: 'https://finder.terra.money/classic/address/',
+      tx: 'https://finder.terra.money/classic/tx/{hash}',
+      address: 'https://finder.terra.money/classic/address/{address}',
     },
   ],
 
+  nameService: {
+    uns: 'TERRA',
+  },
   multicallSupport: false,
   ledgerSupport: false,
 

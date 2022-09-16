@@ -1,5 +1,5 @@
 import { EvmChain } from '../../../chains/EvmChain';
-import { AssetTypes, ChainId } from '../../../types';
+import { AssetTypes, ChainId, NftProviderType } from '../../../types';
 
 export default new EvmChain({
   id: ChainId.Avalanche,
@@ -22,6 +22,7 @@ export default new EvmChain({
   isEVM: true,
   hasTokens: true,
   isMultiLayered: false,
+  nftProviderType: NftProviderType.Moralis,
 
   averageBlockTime: 3,
   safeConfirmations: 10,
@@ -40,11 +41,15 @@ export default new EvmChain({
   },
   explorerViews: [
     {
-      tx: 'https://snowtrace.io/tx/',
-      address: 'https://snowtrace.io/address/',
-      token: 'https://snowtrace.io/token/',
+      tx: 'https://snowtrace.io/tx/{hash}',
+      address: 'https://snowtrace.io/address/{address}',
+      token: 'https://snowtrace.io/token/{token}',
     },
   ],
+
+  nameService: {
+    uns: 'AVAX',
+  },
 
   multicallSupport: true,
   ledgerSupport: false,

@@ -13,9 +13,9 @@ export default transformMainnetToTestnetChain(
   },
   [
     {
-      tx: 'https://mumbai.polygonscan.com/tx/',
-      address: 'https://mumbai.polygonscan.com/address/',
-      token: 'https://mumbai.polygonscan.com/token/',
+      tx: 'https://mumbai.polygonscan.com/tx/{hash}',
+      address: 'https://mumbai.polygonscan.com/address/{address}',
+      token: 'https://mumbai.polygonscan.com/token/{token}',
     },
   ],
   'https://mumbaifaucet.com/'

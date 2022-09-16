@@ -13,9 +13,9 @@ export default transformMainnetToTestnetChain(
   },
   [
     {
-      tx: 'https://testnet.bscscan.com/tx/',
-      address: 'https://testnet.bscscan.com/address/',
-      token: 'https://testnet.bscscan.com/token/',
+      tx: 'https://testnet.bscscan.com/tx/{hash}',
+      address: 'https://testnet.bscscan.com/address/{address}',
+      token: 'https://testnet.bscscan.com/token/{token}',
     },
   ],
   'https://testnet.binance.org/faucet-smart'

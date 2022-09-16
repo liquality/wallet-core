@@ -17,7 +17,6 @@ import { isERC20 } from '../../utils/asset';
 import { assetsAdapter } from '../../utils/chainify';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
-import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
 import {
   BaseSwapProviderConfig,
@@ -377,7 +376,7 @@ class SovrynSwapProvider extends SwapProvider {
       throw new Error('SovrynSwapProvider: chain not supported');
     }
 
-    const chainId = Number(ChainNetworks.rsk[network].chainId);
+    const chainId = Number(getChain(network, ChainId.Rootstock).network.chainId);
     if (chainId in this._apiCache) {
       return this._apiCache[chainId];
     } else {

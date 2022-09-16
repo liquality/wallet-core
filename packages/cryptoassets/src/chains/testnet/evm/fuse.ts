@@ -13,9 +13,9 @@ export default transformMainnetToTestnetChain(
   },
   [
     {
-      tx: 'https://explorer.fusespark.io/tx/',
-      address: 'https://explorer.fusespark.io/address/',
-      token: 'https://explorer.fusespark.io/token/',
+      tx: 'https://explorer.fusespark.io/tx/{hash}',
+      address: 'https://explorer.fusespark.io/address/{address}',
+      token: 'https://explorer.fusespark.io/token/{token}',
     },
   ],
   'https://stakely.io/en/faucet/fuse-blockchain'

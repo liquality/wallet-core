@@ -1,15 +1,19 @@
-import { ChainId } from '@liquality/cryptoassets';
+import { ChainId, getChain } from '@liquality/cryptoassets';
+import { Network } from '../store/types';
 
-export const CHAINS_WITH_FETCH_TOKEN_DETAILS = [
-  // EVM
-  { chainId: ChainId.Ethereum, label: 'Ethereum (ETH)' },
-  { chainId: ChainId.Rootstock, label: 'Rootstock (RSK)' },
-  { chainId: ChainId.BinanceSmartChain, label: 'Binance Smart Chain (BSC)' },
-  { chainId: ChainId.Polygon, label: 'Polygon (MATIC)' },
-  { chainId: ChainId.Arbitrum, label: ' Arbitrum (ARB)' },
-  { chainId: ChainId.Avalanche, label: 'Avalanche (AVAX)' },
-  { chainId: ChainId.Fuse, label: 'Fuse (FUSE)' },
-  // NON-EVM
-  { chainId: ChainId.Terra, label: 'Terra (LUNA)' },
-  { chainId: ChainId.Solana, label: 'Solana (SOL)' },
-];
+export const CHAINS_WITH_FETCH_TOKEN_DETAILS = Object.values(ChainId).reduce((result: Array<any>, chainId: ChainId) => {
+  const chain = getChain(Network.Mainnet, chainId);
+
+  if (chain.hasTokens) {
+    result.push({
+      chainId,
+      label: `${capitalizeFirstLetter(chain.name)} (${chain.nativeAsset[0].code.toUpperCase()})`,
+    });
+  }
+
+  return result;
+}, []);
+
+function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

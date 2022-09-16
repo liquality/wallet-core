@@ -39,8 +39,8 @@ export default new NearChain({
   },
   explorerViews: [
     {
-      tx: 'https://explorer.near.org/transactions/',
-      address: 'https://explorer.near.org/accounts/',
+      tx: 'https://explorer.near.org/transactions/{hash}',
+      address: 'https://explorer.near.org/accounts/{hash}',
     },
   ],
 

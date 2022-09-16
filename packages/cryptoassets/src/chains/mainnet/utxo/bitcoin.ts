@@ -46,8 +46,8 @@ export default new BitcoinChain({
   },
   explorerViews: [
     {
-      tx: 'https://blockstream.info/tx/',
-      address: 'https://blockstream.info/address/',
+      tx: 'https://blockstream.info/tx/{hash}',
+      address: 'https://blockstream.info/address/{address}',
     },
   ],
   multicallSupport: false,
