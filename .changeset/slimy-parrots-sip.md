@@ -4,4 +4,4 @@
 '@liquality/wallet-core': patch
 ---
 
-feat: bump patch versions from master for rc0.73.0 release
+feat: bump patch version from master branch for rc0.73.0
