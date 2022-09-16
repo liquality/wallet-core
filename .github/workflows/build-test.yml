@@ -3,7 +3,8 @@ name: Build Test
 on:
   push:
     branches-ignore:
-      - develop
+      - changeset-release/master
+      - changeset-release/develop
     paths-ignore:
       - '**/node_modules/**'
       - '.github/**'
@@ -17,6 +18,7 @@ on:
     branches-ignore:
       - renovate*
       - changeset-release/develop
+      - changeset-release/master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -50,13 +52,14 @@ jobs:
         uses: tj-actions/changed-files@v29.0.7
         with:
           files_ignore: |
+            .github/**
             .changeset/**
             packages/**/package.json
             packages/**/*.{md,mdx}
             !*.md
 
       - name: Run __tests__ (coverage)
-        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        if: github.event_name == 'pull_request' && steps.changed-files-specific.outputs.any_changed == 'true'
         run: |
           yarn rebuild
           export FORCE_COLOR=true
