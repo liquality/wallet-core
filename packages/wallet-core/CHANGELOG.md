@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.19
+
+### Patch Changes
+
+- c632674: test: bump all packages after remove logic from ci
+- Updated dependencies [c632674]
+  - @liquality/cryptoassets@1.14.14
+
 ## 1.29.18
 
 ### Patch Changes

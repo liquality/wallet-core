@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.14
+
+### Patch Changes
+
+- c632674: test: bump all packages after remove logic from ci
+
 ## 1.14.13
 
 ### Patch Changes
