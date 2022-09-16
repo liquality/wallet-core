@@ -1,5 +1,11 @@
 # @liquality/error-parser
 
+## 1.0.4
+
+### Patch Changes
+
+- c632674: test: bump all packages after remove logic from ci
+
 ## 1.0.3
 
 ### Patch Changes
