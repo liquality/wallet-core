@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.21-next.1
+
+### Patch Changes
+
+- af3fca0: test: bump versions
+- Updated dependencies [af3fca0]
+  - @liquality/cryptoassets@1.14.16-next.1
+
 ## 1.29.21-next.0
 
 ### Patch Changes
