@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.21
+
+### Patch Changes
+
+- 955a8c3: feat: bump to patch versions for 0.73.0
+- Updated dependencies [955a8c3]
+  - @liquality/cryptoassets@1.14.16
+
 ## 1.29.21-next.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.16
+
+### Patch Changes
+
+- 955a8c3: feat: bump to patch versions for 0.73.0
+
 ## 1.14.16-next.1
 
 ### Patch Changes
