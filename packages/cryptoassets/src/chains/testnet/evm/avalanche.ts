@@ -13,9 +13,9 @@ export default transformMainnetToTestnetChain(
   },
   [
     {
-      tx: 'https://testnet.snowtrace.io/tx/{hash}',
-      address: 'https://testnet.snowtrace.io/address/{address}',
-      token: 'https://testnet.snowtrace.io/token/{token}',
+      tx: 'https://testnet.snowtrace.io/tx/',
+      address: 'https://testnet.snowtrace.io/address/',
+      token: 'https://testnet.snowtrace.io/token/',
     },
   ],
   'https://faucet.avax.network/'

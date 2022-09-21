@@ -1,5 +1,5 @@
 import { EvmChain } from '../../../chains/EvmChain';
-import { AssetTypes, ChainId, NftProviderType } from '../../../types';
+import { AssetTypes, ChainId } from '../../../types';
 
 export default new EvmChain({
   id: ChainId.Polygon,
@@ -21,7 +21,6 @@ export default new EvmChain({
   isEVM: true,
   hasTokens: true,
   isMultiLayered: false,
-  nftProviderType: NftProviderType.Moralis,
 
   averageBlockTime: 3,
   safeConfirmations: 5,
@@ -37,15 +36,11 @@ export default new EvmChain({
   },
   explorerViews: [
     {
-      tx: 'https://polygonscan.com/tx/{hash}',
-      address: 'https://polygonscan.com/address/{address}',
-      token: 'https://polygonscan.com/token/{token}',
+      tx: 'https://polygonscan.com/tx/',
+      address: 'https://polygonscan.com/address/',
+      token: 'https://polygonscan.com/token/',
     },
   ],
-
-  nameService: {
-    uns: 'MATIC',
-  },
 
   multicallSupport: true,
   ledgerSupport: false,

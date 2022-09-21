@@ -37,9 +37,9 @@ export default new EvmChain({
   },
   explorerViews: [
     {
-      tx: 'https://optimistic.etherscan.io/tx/{hash}',
-      address: 'https://optimistic.etherscan.io/address/{address}',
-      token: 'https://optimistic.etherscan.io/token/{token}',
+      tx: 'https://optimistic.etherscan.io/tx/',
+      address: 'https://optimistic.etherscan.io/address/',
+      token: 'https://optimistic.etherscan.io/token/',
     },
   ],
 

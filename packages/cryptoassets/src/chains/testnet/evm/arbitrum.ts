@@ -13,9 +13,9 @@ export default transformMainnetToTestnetChain(
   },
   [
     {
-      tx: 'https://testnet.arbiscan.io/tx/{hash}',
-      address: 'https://testnet.arbiscan.io/address/{address}',
-      token: 'https://testnet.arbiscan.io/token/{token}',
+      tx: 'https://testnet.arbiscan.io/tx/',
+      address: 'https://testnet.arbiscan.io/address/',
+      token: 'https://testnet.arbiscan.io/token/',
     },
   ],
   'https://faucet.rinkeby.io/'

@@ -37,8 +37,8 @@ export default new RskChain({
   },
   explorerViews: [
     {
-      tx: 'https://explorer.rsk.co/tx/{hash}',
-      address: 'https://explorer.rsk.co/address/{address}',
+      tx: 'https://explorer.rsk.co/tx/',
+      address: 'https://explorer.rsk.co/address/',
     },
   ],
 

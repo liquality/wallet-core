@@ -1,5 +1,5 @@
 import { EvmChain } from '../../../chains/EvmChain';
-import { AssetTypes, ChainId, NftProviderType } from '../../../types';
+import { AssetTypes, ChainId } from '../../../types';
 
 export default new EvmChain({
   id: ChainId.BinanceSmartChain,
@@ -19,8 +19,6 @@ export default new EvmChain({
   ],
   isEVM: true,
   hasTokens: true,
-  nftProviderType: NftProviderType.Moralis,
-
   averageBlockTime: 3,
   safeConfirmations: 5,
   txFailureTimeoutMs: 600_000,
@@ -34,15 +32,11 @@ export default new EvmChain({
   },
   explorerViews: [
     {
-      tx: 'https://bscscan.com/tx/{hash}',
-      address: 'https://bscscan.com/address/{address}',
-      token: 'https://bscscan.com/token/{token}',
+      tx: 'https://bscscan.com/tx/',
+      address: 'https://bscscan.com/address/',
+      token: 'https://bscscan.com/token/',
     },
   ],
-
-  nameService: {
-    uns: 'BEP20',
-  },
 
   multicallSupport: true,
   ledgerSupport: false,

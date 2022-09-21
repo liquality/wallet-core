@@ -46,9 +46,3 @@ export enum Network {
 }
 
 export type ChainsMap = { [key in ChainId]?: IChain };
-
-export enum NftProviderType {
-  OpenSea = 'opensea',
-  Moralis = 'moralis',
-  Covalent = 'covalent',
-}

@@ -1,6 +1,3 @@
-export { EvmChain } from './chains/EvmChain';
-export { BaseChain } from './chains/BaseChain';
-
 export * from './assets';
 export * from './chains';
 export { dappChains } from './dapps';

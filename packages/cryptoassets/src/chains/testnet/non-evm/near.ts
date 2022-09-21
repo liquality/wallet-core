@@ -13,8 +13,8 @@ export default transformMainnetToTestnetChain(
   },
   [
     {
-      tx: 'https://explorer.testnet.near.org/transactions/{hash}',
-      address: 'https://explorer.testnet.near.org/accounts/{address}',
+      tx: 'https://explorer.testnet.near.org/transactions/',
+      address: 'https://explorer.testnet.near.org/accounts/',
     },
   ],
   'https://wallet.testnet.near.org/'

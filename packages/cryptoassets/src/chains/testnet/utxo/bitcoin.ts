@@ -24,8 +24,8 @@ export default transformMainnetToTestnetChain(
   },
   [
     {
-      tx: 'https://blockstream.info/testnet/tx/{hash}',
-      address: 'https://blockstream.info/testnet/address/{address}',
+      tx: 'https://blockstream.info/testnet/tx/',
+      address: 'https://blockstream.info/testnet/address/',
     },
   ],
   'https://bitcoinfaucet.uo1.net/'
