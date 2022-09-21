@@ -16,27 +16,18 @@ const TOKENS = {
     code: 'bLuna',
     decimals: 6,
     contractAddress: 'terra1kc87mu460fwkqte29rquh4hc20m54fxwtsx7gp',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   bETH: {
     name: 'bETH',
     code: 'bETH',
     decimals: 6,
     contractAddress: 'terra1dzhzukyezv0etz22ud940z7adyv7xgcjkahuun',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   aUST: {
     name: 'aUST',
     code: 'aUST',
     decimals: 6,
     contractAddress: 'terra1hzh9vpxhsk8253se0vv5jj6etdvxu3nv8z07zu',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   ANC: {
     name: 'ANC',
@@ -52,9 +43,6 @@ const TOKENS = {
     code: 'HALO',
     decimals: 6,
     contractAddress: 'terra1w8kvd6cqpsthupsk4l0clwnmek4l3zr7c84kwq',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   APOLLO: {
     name: 'APOLLO',
@@ -79,9 +67,6 @@ const TOKENS = {
     code: 'PUG',
     decimals: 6,
     contractAddress: 'terra1kdfsdm3c4reun9j3m4mk3nmyw4a4ns7mj24q3j',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   BTL: {
     name: 'BTL',
@@ -97,9 +82,6 @@ const TOKENS = {
     code: 'SITY',
     decimals: 6,
     contractAddress: 'terra1z09gnzufuflz6ckd9k0u456l9dnpgsynu0yyhe',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   MIR: {
     name: 'Mirror',
@@ -142,9 +124,6 @@ const TOKENS = {
     code: 'mAMD',
     decimals: 6,
     contractAddress: 'terra18ej5nsuu867fkx4tuy2aglpvqjrkcrjjslap3z',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mAMZN: {
     name: 'Amazon.com, Inc.',
@@ -160,81 +139,54 @@ const TOKENS = {
     code: 'mARKK',
     decimals: 6,
     contractAddress: 'terra1qqfx5jph0rsmkur2zgzyqnfucra45rtjae5vh6',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mBABA: {
     name: 'Alibaba Group Holding Limited',
     code: 'mBABA',
     decimals: 6,
     contractAddress: 'terra1w7zgkcyt7y4zpct9dw8mw362ywvdlydnum2awa',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mBTC: {
     name: 'Bitcoin',
     code: 'mBTC',
     decimals: 6,
     contractAddress: 'terra1rhhvx8nzfrx5fufkuft06q5marfkucdqwq5sjw',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mCOIN: {
     name: 'Coinbase Global, Inc',
     code: 'mCOIN',
     decimals: 6,
     contractAddress: 'terra18wayjpyq28gd970qzgjfmsjj7dmgdk039duhph',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mDOT: {
     name: 'Polkadot',
     code: 'mDOT',
     decimals: 6,
     contractAddress: 'terra19ya4jpvjvvtggepvmmj6ftmwly3p7way0tt08r',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mETH: {
     name: 'Ether',
     code: 'mETH',
     decimals: 6,
     contractAddress: 'terra1dk3g53js3034x4v5c3vavhj2738une880yu6kx',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mFB: {
     name: 'Facebook Inc.',
     code: 'mFB',
     decimals: 6,
     contractAddress: 'terra1mqsjugsugfprn3cvgxsrr8akkvdxv2pzc74us7',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mGLXY: {
     name: 'Galaxy Digital Holdings Ltd',
     code: 'mGLXY',
     decimals: 6,
     contractAddress: 'terra1l5lrxtwd98ylfy09fn866au6dp76gu8ywnudls',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mGME: {
     name: 'GameStop Corp',
     code: 'mGME',
     decimals: 6,
     contractAddress: 'terra1m6j6j9gw728n82k78s0j9kq8l5p6ne0xcc820p',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mGOOGL: {
     name: 'Alphabet Inc.',
@@ -250,117 +202,78 @@ const TOKENS = {
     code: 'mGS',
     decimals: 6,
     contractAddress: 'terra137drsu8gce5thf6jr5mxlfghw36rpljt3zj73v',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mIAU: {
     name: 'iShares Gold Trust',
     code: 'mIAU',
     decimals: 6,
     contractAddress: 'terra10h7ry7apm55h4ez502dqdv9gr53juu85nkd4aq',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   MOON: {
     name: 'MOON',
     code: 'MOON',
     decimals: 6,
     contractAddress: 'terra1hmxxq0y8h79f3228vs0czc4uz5jdgjt0appp26',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mMSFT: {
     name: 'Microsoft Corporation',
     code: 'mMSFT',
     decimals: 6,
     contractAddress: 'terra1227ppwxxj3jxz8cfgq00jgnxqcny7ryenvkwj6',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mNFLX: {
     name: 'Netflix, Inc.',
     code: 'mNFLX',
     decimals: 6,
     contractAddress: 'terra1jsxngqasf2zynj5kyh0tgq9mj3zksa5gk35j4k',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mQQQ: {
     name: 'Invesco QQQ Trust',
     code: 'mQQQ',
     decimals: 6,
     contractAddress: 'terra1csk6tc7pdmpr782w527hwhez6gfv632tyf72cp',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mSLV: {
     name: 'iShares Silver Trust',
     code: 'mSLV',
     decimals: 6,
     contractAddress: 'terra1kscs6uhrqwy6rx5kuw5lwpuqvm3t6j2d6uf2lp',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mSPY: {
     name: 'SPDR S&P 500',
     code: 'mSPY',
     decimals: 6,
     contractAddress: 'terra1aa00lpfexyycedfg5k2p60l9djcmw0ue5l8fhc',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mSQ: {
     name: 'Square, Inc.',
     code: 'mSQ',
     decimals: 6,
     contractAddress: 'terra1u43zu5amjlsgty5j64445fr9yglhm53m576ugh',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mTSLA: {
     name: 'Tesla, Inc.',
     code: 'mTSLA',
     decimals: 6,
     contractAddress: 'terra14y5affaarufk3uscy2vr6pe6w6zqf2wpjzn5sh',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mTWTR: {
     name: 'Twitter, Inc.',
     code: 'mTWTR',
     decimals: 6,
     contractAddress: 'terra1cc3enj9qgchlrj34cnzhwuclc4vl2z3jl7tkqg',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mUSO: {
     name: 'United States Oil Fund, LP',
     code: 'mUSO',
     decimals: 6,
     contractAddress: 'terra1lvmx8fsagy70tv0fhmfzdw9h6s3sy4prz38ugf',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   mVIXY: {
     name: 'ProShares VIX Short-Term Futures ETF',
     code: 'mVIXY',
     decimals: 6,
     contractAddress: 'terra19cmt6vzvhnnnfsmccaaxzy2uaj06zjktu6yzjx',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   LOTA: {
     name: 'LOTA',
@@ -394,9 +307,6 @@ const TOKENS = {
     code: 'MARS',
     decimals: 6,
     contractAddress: 'terra1a7zxk56c72elupp7p44hn4k94fsvavnhylhr6h',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   GLOW: {
     name: 'GLOW',
@@ -421,9 +331,6 @@ const TOKENS = {
     code: 'stLuna',
     decimals: 6,
     contractAddress: 'terra1yg3j2s986nyp5z7r2lvt0hx3r0lnd7kwvwwtsc',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   'pylon-protocol': {
     name: 'Pylon MINE Token',
@@ -466,9 +373,6 @@ const TOKENS = {
     code: 'aLOT',
     decimals: 0,
     contractAddress: 'terra1366wmr8t8rrkh6mag8fagqxntmf2qe4kyte784',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   STT: {
     name: 'StarTerra',
@@ -556,18 +460,12 @@ const TOKENS = {
     code: 'xPRISM',
     decimals: 6,
     contractAddress: 'terra1042wzrwg2uk6jqxjm34ysqquyr9esdgm5qyswz',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   'bPsiDP-24m': {
     name: 'bPsiDP-24m',
     code: 'bPsiDP-24m',
     decimals: 6,
     contractAddress: 'terra1zsaswh926ey8qa5x4vj93kzzlfnef0pstuca0y',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   SDOLLAR: {
     name: 'SDOLLAR',
@@ -601,27 +499,18 @@ const TOKENS = {
     code: 'TFTIC',
     decimals: 6,
     contractAddress: 'terra1a8k3jyv3wf6k3zngza5h6srrxcckdf7zv90p6u',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   TFTICII: {
     name: 'TFTICII',
     code: 'TFTICII',
     decimals: 6,
     contractAddress: 'terra1xt9fgu7965kgvunnjts9zkprd8986kcc444q86',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   TFTICIII: {
     name: 'TFTICIII',
     code: 'TFTICIII',
     decimals: 6,
     contractAddress: 'terra1vte2xv7dr8sfnrnwdf9arcyprqgr0hty5ads28',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   TLAND: {
     name: 'TLAND',
@@ -772,9 +661,6 @@ const TOKENS = {
     code: 'weLDO',
     decimals: 8,
     contractAddress: 'terra1jxypgnfa07j6w92wazzyskhreq2ey2a5crgt6z',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   webETH: {
     name: 'webETH',
@@ -799,90 +685,60 @@ const TOKENS = {
     code: 'whGTPS',
     decimals: 8,
     contractAddress: 'terra1y3d5qexmyac0fg53pfglh2pjk0664ymfvcq9mc',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   whSAIL: {
     name: 'whSAIL',
     code: 'whSAIL',
     decimals: 8,
     contractAddress: 'terra1ku5e0dhutxhuxudsmsn5647wwcz6ndr3rsh90k',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   whgSAIL: {
     name: 'whgSAIL',
     code: 'whgSAIL',
     decimals: 8,
     contractAddress: 'terra1rl0cpwgtwl4utnaynugevdje37fnmsea7rv4uu',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   nLUNA: {
     name: 'nLUNA',
     code: 'nLUNA',
     decimals: 6,
     contractAddress: 'terra10f2mt82kjnkxqj2gepgwl637u2w4ue2z5nhz5j',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   nETH: {
     name: 'nETH',
     code: 'nETH',
     decimals: 6,
     contractAddress: 'terra178v546c407pdnx5rer3hu8s2c0fc924k74ymnn',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   wgOHM: {
     name: 'wgOHM',
     code: 'wgOHM',
     decimals: 6,
     contractAddress: 'terra1fpfn2kkr8mv390wx4dtpfk3vkjx9ch3thvykl3',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   wAVAX: {
     name: 'wAVAX',
     code: 'wAVAX',
     decimals: 6,
     contractAddress: 'terra1hj8de24c3yqvcsv9r8chr03fzwsak3hgd8gv3m',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   wsoUSDC: {
     name: 'wsoUSDC',
     code: 'wsoUSDC',
     decimals: 6,
     contractAddress: 'terra1e6mq63y64zcxz8xyu5van4tgkhemj3r86yvgu4',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   wavUSDC: {
     name: 'wavUSDC',
     code: 'wavUSDC',
     decimals: 6,
     contractAddress: 'terra1pvel56a2hs93yd429pzv9zp5aptcjg5ulhkz7w',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
   wBUSD: {
     name: 'wBUSD',
     code: 'wBUSD',
     decimals: 6,
     contractAddress: 'terra1skjr69exm6v8zellgjpaa2emhwutrk5a6dz7dd',
-    priceSource: {
-      coinGeckoId: undefined,
-    },
   },
 };
 
