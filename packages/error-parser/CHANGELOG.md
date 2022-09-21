@@ -1,5 +1,11 @@
 # @liquality/error-parser
 
+## 1.0.8
+
+### Patch Changes
+
+- f6394a0: fix: revert some changes and bump versions
+
 ## 1.0.7
 
 ### Patch Changes

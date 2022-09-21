@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.23
+
+### Patch Changes
+
+- f6394a0: fix: revert some changes and bump versions
+- Updated dependencies [f6394a0]
+  - @liquality/cryptoassets@1.14.18
+
 ## 1.29.22
 
 ### Patch Changes
