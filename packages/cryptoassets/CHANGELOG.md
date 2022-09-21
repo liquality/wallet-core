@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.16-next.0
+
+### Patch Changes
+
+- 06aebc7: fix: regression bugs bump version
+
 ## 1.14.15
 
 ### Patch Changes

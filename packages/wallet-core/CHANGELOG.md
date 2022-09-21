@@ -1,5 +1,14 @@
 # @liquality/wallet-core
 
+## 1.29.21-next.0
+
+### Patch Changes
+
+- 671dea7: Bump up Chainify package
+- 06aebc7: fix: regression bugs bump version
+- Updated dependencies [06aebc7]
+  - @liquality/cryptoassets@1.14.16-next.0
+
 ## 1.29.20
 
 ### Patch Changes
