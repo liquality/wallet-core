@@ -1,7 +1,6 @@
 import { HttpClient } from '@chainify/client';
 import { Nullable } from '@chainify/types';
-import { IAsset, AssetTypes, ChainId, getChain } from '@liquality/cryptoassets';
-import { Network } from '@liquality/cryptoassets/dist/src/types';
+import { IAsset, AssetTypes, ChainId } from '@liquality/cryptoassets';
 import { Resolution, ResolutionResponse } from '@unstoppabledomains/resolution';
 import buildConfig from '../build.config';
 import { NameResolver } from './nameResolver';
@@ -31,7 +30,24 @@ function getUNSKey(asset: IAsset, noVersion: boolean = false): string {
 }
 
 function multiAssetChainKey(chainId: ChainId): string | null {
-  return getChain(Network.Mainnet, chainId).nameService?.uns || null;
+  switch (chainId) {
+    case ChainId.Avalanche:
+      return 'AVAX';
+    case ChainId.BinanceSmartChain:
+      return 'BEP20';
+    case ChainId.Fuse:
+      return 'FUSE';
+    case ChainId.Polygon:
+      return 'MATIC';
+    case ChainId.Solana:
+      return 'SOLANA';
+    case ChainId.Terra:
+      return 'TERRA';
+    case ChainId.Ethereum:
+    case ChainId.Arbitrum:
+      return 'ERC20';
+  }
+  return null;
 }
 
 class UNSResolver implements NameResolver {

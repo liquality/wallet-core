@@ -1,5 +1,5 @@
 import { EvmChain } from '../../../chains/EvmChain';
-import { AssetTypes, ChainId, NftProviderType } from '../../../types';
+import { AssetTypes, ChainId } from '../../../types';
 
 export default new EvmChain({
   id: ChainId.Ethereum,
@@ -19,7 +19,6 @@ export default new EvmChain({
   ],
 
   isEVM: true,
-  nftProviderType: NftProviderType.OpenSea,
   hasTokens: true,
   isMultiLayered: false,
 
@@ -42,15 +41,11 @@ export default new EvmChain({
   },
   explorerViews: [
     {
-      tx: 'https://etherscan.io/tx/{hash}',
-      address: 'https://etherscan.io/address/{address}',
-      token: 'https://etherscan.io/token/{token}',
+      tx: 'https://etherscan.io/tx/',
+      address: 'https://etherscan.io/address/',
+      token: 'https://etherscan.io/token/',
     },
   ],
-
-  nameService: {
-    uns: 'ERC20',
-  },
 
   multicallSupport: true,
   ledgerSupport: true,

@@ -1,10 +1,11 @@
 import { HttpClient } from '@chainify/client';
 import { EvmChainProvider, EvmWalletProvider } from '@chainify/evm';
-import { AssetTypes, ChainId, getChain } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import EventEmitter from 'events';
 import { findKey, mapKeys, mapValues, random } from 'lodash';
 import cryptoassets from '../utils/cryptoassets';
+import { ChainNetworks } from '../utils/networks';
 import { Asset, AssetInfo, CurrenciesInfo, Network, RootState, WalletId } from './types';
 
 export const CHAIN_LOCK: { [key: string]: boolean } = {};
@@ -82,8 +83,7 @@ export const shouldApplyRskLegacyDerivation = async (
     addresses.push(..._addresses.map((e) => e.address));
   }
 
-  const rskMainnetNetwork = getChain(Network.Mainnet, ChainId.Rootstock).network;
-  const chainProvider = new EvmChainProvider(rskMainnetNetwork);
+  const chainProvider = new EvmChainProvider(ChainNetworks.rsk.mainnet);
   const balances = await chainProvider.getBalance(addresses, rskERC20Assets as any);
   return balances.some((amount) => amount.isGreaterThan(0));
 };

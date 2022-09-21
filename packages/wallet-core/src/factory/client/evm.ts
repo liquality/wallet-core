@@ -1,82 +1,117 @@
-import { Client } from '@chainify/client';
-import {
-  EIP1559FeeProvider,
-  EvmChainProvider,
-  EvmWalletProvider,
-  OptimismChainProvider,
-  RpcFeeProvider,
-} from '@chainify/evm';
-import { EvmLedgerProvider } from '@chainify/evm-ledger';
-import { Address, Network as ChainifyNetwork } from '@chainify/types';
-import { JsonRpcProvider, StaticJsonRpcProvider } from '@ethersproject/providers';
-import { AccountInfo, AccountType } from '../../store/types';
-import { walletOptionsStore } from '../../walletOptions';
-import { getNftProvider } from './nft';
-import { EvmChain } from '@liquality/cryptoassets';
+import { EIP1559FeeProvider, OptimismChainProvider, RpcFeeProvider } from '@chainify/evm';
 import { asL2Provider } from '@eth-optimism/sdk';
+import { StaticJsonRpcProvider } from '@ethersproject/providers';
+import { AccountInfo, Network, NftProviderType } from '../../store/types';
+import { HTLC_CONTRACT_ADDRESS } from '../../utils/chainify';
+import { ChainNetworks } from '../../utils/networks';
+import { createEVMClient } from './clients';
 
-export function createEvmClient(chain: EvmChain, mnemonic: string, accountInfo: AccountInfo) {
-  const network = chain.network;
-  const chainProvider = getEvmProvider(chain);
-  const walletProvider = getEvmWalletProvider(network, accountInfo, chainProvider, mnemonic);
-  const client = new Client().connect(walletProvider);
+const defaultSwapOptions = {
+  contractAddress: HTLC_CONTRACT_ADDRESS,
+};
 
-  if (chain.nftProviderType) {
-    const nftProvider = getNftProvider(chain.nftProviderType, walletProvider, network.isTestnet);
-    client.connect(nftProvider);
-  }
-
-  return client;
+export function createEthClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
+  const ethNetwork = ChainNetworks.ethereum[network];
+  const provider = new StaticJsonRpcProvider(ethNetwork.rpcUrl, ethNetwork.chainId);
+  const feeProvider = new EIP1559FeeProvider(provider);
+  const nftProviderType = network === Network.Mainnet ? NftProviderType.OpenSea : NftProviderType.Moralis;
+  return createEVMClient(ethNetwork, feeProvider, mnemonic, accountInfo, defaultSwapOptions, provider, nftProviderType);
 }
 
-function getEvmWalletProvider(
-  network: ChainifyNetwork,
-  accountInfo: AccountInfo,
-  chainProvider: EvmChainProvider,
-  mnemonic: string
-) {
-  if (accountInfo.type === AccountType.EthereumLedger || accountInfo.type === AccountType.RskLedger) {
-    let addressCache;
-
-    if (accountInfo && accountInfo.publicKey && accountInfo.address) {
-      addressCache = new Address({ publicKey: accountInfo?.publicKey, address: accountInfo.address });
-    }
-
-    if (!walletOptionsStore.walletOptions.ledgerTransportCreator) {
-      throw new Error('Wallet Options: ledgerTransportCreator is not defined - unable to build ledger client');
-    }
-
-    return new EvmLedgerProvider(
-      {
-        network: network,
-        derivationPath: accountInfo.derivationPath,
-        addressCache,
-        transportCreator: walletOptionsStore.walletOptions.ledgerTransportCreator,
-      },
-      chainProvider
-    );
-  } else {
-    const walletOptions = { derivationPath: accountInfo.derivationPath, mnemonic };
-    return new EvmWalletProvider(walletOptions, chainProvider);
-  }
+export function createRskClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
+  const rskNetwork = ChainNetworks.rsk[network];
+  const provider = new StaticJsonRpcProvider(rskNetwork.rpcUrl, rskNetwork.chainId);
+  const feeProvider = new RpcFeeProvider(provider, { slowMultiplier: 1, averageMultiplier: 1, fastMultiplier: 1.25 });
+  const swapOptions = { ...defaultSwapOptions, gasLimitMargin: 3000 /* 30% */ };
+  return createEVMClient(rskNetwork, feeProvider, mnemonic, accountInfo, swapOptions, provider);
 }
 
-function getEvmProvider(chain: EvmChain) {
-  const network = chain.network;
-  if (chain.isMultiLayered) {
-    const provider = asL2Provider(new StaticJsonRpcProvider(network.rpcUrls[0], network.chainId));
-    return new OptimismChainProvider(network, provider, chain.feeMultiplier);
-  } else {
-    const provider = new StaticJsonRpcProvider(network.rpcUrls[0], network.chainId);
-    const feeProvider = getFeeProvider(chain, provider);
-    return new EvmChainProvider(network, provider, feeProvider, chain.multicallSupport);
-  }
+export function createBSCClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
+  const bscNetwork = ChainNetworks.bsc[network];
+  const provider = new StaticJsonRpcProvider(bscNetwork.rpcUrl, bscNetwork.chainId);
+  const feeProvider = new RpcFeeProvider(provider, { slowMultiplier: 1, averageMultiplier: 2, fastMultiplier: 2.2 });
+  return createEVMClient(
+    bscNetwork,
+    feeProvider,
+    mnemonic,
+    accountInfo,
+    defaultSwapOptions,
+    provider,
+    NftProviderType.Moralis
+  );
 }
 
-function getFeeProvider(chain: EvmChain, provider: JsonRpcProvider) {
-  if (chain.EIP1559) {
-    return new EIP1559FeeProvider(provider);
-  } else {
-    return new RpcFeeProvider(provider, chain.feeMultiplier);
-  }
+export function createPolygonClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
+  const polygonNetwork = ChainNetworks.polygon[network];
+  const provider = new StaticJsonRpcProvider(polygonNetwork.rpcUrl, polygonNetwork.chainId);
+  const feeProvider = new EIP1559FeeProvider(provider);
+
+  return createEVMClient(
+    polygonNetwork,
+    feeProvider,
+    mnemonic,
+    accountInfo,
+    defaultSwapOptions,
+    provider,
+    NftProviderType.Moralis
+  );
+}
+
+export function createArbitrumClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
+  const arbitrumNetwork = ChainNetworks.arbitrum[network];
+  const provider = new StaticJsonRpcProvider(arbitrumNetwork.rpcUrl, arbitrumNetwork.chainId);
+  const feeProvider = new RpcFeeProvider(provider, { slowMultiplier: 1, averageMultiplier: 1, fastMultiplier: 1.25 });
+  return createEVMClient(
+    arbitrumNetwork,
+    feeProvider,
+    mnemonic,
+    accountInfo,
+    defaultSwapOptions,
+    provider,
+    NftProviderType.Covalent
+  );
+}
+
+export function createAvalancheClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
+  const avalancheNetwork = ChainNetworks.avalanche[network];
+  const provider = new StaticJsonRpcProvider(avalancheNetwork.rpcUrl, avalancheNetwork.chainId);
+  const feeProvider = new EIP1559FeeProvider(provider);
+
+  return createEVMClient(
+    avalancheNetwork,
+    feeProvider,
+    mnemonic,
+    accountInfo,
+    defaultSwapOptions,
+    provider,
+    NftProviderType.Moralis
+  );
+}
+
+export function createFuseClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
+  const fuseNetwork = ChainNetworks.fuse[network];
+  const provider = new StaticJsonRpcProvider(fuseNetwork.rpcUrl, fuseNetwork.chainId);
+  const feeProvider = new RpcFeeProvider(provider, { slowMultiplier: 1, averageMultiplier: 1, fastMultiplier: 1.25 });
+  return createEVMClient(fuseNetwork, feeProvider, mnemonic, accountInfo, defaultSwapOptions, provider);
+}
+
+export function createOptimismClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
+  const optimismNetwork = ChainNetworks.optimism[network];
+  const jsonRpcProvider = asL2Provider(new StaticJsonRpcProvider(optimismNetwork.rpcUrl));
+  const chainProvider = new OptimismChainProvider(optimismNetwork, jsonRpcProvider, {
+    slowMultiplier: 1,
+    averageMultiplier: 1,
+    fastMultiplier: 1,
+  });
+
+  return createEVMClient(
+    optimismNetwork,
+    chainProvider.getFeeProvider(),
+    mnemonic,
+    accountInfo,
+    defaultSwapOptions,
+    undefined,
+    undefined,
+    chainProvider
+  );
 }

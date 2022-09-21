@@ -18,6 +18,7 @@ import { Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
 import { isChainEvmCompatible, isERC20 } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
+import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
 import {
   ActionStatus,
@@ -102,12 +103,11 @@ class UniswapSwapProvider extends SwapProvider {
   }
 
   getChainId(asset: Asset, network: Network) {
-    const chainId = cryptoassets[asset].chain;
-    if (chainId !== ChainId.Ethereum) {
+    const chain = cryptoassets[asset].chain;
+    if (chain !== ChainId.Ethereum) {
       throw new Error('UniswapSwapProvider: chain not supported');
     }
-    const chain = getChain(network, chainId);
-    return Number(chain.network.chainId);
+    return Number(ChainNetworks.ethereum[network].chainId);
   }
 
   async getQuote({ network, from, to, amount }: QuoteRequest) {

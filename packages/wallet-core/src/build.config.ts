@@ -31,6 +31,9 @@ export interface WalletCoreConfig {
   batchEsploraApis: {
     [key in Network]: string;
   };
+  rskRpcUrls: {
+    [key in Network]: string;
+  };
   nameResolvers: {
     uns: {
       resolutionService: string;
@@ -92,6 +95,10 @@ const config: WalletCoreConfig = {
   batchEsploraApis: {
     testnet: 'https://electrs-batch-testnet-api.liq-chainhub.net/',
     mainnet: 'https://electrs-batch-mainnet-api.liq-chainhub.net/',
+  },
+  rskRpcUrls: {
+    testnet: 'https://testnet.sovryn.app/rpc',
+    mainnet: 'https://mainnet.sovryn.app/rpc',
   },
   swapProviders: {
     testnet: {
@@ -234,7 +241,20 @@ const config: WalletCoreConfig = {
   },
   discordUrl: 'https://discord.gg/Xsqw7PW8wk',
   networks: [Network.Mainnet, Network.Testnet],
-  chains: Object.values(ChainId),
+  chains: [
+    ChainId.Bitcoin,
+    ChainId.Ethereum,
+    ChainId.Rootstock,
+    ChainId.BinanceSmartChain,
+    ChainId.Near,
+    ChainId.Polygon,
+    ChainId.Arbitrum,
+    ChainId.Terra,
+    ChainId.Fuse,
+    ChainId.Avalanche,
+    ChainId.Solana,
+    ChainId.Optimism,
+  ],
   supportedBridgeAssets: ['RBTC', 'AVAX'],
   nameResolvers: {
     uns: {

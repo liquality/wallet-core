@@ -1,23 +1,18 @@
 import { cloneDeep } from 'lodash';
 import { INetwork, IUtxoNetwork } from '../interfaces/INetwork';
-import { ExplorerView, NftProviderType } from '../types';
+import { ExplorerView } from '../types';
 import { BaseChain } from './BaseChain';
 
 export const transformMainnetToTestnetChain = (
   chain: BaseChain,
   network: INetwork,
   explorerViews: ExplorerView[],
-  faucetUrl: string,
-  nftProviderType?: NftProviderType
+  faucetUrl: string
 ): BaseChain => {
   const testnetChain = cloneDeep(chain);
   testnetChain.network = network;
   testnetChain.explorerViews = explorerViews;
   testnetChain.faucetUrl = faucetUrl;
-
-  if (nftProviderType) {
-    testnetChain.nftProviderType = nftProviderType;
-  }
 
   if (!testnetChain.network.isTestnet) {
     throw new Error(`isTestnet should be set to true`);

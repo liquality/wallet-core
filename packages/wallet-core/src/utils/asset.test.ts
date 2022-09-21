@@ -41,6 +41,6 @@ describe('asset tests', () => {
     expect(result).toContain('https://etherscan.io/tx/');
 
     result = getTransactionExplorerLink('f04298d08f77014851f1104a4d7a0248', 'NEAR', Network.Mainnet);
-    expect(result).toContain('https://explorer.near.org/transactions/');
+    expect(result).toContain('https://explorer.mainnet.near.org/transactions/');
   });
 });
