@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.18
+
+### Patch Changes
+
+- f6394a0: fix: revert some changes and bump versions
+
 ## 1.14.17
 
 ### Patch Changes
