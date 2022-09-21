@@ -1,6 +1,7 @@
 ---
 '@liquality/cryptoassets': patch
+'@liquality/error-parser': patch
 '@liquality/wallet-core': patch
 ---
 
-fix: regression bugs bump version
+feat: bump to patch versions for 0.73.0
