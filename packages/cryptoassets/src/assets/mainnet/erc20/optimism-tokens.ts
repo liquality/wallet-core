@@ -61,9 +61,9 @@ const TOKENS = {
     contractAddress: '0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9',
     matchingAsset: 'sUSD',
   },
-  OPUSDC: {
+  OPTUSDC: {
     name: 'Optimism USD Coin',
-    code: 'OPUSDC',
+    code: 'OPTUSDC',
     decimals: 6,
     contractAddress: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
     color: '#2775c9',
