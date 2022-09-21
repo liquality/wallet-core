@@ -1,5 +1,12 @@
 # @liquality/error-parser
 
+## 1.0.7
+
+### Patch Changes
+
+- 3c0113f: test: bump patch versions
+- e466d4f: test: bump versions
+
 ## 1.0.6
 
 ### Patch Changes
