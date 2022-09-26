@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.19
+
+### Patch Changes
+
+- 4a746a4: fix: solana rpc endpoints updated
+
 ## 1.14.18
 
 ### Patch Changes
