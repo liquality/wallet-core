@@ -237,6 +237,41 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.Hop,
         graphqlBaseURL: 'https://api.thegraph.com/subgraphs/name/hop-protocol',
       },
+      [SwapProviderType.DeBridge]: {
+        name: 'DeBridge',
+        icon: 'debridge.svg',
+        type: SwapProviderType.DeBridge,
+        url: 'https://deswap.debridge.finance/v1.0/',
+        api: 'https://api.debridge.finance/api/',
+        routerAddress: '0x663DC15D3C1aC63ff12E45Ab68FeA3F0a883C251',
+        chains: {
+          1: {
+            deBridgeGateAddress: '0x43dE2d77BF8027e25dBD179B491e8d64f38398aA',
+            signatureVerifier: '0x949b3B3c098348b879C9e4F15cecc8046d9C8A8c',
+            minBlockConfirmation: 12,
+          },
+          56: {
+            deBridgeGateAddress: '0x43dE2d77BF8027e25dBD179B491e8d64f38398aA',
+            signatureVerifier: '0x949b3B3c098348b879C9e4F15cecc8046d9C8A8c',
+            minBlockConfirmation: 12,
+          },
+          42161: {
+            deBridgeGateAddress: '0x43dE2d77BF8027e25dBD179B491e8d64f38398aA',
+            signatureVerifier: '0x949b3B3c098348b879C9e4F15cecc8046d9C8A8c',
+            minBlockConfirmation: 12,
+          },
+          137: {
+            deBridgeGateAddress: '0x43dE2d77BF8027e25dBD179B491e8d64f38398aA',
+            signatureVerifier: '0x949b3B3c098348b879C9e4F15cecc8046d9C8A8c',
+            minBlockConfirmation: 256,
+          },
+          43114: {
+            deBridgeGateAddress: '0x43dE2d77BF8027e25dBD179B491e8d64f38398aA',
+            signatureVerifier: '0x949b3B3c098348b879C9e4F15cecc8046d9C8A8c',
+            minBlockConfirmation: 12,
+          },
+        },
+      },
     },
   },
   discordUrl: 'https://discord.gg/Xsqw7PW8wk',
