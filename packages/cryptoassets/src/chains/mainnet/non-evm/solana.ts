@@ -32,7 +32,7 @@ export default new SolanaChain({
     coinType: '501',
     isTestnet: false,
     networkId: 'mainnet',
-    rpcUrls: ['https://solana--mainnet.datahub.figment.io/apikey/d7d9844ccf72ad4fef9bc5caaa957a50'],
+    rpcUrls: ['https://nd-157-564-859.p2pify.com/74ee6dc01d553b84db9e7e5272dd2afe'],
   },
   explorerViews: [
     {
