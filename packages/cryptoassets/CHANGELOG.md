@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.14.20
+
+### Patch Changes
+
+- bd46603: test: bump all versions for hot fix solana endpoints change
+
 ## 1.14.19
 
 ### Patch Changes

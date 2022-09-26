@@ -1,5 +1,11 @@
 # @liquality/error-parser
 
+## 1.0.9
+
+### Patch Changes
+
+- bd46603: test: bump all versions for hot fix solana endpoints change
+
 ## 1.0.8
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.29.25
+
+### Patch Changes
+
+- bd46603: test: bump all versions for hot fix solana endpoints change
+- Updated dependencies [bd46603]
+  - @liquality/cryptoassets@1.14.20
+
 ## 1.29.24
 
 ### Patch Changes
