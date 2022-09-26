@@ -8,7 +8,7 @@ export default transformMainnetToTestnetChain(
     networkId: 'testnet',
     coinType: '501',
     isTestnet: true,
-    rpcUrls: ['https://api.devnet.solana.com/'],
+    rpcUrls: ['https://api.devnet.solana.com'],
   },
   [
     {
