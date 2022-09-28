@@ -539,7 +539,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/errors@npm:1.2.33":
+"@chainify/errors@npm:1.2.33, @chainify/errors@npm:^1.2.33":
   version: 1.2.33
   resolution: "@chainify/errors@npm:1.2.33"
   dependencies:
@@ -2739,6 +2739,7 @@ __metadata:
   dependencies:
     "@liquality/cryptoassets": "workspace:*"
     "@liquality/wallet-core": "workspace:*"
+    "@chainify/errors": ^1.2.33
     "@types/randombytes": ^2.0.0
     randexp: ^0.5.3
     randombytes: ^2.1.0
