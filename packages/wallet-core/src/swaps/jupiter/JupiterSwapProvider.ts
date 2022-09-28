@@ -1,5 +1,7 @@
 import { TxStatus } from '@chainify/types';
 import { ChainId, currencyToUnit, getNativeAssetCode, unitToCurrency } from '@liquality/cryptoassets';
+import { getTransactionByHash } from '../../utils/getTransactionByHash';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import { Transaction } from '@solana/web3.js';
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
@@ -211,7 +213,7 @@ class JupiterSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
+      const tx = await getTransactionByHash(client, swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         const { status } = tx;
         this.updateBalances(network, walletId, [swap.from]);
@@ -222,7 +224,7 @@ class JupiterSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }

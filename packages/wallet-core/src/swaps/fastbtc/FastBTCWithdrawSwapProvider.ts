@@ -4,6 +4,8 @@ import { EvmChainProvider, EvmTypes, EvmWalletProvider } from '@chainify/evm';
 import { Transaction } from '@chainify/types';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
+import { getTransactionByHash } from '../../utils/getTransactionByHash';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import BN from 'bignumber.js';
 import * as ethers from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
@@ -201,7 +203,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
+      const tx = await getTransactionByHash(client, swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         if (!tx.logs) {
           throw new Error('FastBTC logs missing');
@@ -221,7 +223,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -244,7 +246,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
             const transferEvent = transferEvents[0];
             const receiveTxHash = transferEvent.args!.bitcoinTxHash.replace('0x', '');
             const receiveClient = this.getReceiveClient(network, walletId, 'BTC', swap.toAccountId);
-            const receiveTx = await receiveClient.chain.getTransactionByHash(receiveTxHash);
+            const receiveTx = await getTransactionByHash(receiveClient, receiveTxHash);
             if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
               return {
                 receiveTxHash,
@@ -274,7 +276,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
     const client = this.getReceiveClient(network, walletId, 'BTC', swap.toAccountId);
 
     try {
-      const tx = await client.chain.getTransactionByHash(swap.receiveTxHash);
+      const tx = await getTransactionByHash(client, swap.receiveTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           receiveTx: tx,
@@ -283,7 +285,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }

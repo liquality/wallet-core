@@ -1,4 +1,6 @@
 import { TxStatus } from '@chainify/types';
+import { getTransactionByHash } from '../../../utils/getTransactionByHash';
+import { isTransactionNotFoundError } from '../../../utils/isTransactionNotFoundError';
 import { ActionContext, rootActionContext } from '../..';
 import { Network, NFTSendHistoryItem, SendStatus, WalletId } from '../../types';
 import { withInterval } from './utils';
@@ -23,7 +25,7 @@ async function waitForConfirmations(
   const chainId = getters.cryptoassets[from].chain;
   const client = getters.client({ network, walletId, chainId, accountId });
   try {
-    const tx = await client.chain.getTransactionByHash(transaction.txHash);
+    const tx = await getTransactionByHash(client, transaction.txHash);
     if (tx && tx.confirmations && tx.confirmations > 0) {
       await dispatch.updateNFTs({ network, walletId, accountIds: [transaction.accountId] });
 
@@ -33,7 +35,7 @@ async function waitForConfirmations(
       };
     }
   } catch (e) {
-    if (e.name === 'TxNotFoundError') console.warn(e);
+    if (isTransactionNotFoundError(e)) console.warn(e);
     else throw e;
   }
 }

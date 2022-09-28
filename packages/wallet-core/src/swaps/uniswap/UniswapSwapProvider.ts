@@ -2,6 +2,8 @@ import { Client } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Transaction, TxStatus } from '@chainify/types';
 import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
+import { getTransactionByHash } from '../../utils/getTransactionByHash';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import { CurrencyAmount, Fraction, Percent, Token, TradeType, WETH9 } from '@uniswap/sdk-core';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import UniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json';
@@ -368,7 +370,8 @@ class UniswapSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
+      const tx = await getTransactionByHash(client, swap.approveTxHash);
+
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
@@ -376,7 +379,7 @@ class UniswapSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -385,7 +388,7 @@ class UniswapSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
+      const tx = await getTransactionByHash(client, swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
         const { status } = tx;
@@ -396,7 +399,7 @@ class UniswapSwapProvider extends SwapProvider {
         } as ActionStatus;
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }

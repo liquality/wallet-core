@@ -1,5 +1,6 @@
 import { TerraNetworks, TerraTypes } from '@chainify/terra';
 import { Transaction, TxStatus } from '@chainify/types';
+import { getTransactionByHash } from '../../utils/getTransactionByHash';
 import {
   AssetTypes,
   ChainId,
@@ -33,6 +34,7 @@ import {
   getRateERC20ToERC20,
   getRateNativeToAsset,
 } from './queries';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 
 interface RateResponse {
   amount: number;
@@ -139,7 +141,7 @@ class AstroportSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
+      const tx = await getTransactionByHash(client, swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         const { status } = tx;
         this.updateBalances(network, walletId, [swap.fromAccountId]);
@@ -150,7 +152,7 @@ class AstroportSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }

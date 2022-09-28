@@ -2,6 +2,8 @@ import { EIP1559Fee } from '@chainify/types';
 import { ensure0x } from '@chainify/utils';
 import { Chain, Hop, HopBridge, TToken } from '@hop-protocol/sdk';
 import { ChainId, currencyToUnit, getChain, getNativeAssetCode, IAsset, unitToCurrency } from '@liquality/cryptoassets';
+import { getTransactionByHash } from '../../utils/getTransactionByHash';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import BN from 'bignumber.js';
 import { ethers, Wallet } from 'ethers';
 import { createClient } from 'urql';
@@ -364,7 +366,8 @@ class HopSwapProvider extends SwapProvider {
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<HopSwapHistoryItem>) {
     const client = this._getClient(network, walletId, swap.from, swap.fromAccountId);
     try {
-      const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
+      const tx = await getTransactionByHash(client, swap.approveTxHash);
+
       if (tx && tx.confirmations && tx.confirmations >= 1) {
         return {
           endTime: Date.now(),
@@ -372,7 +375,7 @@ class HopSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -380,7 +383,7 @@ class HopSwapProvider extends SwapProvider {
   async waitForSendSwapConfirmations({ swap, network, walletId }: NextSwapActionRequest<HopSwapHistoryItem>) {
     const client = this._getClient(network, walletId, swap.from, swap.fromAccountId);
     try {
-      const tx = await client.chain.getTransactionByHash(swap.fromFundHash);
+      const tx = await getTransactionByHash(client, swap.fromFundHash);
       const chainId: ChainId = <ChainId>swap.hopChainFrom.slug.toString();
       if (tx && tx.confirmations && tx.confirmations >= getChain(network, chainId).safeConfirmations) {
         this.updateBalances(network, walletId, [swap.fromAccountId]);
@@ -426,7 +429,7 @@ class HopSwapProvider extends SwapProvider {
 
       if (!destinationTxHash) return;
       const client = this._getClient(network, walletId, to, toAccountId);
-      const tx = await client.chain.getTransactionByHash(data[methodName]?.[0]?.transactionHash);
+      const tx = await getTransactionByHash(client, data[methodName]?.[0]?.transactionHash);
       if (tx && tx.confirmations && tx.confirmations >= 1) {
         const isSuccessful = tx.status === 'SUCCESS' || Number(tx.status) === 1;
         if (isSuccessful) {
@@ -441,7 +444,7 @@ class HopSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }

@@ -2,6 +2,8 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/
 import { Client, HttpClient } from '@chainify/client';
 import { Transaction } from '@chainify/types';
 import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
+import { getTransactionByHash } from '../../utils/getTransactionByHash';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import { getDoubleSwapOutput, getSwapMemo, getValueOfAsset1InAsset2 } from '@thorchain/asgardex-util';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import { assetFromString, BaseAmount, baseAmount, baseToAsset } from '@xchainjs/xchain-util';
@@ -536,7 +538,8 @@ class ThorchainSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
+      const tx = await getTransactionByHash(client, swap.approveTxHash);
+
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
@@ -544,7 +547,7 @@ class ThorchainSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -553,7 +556,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await client.chain.getTransactionByHash(swap.fromFundHash);
+      const tx = await getTransactionByHash(client, swap.fromFundHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
@@ -561,7 +564,7 @@ class ThorchainSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -590,8 +593,7 @@ class ThorchainSwapProvider extends SwapProvider {
             }
 
             const client = this.getClient(network, walletId, asset, accountId);
-            const receiveTx = await client.chain.getTransactionByHash(receiveHash);
-
+            const receiveTx = await getTransactionByHash(client, receiveHash);
             if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
               this.updateBalances(network, walletId, [accountId]);
               const status = OUT_MEMO_TO_STATUS[memoAction];
