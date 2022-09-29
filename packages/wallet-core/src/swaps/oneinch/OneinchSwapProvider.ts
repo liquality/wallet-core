@@ -8,7 +8,7 @@ import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import BN, { BigNumber } from 'bignumber.js';
 import * as ethers from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
-import { ActionContext } from '../../store';
+import store, { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem } from '../../store/types';
 import { isChainEvmCompatible, isERC20 } from '../../utils/asset';
@@ -24,6 +24,12 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
+import {
+  getParser,
+  OneInchApproveErrorParser,
+  OneInchQuoteErrorParser,
+  OneInchSwapErrorParser,
+} from '@liquality/error-parser';
 
 const NATIVE_ASSET_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
@@ -71,6 +77,10 @@ const optimismL1GasLimits = {
   approve: 6500,
   send: 100000,
 };
+
+const oneInchSwapErrorParser = getParser(OneInchSwapErrorParser);
+const oneInchApproveErrorParser = getParser(OneInchApproveErrorParser);
+const oneInchQuoteErrorParser = getParser(OneInchQuoteErrorParser);
 
 class OneinchSwapProvider extends SwapProvider {
   public config: OneinchSwapProviderConfig;
@@ -223,12 +233,21 @@ class OneinchSwapProvider extends SwapProvider {
     const referrerAddress = this.config.referrerAddress?.[cryptoassets[from].chain];
     const fee = referrerAddress && this.config.referrerFee;
 
-    return await this._httpClient.nodeGet(`/${chainIdFrom}/quote`, {
-      fromTokenAddress: fromToken || NATIVE_ASSET_ADDRESS,
-      toTokenAddress: toToken || NATIVE_ASSET_ADDRESS,
-      amount,
-      fee,
-    });
+    return await oneInchQuoteErrorParser.wrapAync(
+      async () =>
+        await this._httpClient.nodeGet(`/${chainIdFrom}/quote`, {
+          fromTokenAddress: fromToken || NATIVE_ASSET_ADDRESS,
+          toTokenAddress: toToken || NATIVE_ASSET_ADDRESS,
+          amount,
+          fee,
+        }),
+      {
+        from: from,
+        to: to,
+        amount: unitToCurrency(cryptoassets[from], amount).toString(),
+        balance: 'NA',
+      }
+    );
   }
 
   private async _buildApproval({ network, walletId, quote }: SwapRequest<OneinchSwapHistoryItem>) {
@@ -255,10 +274,14 @@ class OneinchSwapProvider extends SwapProvider {
       };
     }
 
-    const callData = await this._httpClient.nodeGet(`/${chainId}/approve/transaction`, {
-      tokenAddress: cryptoassets[quote.from].contractAddress,
-      amount: inputAmount.toString(),
-    });
+    const callData = await oneInchApproveErrorParser.wrapAync(
+      async () =>
+        await this._httpClient.nodeGet(`/${chainId}/approve/transaction`, {
+          tokenAddress: cryptoassets[quote.from].contractAddress,
+          amount: inputAmount.toString(),
+        }),
+      null
+    );
 
     return callData;
   }
@@ -290,7 +313,15 @@ class OneinchSwapProvider extends SwapProvider {
       swapParams.fee = this.config.referrerFee;
     }
 
-    const swap = await this._httpClient.nodeGet(`/${chainId}/swap`, swapParams);
+    const swap = await oneInchSwapErrorParser.wrapAync(
+      async () => await this._httpClient.nodeGet(`/${chainId}/swap`, swapParams),
+      {
+        from: quote.from,
+        to: quote.to,
+        amount: unitToCurrency(cryptoassets[quote.from], new BN(quote.fromAmount)).toString(),
+        balance: store.getters.accountItem(quote.fromAccountId)?.balances[quote.from] || 'NA',
+      }
+    );
 
     if (new BN(quote.toAmount).times(1 - swapParams.slippage / 100).gt(swap?.toTokenAmount)) {
       throw new Error(
