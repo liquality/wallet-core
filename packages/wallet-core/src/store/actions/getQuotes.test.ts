@@ -47,12 +47,12 @@ describe('getQuotes tests', () => {
       amount: '1',
     });
     expect(quotes).toBeDefined();
-    expect(quotes.length).toBeGreaterThan(0);
-    expect(quotes[0].from).toBe('BTC');
-    expect(quotes[0].to).toBe('ETH');
-    expect(quotes[0].fromAmount).toBe('100000000');
-    expect(quotes[0].toAmount).not.toBe(undefined);
-    expect(quotes[0].provider).not.toBe(undefined);
+    expect(quotes.quotes.length).toBeGreaterThan(0);
+    expect(quotes.quotes[0].from).toBe('BTC');
+    expect(quotes.quotes[0].to).toBe('ETH');
+    expect(quotes.quotes[0].fromAmount).toBe('100000000');
+    expect(quotes.quotes[0].toAmount).not.toBe(undefined);
+    expect(quotes.quotes[0].provider).not.toBe(undefined);
   });
   it('should be able to get quotes for ETH to BTC against testnet', async () => {
     const walletId = wallet.state.activeWalletId;
@@ -73,11 +73,11 @@ describe('getQuotes tests', () => {
       amount: '1',
     });
     expect(quotes).toBeDefined();
-    expect(quotes.length).toBeGreaterThan(0);
-    expect(quotes[0].from).toBe('ETH');
-    expect(quotes[0].to).toBe('BTC');
-    expect(quotes[0].fromAmount).toBeDefined();
-    expect(quotes[0].toAmount).not.toBe(undefined);
-    expect(quotes[0].provider).not.toBe(undefined);
+    expect(quotes.quotes.length).toBeGreaterThan(0);
+    expect(quotes.quotes[0].from).toBe('ETH');
+    expect(quotes.quotes[0].to).toBe('BTC');
+    expect(quotes.quotes[0].fromAmount).toBeDefined();
+    expect(quotes.quotes[0].toAmount).not.toBe(undefined);
+    expect(quotes.quotes[0].provider).not.toBe(undefined);
   });
 });

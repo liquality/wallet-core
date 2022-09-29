@@ -44,6 +44,7 @@ export type QuoteRequestUIData = {
   toAccountId: AccountId;
   amount: string;
   walletId?: string;
+  slowQuoteThreshold?: number;
 };
 
 export type SwapRequest<T = SwapHistoryItem> = {
