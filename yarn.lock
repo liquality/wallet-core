@@ -2733,7 +2733,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@liquality/error-parser@workspace:packages/error-parser":
+"@liquality/error-parser@workspace:*, @liquality/error-parser@workspace:packages/error-parser":
   version: 0.0.0-use.local
   resolution: "@liquality/error-parser@workspace:packages/error-parser"
   dependencies:
@@ -2784,6 +2784,7 @@ __metadata:
     "@hop-protocol/sdk": 0.0.1-beta.314
     "@lifi/sdk": 1.0.2
     "@liquality/cryptoassets": "workspace:*"
+    "@liquality/error-parser": "workspace:*"
     "@metamask/eth-sig-util": ^4.0.1
     "@terra-money/terra.js": 3.1.3
     "@thorchain/asgardex-util": ^0.10.0
