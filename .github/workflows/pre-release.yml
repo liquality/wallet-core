@@ -1,0 +1,68 @@
+# Prerelease workflow (pre-release.yml)
+name: Prerelease
+
+on:
+  push:
+    branches:
+      - develop
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  pre-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+
+      # yarn cache
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Restore yarn cache
+        uses: actions/cache@v3.0.4
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-cache-folder-${{ hashFiles('**/yarn.lock', '.yarnrc.yml') }}
+          restore-keys: |
+            yarn-cache-folder-
+
+      - name: install dependencies
+        run: yarn install
+
+      - name: Get date
+        id: date
+        run: |
+          echo "::set-output name=date::$(date +%Y-%m-%d_%H-%M-%S)"
+
+      - name: Get changed files in the .changeset folder
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v29.0.7
+        with:
+          files: |
+            .changeset/**
+
+      - name: Create Release Pull Request & npm publish (Prereleases)
+        if: github.ref == 'refs/heads/develop' && steps.changed-files-specific.outputs.any_changed == 'true' || steps.changed-files-specific.outputs.any_deleted == 'true'
+        uses: changesets/action@v1
+        id: changesets
+        with:
+          publish: yarn build-prerelease
+          commit: 'chore: enter prerelease mode and version packages'
+          title: ':rocket: PreRelease ${{ steps.date.outputs.date }} :rocket:'
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+
+

@@ -2,11 +2,15 @@ name: Build Test
 
 on:
   push:
+    branches-ignore:
+      - changeset-release/master
+      - changeset-release/develop
     paths-ignore:
       - '**/node_modules/**'
       - '.github/**'
       - '.github/*'
       - '.changeset/**'
+      - '*.md'
   pull_request:
     paths-ignore:
       - '**/node_modules/**'
@@ -15,6 +19,7 @@ on:
     branches-ignore:
       - renovate*
       - changeset-release/develop
+      - changeset-release/master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,10 +29,38 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16
-      - run: yarn
+
+      # yarn cache
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Restore yarn cache
+        uses: actions/cache@v3.0.4
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-cache-folder-${{ hashFiles('**/yarn.lock', '.yarnrc.yml') }}
+          restore-keys: |
+            yarn-cache-folder-
+
+      - run: yarn --immutable
       - run: yarn lint
       - run: yarn build
+
+      - name: Get changed files in the packages folder
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v29.0.7
+        with:
+          files_ignore: |
+            .github/**
+            .changeset/**
+            packages/**/package.json
+            packages/**/*.{md,mdx}
+            !*.md
+
       - name: Run __tests__ (coverage)
+        if: github.event_name == 'pull_request' && steps.changed-files-specific.outputs.any_changed == 'true'
         run: |
           yarn rebuild
           export FORCE_COLOR=true

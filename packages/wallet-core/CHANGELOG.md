@@ -1,5 +1,140 @@
 # @liquality/wallet-core
 
+## 1.29.25
+
+### Patch Changes
+
+- bd46603: test: bump all versions for hot fix solana endpoints change
+- Updated dependencies [bd46603]
+  - @liquality/cryptoassets@1.14.20
+
+## 1.29.24
+
+### Patch Changes
+
+- Updated dependencies [4a746a4]
+  - @liquality/cryptoassets@1.14.19
+
+## 1.29.23
+
+### Patch Changes
+
+- f6394a0: fix: revert some changes and bump versions
+- Updated dependencies [f6394a0]
+  - @liquality/cryptoassets@1.14.18
+
+## 1.29.22
+
+### Patch Changes
+
+- 3c0113f: test: bump patch versions
+- e466d4f: test: bump versions
+- Updated dependencies [3c0113f]
+- Updated dependencies [e466d4f]
+  - @liquality/cryptoassets@1.14.17
+
+## 1.29.21
+
+### Patch Changes
+
+- 955a8c3: feat: bump to patch versions for 0.73.0
+- Updated dependencies [955a8c3]
+  - @liquality/cryptoassets@1.14.16
+
+## 1.29.21-next.1
+
+### Patch Changes
+
+- af3fca0: test: bump versions
+- Updated dependencies [af3fca0]
+  - @liquality/cryptoassets@1.14.16-next.1
+
+## 1.29.21-next.0
+
+### Patch Changes
+
+- 671dea7: Bump up Chainify package
+- 06aebc7: fix: regression bugs bump version
+- Updated dependencies [06aebc7]
+  - @liquality/cryptoassets@1.14.16-next.0
+
+## 1.29.20
+
+### Patch Changes
+
+- 8f4b740: test: bump version from master test
+- Updated dependencies [8f4b740]
+  - @liquality/cryptoassets@1.14.15
+
+## 1.29.19
+
+### Patch Changes
+
+- c632674: test: bump all packages after remove logic from ci
+- Updated dependencies [c632674]
+  - @liquality/cryptoassets@1.14.14
+
+## 1.29.18
+
+### Patch Changes
+
+- 1784096: feat: bump version from master after yarn lock file
+- Updated dependencies [1784096]
+  - @liquality/cryptoassets@1.14.13
+
+## 1.29.17
+
+### Patch Changes
+
+- fe656f0: test: testing bump version without running changeset version command local
+- 66038e7: test: bump another next version from develop branch
+- 66038e7: test: test another pre release bump
+- f552f0e: feat: bump patch version from master branch for rc0.73.0
+- ae1b06b: Wallet core minor bump
+- Updated dependencies [fe656f0]
+- Updated dependencies [66038e7]
+- Updated dependencies [66038e7]
+- Updated dependencies [f552f0e]
+  - @liquality/cryptoassets@1.14.12
+
+## 1.29.17-next.4
+
+### Patch Changes
+
+- ae1b06b: Wallet core minor bump
+
+## 1.29.17-next.3
+
+### Patch Changes
+
+- fe656f0: test: testing bump version without running changeset version command local
+- Updated dependencies [fe656f0]
+  - @liquality/cryptoassets@1.14.12-next.3
+
+## 1.29.17-next.2
+
+### Patch Changes
+
+- test: test another pre release bump
+- Updated dependencies
+  - @liquality/cryptoassets@1.14.12-next.2
+
+## 1.29.17-next.1
+
+### Patch Changes
+
+- test: bump another next version from develop branch
+- Updated dependencies
+  - @liquality/cryptoassets@1.14.12-next.1
+
+## 1.29.17-next.0
+
+### Patch Changes
+
+- 179f0b4: test: prerelease version bump
+- Updated dependencies [179f0b4]
+  - @liquality/cryptoassets@1.14.12-next.0
+
 ## 1.29.16
 
 ### Patch Changes

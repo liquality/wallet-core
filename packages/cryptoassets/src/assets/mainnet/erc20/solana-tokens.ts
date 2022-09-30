@@ -8,9 +8,6 @@ const TOKENS = {
     decimals: 6,
     contractAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
     matchingAsset: 'USDT',
-    priceSource: {
-      coinGeckoId: 'tether',
-    },
   },
   sUSDC: {
     name: 'sUSDC',
@@ -18,9 +15,6 @@ const TOKENS = {
     decimals: 6,
     contractAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     matchingAsset: 'USDC',
-    priceSource: {
-      coinGeckoId: 'tether',
-    },
   },
   RAY: {
     name: 'RAY',
@@ -46,9 +40,6 @@ const TOKENS = {
     decimals: 6,
     contractAddress: 'CWE8jPTUYhdCTZYWPTe1o5DFqfdjzWKc9WKz6rSjQUdG',
     matchingAsset: 'LINK',
-    priceSource: {
-      coinGeckoId: 'chainlink',
-    },
   },
 };
 

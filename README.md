@@ -87,7 +87,8 @@ yarn test
 ## Publish to npm
 
 - GitHub actions will publish to NPM automatically after a successful pull request merge, follow the below steps to publish to NPM.
-```
+
+```bash
 yarn changeset
 ```
 
@@ -103,4 +104,17 @@ Push the file along with the rest of the changes, and let the GitHub actions do 
 
 ![Alt text](docs/img_2.png)
 
+### How to do [prerelease](https://github.com/changesets/changesets/blob/main/docs/prereleases.md) version from a branch
 
+- Create a changed file with the version you want to release, for example `v0.1.0-alpha.1`
+
+```bash
+ yarn changeset
+```
+_Note:_ Ensure `pre.json` file is present in the `.changeset` directory of the project, then create a pull request with the changeset file and merge it to the develop branch.
+
+If `pre.json` file is not present, create a new file with the following command & it will to the `.changeset` directory of the project,push the changes and create a pull request with the changeset file and merge it to the develop branch.
+
+```bash
+yarn changeset pre enter next
+```
