@@ -35,6 +35,7 @@ export default new EvmChain({
     chainId: 43114,
     isTestnet: false,
     rpcUrls: [
+      'https://nd-121-949-157.p2pify.com/b730890d3262b7c31f27895a698f46ed/ext/bc/C/rpc',
       'https://speedy-nodes-nyc.moralis.io/7c28a10f7d39bfb24704dafc/avalanche/mainnet',
       'https://api.avax.network/ext/bc/C/rpc',
     ],

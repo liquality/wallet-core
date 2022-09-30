@@ -9,7 +9,10 @@ export default transformMainnetToTestnetChain(
     networkId: 80001,
     chainId: 80001,
     isTestnet: true,
-    rpcUrls: ['https://matic-testnet-archive-rpc.bwarelabs.com'],
+    rpcUrls: [
+      'https://polygon-mumbai.infura.io/v3/a2ad6f8c0e57453ca4918331f16de87d',
+      'https://matic-testnet-archive-rpc.bwarelabs.com',
+    ],
   },
   [
     {

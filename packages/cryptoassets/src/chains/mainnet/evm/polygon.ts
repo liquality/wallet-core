@@ -33,7 +33,7 @@ export default new EvmChain({
     networkId: 137,
     chainId: 137,
     isTestnet: false,
-    rpcUrls: ['https://polygon-rpc.com'],
+    rpcUrls: ['https://polygon-mainnet.infura.io/v3/a2ad6f8c0e57453ca4918331f16de87d', 'https://polygon-rpc.com'],
   },
   explorerViews: [
     {

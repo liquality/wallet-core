@@ -34,10 +34,10 @@ export default new EvmChain({
     chainId: 1,
     networkId: 1,
     rpcUrls: [
-      'https://mainnet.infura.io/v3/da99ebc8c0964bb8bb757b6f8cc40f1f',
-      'https://eth-mainnet.public.blastapi.io',
+      'https://mainnet.infura.io/v3/a2ad6f8c0e57453ca4918331f16de87d',
+      'https://eth-mainnet.public.blastapi.io/',
       'https://eth-mainnet.nodereal.io/v1/1659dfb40aa24bbb8153a677b98064d7',
-      'https://eth-mainnet.gateway.pokt.network/v1/5f3453978e354ab992c4da79	',
+      'https://eth-mainnet.gateway.pokt.network/v1/5f3453978e354ab992c4da79',
     ],
   },
   explorerViews: [

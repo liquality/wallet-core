@@ -8,7 +8,10 @@ export default transformMainnetToTestnetChain(
     networkId: 'testnet',
     coinType: '501',
     isTestnet: true,
-    rpcUrls: ['https://solana--devnet.datahub.figment.io/apikey/d7d9844ccf72ad4fef9bc5caaa957a50'],
+    rpcUrls: [
+      'https://api.testnet.solana.com',
+      'https://solana--devnet.datahub.figment.io/apikey/d7d9844ccf72ad4fef9bc5caaa957a50',
+    ],
   },
   [
     {
