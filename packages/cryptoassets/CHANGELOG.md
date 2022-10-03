@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.15.0
+
+### Minor Changes
+
+- 87ea3f6: - evm chains work under same logic now
+
 ## 1.14.20
 
 ### Patch Changes

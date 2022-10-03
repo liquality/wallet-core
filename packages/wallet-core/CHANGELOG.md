@@ -1,5 +1,16 @@
 # @liquality/wallet-core
 
+## 1.30.0
+
+### Minor Changes
+
+- 87ea3f6: - evm chains work under same logic now
+
+### Patch Changes
+
+- Updated dependencies [87ea3f6]
+  - @liquality/cryptoassets@1.15.0
+
 ## 1.29.25
 
 ### Patch Changes
