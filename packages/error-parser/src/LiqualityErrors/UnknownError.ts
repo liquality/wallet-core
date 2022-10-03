@@ -1,5 +1,7 @@
 import { LiqualityError } from '.';
 class UnknownError extends LiqualityError {
+  public readonly name = 'UnknownError';
+
   constructor(lang?: string) {
     super();
     this.wrapUserErrorMessage(lang);
@@ -16,7 +18,5 @@ class UnknownError extends LiqualityError {
     }
   }
 }
-
-UnknownError.prototype.name = 'UnknownError';
 
 export default UnknownError;

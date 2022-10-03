@@ -11,6 +11,8 @@
     "dist/**"
   ],
   "dependencies": {
+    "@liquality/cryptoassets": "workspace:*",
+    "@liquality/wallet-core": "workspace:*",
     "randombytes": "^2.1.0"
   },
   "devDependencies": {

@@ -31,6 +31,20 @@ export type QuoteRequest = {
   from: Asset;
   to: Asset;
   amount: BigNumber;
+  walletId?: string;
+  fromAccountId?: AccountId;
+  toAccountId?: AccountId;
+};
+
+export type GetQuotesRequest = {
+  network: Network;
+  from: Asset;
+  to: Asset;
+  fromAccountId: AccountId;
+  toAccountId: AccountId;
+  amount: string;
+  walletId?: string;
+  slowQuoteThreshold?: number;
 };
 
 export type SwapRequest<T = SwapHistoryItem> = {
@@ -71,3 +85,15 @@ export type ActionStatus = {
   endTime: number;
   status: string;
 };
+
+export type SwapProviderError = {
+  code: SwapProviderErrorTypes;
+  message?: string;
+  min?: BigNumber;
+  max?: BigNumber;
+};
+
+export enum SwapProviderErrorTypes {
+  AMOUNT_TOO_LOW = 'AMOUNT_TOO_LOW',
+  FEES_HIGHER_THAN_AMOUNT = 'FEES_HIGHER_THAN_AMOUNT',
+}

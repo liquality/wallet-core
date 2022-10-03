@@ -22,15 +22,15 @@ describe('OneInchSwapAPI parser', () => {
   const parser = getParser(OneInchSwapErrorParser);
 
   const errorMap = [
-    [ONE_INCH_ERRORS.CANNOT_ESTIMATE_1, ThirdPartyError.prototype.name],
-    [ONE_INCH_ERRORS.CANNOT_ESTIMATE_WITH_REASON, ThirdPartyError.prototype.name],
-    [ONE_INCH_ERRORS.INSUFFICIENT_ALLOWANCE, InternalError.prototype.name],
-    [ONE_INCH_ERRORS.INSUFFICIENT_FUNDS, InsufficientFundsError.prototype.name],
-    [ONE_INCH_ERRORS.INSUFFICIENT_GAS_FEE, InsufficientGasFeeError.prototype.name],
-    [ONE_INCH_ERRORS.INSUFFICIENT_LIQUIDITY, InsufficientLiquidityError.prototype.name],
-    [ONE_INCH_ERRORS.INTERNAL_ERROR, ThirdPartyError.prototype.name],
-    [ONE_INCH_ERRORS.INVALID_TOKEN_PAIR, InternalError.prototype.name],
-    [ONE_INCH_ERRORS.INVALID_TOKEN_ADDRESS, InternalError.prototype.name],
+    [ONE_INCH_ERRORS.CANNOT_ESTIMATE_1, ThirdPartyError.name],
+    [ONE_INCH_ERRORS.CANNOT_ESTIMATE_WITH_REASON, ThirdPartyError.name],
+    [ONE_INCH_ERRORS.INSUFFICIENT_ALLOWANCE, InternalError.name],
+    [ONE_INCH_ERRORS.INSUFFICIENT_FUNDS, InsufficientFundsError.name],
+    [ONE_INCH_ERRORS.INSUFFICIENT_GAS_FEE, InsufficientGasFeeError.name],
+    [ONE_INCH_ERRORS.INSUFFICIENT_LIQUIDITY, InsufficientLiquidityError.name],
+    [ONE_INCH_ERRORS.INTERNAL_ERROR, ThirdPartyError.name],
+    [ONE_INCH_ERRORS.INVALID_TOKEN_PAIR, InternalError.name],
+    [ONE_INCH_ERRORS.INVALID_TOKEN_ADDRESS, InternalError.name],
   ];
 
   it('should not log anything to console', async () => {
@@ -73,7 +73,7 @@ describe('OneInchSwapAPI parser', () => {
     });
 
     expect(error.name).toBe(liqError);
-    expect(error.source).toBe(OneInchSwapErrorParser.prototype.errorSource);
+    expect(error.source).toBe(OneInchSwapErrorParser.errorSource);
     expect(error.devMsg.data).toBe(data);
     expect(error.rawError).toBe(validError);
 
@@ -84,7 +84,7 @@ describe('OneInchSwapAPI parser', () => {
     });
 
     expect(error1.name).toBe(liqError);
-    expect(error1.source).toBe(OneInchSwapErrorParser.prototype.errorSource);
+    expect(error1.source).toBe(OneInchSwapErrorParser.errorSource);
     expect(error1.devMsg.data).toBe(data);
     expect(error1.rawError).toBe(validError);
   });
@@ -112,13 +112,13 @@ describe('OneInchSwapAPI parser', () => {
         throw error;
       }, data);
     });
-    expect(liqError.name).toBe(UnknownError.prototype.name);
+    expect(liqError.name).toBe(UnknownError.name);
 
     const liqError1: LiqualityError = await getErrorAsync(async () => {
       await parser.wrapAync(() => {
         throw error;
       }, data);
     });
-    expect(liqError1.name).toBe(UnknownError.prototype.name);
+    expect(liqError1.name).toBe(UnknownError.name);
   });
 });

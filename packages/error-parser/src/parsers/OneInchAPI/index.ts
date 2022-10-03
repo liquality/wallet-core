@@ -1,3 +1,7 @@
+export const oneInchQuoteErrorSource = 'OneInchQuoteAPI';
+export const oneInchSwapSourceName = 'OneInchSwapAPI';
+export const oneInchApproveSourceName = 'OneInchApproveAPI';
+
 export type OneInchError = {
   statusCode: number;
   error: string;

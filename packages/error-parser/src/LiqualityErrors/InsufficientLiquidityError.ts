@@ -1,5 +1,7 @@
 import { LiqualityError } from '.';
 class InsufficientLiquidityError extends LiqualityError {
+  public readonly name = 'InsufficientLiquidityError';
+
   constructor(context?: InsufficientLiquidityErrorContext, lang?: string) {
     super();
     if (context) {
@@ -25,8 +27,6 @@ class InsufficientLiquidityError extends LiqualityError {
     }
   }
 }
-
-InsufficientLiquidityError.prototype.name = 'InsufficientLiquidityError';
 
 export type InsufficientLiquidityErrorContext = { from: string; to: string; amount: string };
 export default InsufficientLiquidityError;
