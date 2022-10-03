@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ActionContext } from '..';
 import buildConfig from '../../build.config';
 import { getSwapProvider } from '../../factory/swap';
-import { QuoteRequestUIData, SwapQuote } from '../../swaps/types';
+import { GetQuotesRequest, SwapQuote } from '../../swaps/types';
 import { SwapProviderType } from '../types';
 
 export type RequestId = string;
@@ -35,7 +35,7 @@ export const getQuotes = async (
     // Amount is string because in some contexts, it is passed over messages not supporting full objects
     amount,
     slowQuoteThreshold = 5000,
-  }: QuoteRequestUIData
+  }: GetQuotesRequest
 ): Promise<GetQuotesResult> => {
   const requestId = uuidv4();
   if (!amount) {

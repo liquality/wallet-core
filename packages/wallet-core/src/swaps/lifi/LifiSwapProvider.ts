@@ -101,15 +101,11 @@ class LifiSwapProvider extends EvmSwapProvider {
     };
 
     try {
-      console.log('Before getQuote');
       const lifiRoute = await this._lifiClient.getQuote(quoteRequest);
-      console.log('After getQuote');
 
       return { from, to, fromAmount: fromAmountInUnit, toAmount: lifiRoute.estimate.toAmount, lifiRoute };
     } catch (e) {
-      console.log('Catch getQuote');
-
-      console.warn('LifiSwapProvider: ', e);
+      console.warn('LifiSwapProvider error : ', e);
       return null;
     }
   }

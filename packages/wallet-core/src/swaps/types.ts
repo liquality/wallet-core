@@ -36,7 +36,7 @@ export type QuoteRequest = {
   toAccountId?: AccountId;
 };
 
-export type QuoteRequestUIData = {
+export type GetQuotesRequest = {
   network: Network;
   from: Asset;
   to: Asset;
