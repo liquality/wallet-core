@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "@liquality/cryptoassets": "1.14.17",
+    "@liquality/error-parser": "1.0.7",
+    "@liquality/wallet-core": "1.29.22"
+  },
+  "changesets": []
+}

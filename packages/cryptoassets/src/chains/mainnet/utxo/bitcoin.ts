@@ -62,5 +62,5 @@ export default new BitcoinChain({
     unit: 'sat/b',
     magnitude: 1e8,
   },
-  supportCustomFees: false,
+  supportCustomFees: true,
 });

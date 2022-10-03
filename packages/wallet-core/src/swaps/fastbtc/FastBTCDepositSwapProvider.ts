@@ -81,7 +81,7 @@ class FastBTCDepositSwapProvider extends SwapProvider {
       });
 
       this.socketConnection.on('disconnect', function () {
-        console.log('FastBtc socket disconnected');
+        console.warn('FastBtc socket disconnected');
       });
     });
   }
@@ -268,7 +268,7 @@ class FastBTCDepositSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      console.log(e);
+      console.warn(e);
     }
   }
 

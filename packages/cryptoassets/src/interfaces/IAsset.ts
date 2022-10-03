@@ -11,7 +11,7 @@ export interface IAsset {
   code: string;
 
   decimals: number;
-  priceSource: PriceSources;
+  priceSource?: PriceSources;
 
   color?: string;
   contractAddress?: string;

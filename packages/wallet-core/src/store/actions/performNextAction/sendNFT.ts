@@ -19,13 +19,15 @@ async function waitForConfirmations(
   context: ActionContext,
   { transaction, network, walletId }: { transaction: NFTSendHistoryItem; network: Network; walletId: WalletId }
 ): Promise<Partial<NFTSendHistoryItem> | undefined> {
-  const { getters } = rootActionContext(context);
+  const { getters, dispatch } = rootActionContext(context);
   const { from, accountId } = transaction;
   const chainId = getAsset(network, from).chain;
   const client = getters.client({ network, walletId, chainId, accountId });
   try {
     const tx = await client.chain.getTransactionByHash(transaction.txHash);
     if (tx && tx.confirmations && tx.confirmations > 0) {
+      await dispatch.updateNFTs({ network, walletId, accountIds: [transaction.accountId] });
+
       return {
         endTime: Date.now(),
         status: txStatusToSendStatus(tx.status!),

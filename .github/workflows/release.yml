@@ -3,9 +3,10 @@ name: Release
 
 on:
   push:
+    paths-ignore:
+      - '*.md'
     branches:
       - master
-      - develop
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -15,57 +16,55 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js 16.x
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
 
-      # yarn cache
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-
-      - name: Restore yarn cache
-        uses: actions/cache@v3.0.4
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: yarn-cache-folder-${{ hashFiles('**/yarn.lock', '.yarnrc.yml') }}
-          restore-keys: |
-            yarn-cache-folder-
+#      # yarn cache
+#      - name: Get yarn cache directory path
+#        id: yarn-cache-dir-path
+#        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+#
+#      - name: Restore yarn cache
+#        uses: actions/cache@v3.0.4
+#        id: yarn-cache
+#        with:
+#          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+#          key: yarn-cache-folder-${{ hashFiles('**/yarn.lock', '.yarnrc.yml') }}
+#          restore-keys: |
+#            yarn-cache-folder-
 
       - name: install dependencies
-        run: yarn --frozen-lockfile
+        run: yarn install
 
       - name: Get date
         id: date
         run: |
           echo "::set-output name=date::$(date +%Y-%m-%d_%H-%M-%S)"
 
-      - name: Create Release Pull Request & npm publish (develop)
-        if: github.ref == 'refs/heads/develop'
+      - name: Get changed files in the .changeset folder
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v29.0.7
+        with:
+          files: |
+            .changeset/**
+
+      - name: Create Release Pull Request & npm publish (latest)
+        if: github.ref == 'refs/heads/master' && steps.changed-files-specific.outputs.any_changed == 'true' || steps.changed-files-specific.outputs.any_deleted == 'true'
         uses: changesets/action@v1
         with:
-          publish: yarn build-release-beta
-          commit: 'chore: entering prerelease mode'
+          publish: yarn build-release
+          commit: 'chore: entering version change mode'
           title: ':rocket: Release ${{ steps.date.outputs.date }} :rocket:'
           createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Create Release Pull Request & npm publish (latest)
-        if: github.ref == 'refs/heads/master'
-        uses: changesets/action@v1
-        with:
-          publish: yarn build-release
-          commit: 'chore: entering prerelease mode'
-          title: ':rocket: Release ${{ steps.date.outputs.date }} :rocket:'
-          createGithubReleases: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 
 

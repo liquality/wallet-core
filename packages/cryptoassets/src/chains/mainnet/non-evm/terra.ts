@@ -67,5 +67,5 @@ export default new TerraChain({
     unit: 'LUNA',
     magnitude: 1e6,
   },
-  supportCustomFees: false,
+  supportCustomFees: true,
 });

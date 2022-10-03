@@ -80,7 +80,6 @@ describe('quotes utils tests', () => {
 
     // sort quotes
     let result = sortQuotes(quotes.quotes, Network.Testnet);
-    console.log(result);
     expect(result).toBeDefined();
     expect(result).not.toBeNaN();
 
