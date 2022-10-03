@@ -13,9 +13,9 @@ const optimismTestnet = transformMainnetToTestnetChain(
   },
   [
     {
-      tx: ' tx/',
-      address: 'https://kovan-optimistic.etherscan.io/address/',
-      token: 'https://kovan-optimistic.etherscan.io/token/',
+      tx: 'https://kovan-optimistic.etherscan.io/tx/{hash}',
+      address: 'https://kovan-optimistic.etherscan.io/address/{address}',
+      token: 'https://kovan-optimistic.etherscan.io/token/{token}',
     },
   ],
   'https://optimismfaucet.xyz/'

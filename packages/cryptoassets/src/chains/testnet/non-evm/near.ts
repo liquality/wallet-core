@@ -8,13 +8,13 @@ export default transformMainnetToTestnetChain(
     networkId: 'testnet',
     coinType: '397',
     isTestnet: true,
-    rpcUrls: ['https://rinkeby.arbitrum.io/rpc'],
+    rpcUrls: ['https://rpc.testnet.near.org'],
     scraperUrls: ['https://near-testnet-api.liq-chainhub.net'],
   },
   [
     {
-      tx: 'https://explorer.testnet.near.org/transactions/',
-      address: 'https://explorer.testnet.near.org/accounts/',
+      tx: 'https://explorer.testnet.near.org/transactions/{hash}',
+      address: 'https://explorer.testnet.near.org/accounts/{address}',
     },
   ],
   'https://wallet.testnet.near.org/'

@@ -37,11 +37,15 @@ export default new EvmChain({
   },
   explorerViews: [
     {
-      tx: 'https://explorer.fuse.io/tx/',
-      address: 'https://explorer.fuse.io/address/',
-      token: 'https://explorer.fuse.io/token/',
+      tx: 'https://explorer.fuse.io/tx/{hash}',
+      address: 'https://explorer.fuse.io/address/{address}',
+      token: 'https://explorer.fuse.io/token/{token}',
     },
   ],
+
+  nameService: {
+    uns: 'FUSE',
+  },
 
   multicallSupport: true,
   ledgerSupport: false,

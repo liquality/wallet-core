@@ -1,5 +1,5 @@
 import { EvmChain } from '../../../chains/EvmChain';
-import { AssetTypes, ChainId } from '../../../types';
+import { AssetTypes, ChainId, NftProviderType } from '../../../types';
 
 export default new EvmChain({
   id: ChainId.Avalanche,
@@ -22,6 +22,7 @@ export default new EvmChain({
   isEVM: true,
   hasTokens: true,
   isMultiLayered: false,
+  nftProviderType: NftProviderType.Moralis,
 
   averageBlockTime: 3,
   safeConfirmations: 10,
@@ -34,17 +35,22 @@ export default new EvmChain({
     chainId: 43114,
     isTestnet: false,
     rpcUrls: [
+      'https://nd-121-949-157.p2pify.com/b730890d3262b7c31f27895a698f46ed/ext/bc/C/rpc',
       'https://speedy-nodes-nyc.moralis.io/7c28a10f7d39bfb24704dafc/avalanche/mainnet',
       'https://api.avax.network/ext/bc/C/rpc',
     ],
   },
   explorerViews: [
     {
-      tx: 'https://snowtrace.io/tx/',
-      address: 'https://snowtrace.io/address/',
-      token: 'https://snowtrace.io/token/',
+      tx: 'https://snowtrace.io/tx/{hash}',
+      address: 'https://snowtrace.io/address/{address}',
+      token: 'https://snowtrace.io/token/{token}',
     },
   ],
+
+  nameService: {
+    uns: 'AVAX',
+  },
 
   multicallSupport: true,
   ledgerSupport: false,

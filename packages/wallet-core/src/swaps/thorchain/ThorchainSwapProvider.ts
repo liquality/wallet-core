@@ -17,7 +17,6 @@ import { isERC20 } from '../../utils/asset';
 import { fiatToCrypto, prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
-import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
 import {
   BaseSwapProviderConfig,
@@ -316,8 +315,8 @@ class ThorchainSwapProvider extends SwapProvider {
   async approveTokens({ network, walletId, swap }: NextSwapActionRequest<ThorchainSwapHistoryItem>) {
     const fromChain = cryptoassets[swap.from].chain;
     // @ts-ignore
-    const chainNetwork = ChainNetworks[fromChain];
-    const chainId = chainNetwork[network].chainId;
+    const chainNetwork = getChain(network, fromChain).network;
+    const chainId = chainNetwork.chainId;
 
     // TODO: use chainify clients, i.e. `chain.client.getProvider`
     const api = new ethers.providers.InfuraProvider(chainId, buildConfig.infuraApiKey);
@@ -408,8 +407,8 @@ class ThorchainSwapProvider extends SwapProvider {
     }
     const routerAddress = await this.getRouterAddress(fromThorchainAsset.chain);
     // @ts-ignore
-    const chainNetwork = ChainNetworks[cryptoassets[quote.from].chain];
-    const chainId = chainNetwork[network].chainId;
+    const chainNetwork = getChain(network, cryptoassets[quote.from].chain).network;
+    const chainId = chainNetwork.chainId;
     const api = new ethers.providers.InfuraProvider(chainId, buildConfig.infuraApiKey);
     const tokenAddress = isERC20(quote.from)
       ? cryptoassets[quote.from].contractAddress

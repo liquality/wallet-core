@@ -8,12 +8,15 @@ export default transformMainnetToTestnetChain(
     networkId: 'testnet',
     coinType: '501',
     isTestnet: true,
-    rpcUrls: ['https://api.devnet.solana.com'],
+    rpcUrls: [
+      'https://api.testnet.solana.com',
+      'https://solana--devnet.datahub.figment.io/apikey/d7d9844ccf72ad4fef9bc5caaa957a50',
+    ],
   },
   [
     {
-      tx: 'https://explorer.solana.com/tx/${tx}?cluster=testnet',
-      address: 'https://explorer.solana.com/address/${address}?cluster=testnet',
+      tx: 'https://explorer.solana.com/tx/{hash}?cluster=testnet',
+      address: 'https://explorer.solana.com/address/{address}?cluster=testnet',
     },
   ],
   'https://solfaucet.com/'

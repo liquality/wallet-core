@@ -9,13 +9,16 @@ export default transformMainnetToTestnetChain(
     networkId: 43113,
     chainId: 43113,
     isTestnet: true,
-    rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
+    rpcUrls: [
+      'https://nd-865-707-799.p2pify.com/50bb56fd7bb9cc0f1847f418417c0d7a/ext/bc/C/rpc',
+      'https://api.avax-test.network/ext/bc/C/rpc',
+    ],
   },
   [
     {
-      tx: 'https://testnet.snowtrace.io/tx/',
-      address: 'https://testnet.snowtrace.io/address/',
-      token: 'https://testnet.snowtrace.io/token/',
+      tx: 'https://testnet.snowtrace.io/tx/{hash}',
+      address: 'https://testnet.snowtrace.io/address/{address}',
+      token: 'https://testnet.snowtrace.io/token/{token}',
     },
   ],
   'https://faucet.avax.network/'
