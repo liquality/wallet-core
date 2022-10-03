@@ -1,19 +1,5 @@
 # @liquality/error-parser
 
-<<<<<<< HEAD
-## 1.1.0-next.0
-
-### Minor Changes
-
-- cb2c60a: feat: lifi swap provider
-  refactor: get quotes returns fast quotes first. `getSlowQuotes` action to retrieve restr
-
-### Patch Changes
-
-- Updated dependencies [cb2c60a]
-  - @liquality/cryptoassets@1.15.0-next.0
-  - @liquality/wallet-core@1.30.0-next.0
-=======
 ## 1.0.9
 
 ### Patch Changes
@@ -25,7 +11,6 @@
 ### Patch Changes
 
 - f6394a0: fix: revert some changes and bump versions
->>>>>>> master
 
 ## 1.0.7
 
