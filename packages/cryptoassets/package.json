@@ -1,6 +1,10 @@
 {
   "name": "@liquality/cryptoassets",
+<<<<<<< HEAD
   "version": "1.15.0-next.0",
+=======
+  "version": "1.15.0",
+>>>>>>> master
   "description": "Common library for liquality wallet",
   "repository": "git@github.com:liquality/wallet-core.git",
   "author": "monokh <mnokhb@gmail.com>",

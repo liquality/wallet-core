@@ -1,5 +1,6 @@
 # @liquality/error-parser
 
+<<<<<<< HEAD
 ## 1.1.0-next.0
 
 ### Minor Changes
@@ -12,6 +13,19 @@
 - Updated dependencies [cb2c60a]
   - @liquality/cryptoassets@1.15.0-next.0
   - @liquality/wallet-core@1.30.0-next.0
+=======
+## 1.0.9
+
+### Patch Changes
+
+- bd46603: test: bump all versions for hot fix solana endpoints change
+
+## 1.0.8
+
+### Patch Changes
+
+- f6394a0: fix: revert some changes and bump versions
+>>>>>>> master
 
 ## 1.0.7
 

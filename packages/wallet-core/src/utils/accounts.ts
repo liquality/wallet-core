@@ -60,23 +60,8 @@ export const accountColors = [
   '#bf0205',
 ];
 
-export const chainDefaultColors: { [key in ChainId]?: string } = {
-  bitcoin: '#EAB300',
-  ethereum: '#4F67E4',
-  rsk: '#3AB24D',
-  bsc: '#F7CA4F',
-  near: '#000000',
-  solana: '#008080',
-  polygon: '#8247E5',
-  arbitrum: '#28A0EF',
-  terra: '#008080',
-  fuse: '#46e8b6',
-  avalanche: '#E84141',
-  optimism: '#bf0205',
-};
-
 export const getNextAccountColor = (chain: ChainId, index: number) => {
-  const defaultColor = chainDefaultColors[chain];
+  const defaultColor = getChain(Network.Mainnet, chain).color;
   if (!defaultColor) {
     throw new Error(`Default color for chain ${chain} not defined`);
   }

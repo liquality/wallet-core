@@ -1,6 +1,10 @@
 {
   "name": "@liquality/error-parser",
+<<<<<<< HEAD
   "version": "1.1.0-next.0",
+=======
+  "version": "1.0.9",
+>>>>>>> master
   "description": "Error Parsing Library for liquality",
   "repository": "git@github.com:liquality/wallet-core.git",
   "author": "koderholic <meetenebelioluchi@gmail.com>",

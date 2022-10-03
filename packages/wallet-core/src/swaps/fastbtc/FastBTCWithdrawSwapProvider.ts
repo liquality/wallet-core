@@ -7,13 +7,11 @@ import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cr
 import BN from 'bignumber.js';
 import * as ethers from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
-import { buildConfig } from '../..';
 import { ActionContext } from '../../store';
 import { withInterval } from '../../store/actions/performNextAction/utils';
 import { Network, SwapHistoryItem, WalletId } from '../../store/types';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
-import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
 import {
   BaseSwapProviderConfig,
@@ -52,9 +50,11 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
 
   constructor(config: FastBtcWithdrawSwapProviderConfig) {
     super(config);
-    const rpcUrl = buildConfig.rskRpcUrls[this.config.network];
-    const chainId = ChainNetworks[ChainId.Rootstock][this.config.network].chainId;
-    this._provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl, chainId);
+    const rskChain = getChain(this.config.network, ChainId.Rootstock);
+    this._provider = new ethers.providers.StaticJsonRpcProvider(
+      rskChain.network.rpcUrls[0],
+      Number(rskChain.network.chainId)
+    );
   }
 
   getFastBtcBridge(provider: JsonRpcProvider) {

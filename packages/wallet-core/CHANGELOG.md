@@ -1,5 +1,6 @@
 # @liquality/wallet-core
 
+<<<<<<< HEAD
 ## 1.30.0-next.0
 
 ### Minor Changes
@@ -11,6 +12,41 @@
 
 - Updated dependencies [cb2c60a]
   - @liquality/cryptoassets@1.15.0-next.0
+=======
+## 1.30.0
+
+### Minor Changes
+
+- 87ea3f6: - evm chains work under same logic now
+
+### Patch Changes
+
+- Updated dependencies [87ea3f6]
+  - @liquality/cryptoassets@1.15.0
+
+## 1.29.25
+
+### Patch Changes
+
+- bd46603: test: bump all versions for hot fix solana endpoints change
+- Updated dependencies [bd46603]
+  - @liquality/cryptoassets@1.14.20
+
+## 1.29.24
+
+### Patch Changes
+
+- Updated dependencies [4a746a4]
+  - @liquality/cryptoassets@1.14.19
+
+## 1.29.23
+
+### Patch Changes
+
+- f6394a0: fix: revert some changes and bump versions
+- Updated dependencies [f6394a0]
+  - @liquality/cryptoassets@1.14.18
+>>>>>>> master
 
 ## 1.29.22
 

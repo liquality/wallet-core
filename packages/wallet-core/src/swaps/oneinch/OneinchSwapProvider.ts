@@ -12,7 +12,6 @@ import { Asset, Network, SwapHistoryItem } from '../../store/types';
 import { isChainEvmCompatible, isERC20 } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
-import { ChainNetworks } from '../../utils/networks';
 import { SwapProvider } from '../SwapProvider';
 import {
   BaseSwapProviderConfig,
@@ -93,9 +92,10 @@ class OneinchSwapProvider extends SwapProvider {
       return null;
     const fromAmountInUnit = new BN(currencyToUnit(cryptoassets[from], new BN(amount)));
     // @ts-ignore TODO: Fix chain networks
-    const chainIdFrom: number = ChainNetworks[cryptoassets[from].chain][network].chainId;
+    const chainIdFrom: number = Number(getChain(network, cryptoassets[from].chain).network.chainId);
     // @ts-ignore TODO: Fix chain networks
-    const chainIdTo: number = ChainNetworks[cryptoassets[to].chain][network].chainId;
+    const chainIdTo: number = Number(getChain(network, cryptoassets[to].chain).network.chainId);
+
     if (chainIdFrom !== chainIdTo || !supportedChains[chainIdFrom]) {
       return null;
     }
@@ -170,8 +170,9 @@ class OneinchSwapProvider extends SwapProvider {
     const chain = cryptoassets[quote.from].chain;
 
     // @ts-ignore TODO: Fix chain networks
-    const chainId: number = ChainNetworks[chain][network].chainId;
-    const nativeAsset = getChain(network, chain).nativeAsset[0].code;
+    const _chain = getChain(network, chain);
+    const chainId: number = Number(_chain.network.chainId);
+    const nativeAsset = _chain.nativeAsset[0].code;
 
     if (txType in this._txTypes()) {
       const fees: EstimateFeeResponse = {};
@@ -232,7 +233,8 @@ class OneinchSwapProvider extends SwapProvider {
     const fromChain = cryptoassets[quote.from].chain;
     const toChain = cryptoassets[quote.to].chain;
     // @ts-ignore TODO: Fix chain networks
-    const chainId = ChainNetworks[fromChain][network].chainId;
+    const chainId = Number(getChain(network, fromChain).network.chainId);
+
     if (fromChain !== toChain || !supportedChains[Number(chainId)]) {
       return null;
     }
@@ -263,7 +265,7 @@ class OneinchSwapProvider extends SwapProvider {
     const toChain = cryptoassets[quote.to].chain;
     const fromChain = cryptoassets[quote.from].chain;
     // @ts-ignore TODO: Fix chain networks
-    const chainId = ChainNetworks[toChain][network].chainId;
+    const chainId = Number(getChain(network, toChain).network.chainId);
     if (toChain !== fromChain || !supportedChains[Number(chainId)]) {
       throw new Error(`Route ${fromChain} - ${toChain} not supported`);
     }

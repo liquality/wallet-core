@@ -1,5 +1,5 @@
 import { EvmChain } from '../../../chains/EvmChain';
-import { AssetTypes, ChainId } from '../../../types';
+import { AssetTypes, ChainId, NftProviderType } from '../../../types';
 
 export default new EvmChain({
   id: ChainId.Ethereum,
@@ -19,6 +19,7 @@ export default new EvmChain({
   ],
 
   isEVM: true,
+  nftProviderType: NftProviderType.OpenSea,
   hasTokens: true,
   isMultiLayered: false,
 
@@ -33,19 +34,23 @@ export default new EvmChain({
     chainId: 1,
     networkId: 1,
     rpcUrls: [
-      'https://mainnet.infura.io/v3/da99ebc8c0964bb8bb757b6f8cc40f1f',
-      'https://eth-mainnet.public.blastapi.io',
+      'https://mainnet.infura.io/v3/a2ad6f8c0e57453ca4918331f16de87d',
+      'https://eth-mainnet.public.blastapi.io/',
       'https://eth-mainnet.nodereal.io/v1/1659dfb40aa24bbb8153a677b98064d7',
-      'https://eth-mainnet.gateway.pokt.network/v1/5f3453978e354ab992c4da79	',
+      'https://eth-mainnet.gateway.pokt.network/v1/5f3453978e354ab992c4da79',
     ],
   },
   explorerViews: [
     {
-      tx: 'https://etherscan.io/tx/',
-      address: 'https://etherscan.io/address/',
-      token: 'https://etherscan.io/token/',
+      tx: 'https://etherscan.io/tx/{hash}',
+      address: 'https://etherscan.io/address/{address}',
+      token: 'https://etherscan.io/token/{token}',
     },
   ],
+
+  nameService: {
+    uns: 'ERC20',
+  },
 
   multicallSupport: true,
   ledgerSupport: true,

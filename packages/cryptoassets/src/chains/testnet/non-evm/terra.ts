@@ -14,8 +14,8 @@ export default transformMainnetToTestnetChain(
   },
   [
     {
-      tx: 'https://finder.terra.money/testnet/tx/',
-      address: 'https://finder.terra.money/testnet/address/',
+      tx: 'https://finder.terra.money/testnet/tx/{hash}',
+      address: 'https://finder.terra.money/testnet/address/{address}',
     },
   ],
   'https://faucet.terra.money/'
