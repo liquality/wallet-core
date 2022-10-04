@@ -1,5 +1,3 @@
-import { LifiToolAction } from '@liquality/wallet-core/src/swaps/lifi/LifiSwapProvider';
-
 export const lifiQuoteErrorSource = 'LifiQuoteAPI';
 
 // errors from internal bridges and dexes
@@ -25,7 +23,7 @@ export enum ErrorType {
 type ToolError = {
   errorType?: ErrorType;
   code: ToolErrorCode;
-  action?: LifiToolAction; // so far actions do not give a clear explanation of errors, so ignore them
+  action?: any; // so far actions do not give a clear explanation of errors, so ignore them.
   tool?: string;
   message?: string;
 };
@@ -47,4 +45,10 @@ export const LIFI_QUOTE_ERRORS = {
 export const LIFI_ERROR_REASON = {
   IncorrectInputs: 'Check getQuote input',
   LifiSubServicesFailed: 'All Lifi subservices failed',
+};
+
+export type LifiQuoteErrorParserDataType = {
+  fromToken: string;
+  toToken: string;
+  fromAmount: string;
 };

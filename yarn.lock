@@ -2739,7 +2739,6 @@ __metadata:
   dependencies:
     "@chainify/errors": ^1.2.33
     "@liquality/cryptoassets": "workspace:*"
-    "@liquality/wallet-core": "workspace:*"
     "@types/randombytes": ^2.0.0
     randexp: ^0.5.3
     randombytes: ^2.1.0
@@ -2758,7 +2757,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@liquality/wallet-core@workspace:*, @liquality/wallet-core@workspace:packages/wallet-core":
+"@liquality/wallet-core@workspace:packages/wallet-core":
   version: 0.0.0-use.local
   resolution: "@liquality/wallet-core@workspace:packages/wallet-core"
   dependencies:

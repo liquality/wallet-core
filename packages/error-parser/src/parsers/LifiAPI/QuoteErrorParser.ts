@@ -1,5 +1,3 @@
-import { LifiQuoteRequest } from '@liquality/wallet-core/src/swaps/lifi/LifiSwapProvider';
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LiqualityError } from '../../LiqualityErrors';
 import { ErrorParser } from '../ErrorParser';
@@ -11,12 +9,19 @@ import HighInputAmountError from '../../LiqualityErrors/HighInputAmountError';
 import InsufficientLiquidityError from '../../LiqualityErrors/InsufficientLiquidityError';
 import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
 
-import { LifiQuoteError, lifiQuoteErrorSource, LIFI_QUOTE_ERRORS, LIFI_ERROR_REASON, ToolErrorCode } from '.';
+import {
+  LifiQuoteError,
+  lifiQuoteErrorSource,
+  LIFI_QUOTE_ERRORS,
+  LIFI_ERROR_REASON,
+  ToolErrorCode,
+  LifiQuoteErrorParserDataType,
+} from '.';
 
-export class LifiQuoteErrorParser extends ErrorParser<LifiQuoteError, LifiQuoteRequest> {
+export class LifiQuoteErrorParser extends ErrorParser<LifiQuoteError, LifiQuoteErrorParserDataType> {
   public static readonly errorSource = lifiQuoteErrorSource;
 
-  protected _parseError(error: LifiQuoteError, data: LifiQuoteRequest): LiqualityError {
+  protected _parseError(error: LifiQuoteError, data: LifiQuoteErrorParserDataType): LiqualityError {
     let liqError: LiqualityError;
     let devDesc = '';
 
