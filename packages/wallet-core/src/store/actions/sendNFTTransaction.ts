@@ -1,6 +1,6 @@
 import { Transaction } from '@chainify/types';
 import { getChain } from '@liquality/cryptoassets';
-import { getParser, ChainifyErrorParser } from '@liquality/error-parser';
+import { getErrorParser, ChainifyErrorParser } from '@liquality/error-parser';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
 import { createHistoryNotification } from '../broker/notification';
@@ -15,8 +15,8 @@ export const sendNFTTransaction = async (
   const asset = getChain(network, account.chain).nativeAsset[0].code;
   const client = getters.client({ network, walletId, chainId: account.chain, accountId });
 
-  const parser = getParser(ChainifyErrorParser);
-  const tx = (await parser.wrapAync(
+  const parser = getErrorParser(ChainifyErrorParser);
+  const tx = (await parser.wrapAsync(
     async () => await client.nft.transfer(nft.asset_contract!.address!, receiver, [nft.token_id!], values),
     null
   )) as any;

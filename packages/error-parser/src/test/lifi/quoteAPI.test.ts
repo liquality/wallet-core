@@ -2,7 +2,7 @@ import { LifiQuoteError, LIFI_QUOTE_ERRORS, ToolErrorCode } from '../../parsers/
 import { getError } from '..';
 import { LiqualityError } from '../../LiqualityErrors';
 import RandExp = require('randexp');
-import { getParser, LifiQuoteErrorParser } from '../..';
+import { getErrorParser, LifiQuoteErrorParser } from '../..';
 import InsufficientInputAmountError from '../../LiqualityErrors/InsufficientInputAmountError';
 import InternalError from '../../LiqualityErrors/InternalError';
 import PairNotSupportedError from '../../LiqualityErrors/PairNotSupportedError';
@@ -10,7 +10,7 @@ import HighInputAmountError from '../../LiqualityErrors/HighInputAmountError';
 import InsufficientLiquidityError from '../../LiqualityErrors/InsufficientLiquidityError';
 
 describe('LifiQuoteAPI parser', () => {
-  const parser = getParser(LifiQuoteErrorParser);
+  const parser = getErrorParser(LifiQuoteErrorParser);
 
   const errorMap = [
     [LIFI_QUOTE_ERRORS.InvalidAddress, [], InternalError.name],

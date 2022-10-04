@@ -3,7 +3,7 @@ import { EvmTypes } from '@chainify/evm';
 import { Transaction, TransactionRequest, TxStatus } from '@chainify/types';
 import LiFi, { ChainId, ConfigUpdate, LifiStep, Order, Orders, RouteOptions, Step } from '@lifi/sdk';
 import { getChain, currencyToUnit, unitToCurrency } from '@liquality/cryptoassets';
-import { getParser, LifiQuoteErrorParser } from '@liquality/error-parser';
+import { getErrorParser, LifiQuoteErrorParser } from '@liquality/error-parser';
 import BN from 'bignumber.js';
 import { ethers } from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
@@ -101,8 +101,8 @@ class LifiSwapProvider extends EvmSwapProvider {
     };
 
     try {
-      const parser = getParser(LifiQuoteErrorParser);
-      const lifiRoute = (await parser.wrapAync(async () => await this._lifiClient.getQuote(quoteRequest), {
+      const parser = getErrorParser(LifiQuoteErrorParser);
+      const lifiRoute = (await parser.wrapAsync(async () => await this._lifiClient.getQuote(quoteRequest), {
         fromToken: quoteRequest.fromToken,
         toToken: quoteRequest.toToken,
         fromAmount: quoteRequest.fromAmount,

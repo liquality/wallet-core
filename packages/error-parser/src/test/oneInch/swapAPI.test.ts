@@ -2,7 +2,7 @@ import { OneInchError, ONE_INCH_ERRORS } from '../../parsers/OneInchAPI';
 import { FAKE_ERROR, getError, getErrorAsync } from '..';
 import { LiqualityError } from '../../LiqualityErrors';
 import RandExp = require('randexp');
-import { getParser, OneInchSwapErrorParser } from '../../';
+import { getErrorParser, OneInchSwapErrorParser } from '../../';
 import { OneInchSwapParserDataType } from '../../parsers';
 import InternalError from '../../LiqualityErrors/InternalError';
 import InsufficientFundsError from '../../LiqualityErrors/InsufficientFundsError';
@@ -19,7 +19,7 @@ describe('OneInchSwapAPI parser', () => {
     balance: '1000',
   };
 
-  const parser = getParser(OneInchSwapErrorParser);
+  const parser = getErrorParser(OneInchSwapErrorParser);
 
   const errorMap = [
     [ONE_INCH_ERRORS.CANNOT_ESTIMATE_1, ThirdPartyError.name],
@@ -43,7 +43,7 @@ describe('OneInchSwapAPI parser', () => {
     });
 
     await getErrorAsync(async () => {
-      return await parser.wrapAync(async () => {
+      return await parser.wrapAsync(async () => {
         throw FAKE_ERROR;
       }, data);
     });
@@ -78,7 +78,7 @@ describe('OneInchSwapAPI parser', () => {
     expect(error.rawError).toBe(validError);
 
     const error1: LiqualityError = await getErrorAsync(async () => {
-      await parser.wrapAync(async () => {
+      await parser.wrapAsync(async () => {
         throw validError;
       }, data);
     });
@@ -115,7 +115,7 @@ describe('OneInchSwapAPI parser', () => {
     expect(liqError.name).toBe(UnknownError.name);
 
     const liqError1: LiqualityError = await getErrorAsync(async () => {
-      await parser.wrapAync(() => {
+      await parser.wrapAsync(() => {
         throw error;
       }, data);
     });

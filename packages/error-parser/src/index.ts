@@ -1,7 +1,7 @@
 export { LiqualityError } from './LiqualityErrors';
 
 export { setReportConfig } from './reporters';
-export { getParser } from './factory';
+export { getErrorParser } from './factory';
 export {
   OneInchApproveErrorParser,
   OneInchQuoteErrorParser,

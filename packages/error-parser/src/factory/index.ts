@@ -13,7 +13,7 @@ function createParser<T extends new () => any>(errorParserType: T): InstanceType
 // export a function for getting a parser
 // The function should check cache first and only instantiate
 // a new parser if non exists in cache.
-export function getParser<T extends new () => any>(errorParserType: T): InstanceType<T> {
+export function getErrorParser<T extends new () => any>(errorParserType: T): InstanceType<T> {
   const cachedParser = parserCache[errorParserType.name];
   if (cachedParser) {
     return cachedParser;

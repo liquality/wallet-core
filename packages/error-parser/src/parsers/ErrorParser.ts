@@ -12,7 +12,7 @@ export abstract class ErrorParser<SourceError, DataType> {
       this.parseError(error, data);
     }
   }
-  async wrapAync<F extends (...args: Array<any>) => Promise<any>>(
+  async wrapAsync<F extends (...args: Array<any>) => Promise<any>>(
     func: F,
     data: DataType
   ): Promise<ReturnType<F> | undefined> {

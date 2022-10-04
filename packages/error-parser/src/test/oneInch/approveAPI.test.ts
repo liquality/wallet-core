@@ -2,13 +2,13 @@ import { OneInchError, ONE_INCH_ERRORS } from '../../parsers/OneInchAPI';
 import { FAKE_ERROR, getError } from '..';
 import { LiqualityError } from '../../LiqualityErrors';
 import RandExp = require('randexp');
-import { getParser, OneInchApproveErrorParser } from '../..';
+import { getErrorParser, OneInchApproveErrorParser } from '../..';
 import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
 import InternalError from '../../LiqualityErrors/InternalError';
 import UnknownError from '../../LiqualityErrors/UnknownError';
 
 describe('OneInchApproveAPI parser', () => {
-  const parser = getParser(OneInchApproveErrorParser);
+  const parser = getErrorParser(OneInchApproveErrorParser);
 
   const errorMap = [
     [ONE_INCH_ERRORS.INTERNAL_ERROR, ThirdPartyError.name],

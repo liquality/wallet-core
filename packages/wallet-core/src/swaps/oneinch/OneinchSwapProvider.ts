@@ -25,7 +25,7 @@ import {
   SwapStatus,
 } from '../types';
 import {
-  getParser,
+  getErrorParser,
   OneInchApproveErrorParser,
   OneInchQuoteErrorParser,
   OneInchSwapErrorParser,
@@ -78,9 +78,9 @@ const optimismL1GasLimits = {
   send: 100000,
 };
 
-const oneInchSwapErrorParser = getParser(OneInchSwapErrorParser);
-const oneInchApproveErrorParser = getParser(OneInchApproveErrorParser);
-const oneInchQuoteErrorParser = getParser(OneInchQuoteErrorParser);
+const oneInchSwapErrorParser = getErrorParser(OneInchSwapErrorParser);
+const oneInchApproveErrorParser = getErrorParser(OneInchApproveErrorParser);
+const oneInchQuoteErrorParser = getErrorParser(OneInchQuoteErrorParser);
 
 class OneinchSwapProvider extends SwapProvider {
   public config: OneinchSwapProviderConfig;
@@ -233,7 +233,7 @@ class OneinchSwapProvider extends SwapProvider {
     const referrerAddress = this.config.referrerAddress?.[cryptoassets[from].chain];
     const fee = referrerAddress && this.config.referrerFee;
 
-    return await oneInchQuoteErrorParser.wrapAync(
+    return await oneInchQuoteErrorParser.wrapAsync(
       async () =>
         await this._httpClient.nodeGet(`/${chainIdFrom}/quote`, {
           fromTokenAddress: fromToken || NATIVE_ASSET_ADDRESS,
@@ -274,7 +274,7 @@ class OneinchSwapProvider extends SwapProvider {
       };
     }
 
-    const callData = await oneInchApproveErrorParser.wrapAync(
+    const callData = await oneInchApproveErrorParser.wrapAsync(
       async () =>
         await this._httpClient.nodeGet(`/${chainId}/approve/transaction`, {
           tokenAddress: cryptoassets[quote.from].contractAddress,
@@ -313,7 +313,7 @@ class OneinchSwapProvider extends SwapProvider {
       swapParams.fee = this.config.referrerFee;
     }
 
-    const swap = await oneInchSwapErrorParser.wrapAync(
+    const swap = await oneInchSwapErrorParser.wrapAsync(
       async () => await this._httpClient.nodeGet(`/${chainId}/swap`, swapParams),
       {
         from: quote.from,
