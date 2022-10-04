@@ -39,10 +39,10 @@ export class LifiQuoteErrorParser extends ErrorParser<LifiQuoteError, LifiQuoteR
           switch (true) {
             case errorCodes.includes(ToolErrorCode.AMOUNT_TOO_LOW):
             case errorCodes.includes(ToolErrorCode.FEES_HGHER_THAN_AMOUNT):
-              liqError = new InsufficientInputAmountError();
+              liqError = new InsufficientInputAmountError({});
               break;
             case errorCodes.includes(ToolErrorCode.AMOUNT_TOO_HIGH):
-              liqError = new HighInputAmountError();
+              liqError = new HighInputAmountError({});
               break;
             case errorCodes.includes(ToolErrorCode.INSUFFICIENT_LIQUIDITY):
               liqError = new InsufficientLiquidityError({

@@ -1,16 +1,14 @@
+import { UserErrorMessage } from 'src/types/types';
 import { LiqualityError } from '.';
-class InsufficientLiquidityError extends LiqualityError {
+class InsufficientLiquidityError extends LiqualityError<InsufficientLiquidityErrorContext> {
   public readonly name = 'InsufficientLiquidityError';
 
-  constructor(context?: InsufficientLiquidityErrorContext, lang?: string) {
-    super();
-    if (context) {
-      this.wrapUserErrorMessage(context, lang);
-    }
+  constructor(context: InsufficientLiquidityErrorContext) {
+    super(context);
   }
 
-  wrapUserErrorMessage(context: InsufficientLiquidityErrorContext, lang?: string): void {
-    const { amount, from, to } = context;
+  wrapUserErrorMessage(lang?: string): UserErrorMessage {
+    const { amount, from, to } = this.context;
 
     switch (lang) {
       default:
@@ -25,6 +23,8 @@ class InsufficientLiquidityError extends LiqualityError {
         };
         break;
     }
+
+    return this.userMsg;
   }
 }
 

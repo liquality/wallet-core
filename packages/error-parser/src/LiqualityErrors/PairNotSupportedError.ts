@@ -1,15 +1,15 @@
+import { UserErrorMessage } from 'src/types/types';
 import { LiqualityError } from '.';
 
-class PairNotSupportedError extends LiqualityError {
+class PairNotSupportedError extends LiqualityError<PairNotSupportedErrorContext> {
   public readonly name = 'PairNotSupportedError';
 
-  constructor(context?: PairNotSupportedErrorContext, lang?: string) {
-    super();
-    this.wrapUserErrorMessage(context, lang);
+  constructor(context: PairNotSupportedErrorContext) {
+    super(context);
   }
 
-  wrapUserErrorMessage(context?: PairNotSupportedErrorContext, lang?: string): void {
-    const activity = context?.activity;
+  wrapUserErrorMessage(lang?: string): UserErrorMessage {
+    const activity = this.context.activity;
     switch (lang) {
       default:
         this.userMsg = {
@@ -22,6 +22,8 @@ class PairNotSupportedError extends LiqualityError {
         this.userMsg.suggestions.push(this.suggestContactSupport());
         break;
     }
+
+    return this.userMsg;
   }
 }
 

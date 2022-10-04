@@ -2,7 +2,7 @@
 import * as ChainifyErrors from '@chainify/errors';
 import { LiqualityError } from '../../LiqualityErrors';
 import { ErrorParser } from '../ErrorParser';
-import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
+import ThirdPartyError, { UserActivity } from '../../LiqualityErrors/ThirdPartyError';
 import InternalError from '../../LiqualityErrors/InternalError';
 import UnknownError from '../../LiqualityErrors/UnknownError';
 import { ChainifyErrorSource } from '.';
@@ -16,7 +16,7 @@ export class ChainifyErrorParser extends ErrorParser<Error, null> {
 
     switch (error.name) {
       case ChainifyErrors.NodeError.name:
-        liqError = new ThirdPartyError();
+        liqError = new ThirdPartyError({ activity: UserActivity.UNKNOWN });
         break;
       case ChainifyErrors.InvalidAddressError.name:
       case ChainifyErrors.InvalidDestinationAddressError.name:

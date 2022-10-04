@@ -1,13 +1,13 @@
+import { UserErrorMessage } from 'src/types/types';
 import { LiqualityError } from '.';
 class InternalError extends LiqualityError {
   public readonly name = 'InternalError';
 
-  constructor(lang?: string) {
+  constructor() {
     super();
-    this.wrapUserErrorMessage(lang);
   }
 
-  wrapUserErrorMessage(lang?: string): void {
+  wrapUserErrorMessage(lang?: string): UserErrorMessage {
     switch (lang) {
       default:
         this.userMsg = {
@@ -16,6 +16,8 @@ class InternalError extends LiqualityError {
         };
         break;
     }
+
+    return this.userMsg;
   }
 }
 

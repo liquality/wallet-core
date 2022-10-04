@@ -1,17 +1,15 @@
+import { UserErrorMessage } from 'src/types/types';
 import { LiqualityError } from '.';
 
 class HighInputAmountError extends LiqualityError {
   public readonly name = 'HighInputAmountError';
 
-  constructor(context?: HighInputAmountErrorContext, lang?: string) {
-    super();
-    if (context) {
-      this.wrapUserErrorMessage(context, lang);
-    }
+  constructor(context: HighInputAmountErrorContext) {
+    super(context);
   }
 
-  wrapUserErrorMessage(context: HighInputAmountErrorContext, lang?: string): void {
-    const { expectedMaximum, assetCode } = context;
+  wrapUserErrorMessage(lang?: string): UserErrorMessage {
+    const { expectedMaximum, assetCode } = this.context;
     switch (lang) {
       default: {
         const inputTooHigh = `Input amount is too high`;
@@ -28,6 +26,8 @@ class HighInputAmountError extends LiqualityError {
         break;
       }
     }
+
+    return this.userMsg;
   }
 }
 

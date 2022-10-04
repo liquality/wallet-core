@@ -1,16 +1,14 @@
+import { UserErrorMessage } from 'src/types/types';
 import { LiqualityError } from '.';
-class InsufficientGasFeeError extends LiqualityError {
+class InsufficientGasFeeError extends LiqualityError<InsufficientGasFeeErrorContext> {
   public readonly name = 'InsufficientGasFeeError';
 
-  constructor(context?: InsufficientGasFeeErrorContext, lang?: string) {
-    super();
-    if (context) {
-      this.wrapUserErrorMessage(context, lang);
-    }
+  constructor(context: InsufficientGasFeeErrorContext) {
+    super(context);
   }
 
-  wrapUserErrorMessage(context: InsufficientGasFeeErrorContext, lang?: string): void {
-    const { currency, gasFee } = context;
+  wrapUserErrorMessage(lang?: string): UserErrorMessage {
+    const { currency, gasFee } = this.context;
 
     switch (lang) {
       default:
@@ -22,6 +20,7 @@ class InsufficientGasFeeError extends LiqualityError {
         };
         break;
     }
+    return this.userMsg;
   }
 }
 

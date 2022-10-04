@@ -1,14 +1,14 @@
+import { UserErrorMessage } from 'src/types/types';
 import { LiqualityError } from '.';
-class ThirdPartyError extends LiqualityError {
+class ThirdPartyError extends LiqualityError<ThirdPartyErrorContext> {
   public readonly name = 'ThirdPartyError';
 
-  constructor(context?: ThirdPartyErrorContext, lang?: string) {
-    super();
-    this.wrapUserErrorMessage(context, lang);
+  constructor(context: ThirdPartyErrorContext) {
+    super(context);
   }
 
-  wrapUserErrorMessage(context?: ThirdPartyErrorContext, lang?: string): void {
-    const activity = context?.activity;
+  wrapUserErrorMessage(lang?: string): UserErrorMessage {
+    const activity = this.context.activity;
     switch (lang) {
       default:
         this.userMsg = {
@@ -22,12 +22,15 @@ class ThirdPartyError extends LiqualityError {
         this.userMsg.suggestions.push(this.suggestContactSupport());
         break;
     }
+
+    return this.userMsg;
   }
 }
 
 export enum UserActivity {
   SWAP = 'SWAP',
+  UNKNOWN = 'UNKNOWN',
 }
-export type ThirdPartyErrorContext = { activity: string };
+export type ThirdPartyErrorContext = { activity: UserActivity };
 
 export default ThirdPartyError;

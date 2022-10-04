@@ -2737,9 +2737,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@liquality/error-parser@workspace:packages/error-parser"
   dependencies:
+    "@chainify/errors": ^1.2.33
     "@liquality/cryptoassets": "workspace:*"
     "@liquality/wallet-core": "workspace:*"
-    "@chainify/errors": ^1.2.33
     "@types/randombytes": ^2.0.0
     randexp: ^0.5.3
     randombytes: ^2.1.0

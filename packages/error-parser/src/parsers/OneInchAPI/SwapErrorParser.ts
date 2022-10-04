@@ -54,7 +54,7 @@ export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwa
           devDesc = 'Check the approval process for 1inch, approvals are not being made correctly';
           break;
         case ONE_INCH_ERRORS.INTERNAL_ERROR.test(errorDesc):
-          liqError = new ThirdPartyError();
+          liqError = new ThirdPartyError({ activity: UserActivity.SWAP });
           devDesc = oneInchInternalErrReason();
           break;
         default:

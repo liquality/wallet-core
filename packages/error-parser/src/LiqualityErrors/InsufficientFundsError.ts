@@ -1,25 +1,24 @@
+import { UserErrorMessage } from 'src/types/types';
 import { LiqualityError } from '.';
 
-class InsufficientFundsError extends LiqualityError {
+class InsufficientFundsError extends LiqualityError<InsufficientFundsErrorContext> {
   public readonly name = 'InsufficientFundsError';
 
-  constructor(context?: InsufficientFundsErrorContext, lang?: string) {
-    super();
-    if (context) {
-      this.wrapUserErrorMessage(context, lang);
-    }
+  constructor(context: InsufficientFundsErrorContext) {
+    super(context);
   }
 
-  wrapUserErrorMessage(context: InsufficientFundsErrorContext, lang?: string): void {
-    const { availAmt, currency, neededAmt } = context;
+  wrapUserErrorMessage(lang?: string): UserErrorMessage {
+    const { availAmt, currency, neededAmt } = this.context;
     switch (lang) {
       default:
         this.userMsg = {
           cause: `Insufficient funds: Sorry, You have ${availAmt}${currency} but you need ${neededAmt}${currency} `,
           suggestions: [],
         };
-        break;
     }
+
+    return this.userMsg;
   }
 }
 

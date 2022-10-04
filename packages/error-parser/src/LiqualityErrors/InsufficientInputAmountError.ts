@@ -1,17 +1,15 @@
+import { UserErrorMessage } from 'src/types/types';
 import { LiqualityError } from '.';
 
-class InsufficientInputAmountError extends LiqualityError {
+class InsufficientInputAmountError extends LiqualityError<InsufficientInputAmountErrorContext> {
   public readonly name = 'InsufficientInputAmountError';
 
-  constructor(context?: InsufficientInputAmountErrorContext, lang?: string) {
-    super();
-    if (context) {
-      this.wrapUserErrorMessage(context, lang);
-    }
+  constructor(context: InsufficientInputAmountErrorContext) {
+    super(context);
   }
 
-  wrapUserErrorMessage(context: InsufficientInputAmountErrorContext, lang?: string): void {
-    const { expectedMinimum, assetCode } = context;
+  wrapUserErrorMessage(lang?: string): UserErrorMessage {
+    const { expectedMinimum, assetCode } = this.context;
     switch (lang) {
       default: {
         const inputTooLow = `Input amount is too low`;
@@ -29,6 +27,8 @@ class InsufficientInputAmountError extends LiqualityError {
         break;
       }
     }
+
+    return this.userMsg;
   }
 }
 
