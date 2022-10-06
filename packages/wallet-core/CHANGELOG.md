@@ -1,5 +1,18 @@
 # @liquality/wallet-core
 
+## 1.31.0-next.1
+
+### Minor Changes
+
+- 31a975e: bump
+- eadd70c: fix: getQuotes has slow quotes propery
+
+### Patch Changes
+
+- Updated dependencies [31a975e]
+- Updated dependencies [eadd70c]
+  - @liquality/cryptoassets@1.16.0-next.1
+
 ## 1.31.0-next.0
 
 ### Minor Changes
