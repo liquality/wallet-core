@@ -14,6 +14,7 @@ export type SlowQuotesCallback = (quotes: SwapQuote[]) => void;
 
 export interface GetQuotesResult {
   requestId: RequestId;
+  hasSlowQuotes: boolean;
   quotes: SwapQuote[];
 }
 
@@ -41,6 +42,7 @@ export const getQuotes = async (
   if (!amount) {
     return {
       requestId,
+      hasSlowQuotes: false,
       quotes: [],
     };
   }
@@ -95,6 +97,7 @@ export const getQuotes = async (
 
   return {
     requestId,
+    hasSlowQuotes,
     quotes: fastQuotes,
   };
 };
