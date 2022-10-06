@@ -1,5 +1,12 @@
 # @liquality/cryptoassets
 
+## 1.16.0-next.1
+
+### Minor Changes
+
+- 31a975e: bump
+- eadd70c: fix: getQuotes has slow quotes propery
+
 ## 1.16.0-next.0
 
 ### Minor Changes
