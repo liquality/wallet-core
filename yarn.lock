@@ -2704,7 +2704,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@liquality/cryptoassets@^1.13.3, @liquality/cryptoassets@workspace:*, @liquality/cryptoassets@workspace:packages/cryptoassets":
+"@liquality/cryptoassets@npm:^1.13.3":
+  version: 1.15.1
+  resolution: "@liquality/cryptoassets@npm:1.15.1"
+  dependencies:
+    "@ethersproject/address": 5.7.0
+    "@types/bs58": 4.0.1
+    bignumber.js: ^9.0.2
+    bitcoin-address-validation: 2.2.1
+    bs58: 4.0.1
+    ethereumjs-util: 7.1.5
+    lodash: 4.17.21
+  checksum: 432a80df7a38130c01f15a1af8199a84624f1dbd97ff84dba32b86def0e1273c452e00d2edf8450abddceeac344cd510240784a68855f604a32735467dac429d
+  languageName: node
+  linkType: hard
+
+"@liquality/cryptoassets@workspace:*, @liquality/cryptoassets@workspace:packages/cryptoassets":
   version: 0.0.0-use.local
   resolution: "@liquality/cryptoassets@workspace:packages/cryptoassets"
   dependencies:
