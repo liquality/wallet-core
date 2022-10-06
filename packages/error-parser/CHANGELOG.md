@@ -1,5 +1,11 @@
 # @liquality/error-parser
 
+## 1.0.10
+
+### Patch Changes
+
+- 1ae3e84: fix: bump versions from master
+
 ## 1.0.9
 
 ### Patch Changes
