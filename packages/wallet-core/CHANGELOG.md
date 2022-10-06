@@ -1,5 +1,19 @@
 # @liquality/wallet-core
 
+## 1.31.0-next.0
+
+### Minor Changes
+
+- 7fa751e: feat: lifi swap provider
+  refactor: get quotes returns fast quotes first. getSlowQuotes action to retrieve restr
+- cb2c60a: feat: lifi swap provider
+  refactor: get quotes returns fast quotes first. `getSlowQuotes` action to retrieve restr
+
+### Patch Changes
+
+- Updated dependencies [cb2c60a]
+  - @liquality/cryptoassets@1.16.0-next.0
+
 ## 1.30.0
 
 ### Minor Changes
