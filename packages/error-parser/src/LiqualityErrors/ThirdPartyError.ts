@@ -1,36 +1,23 @@
-import { UserErrorMessage } from 'src/types/types';
-import { LiqualityError } from '.';
+import { LiqualityError, UserActivity } from '.';
+import { CAUSE, PLAIN, SUGGESTIONS, SWAP_ACTIVITY, UNKNOWN_ACTIVITY } from './translations/translationKeys';
 class ThirdPartyError extends LiqualityError<ThirdPartyErrorContext> {
   public readonly name = 'ThirdPartyError';
 
-  constructor(context: ThirdPartyErrorContext) {
-    super(context);
+  constructor(data?: ThirdPartyErrorContext) {
+    super(data);
   }
 
-  wrapUserErrorMessage(lang?: string): UserErrorMessage {
-    const activity = this.context.activity;
-    switch (lang) {
-      default:
-        this.userMsg = {
-          cause: 'Sorry, something went wrong in a third party service we use in processing this transaction',
-          suggestions: [],
-        };
-        if (activity === UserActivity.SWAP) {
-          this.userMsg.suggestions.push('Select a different swap provider');
-        }
-        this.userMsg.suggestions.push('Try again at a later time');
-        this.userMsg.suggestions.push(this.suggestContactSupport());
-        break;
+  setKeys(data?: ThirdPartyErrorContext): void {
+    this.causeKey = `${this.name}.${PLAIN}.${CAUSE}`;
+
+    if (data?.activity === UserActivity.SWAP) {
+      this.suggestionKey = `${this.name}.${PLAIN}.${SUGGESTIONS}.${SWAP_ACTIVITY}`;
+    } else {
+      this.suggestionKey = `${this.name}.${PLAIN}.${SUGGESTIONS}.${UNKNOWN_ACTIVITY}`;
     }
-
-    return this.userMsg;
   }
 }
 
-export enum UserActivity {
-  SWAP = 'SWAP',
-  UNKNOWN = 'UNKNOWN',
-}
 export type ThirdPartyErrorContext = { activity: UserActivity };
 
 export default ThirdPartyError;

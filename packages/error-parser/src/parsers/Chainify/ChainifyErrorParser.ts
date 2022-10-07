@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as ChainifyErrors from '@chainify/errors';
-import { LiqualityError } from '../../LiqualityErrors';
+import { LiqualityError, UserActivity } from '../../LiqualityErrors';
 import { ErrorParser } from '../ErrorParser';
-import ThirdPartyError, { UserActivity } from '../../LiqualityErrors/ThirdPartyError';
+import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
 import InternalError from '../../LiqualityErrors/InternalError';
 import UnknownError from '../../LiqualityErrors/UnknownError';
 import { ChainifyErrorSource } from '.';

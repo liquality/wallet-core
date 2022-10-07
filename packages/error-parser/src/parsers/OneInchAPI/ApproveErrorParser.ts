@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LiqualityError } from '../../LiqualityErrors';
+import { LiqualityError, UserActivity } from '../../LiqualityErrors';
 import { ErrorParser } from '../ErrorParser';
-import ThirdPartyError, { UserActivity } from '../../LiqualityErrors/ThirdPartyError';
+import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
 import InternalError from '../../LiqualityErrors/InternalError';
 import UnknownError from '../../LiqualityErrors/UnknownError';
 import { oneInchInternalErrReason, OneInchError, ONE_INCH_ERRORS, oneInchApproveSourceName } from '.';

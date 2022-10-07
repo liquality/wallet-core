@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LiqualityError } from '../../LiqualityErrors';
+import { LiqualityError, UserActivity } from '../../LiqualityErrors';
 import { ErrorParser } from '../ErrorParser';
-import ThirdPartyError, { UserActivity } from '../../LiqualityErrors/ThirdPartyError';
+import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
 import InsufficientFundsError from '../../LiqualityErrors/InsufficientFundsError';
 import InsufficientGasFeeError from '../../LiqualityErrors/InsufficientGasFeeError';
 import InsufficientLiquidityError from '../../LiqualityErrors/InsufficientLiquidityError';
@@ -30,7 +30,7 @@ export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwa
           devDesc = 'see https://bit.ly/3Bu3e7U';
           break;
         case ONE_INCH_ERRORS.INSUFFICIENT_GAS_FEE.test(errorDesc):
-          liqError = new InsufficientGasFeeError({ currency: data.from });
+          liqError = new InsufficientGasFeeError();
           break;
         case ONE_INCH_ERRORS.INVALID_TOKEN_ADDRESS.test(errorDesc):
           liqError = new InternalError();

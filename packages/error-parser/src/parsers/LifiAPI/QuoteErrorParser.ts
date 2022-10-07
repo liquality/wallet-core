@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LiqualityError } from '../../LiqualityErrors';
+import { LiqualityError, UserActivity } from '../../LiqualityErrors';
 import { ErrorParser } from '../ErrorParser';
-import PairNotSupported, { UserActivity } from '../../LiqualityErrors/PairNotSupportedError';
+import PairNotSupported from '../../LiqualityErrors/PairNotSupportedError';
 import InternalError from '../../LiqualityErrors/InternalError';
 import UnknownError from '../../LiqualityErrors/UnknownError';
 import InsufficientInputAmountError from '../../LiqualityErrors/InsufficientInputAmountError';
@@ -37,17 +37,17 @@ export class LifiQuoteErrorParser extends ErrorParser<LifiQuoteError, LifiQuoteE
           liqError = new InternalError();
           break;
         case LIFI_QUOTE_ERRORS.NoToolsCanCompleteTheAction.test(errorDesc):
-          liqError = new PairNotSupported({ activity: UserActivity.SWAP });
+          liqError = new PairNotSupported();
           break;
         case LIFI_QUOTE_ERRORS.NoQuoteFound.test(errorDesc): {
           const errorCodes = error.errors.map((toolError) => toolError.code);
           switch (true) {
             case errorCodes.includes(ToolErrorCode.AMOUNT_TOO_LOW):
             case errorCodes.includes(ToolErrorCode.FEES_HGHER_THAN_AMOUNT):
-              liqError = new InsufficientInputAmountError({});
+              liqError = new InsufficientInputAmountError();
               break;
             case errorCodes.includes(ToolErrorCode.AMOUNT_TOO_HIGH):
-              liqError = new HighInputAmountError({});
+              liqError = new HighInputAmountError();
               break;
             case errorCodes.includes(ToolErrorCode.INSUFFICIENT_LIQUIDITY):
               liqError = new InsufficientLiquidityError({
