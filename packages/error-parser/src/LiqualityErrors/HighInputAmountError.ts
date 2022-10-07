@@ -1,6 +1,6 @@
 import { LiqualityError } from '.';
-class HighInputAmountError extends LiqualityError<HighInputAmountErrorContext> {
-  public readonly name = 'HighInputAmountError';
+export default class HighInputAmountError extends LiqualityError<HighInputAmountErrorContext> {
+  public readonly name = HighInputAmountError.name;
 
   constructor(data?: HighInputAmountErrorContext) {
     super(data);
@@ -8,4 +8,3 @@ class HighInputAmountError extends LiqualityError<HighInputAmountErrorContext> {
 }
 
 export type HighInputAmountErrorContext = { expectedMaximum: string; assetCode: string };
-export default HighInputAmountError;

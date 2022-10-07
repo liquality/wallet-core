@@ -1,6 +1,6 @@
 import { LiqualityError } from '.';
-class InsufficientGasFeeError extends LiqualityError<InsufficientGasFeeErrorContext> {
-  public readonly name = 'InsufficientGasFeeError';
+export default class InsufficientGasFeeError extends LiqualityError<InsufficientGasFeeErrorContext> {
+  public readonly name = InsufficientGasFeeError.name;
 
   constructor(data?: InsufficientGasFeeErrorContext) {
     super(data);
@@ -8,4 +8,3 @@ class InsufficientGasFeeError extends LiqualityError<InsufficientGasFeeErrorCont
 }
 
 export type InsufficientGasFeeErrorContext = { currency: string; gasFee: string };
-export default InsufficientGasFeeError;

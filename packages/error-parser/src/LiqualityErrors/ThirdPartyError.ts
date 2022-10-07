@@ -1,7 +1,7 @@
 import { LiqualityError, UserActivity } from '.';
 import { CAUSE, PLAIN, SUGGESTIONS, SWAP_ACTIVITY, UNKNOWN_ACTIVITY } from './translations/translationKeys';
-class ThirdPartyError extends LiqualityError<ThirdPartyErrorContext> {
-  public readonly name = 'ThirdPartyError';
+export default class ThirdPartyError extends LiqualityError<ThirdPartyErrorContext> {
+  public readonly name = ThirdPartyError.name;
 
   constructor(data?: ThirdPartyErrorContext) {
     super(data);
@@ -19,5 +19,3 @@ class ThirdPartyError extends LiqualityError<ThirdPartyErrorContext> {
 }
 
 export type ThirdPartyErrorContext = { activity: UserActivity };
-
-export default ThirdPartyError;

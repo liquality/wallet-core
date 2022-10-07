@@ -1,10 +1,8 @@
 import { LiqualityError } from '.';
-class UnknownError extends LiqualityError {
-  public readonly name = 'UnknownError';
+export default class UnknownError extends LiqualityError {
+  public readonly name = UnknownError.name;
 
   constructor() {
     super();
   }
 }
-
-export default UnknownError;

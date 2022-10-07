@@ -1,7 +1,7 @@
 import { LiqualityError } from '.';
 
-class InsufficientInputAmountError extends LiqualityError<InsufficientInputAmountErrorContext> {
-  public readonly name = 'InsufficientInputAmountError';
+export default class InsufficientInputAmountError extends LiqualityError<InsufficientInputAmountErrorContext> {
+  public readonly name = InsufficientInputAmountError.name;
 
   constructor(data?: InsufficientInputAmountErrorContext) {
     super(data);
@@ -9,4 +9,3 @@ class InsufficientInputAmountError extends LiqualityError<InsufficientInputAmoun
 }
 
 export type InsufficientInputAmountErrorContext = { expectedMinimum: string; assetCode: string };
-export default InsufficientInputAmountError;

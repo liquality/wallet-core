@@ -1,10 +1,8 @@
 import { LiqualityError } from '.';
-class InternalError extends LiqualityError {
-  public readonly name = 'InternalError';
+export default class InternalError extends LiqualityError {
+  public readonly name = InternalError.name;
 
   constructor() {
     super();
   }
 }
-
-export default InternalError;
