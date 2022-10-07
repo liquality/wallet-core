@@ -19,15 +19,13 @@ import {
   SwapStatus,
 } from '../types';
 import cryptoassets from '../../utils/cryptoassets';
-import { Asset, Network, SwapHistoryItem, SwapProviderType, WalletId } from '../../store/types';
+import { Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
 import { isChainEvmCompatible, isERC20 } from '../../utils/asset';
 import { ChainNetworks } from '../../utils/networks';
 import { Transaction } from '@chainify/types';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { ActionContext } from '../../store';
-import { Client, HttpClient } from '@chainify/client';
-import { getSwapProvider } from '../../factory';
-import { OneinchSwapProvider } from '../oneinch/OneinchSwapProvider';
+import { Client } from '@chainify/client';
 
 interface BuildSwapQuote extends SwapQuote {
   fee?: number;
@@ -37,6 +35,15 @@ interface BuildSwapRequest {
   network: Network;
   walletId: WalletId;
   quote: BuildSwapQuote;
+}
+
+interface FullSubmissionInfo {
+  claim: {
+    transactionHash: string;
+  };
+  send: {
+    isExecuted: boolean;
+  };
 }
 
 export interface DebridgeSwapHistoryItem extends SwapHistoryItem {
@@ -58,8 +65,8 @@ export interface DebridgeSwapProviderConfig extends BaseSwapProviderConfig {
 }
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
-const nativeAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 const slippagePercentage = 1;
+const slippageBps = slippagePercentage * 100;
 const chainIds = [1, 56, 137, 42161, 43114];
 
 class DeBridgeSwapProvider extends SwapProvider {
@@ -96,7 +103,7 @@ class DeBridgeSwapProvider extends SwapProvider {
         params: {
           srcChainId: chainIdFrom,
           srcChainTokenIn: fromToken,
-          srcChainTokenInAmount: fromAmountInUnit.toNumber(),
+          srcChainTokenInAmount: fromAmountInUnit.toFixed(),
           slippage: slippagePercentage,
           dstChainId: chainIdTo,
           dstChainTokenOut: toToken,
@@ -134,14 +141,14 @@ class DeBridgeSwapProvider extends SwapProvider {
         gasLimit += (await client.chain.getProvider().estimateGas(rawApprovalTx)).toNumber();
       }
 
-      const swapTx: any = await this.loadSwapTx({ network, walletId, quote });
+      const swapTx = await this.loadSwapTx({ network, walletId, quote });
       if (!swapTx) return null;
       const toChain = cryptoassets[quote.to].chain;
       const fromChain = cryptoassets[quote.from].chain;
       if (toChain === fromChain) return null;
       const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-
       const fromAddress = getChain(network, toChain).formatAddress(fromAddressRaw);
+
       const rawSwapTx = {
         from: fromAddress,
         to: swapTx.to,
@@ -152,16 +159,12 @@ class DeBridgeSwapProvider extends SwapProvider {
       try {
         gasLimit += (await client.chain.getProvider().estimateGas(rawSwapTx)).toNumber();
       } catch (e) {
-        if (swapTx.preSwap) {
-          const quoteOneinch = await this.getQuoteOneinch(
-            network,
-            quote.from,
-            swapTx.preSwap.fromAddress,
-            swapTx.preSwap.toAddress,
-            +quote.fromAmount
-          );
-          gasLimit += quoteOneinch?.estimatedGas || 0;
-        }
+        const estimateGas = await this.getGasLimit(
+          network,
+          quote.from,
+          cryptoassets[quote.from].contractAddress || zeroAddress
+        );
+        gasLimit += estimateGas;
       }
 
       let globalFee = BN(0);
@@ -177,13 +180,13 @@ class DeBridgeSwapProvider extends SwapProvider {
         globalFee = (await debridgeGate.globalFixedNativeFee()) || 0;
       }
 
-      const i = new BigNumber(21e3);
       const fees: EstimateFeeResponse = {};
       for (const feePrice of feePrices) {
         const gasPrice = BN(feePrice).times(1e9);
-        const fee = BN(gasLimit).times(1.2).times(gasPrice).plus(i.multipliedBy(gasPrice)).plus(globalFee.toString());
+        const fee = BN(gasLimit).times(1.3).times(gasPrice).plus(globalFee.toString());
         fees[feePrice] = unitToCurrency(cryptoassets[nativeAsset[0].code], fee);
       }
+
       return fees;
     } catch (e) {
       console.warn(e);
@@ -200,7 +203,7 @@ class DeBridgeSwapProvider extends SwapProvider {
     return {
       id: uuidv4(),
       fee: quote.fee,
-      slippage: 50,
+      slippage: slippageBps,
       ...updates,
     };
   }
@@ -219,10 +222,10 @@ class DeBridgeSwapProvider extends SwapProvider {
           this.sendSwap({ quote: swap, network, walletId })
         );
         break;
-      case 'WAITING_FOR_SWAP_CONFIRMATIONS':
+      case 'WAITING_FOR_SEND_SWAP_CONFIRMATIONS':
         updates = await withInterval(async () => this.waitForSwapConfirmations({ swap, network, walletId }));
         break;
-      case 'WAITING_FOR_SWAP_EXECUTION':
+      case 'WAITING_FOR_RECEIVE_SWAP_CONFIRMATIONS':
         updates = await withInterval(async () => this.waitForSwapExecution({ swap, network, walletId }));
         break;
     }
@@ -255,7 +258,7 @@ class DeBridgeSwapProvider extends SwapProvider {
           if (count >= minConfirmations) {
             return {
               endTime: Date.now(),
-              status: 'WAITING_FOR_SWAP_EXECUTION',
+              status: 'WAITING_FOR_RECEIVE_SWAP_CONFIRMATIONS',
             };
           }
         } else {
@@ -364,9 +367,8 @@ class DeBridgeSwapProvider extends SwapProvider {
     const toChain = cryptoassets[quote.to].chain;
     const fromChain = cryptoassets[quote.from].chain;
     if (toChain === fromChain) return null;
-    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
 
-    const fromAddress = getChain(network, toChain).formatAddress(fromAddressRaw);
+    const toAddress = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
     const chainIdFrom = ChainNetworks[cryptoassets[quote.from].chain][network].chainId;
     const chainIdTo = ChainNetworks[cryptoassets[quote.to].chain][network].chainId;
     const fromToken = cryptoassets[quote.from].contractAddress || zeroAddress;
@@ -382,29 +384,29 @@ class DeBridgeSwapProvider extends SwapProvider {
           slippage: slippagePercentage,
           dstChainId: chainIdTo,
           dstChainTokenOut: toToken,
-          dstChainTokenOutRecipient: fromAddress,
-          dstChainFallbackAddress: fromAddress,
+          dstChainTokenOutRecipient: toAddress,
+          dstChainFallbackAddress: toAddress,
         },
       });
-      const estimation = result?.data?.estimation;
-      return result?.data?.tx
-        ? {
-            ...result.data.tx,
-            amount: estimation?.dstChainTokenOut.amount,
-            ...(estimation?.srcChainTokenIn && estimation?.srcChainTokenOut
-              ? {
-                  preSwap: {
-                    toAddress: estimation?.srcChainTokenOut.address,
-                    fromAddress: estimation?.srcChainTokenIn.address,
-                  },
-                }
-              : {}),
-          }
-        : null;
+
+      if (result?.data?.tx) {
+        const estimation = result?.data?.estimation;
+        const txInfo = {
+          ...result.data.tx,
+          amount: estimation?.dstChainTokenOut.amount,
+        };
+        if (estimation?.srcChainTokenIn && estimation?.srcChainTokenOut) {
+          txInfo.preSwap = {
+            toAddress: estimation?.srcChainTokenOut.address,
+            fromAddress: estimation?.srcChainTokenIn.address,
+          };
+        }
+        return txInfo;
+      }
     } catch (e) {
       console.warn(e);
-      return null;
     }
+    return null;
   }
 
   private async sendSwap({ network, walletId, quote }: BuildSwapRequest) {
@@ -432,7 +434,7 @@ class DeBridgeSwapProvider extends SwapProvider {
         fee: quote.fee,
       });
       return {
-        status: 'WAITING_FOR_SWAP_CONFIRMATIONS',
+        status: 'WAITING_FOR_SEND_SWAP_CONFIRMATIONS',
         swapTx,
         swapTxHash: swapTx.hash,
       };
@@ -467,13 +469,17 @@ class DeBridgeSwapProvider extends SwapProvider {
 
   private async waitForSwapExecution({ swap, network, walletId }: NextSwapActionRequest<DebridgeSwapHistoryItem>) {
     try {
-      if (await this.isExecuted(swap.swapTxHash)) {
-        const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
-        const { status } = await client.chain.getProvider().getTransactionReceipt(swap.swapTxHash);
+      const submissionInfo = await this.getFullSubmissionInfo(swap.swapTxHash);
+
+      if (submissionInfo?.send?.isExecuted && submissionInfo?.claim) {
+        const client = this.getClient(network, walletId, swap.to, swap.toAccountId);
+        const tx = await client.chain.getTransactionByHash(submissionInfo?.claim.transactionHash);
         this.updateBalances(network, walletId, [swap.fromAccountId]);
         return {
+          receiveTxHash: tx.hash,
+          receiveTx: tx,
           endTime: Date.now(),
-          status: Number(status) === 1 ? 'SUCCESS' : 'FAILED',
+          status: tx.status,
         };
       }
     } catch (e) {
@@ -482,7 +488,7 @@ class DeBridgeSwapProvider extends SwapProvider {
     }
   }
 
-  private async isExecuted(swapTxHash: string): Promise<boolean> {
+  private async getFullSubmissionInfo(swapTxHash: string): Promise<FullSubmissionInfo | null> {
     try {
       const result = await axios({
         url: this.config.api + 'Transactions/GetFullSubmissionInfo',
@@ -492,10 +498,10 @@ class DeBridgeSwapProvider extends SwapProvider {
           filterType: 1,
         },
       });
-      return !!result?.data?.send?.isExecuted;
+      return result?.data || null;
     } catch (e) {
       console.warn(e);
-      return false;
+      return null;
     }
   }
 
@@ -535,7 +541,7 @@ class DeBridgeSwapProvider extends SwapProvider {
   }
 
   protected _timelineDiagramSteps(): string[] {
-    return ['APPROVE', 'SWAP'];
+    return ['APPROVE', 'INITIATION', 'RECEIVE'];
   }
 
   protected _getStatuses(): Record<string, SwapStatus> {
@@ -555,7 +561,7 @@ class DeBridgeSwapProvider extends SwapProvider {
         label: 'Swapping {from}',
         filterStatus: 'PENDING',
       },
-      WAITING_FOR_SWAP_CONFIRMATIONS: {
+      WAITING_FOR_SEND_SWAP_CONFIRMATIONS: {
         step: 1,
         label: 'Swapping {from}',
         filterStatus: 'PENDING',
@@ -565,9 +571,9 @@ class DeBridgeSwapProvider extends SwapProvider {
           };
         },
       },
-      WAITING_FOR_SWAP_EXECUTION: {
+      WAITING_FOR_RECEIVE_SWAP_CONFIRMATIONS: {
         step: 2,
-        label: 'Swapping {from}',
+        label: 'Swapping {to}',
         filterStatus: 'PENDING',
         notification() {
           return {
@@ -598,18 +604,21 @@ class DeBridgeSwapProvider extends SwapProvider {
     };
   }
 
-  private async getQuoteOneinch(network: Network, from: Asset, fromAddress: string, toAddress: string, amount: number) {
-    const oneinchSwapProvider = getSwapProvider(network, SwapProviderType.OneInch) as OneinchSwapProvider;
-    const httpClient = new HttpClient({ baseURL: oneinchSwapProvider.config.agent });
-    const referrerAddress = oneinchSwapProvider.config.referrerAddress?.[cryptoassets[from].chain];
-    const fee = referrerAddress && this.config.referrerFee;
+  private async getGasLimit(network: Network, from: Asset, toAddress: string): Promise<number> {
     const chainIdFrom = ChainNetworks[cryptoassets[from].chain][network].chainId;
-    return await httpClient.nodeGet(`/${chainIdFrom}/quote`, {
-      fromTokenAddress: fromAddress !== zeroAddress ? fromAddress : nativeAddress,
-      toTokenAddress: toAddress !== zeroAddress ? toAddress : nativeAddress,
-      amount,
-      fee,
-    });
+    try {
+      const result = await axios({
+        url: this.config.url + 'srcTxOptimisticGasConsumption',
+        method: 'get',
+        params: {
+          srcChainId: chainIdFrom,
+          srcChainTokenIn: toAddress,
+        },
+      });
+      return result?.data?.srcTxOptimisticGasConsumption || 0;
+    } catch (e) {
+      return 0;
+    }
   }
 }
 

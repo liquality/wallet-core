@@ -241,7 +241,7 @@ const config: WalletCoreConfig = {
         name: 'DeBridge',
         icon: 'debridge.svg',
         type: SwapProviderType.DeBridge,
-        url: 'https://deswap.debridge.finance/v1.0/',
+        url: 'https://deswap-nest-dev-1795.debridge.io/v1.0/',
         api: 'https://api.debridge.finance/api/',
         routerAddress: '0x663DC15D3C1aC63ff12E45Ab68FeA3F0a883C251',
         chains: {
