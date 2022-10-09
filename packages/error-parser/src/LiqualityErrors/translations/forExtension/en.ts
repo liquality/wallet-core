@@ -1,15 +1,15 @@
-import { SUGGESTION_DELIMETER } from '.';
-import HighInputAmountError from '../HighInputAmountError';
-import InsufficientFundsError from '../InsufficientFundsError';
-import InsufficientGasFeeError from '../InsufficientGasFeeError';
-import InsufficientInputAmountError from '../InsufficientInputAmountError';
-import InsufficientLiquidityError from '../InsufficientLiquidityError';
-import InternalError from '../InternalError';
-import LowSpeedupFeeError from '../LowSpeedupFeeError';
-import PairNotSupportedError from '../PairNotSupportedError';
-import ThirdPartyError from '../ThirdPartyError';
-import UnknownError from '../UnknownError';
-import { CAUSE, PLACEHOLDER, PLAIN, SUGGESTIONS, SWAP_ACTIVITY, UNKNOWN_ACTIVITY } from './translationKeys';
+import { SUGGESTION_DELIMETER } from '..';
+import HighInputAmountError from '../../HighInputAmountError';
+import InsufficientFundsError from '../../InsufficientFundsError';
+import InsufficientGasFeeError from '../../InsufficientGasFeeError';
+import InsufficientInputAmountError from '../../InsufficientInputAmountError';
+import InsufficientLiquidityError from '../../InsufficientLiquidityError';
+import InternalError from '../../InternalError';
+import LowSpeedupFeeError from '../../LowSpeedupFeeError';
+import PairNotSupportedError from '../../PairNotSupportedError';
+import ThirdPartyError from '../../ThirdPartyError';
+import UnknownError from '../../UnknownError';
+import { CAUSE, PLACEHOLDER, PLAIN, SUGGESTIONS, SWAP_ACTIVITY, UNKNOWN_ACTIVITY } from '../translationKeys';
 
 export const en = {
   [HighInputAmountError.name]: {

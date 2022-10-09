@@ -9,4 +9,5 @@ export {
   LifiQuoteErrorParser,
   ChainifyErrorParser,
 } from './parsers';
-export { en, SUGGESTION_DELIMETER } from './LiqualityErrors/translations';
+export { SUGGESTION_DELIMETER } from './LiqualityErrors/translations';
+export { TRANSLATIONS } from './LiqualityErrors/translations';
