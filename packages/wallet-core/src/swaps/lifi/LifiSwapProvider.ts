@@ -10,7 +10,6 @@ import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
-import { ChainNetworks } from '../../utils/networks';
 import { EvmSwapHistoryItem, EvmSwapProvider, EvmSwapProviderConfig } from '../EvmSwapProvider';
 import {
   EstimateFeeRequest,
@@ -80,8 +79,8 @@ class LifiSwapProvider extends EvmSwapProvider {
 
     const fromAmountInUnit = currencyToUnit(fromInfo, new BN(amount)).toString(10);
 
-    const fromChainId = ChainNetworks[fromInfo.chain][network].chainId;
-    const toChainId = ChainNetworks[toInfo.chain][network].chainId;
+    const fromChainId = getChain(network, fromInfo.chain).network.chainId;
+    const toChainId = getChain(network, toInfo.chain).network.chainId;
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId as string, from, fromAccountId as string);
     const toAddressRaw = await this.getSwapAddress(network, walletId as string, to, toAccountId as string);
