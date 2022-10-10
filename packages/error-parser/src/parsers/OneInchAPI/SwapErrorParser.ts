@@ -7,9 +7,11 @@ import InsufficientGasFeeError from '../../LiqualityErrors/InsufficientGasFeeErr
 import InsufficientLiquidityError from '../../LiqualityErrors/InsufficientLiquidityError';
 import InternalError from '../../LiqualityErrors/InternalError';
 import UnknownError from '../../LiqualityErrors/UnknownError';
-import { oneInchInternalErrReason, OneInchError, ONE_INCH_ERRORS } from '.';
+import { oneInchInternalErrReason, OneInchError, ONE_INCH_ERRORS, oneInchSwapSourceName } from '.';
 
 export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwapParserDataType> {
+  public static readonly errorSource = oneInchSwapSourceName;
+
   protected _parseError(error: OneInchError, data: OneInchSwapParserDataType): LiqualityError {
     let liqError: LiqualityError;
     let devDesc = '';
@@ -61,7 +63,7 @@ export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwa
       }
     }
 
-    liqError.source = this.errorSource;
+    liqError.source = OneInchSwapErrorParser.errorSource;
     liqError.devMsg = { desc: devDesc, data };
     liqError.rawError = error as never;
 
@@ -69,7 +71,6 @@ export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwa
   }
 }
 
-OneInchSwapErrorParser.prototype.errorSource = 'OneInchSwapAPI';
 export type OneInchSwapParserDataType = {
   from: string;
   to: string;

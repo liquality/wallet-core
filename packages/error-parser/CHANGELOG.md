@@ -1,5 +1,41 @@
 # @liquality/error-parser
 
+## 1.1.0-next.1
+
+### Minor Changes
+
+- 31a975e: bump
+- eadd70c: fix: getQuotes has slow quotes propery
+
+### Patch Changes
+
+- Updated dependencies [31a975e]
+- Updated dependencies [eadd70c]
+  - @liquality/cryptoassets@1.16.0-next.1
+  - @liquality/wallet-core@1.31.0-next.1
+
+## 1.1.0-next.0
+
+### Minor Changes
+
+- 7fa751e: feat: lifi swap provider
+  refactor: get quotes returns fast quotes first. getSlowQuotes action to retrieve restr
+- cb2c60a: feat: lifi swap provider
+  refactor: get quotes returns fast quotes first. `getSlowQuotes` action to retrieve restr
+
+### Patch Changes
+
+- Updated dependencies [7fa751e]
+- Updated dependencies [cb2c60a]
+  - @liquality/wallet-core@1.31.0-next.0
+  - @liquality/cryptoassets@1.16.0-next.0
+
+## 1.0.9
+
+### Patch Changes
+
+- bd46603: test: bump all versions for hot fix solana endpoints change
+
 ## 1.0.8
 
 ### Patch Changes

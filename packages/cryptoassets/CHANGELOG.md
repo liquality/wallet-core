@@ -1,5 +1,31 @@
 # @liquality/cryptoassets
 
+## 1.16.0-next.1
+
+### Minor Changes
+
+- 31a975e: bump
+- eadd70c: fix: getQuotes has slow quotes propery
+
+## 1.16.0-next.0
+
+### Minor Changes
+
+- cb2c60a: feat: lifi swap provider
+  refactor: get quotes returns fast quotes first. `getSlowQuotes` action to retrieve restr
+
+## 1.15.0
+
+### Minor Changes
+
+- 87ea3f6: - evm chains work under same logic now
+
+## 1.14.20
+
+### Patch Changes
+
+- bd46603: test: bump all versions for hot fix solana endpoints change
+
 ## 1.14.19
 
 ### Patch Changes

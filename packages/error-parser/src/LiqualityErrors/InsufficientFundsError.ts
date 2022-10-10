@@ -1,6 +1,8 @@
 import { LiqualityError } from '.';
 
 class InsufficientFundsError extends LiqualityError {
+  public readonly name = 'InsufficientFundsError';
+
   constructor(context?: InsufficientFundsErrorContext, lang?: string) {
     super();
     if (context) {
@@ -20,8 +22,6 @@ class InsufficientFundsError extends LiqualityError {
     }
   }
 }
-
-InsufficientFundsError.prototype.name = 'InsufficientFundsError';
 
 export type InsufficientFundsErrorContext = { availAmt: string; neededAmt: string; currency: string };
 export default InsufficientFundsError;

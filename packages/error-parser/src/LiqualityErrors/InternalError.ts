@@ -1,5 +1,7 @@
 import { LiqualityError } from '.';
 class InternalError extends LiqualityError {
+  public readonly name = 'InternalError';
+
   constructor(lang?: string) {
     super();
     this.wrapUserErrorMessage(lang);
@@ -17,5 +19,4 @@ class InternalError extends LiqualityError {
   }
 }
 
-InternalError.prototype.name = 'InternalError';
 export default InternalError;

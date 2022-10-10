@@ -1,5 +1,7 @@
 import { LiqualityError } from '.';
 class InsufficientGasFeeError extends LiqualityError {
+  public readonly name = 'InsufficientGasFeeError';
+
   constructor(context?: InsufficientGasFeeErrorContext, lang?: string) {
     super();
     if (context) {
@@ -23,6 +25,5 @@ class InsufficientGasFeeError extends LiqualityError {
   }
 }
 
-InsufficientGasFeeError.prototype.name = 'InsufficientGasFeeError';
 export type InsufficientGasFeeErrorContext = { currency: string; gasFee?: string };
 export default InsufficientGasFeeError;

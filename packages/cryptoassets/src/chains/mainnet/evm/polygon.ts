@@ -1,5 +1,5 @@
 import { EvmChain } from '../../../chains/EvmChain';
-import { AssetTypes, ChainId } from '../../../types';
+import { AssetTypes, ChainId, NftProviderType } from '../../../types';
 
 export default new EvmChain({
   id: ChainId.Polygon,
@@ -21,6 +21,7 @@ export default new EvmChain({
   isEVM: true,
   hasTokens: true,
   isMultiLayered: false,
+  nftProviderType: NftProviderType.Moralis,
 
   averageBlockTime: 3,
   safeConfirmations: 5,
@@ -32,15 +33,19 @@ export default new EvmChain({
     networkId: 137,
     chainId: 137,
     isTestnet: false,
-    rpcUrls: ['https://polygon-rpc.com'],
+    rpcUrls: ['https://polygon-mainnet.infura.io/v3/a2ad6f8c0e57453ca4918331f16de87d', 'https://polygon-rpc.com'],
   },
   explorerViews: [
     {
-      tx: 'https://polygonscan.com/tx/',
-      address: 'https://polygonscan.com/address/',
-      token: 'https://polygonscan.com/token/',
+      tx: 'https://polygonscan.com/tx/{hash}',
+      address: 'https://polygonscan.com/address/{address}',
+      token: 'https://polygonscan.com/token/{token}',
     },
   ],
+
+  nameService: {
+    uns: 'MATIC',
+  },
 
   multicallSupport: true,
   ledgerSupport: false,

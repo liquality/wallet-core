@@ -1,5 +1,51 @@
 # @liquality/wallet-core
 
+## 1.31.0-next.1
+
+### Minor Changes
+
+- 31a975e: bump
+- eadd70c: fix: getQuotes has slow quotes propery
+
+### Patch Changes
+
+- Updated dependencies [31a975e]
+- Updated dependencies [eadd70c]
+  - @liquality/cryptoassets@1.16.0-next.1
+
+## 1.31.0-next.0
+
+### Minor Changes
+
+- 7fa751e: feat: lifi swap provider
+  refactor: get quotes returns fast quotes first. getSlowQuotes action to retrieve restr
+- cb2c60a: feat: lifi swap provider
+  refactor: get quotes returns fast quotes first. `getSlowQuotes` action to retrieve restr
+
+### Patch Changes
+
+- Updated dependencies [cb2c60a]
+  - @liquality/cryptoassets@1.16.0-next.0
+
+## 1.30.0
+
+### Minor Changes
+
+- 87ea3f6: - evm chains work under same logic now
+
+### Patch Changes
+
+- Updated dependencies [87ea3f6]
+  - @liquality/cryptoassets@1.15.0
+
+## 1.29.25
+
+### Patch Changes
+
+- bd46603: test: bump all versions for hot fix solana endpoints change
+- Updated dependencies [bd46603]
+  - @liquality/cryptoassets@1.14.20
+
 ## 1.29.24
 
 ### Patch Changes

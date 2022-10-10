@@ -11,8 +11,8 @@ describe('OneInchApproveAPI parser', () => {
   const parser = getParser(OneInchApproveErrorParser);
 
   const errorMap = [
-    [ONE_INCH_ERRORS.INTERNAL_ERROR, ThirdPartyError.prototype.name],
-    [ONE_INCH_ERRORS.INVALID_TOKEN_ADDRESS, InternalError.prototype.name],
+    [ONE_INCH_ERRORS.INTERNAL_ERROR, ThirdPartyError.name],
+    [ONE_INCH_ERRORS.INVALID_TOKEN_ADDRESS, InternalError.name],
   ];
 
   it('should not log anything to console', () => {
@@ -49,7 +49,7 @@ describe('OneInchApproveAPI parser', () => {
     });
 
     expect(error.name).toBe(liqError);
-    expect(error.source).toBe(OneInchApproveErrorParser.prototype.errorSource);
+    expect(error.source).toBe(OneInchApproveErrorParser.errorSource);
     expect(error.devMsg.data).toBe(null);
     expect(error.rawError).toBe(validError);
   });
@@ -77,6 +77,6 @@ describe('OneInchApproveAPI parser', () => {
         throw error;
       }, null);
     });
-    expect(liqError.name).toBe(UnknownError.prototype.name);
+    expect(liqError.name).toBe(UnknownError.name);
   });
 });
