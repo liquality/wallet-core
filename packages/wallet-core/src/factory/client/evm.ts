@@ -14,6 +14,7 @@ import { walletOptionsStore } from '../../walletOptions';
 import { getNftProvider } from './nft';
 import { EvmChain } from '@liquality/cryptoassets';
 import { asL2Provider } from '@eth-optimism/sdk';
+import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
 
 export function createEvmClient(chain: EvmChain, mnemonic: string, accountInfo: AccountInfo) {
   const network = chain.network;
@@ -43,7 +44,7 @@ function getEvmWalletProvider(
     }
 
     if (!walletOptionsStore.walletOptions.ledgerTransportCreator) {
-      throw new Error('Wallet Options: ledgerTransportCreator is not defined - unable to build ledger client');
+      throw wrapCustomError(CUSTOM_ERRORS.NotFound.LedgerTransportCreator);
     }
 
     return new EvmLedgerProvider(

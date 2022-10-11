@@ -29,6 +29,7 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
+import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
 
 // use WRBTC address for RBTC native token
 const wrappedRbtcAddress: { [key: string]: string } = {
@@ -271,12 +272,12 @@ class SovrynSwapProvider extends SwapProvider {
     feePrices,
   }: EstimateFeeRequest<string, SovrynSwapHistoryItem>) {
     if (txType !== this.fromTxType) {
-      throw new Error(`Invalid tx type ${txType}`);
+      throw wrapCustomError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
     }
 
     const nativeAsset = getChain(network, cryptoassets[asset].chain).nativeAsset[0].code;
     const account = this.getAccount(quote.fromAccountId);
-    if (!account) throw new Error(`SovrynSwapProvider: Account with id ${quote.fromAccountId} not found`);
+    if (!account) throw wrapCustomError(CUSTOM_ERRORS.NotFound.Account(quote.fromAccountId));
     const client = this.getClient(network, walletId, quote.from, account.id);
 
     let gasLimit = 0;
@@ -376,7 +377,7 @@ class SovrynSwapProvider extends SwapProvider {
   _getApi(network: Network, asset: Asset) {
     const chain = cryptoassets[asset].chain;
     if (chain !== ChainId.Rootstock) {
-      throw new Error('SovrynSwapProvider: chain not supported');
+      throw wrapCustomError(CUSTOM_ERRORS.Unsupported.Chain);
     }
 
     const chainId = Number(getChain(network, ChainId.Rootstock).network.chainId);

@@ -25,11 +25,14 @@ import {
   SwapStatus,
 } from '../types';
 import {
+  CUSTOM_ERRORS,
   getErrorParser,
   OneInchApproveErrorParser,
   OneInchQuoteErrorParser,
   OneInchSwapErrorParser,
+  wrapCustomError,
 } from '@liquality/error-parser';
+import { SlippageTooHighError } from '@liquality/error-parser';
 
 const NATIVE_ASSET_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
@@ -292,7 +295,7 @@ class OneinchSwapProvider extends SwapProvider {
     // @ts-ignore TODO: Fix chain networks
     const chainId = Number(getChain(network, toChain).network.chainId);
     if (toChain !== fromChain || !supportedChains[Number(chainId)]) {
-      throw new Error(`Route ${fromChain} - ${toChain} not supported`);
+      throw wrapCustomError(CUSTOM_ERRORS.Unsupported.SwapRoute(fromChain, toChain));
     }
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
@@ -324,9 +327,11 @@ class OneinchSwapProvider extends SwapProvider {
     );
 
     if (new BN(quote.toAmount).times(1 - swapParams.slippage / 100).gt(swap?.toTokenAmount)) {
-      throw new Error(
-        `Slippage is too high. You expect ${quote.toAmount} but you are going to receive ${swap?.toTokenAmount} ${quote.to}`
-      );
+      throw new SlippageTooHighError({
+        expectedAmount: quote.toAmount,
+        actualAmount: swap?.toTokenAmount,
+        currency: quote.to,
+      });
     }
 
     return swap;

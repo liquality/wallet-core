@@ -1,5 +1,6 @@
 import { FeeDetails, Nullable } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
+import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
 import Vue from 'vue';
 import {
   Account,
@@ -497,7 +498,7 @@ export default {
     { network, walletId, accountId, nfts }: { network: Network; walletId: WalletId; accountId: AccountId; nfts: NFT[] }
   ) {
     const account = state.accounts[walletId]![network].find((a) => a.id === accountId);
-    if (!account) throw new Error(`Tried to update nfts for unknown account ${accountId}`);
+    if (!account) throw wrapCustomError(CUSTOM_ERRORS.NotFound.Account(accountId));
 
     Vue.set(account, 'nfts', nfts);
   },
@@ -506,7 +507,7 @@ export default {
     { network, walletId, accountId, nft }: { network: Network; walletId: WalletId; accountId: AccountId; nft: NFT }
   ) {
     const account = state.accounts[walletId]![network].find((a) => a.id === accountId);
-    if (!account) throw new Error(`Tried to update nfts for unknown account ${accountId}`);
+    if (!account) throw wrapCustomError(CUSTOM_ERRORS.NotFound.Account(accountId));
 
     const stateNFT = account.nfts?.find((accountNFT) => {
       return accountNFT.asset_contract!.address === nft.asset_contract!.address && accountNFT.token_id === nft.token_id;

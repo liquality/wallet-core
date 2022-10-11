@@ -26,6 +26,7 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
+import SlippageError, { CUSTOM_ERRORS, QuoteExpiredError, wrapCustomError } from '@liquality/error-parser';
 
 const VERSION_STRING = `Wallet ${pkg.version} (Chainify ${pkg.dependencies['@chainify/client']
   .replace('^', '')
@@ -153,7 +154,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     delete lockedQuote.id;
 
     if (new BN(lockedQuote.toAmount).lt(new BN(_quote.toAmount).times(0.995))) {
-      throw new Error('The quote slippage is too high (> 0.5%). Try again.');
+      throw SlippageError;
     }
 
     const quote = {
@@ -161,7 +162,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       ...lockedQuote,
     };
     if (await this.hasQuoteExpired(quote)) {
-      throw new Error('The quote is expired.');
+      throw new QuoteExpiredError();
     }
 
     quote.fromAddress = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
@@ -477,7 +478,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       return this._httpClient.nodePost('/api/swap/order', { from, to, fromAmount: amount }, { headers });
     } catch (e) {
       if (e?.response?.data?.error) {
-        throw new Error(e.response.data.error);
+        throw wrapCustomError(CUSTOM_ERRORS.Unknown(e.response.data.error));
       } else {
         throw e;
       }

@@ -1,3 +1,4 @@
+import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
 import moment from 'moment';
 import { getSwapProvider } from '../factory/swap';
 import { HistoryItem, SendStatus, TransactionType } from '../store/types';
@@ -33,18 +34,19 @@ export function getStatusLabel(item: HistoryItem) {
 }
 
 export function getStep(item: HistoryItem) {
-  if (item.type === TransactionType.NFT) {
+  const itemType = item.type;
+  if (itemType === TransactionType.NFT) {
     return SEND_STATUS_STEP_MAP[item.status];
   }
-  if (item.type === TransactionType.Send) {
+  if (itemType === TransactionType.Send) {
     return SEND_STATUS_STEP_MAP[item.status];
   }
-  if (item.type === TransactionType.Swap) {
+  if (itemType === TransactionType.Swap) {
     const swapProvider = getSwapProvider(item.network, item.provider);
     return swapProvider.statuses[item.status].step;
   }
 
-  throw new Error('getStep: Unknown type');
+  throw wrapCustomError(CUSTOM_ERRORS.Invalid.TransactionType(itemType));
 }
 
 export const ACTIVITY_FILTER_TYPES = {

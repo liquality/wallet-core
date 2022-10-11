@@ -9,6 +9,7 @@ import {
   getNativeAssetCode,
   unitToCurrency,
 } from '@liquality/cryptoassets';
+import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
 import BN from 'bignumber.js';
 import store from '../store';
 import { Account, AccountId, Asset, Network, NFT } from '../store/types';
@@ -49,11 +50,11 @@ function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number, network
     // calculate ETH fees
     const gasLimitL1 = getAssetSendL1GasLimit(assetInfo, network);
     if (!gasLimitL1) {
-      throw new Error(`${asset} doesn't have gas limit set`);
+      throw wrapCustomError(CUSTOM_ERRORS.NotFound.Chain.L1GasLimit(assetInfo.chain));
     }
 
     if (!l1FeePrice) {
-      throw new Error('l1FeePrice must be specified for Optimism');
+      throw wrapCustomError(CUSTOM_ERRORS.NotFound.Chain.L1FeePrice);
     }
 
     const feeL1 = new BN(gasLimitL1).times(feePriceInUnit(nativeAssetInfo.code, l1FeePrice, network));
@@ -61,7 +62,7 @@ function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number, network
     // calculate OP fees
     const gasLimitL2 = getAssetSendGasLimit(assetInfo, network);
     if (!gasLimitL2) {
-      throw new Error(`${asset} doesn't have gas limit set`);
+      throw wrapCustomError(CUSTOM_ERRORS.NotFound.Chain.GasLimit(assetInfo.chain));
     }
 
     const feeL2 = new BN(gasLimitL2).times(feePriceInUnit(nativeAssetInfo.code, feePrice, network));
@@ -74,7 +75,7 @@ function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number, network
   } else {
     const gasLimitL = getAssetSendGasLimit(assetInfo, network);
     if (!gasLimitL) {
-      throw new Error(`${asset} doesn't have gas limit set`);
+      throw wrapCustomError(CUSTOM_ERRORS.NotFound.Chain.GasLimit(assetInfo.chain));
     }
     const fee = new BN(gasLimitL).times(feePriceInUnit(nativeAssetInfo.code, feePrice, network));
     return unitToCurrency(nativeAssetInfo, fee);
@@ -122,7 +123,7 @@ function maxFeePerUnitEIP1559(suggestedGasFee: EIP1559Fee) {
  */
 function feePerUnit(suggestedGasFee: FeeType, chain: ChainId): number {
   if (suggestedGasFee === undefined || chain === undefined) {
-    throw new Error('feePerUnit: Incorrect input!');
+    throw wrapCustomError(CUSTOM_ERRORS.Invalid.Default);
   }
 
   /*
@@ -145,23 +146,23 @@ function feePerUnit(suggestedGasFee: FeeType, chain: ChainId): number {
     return suggestedGasFee as number;
   }
 
-  throw new Error('feePerUnit: suggestedGasFee does not match chain!');
+  throw wrapCustomError(CUSTOM_ERRORS.Invalid.ChainGasFeeMisMatch);
 }
 
 async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN, customFee?: FeeType) {
   const assetChain = cryptoassets[asset]?.chain;
   if (!assetChain) {
-    throw new Error(`getSendFeeEstimations: asset chain not available for ${asset}`);
+    throw wrapCustomError(CUSTOM_ERRORS.NotFound.Asset.Chain(asset));
   }
 
   const feeAsset = getFeeAsset(asset) || getNativeAsset(asset);
   if (!feeAsset) {
-    throw new Error(`getSendFeeEstimations: fee asset not available for ${asset}`);
+    throw wrapCustomError(CUSTOM_ERRORS.NotFound.Asset.FeeAsset(asset));
   }
 
   const suggestedGasFees = store.getters.suggestedFeePrices(feeAsset);
   if (!suggestedGasFees) {
-    throw new Error(`getSendFeeEstimations: fees not avaibale for ${feeAsset}`);
+    throw wrapCustomError(CUSTOM_ERRORS.NotFound.Asset.Fees(feeAsset));
   }
 
   const _suggestedGasFees = suggestedGasFees as FeeDetailsWithCustom;
@@ -205,7 +206,7 @@ async function sendBitcoinTxFees(
   sendFees?: SendFees
 ) {
   if (asset != 'BTC') {
-    throw new Error(`getFeeEstimationsBTC: incorrect input asset ${asset}. BTC expected.`);
+    throw wrapCustomError(CUSTOM_ERRORS.Invalid.Default);
   }
   const isMax: boolean = amount === undefined; // checking if it is a max send
   const _sendFees = sendFees ?? newSendFees();
@@ -248,12 +249,12 @@ async function estimateTransferNFT(
 
   const feeAsset = getNativeAssetCode(network, account.chain);
   if (!feeAsset) {
-    throw new Error(`getSendFeeEstimations: fee asset not available`);
+    throw wrapCustomError(CUSTOM_ERRORS.NotFound.Asset.FeeAsset());
   }
 
   const suggestedGasFees = store.getters.suggestedFeePrices(feeAsset);
   if (!suggestedGasFees) {
-    throw new Error(`getSendFeeEstimations: fees not avaibale for ${feeAsset}`);
+    throw wrapCustomError(CUSTOM_ERRORS.NotFound.Asset.Fees(feeAsset));
   }
 
   const _suggestedGasFees = suggestedGasFees as FeeDetailsWithCustom;

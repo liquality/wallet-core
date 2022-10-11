@@ -1,5 +1,5 @@
 import { Transaction } from '@chainify/types';
-import { ChainifyErrorParser, getErrorParser } from '@liquality/error-parser';
+import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, wrapCustomError } from '@liquality/error-parser';
 import { isObject } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
 import { getSwapProvider } from '../../factory/swap';
@@ -22,7 +22,7 @@ export const updateTransactionFee = async (
   const item = getters.historyItemById(network, walletId, id);
 
   if (!item) {
-    throw new Error('updateTransactionFee: Item does not exist');
+    throw wrapCustomError(CUSTOM_ERRORS.NotFound.History.Item);
   }
 
   const hashKey = Object.keys(item).find((key: keyof HistoryItem) => item[key] === hash);
@@ -31,7 +31,7 @@ export const updateTransactionFee = async (
   const txKey = Object.keys(item).find((key: keyof HistoryItem) => isObject(item[key]) && item[key].hash === hash);
 
   if (!hashKey || !txKey) {
-    throw new Error('Updating fee: Transaction not found');
+    throw wrapCustomError(CUSTOM_ERRORS.NotFound.History.Transaction);
   }
 
   const feeKey = {
@@ -93,7 +93,7 @@ export const updateTransactionFee = async (
   const isFundingUpdate = hashKey === 'fromFundHash';
   if (isFundingUpdate) {
     if (item.type !== TransactionType.Swap) {
-      throw new Error('updateTransactionFee: Funding update must be swap transaction type.');
+      throw wrapCustomError(CUSTOM_ERRORS.Invalid.Default);
     }
     // TODO: this should be the function of any swap? Should be able to bump any tx
     const swapProvider = getSwapProvider(network, item.provider) as LiqualitySwapProvider;

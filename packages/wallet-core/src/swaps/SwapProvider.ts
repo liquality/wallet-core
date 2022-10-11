@@ -1,3 +1,4 @@
+import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
 import BigNumber from 'bignumber.js';
 import store, { ActionContext } from '../store';
 import { createNotification } from '../store/broker/notification';
@@ -118,17 +119,14 @@ export abstract class SwapProvider {
 
   public get statuses() {
     const statuses = this._getStatuses();
-    if (typeof statuses === 'undefined')
-      throw new Error(
-        '`statuses` is not defined. Shape: { STATUS: { step: number, label: string, filterStatus: string, notification () : ({ message }) } }'
-      );
+    if (typeof statuses === 'undefined') throw wrapCustomError(CUSTOM_ERRORS.NotFound.SwapProvider.Statuses);
     return statuses;
   }
 
   public get fromTxType() {
     const fromTxType = this._fromTxType();
     if (typeof fromTxType === 'undefined') {
-      throw new Error('`fromTxType` is not defined. e.g. "INITIATE"');
+      throw wrapCustomError(CUSTOM_ERRORS.NotFound.SwapProvider.FromTxType);
     }
     return fromTxType;
   }
@@ -136,7 +134,7 @@ export abstract class SwapProvider {
   public get toTxType() {
     const toTxType = this._toTxType();
     if (typeof toTxType === 'undefined') {
-      throw new Error('`toTxType` is not defined. e.g. "REDEEM"');
+      throw wrapCustomError(CUSTOM_ERRORS.NotFound.SwapProvider.ToTxType);
     }
     return toTxType;
   }
@@ -144,7 +142,7 @@ export abstract class SwapProvider {
   public get timelineDiagramSteps() {
     const timelineDiagramSteps = this._timelineDiagramSteps();
     if (typeof timelineDiagramSteps === 'undefined') {
-      throw new Error('`timelineDiagramSteps` is not defined. e.g. ["APPROVE","SWAP"]');
+      throw wrapCustomError(CUSTOM_ERRORS.NotFound.SwapProvider.timelineDiagramSteps);
     }
     return timelineDiagramSteps;
   }
@@ -152,7 +150,7 @@ export abstract class SwapProvider {
   public get totalSteps() {
     const totalSteps = this._totalSteps();
     if (typeof totalSteps === 'undefined') {
-      throw new Error('`totalSteps` is not defined. e.g. 2');
+      throw wrapCustomError(CUSTOM_ERRORS.NotFound.SwapProvider.totalSteps);
     }
     return totalSteps;
   }
@@ -160,7 +158,7 @@ export abstract class SwapProvider {
   public get txTypes() {
     const totalSteps = this._txTypes();
     if (typeof totalSteps === 'undefined') {
-      throw new Error('`_txTypes` is not defined. e.g. {SWAP: "SWAP"}');
+      throw wrapCustomError(CUSTOM_ERRORS.NotFound.SwapProvider._txTypes);
     }
     return totalSteps;
   }
