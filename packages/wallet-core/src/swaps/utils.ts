@@ -13,6 +13,7 @@ import oneinchInfo from '../swaps/oneinch/info.json';
 import sovrynInfo from '../swaps/sovryn/info.json';
 import thorchainInfo from '../swaps/thorchain/info.json';
 import uniswapInfo from '../swaps/uniswap/info.json';
+import debridgeInfo from '../swaps/debridge/info.json';
 import { LiqualitySwapProvider } from './liquality/LiqualitySwapProvider';
 
 const swapProviderInfo = {
@@ -28,6 +29,7 @@ const swapProviderInfo = {
   [SwapProviderType.Astroport]: astroportInfo,
   [SwapProviderType.Hop]: hopInfo,
   [SwapProviderType.Jupiter]: jupiterInfo,
+  [SwapProviderType.DeBridge]: debridgeInfo,
   [SwapProviderType.LiFi]: lifiInfo,
 };
 

@@ -14,6 +14,7 @@ import { SovrynSwapProvider } from '../../swaps/sovryn/SovrynSwapProvider';
 import { SwapProvider } from '../../swaps/SwapProvider';
 import { ThorchainSwapProvider } from '../../swaps/thorchain/ThorchainSwapProvider';
 import { UniswapSwapProvider } from '../../swaps/uniswap/UniswapSwapProvider';
+import { DeBridgeSwapProvider } from '../../swaps/debridge/DeBridgeSwapProvider';
 
 const providers = {
   [SwapProviderType.Liquality]: LiqualitySwapProvider,
@@ -28,6 +29,7 @@ const providers = {
   [SwapProviderType.Astroport]: AstroportSwapProvider,
   [SwapProviderType.Hop]: HopSwapProvider,
   [SwapProviderType.Jupiter]: JupiterSwapProvider,
+  [SwapProviderType.DeBridge]: DeBridgeSwapProvider,
   [SwapProviderType.LiFi]: LifiSwapProvider,
 };
 

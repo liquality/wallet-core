@@ -124,6 +124,7 @@ export enum SwapProviderType {
   Astroport = 'astroport',
   Hop = 'hop',
   Jupiter = 'jupiter',
+  DeBridge = 'debridge',
   LiFi = 'lifi',
 }
 
