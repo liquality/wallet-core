@@ -1,5 +1,12 @@
 # @liquality/cryptoassets
 
+## 1.16.0-next.2
+
+### Minor Changes
+
+- e80e6eb: feat: debridge swap provider
+- 5e3607c: feat: debridge swap provider
+
 ## 1.16.0-next.1
 
 ### Minor Changes
