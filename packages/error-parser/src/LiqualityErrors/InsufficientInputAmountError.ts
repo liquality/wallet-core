@@ -1,6 +1,6 @@
-import { LiqualityError } from '.';
+import { LiqualityError } from './LiqualityError';
 
-export default class InsufficientInputAmountError extends LiqualityError<InsufficientInputAmountErrorContext> {
+export class InsufficientInputAmountError extends LiqualityError<InsufficientInputAmountErrorContext> {
   public readonly name = InsufficientInputAmountError.name;
 
   constructor(data?: InsufficientInputAmountErrorContext) {

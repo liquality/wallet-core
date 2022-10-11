@@ -1,15 +1,18 @@
 import { OneInchError, ONE_INCH_ERRORS } from '../../parsers/OneInchAPI';
 import { FAKE_ERROR, getError, getErrorAsync } from '..';
-import { LiqualityError } from '../../LiqualityErrors';
+import { LiqualityError } from '../../LiqualityErrors/LiqualityError';
 import RandExp = require('randexp');
-import { getErrorParser, OneInchSwapErrorParser } from '../../';
+import {
+  getErrorParser,
+  InsufficientFundsError,
+  InsufficientGasFeeError,
+  InsufficientLiquidityError,
+  InternalError,
+  OneInchSwapErrorParser,
+  ThirdPartyError,
+  UnknownError,
+} from '../../';
 import { OneInchSwapParserDataType } from '../../parsers';
-import InternalError from '../../LiqualityErrors/InternalError';
-import InsufficientFundsError from '../../LiqualityErrors/InsufficientFundsError';
-import InsufficientGasFeeError from '../../LiqualityErrors/InsufficientGasFeeError';
-import InsufficientLiquidityError from '../../LiqualityErrors/InsufficientLiquidityError';
-import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
-import UnknownError from '../../LiqualityErrors/UnknownError';
 
 describe('OneInchSwapAPI parser', () => {
   const data: OneInchSwapParserDataType = {

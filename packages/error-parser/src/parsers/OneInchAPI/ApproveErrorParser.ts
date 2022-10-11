@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LiqualityError, UserActivity } from '../../LiqualityErrors';
+import { LiqualityError, UserActivity } from '../../LiqualityErrors/LiqualityError';
 import { ErrorParser } from '../ErrorParser';
-import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
-import InternalError from '../../LiqualityErrors/InternalError';
-import UnknownError from '../../LiqualityErrors/UnknownError';
 import { oneInchInternalErrReason, OneInchError, ONE_INCH_ERRORS, oneInchApproveSourceName } from '.';
+import { InternalError, ThirdPartyError, UnknownError } from '../../LiqualityErrors';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export class OneInchApproveErrorParser extends ErrorParser<OneInchError, null> {

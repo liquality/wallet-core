@@ -1,5 +1,5 @@
 import { REPORTERS } from '../config';
-import { LiqualityError } from '../LiqualityErrors';
+import { LiqualityError } from '../LiqualityErrors/LiqualityError';
 import { ReportConfig, ReportType } from '../types/types';
 
 let reportConfig: ReportConfig = {};

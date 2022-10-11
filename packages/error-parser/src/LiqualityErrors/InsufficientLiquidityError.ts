@@ -1,5 +1,5 @@
-import { LiqualityError } from '.';
-export default class InsufficientLiquidityError extends LiqualityError<InsufficientLiquidityErrorContext> {
+import { LiqualityError } from './LiqualityError';
+export class InsufficientLiquidityError extends LiqualityError<InsufficientLiquidityErrorContext> {
   public readonly name = InsufficientLiquidityError.name;
 
   constructor(data?: InsufficientLiquidityErrorContext) {

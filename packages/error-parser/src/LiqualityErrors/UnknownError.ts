@@ -1,5 +1,5 @@
-import { LiqualityError } from '.';
-export default class UnknownError extends LiqualityError {
+import { LiqualityError } from './LiqualityError';
+export class UnknownError extends LiqualityError {
   public readonly name = UnknownError.name;
 
   constructor() {

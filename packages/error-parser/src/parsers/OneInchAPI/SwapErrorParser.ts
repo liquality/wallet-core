@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LiqualityError, UserActivity } from '../../LiqualityErrors';
+import { LiqualityError, UserActivity } from '../../LiqualityErrors/LiqualityError';
 import { ErrorParser } from '../ErrorParser';
-import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
-import InsufficientFundsError from '../../LiqualityErrors/InsufficientFundsError';
-import InsufficientGasFeeError from '../../LiqualityErrors/InsufficientGasFeeError';
-import InsufficientLiquidityError from '../../LiqualityErrors/InsufficientLiquidityError';
-import InternalError from '../../LiqualityErrors/InternalError';
-import UnknownError from '../../LiqualityErrors/UnknownError';
 import { oneInchInternalErrReason, OneInchError, ONE_INCH_ERRORS, oneInchSwapSourceName } from '.';
+import {
+  InsufficientFundsError,
+  InsufficientGasFeeError,
+  InsufficientLiquidityError,
+  InternalError,
+  ThirdPartyError,
+  UnknownError,
+} from '../../LiqualityErrors';
 
 export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwapParserDataType> {
   public static readonly errorSource = oneInchSwapSourceName;

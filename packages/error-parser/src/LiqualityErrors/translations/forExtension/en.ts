@@ -1,14 +1,22 @@
 import { SUGGESTION_DELIMETER } from '..';
-import HighInputAmountError from '../../HighInputAmountError';
-import InsufficientFundsError from '../../InsufficientFundsError';
-import InsufficientGasFeeError from '../../InsufficientGasFeeError';
-import InsufficientInputAmountError from '../../InsufficientInputAmountError';
-import InsufficientLiquidityError from '../../InsufficientLiquidityError';
-import InternalError from '../../InternalError';
-import LowSpeedupFeeError from '../../LowSpeedupFeeError';
-import PairNotSupportedError from '../../PairNotSupportedError';
-import ThirdPartyError from '../../ThirdPartyError';
-import UnknownError from '../../UnknownError';
+import {
+  HighInputAmountError,
+  InsufficientFundsError,
+  InsufficientGasFeeError,
+  InsufficientInputAmountError,
+  InsufficientLiquidityError,
+  InternalError,
+  LedgerDeviceConnectionError,
+  LowSpeedupFeeError,
+  NoActiveWalletError,
+  PairNotSupportedError,
+  PasswordError,
+  QuoteExpiredError,
+  SlippageTooHighError,
+  ThirdPartyError,
+  UnknownError,
+  WalletLockedError,
+} from '../../../LiqualityErrors';
 import { CAUSE, PLACEHOLDER, PLAIN, SUGGESTIONS, SWAP_ACTIVITY, UNKNOWN_ACTIVITY } from '../translationKeys';
 
 export const en = {
@@ -128,6 +136,47 @@ export const en = {
     [PLAIN]: {
       [CAUSE]: 'Sorry, something went wrong while processing this transaction',
       [SUGGESTIONS]: '',
+    },
+  },
+  [SlippageTooHighError.name]: {
+    [PLACEHOLDER]: {
+      [CAUSE]:
+        'Slippage is too high. You expect %{expectedAmount} but you are going to receive %{actualAmount} %{currency}',
+      [SUGGESTIONS]: 'Try again',
+    },
+    [PLAIN]: {
+      [CAUSE]: 'Slippage is too high',
+      [SUGGESTIONS]: 'Try again',
+    },
+  },
+  [QuoteExpiredError.name]: {
+    [PLAIN]: {
+      [CAUSE]: 'The quote has expired',
+      [SUGGESTIONS]: 'Try again',
+    },
+  },
+  [WalletLockedError.name]: {
+    [PLAIN]: {
+      [CAUSE]: 'Wallet is locked',
+      [SUGGESTIONS]: 'Unlock the wallet first',
+    },
+  },
+  [NoActiveWalletError.name]: {
+    [PLAIN]: {
+      [CAUSE]: 'No active wallet found. Create a wallet first',
+      [SUGGESTIONS]: 'Create a wallet first',
+    },
+  },
+  [LedgerDeviceConnectionError.name]: {
+    [PLAIN]: {
+      [CAUSE]: 'Ledger device not connected or not unlocked',
+      [SUGGESTIONS]: '',
+    },
+  },
+  [PasswordError.name]: {
+    [PLAIN]: {
+      [CAUSE]: 'Incorrect Password',
+      [SUGGESTIONS]: 'Try Again (Password should have 8 or more characters)',
     },
   },
 };

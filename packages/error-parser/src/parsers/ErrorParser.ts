@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LiqualityError } from '../LiqualityErrors';
+import { LiqualityError } from '../LiqualityErrors/LiqualityError';
 
 export abstract class ErrorParser<SourceError, DataType> {
   public static readonly errorSource: string;

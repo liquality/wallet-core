@@ -1,5 +1,5 @@
-import { LiqualityError } from '.';
-export default class InsufficientGasFeeError extends LiqualityError<InsufficientGasFeeErrorContext> {
+import { LiqualityError } from './LiqualityError';
+export class InsufficientGasFeeError extends LiqualityError<InsufficientGasFeeErrorContext> {
   public readonly name = InsufficientGasFeeError.name;
 
   constructor(data?: InsufficientGasFeeErrorContext) {

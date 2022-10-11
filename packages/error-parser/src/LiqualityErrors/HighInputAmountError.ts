@@ -1,5 +1,5 @@
-import { LiqualityError } from '.';
-export default class HighInputAmountError extends LiqualityError<HighInputAmountErrorContext> {
+import { LiqualityError } from './LiqualityError';
+export class HighInputAmountError extends LiqualityError<HighInputAmountErrorContext> {
   public readonly name = HighInputAmountError.name;
 
   constructor(data?: HighInputAmountErrorContext) {

@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as ChainifyErrors from '@chainify/errors';
-import { LiqualityError, UserActivity } from '../../LiqualityErrors';
+import { LiqualityError, UserActivity } from '../../LiqualityErrors/LiqualityError';
 import { ErrorParser } from '../ErrorParser';
-import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
-import InternalError from '../../LiqualityErrors/InternalError';
-import UnknownError from '../../LiqualityErrors/UnknownError';
 import { ChainifyErrorSource } from '.';
-import LowSpeedupFeeError from '../../LiqualityErrors/LowSpeedupFeeError';
-
+import { InternalError, LowSpeedupFeeError, ThirdPartyError, UnknownError } from '../../LiqualityErrors';
 export class ChainifyErrorParser extends ErrorParser<Error, null> {
   public static readonly errorSource = ChainifyErrorSource;
 
