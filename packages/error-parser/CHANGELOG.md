@@ -1,5 +1,19 @@
 # @liquality/error-parser
 
+## 1.1.0-next.2
+
+### Minor Changes
+
+- e80e6eb: feat: debridge swap provider
+- 5e3607c: feat: debridge swap provider
+
+### Patch Changes
+
+- Updated dependencies [e80e6eb]
+- Updated dependencies [5e3607c]
+  - @liquality/cryptoassets@1.16.0-next.2
+  - @liquality/wallet-core@1.31.0-next.2
+
 ## 1.1.0-next.1
 
 ### Minor Changes
