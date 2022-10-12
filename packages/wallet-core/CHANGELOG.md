@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.30.3
+
+### Patch Changes
+
+- d764511: - fix fetching assets
+- Updated dependencies [d764511]
+  - @liquality/cryptoassets@1.15.3
+
 ## 1.30.2
 
 ### Patch Changes
