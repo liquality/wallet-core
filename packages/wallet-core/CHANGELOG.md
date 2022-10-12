@@ -1,5 +1,18 @@
 # @liquality/wallet-core
 
+## 1.31.0-next.3
+
+### Minor Changes
+
+- e45d2cb: fix: debridge rpc url
+- 61c228e: feat: eth testnet to goerli
+
+### Patch Changes
+
+- Updated dependencies [e45d2cb]
+- Updated dependencies [61c228e]
+  - @liquality/cryptoassets@1.16.0-next.3
+
 ## 1.31.0-next.2
 
 ### Minor Changes
