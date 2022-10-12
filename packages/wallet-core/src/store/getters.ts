@@ -1,6 +1,6 @@
 import { Client } from '@chainify/client';
 import { FeeDetails, Nullable } from '@chainify/types';
-import { AssetTypes, ChainId, getAllAssets, getAsset, IAsset, unitToCurrency } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId, getAllAssets, IAsset, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
 import { rootGetterContext } from '.';
@@ -191,7 +191,7 @@ export default {
   accountsData(...context: GetterContext): Account[] {
     const { state, getters } = rootGetterContext(context);
     const { accounts, activeNetwork, activeWalletId, enabledChains } = state;
-    const { accountFiatBalance, assetFiatBalance, assetMarketCap } = getters;
+    const { accountFiatBalance, assetFiatBalance, assetMarketCap, cryptoassets } = getters;
 
     const _accounts = accounts[activeWalletId]?.[activeNetwork]
       ? accounts[activeWalletId]![activeNetwork].filter(
@@ -222,7 +222,7 @@ export default {
               let type = AssetTypes.erc20;
               let matchingAsset;
 
-              const assetByCode = getAsset(activeNetwork, asset);
+              const assetByCode = cryptoassets[asset];
 
               if (assetByCode) {
                 type = assetByCode.type;
@@ -309,11 +309,12 @@ export default {
     };
   },
   assetFiatBalance(...context: GetterContext) {
-    const { state } = rootGetterContext(context);
-    const { fiatRates, activeNetwork } = state;
+    const { state, getters } = rootGetterContext(context);
+    const { fiatRates } = state;
+    const { cryptoassets } = getters;
     return (asset: AssetType, balance: BigNumber): BigNumber | null => {
       if (fiatRates && fiatRates[asset] && balance?.gt(0)) {
-        const amount = unitToCurrency(getAsset(activeNetwork, asset), balance);
+        const amount = unitToCurrency(cryptoassets[asset], balance);
         // TODO: coinformatter types are messed up and this shouldn't require `as BigNumber`
         return cryptoToFiat(amount, fiatRates[asset]) as BigNumber;
       }
