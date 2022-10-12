@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.15.2
+
+### Patch Changes
+
+- efdc92d: fix: pass solana rpc as environmnet variable
+
 ## 1.15.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @liquality/error-parser
 
+## 1.0.11
+
+### Patch Changes
+
+- efdc92d: fix: pass solana rpc as environmnet variable
+
 ## 1.0.10
 
 ### Patch Changes
