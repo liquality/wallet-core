@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.30.2
+
+### Patch Changes
+
+- efdc92d: fix: pass solana rpc as environmnet variable
+- Updated dependencies [efdc92d]
+  - @liquality/cryptoassets@1.15.2
+
 ## 1.30.1
 
 ### Patch Changes
