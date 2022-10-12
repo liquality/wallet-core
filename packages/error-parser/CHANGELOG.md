@@ -1,5 +1,11 @@
 # @liquality/error-parser
 
+## 1.0.12
+
+### Patch Changes
+
+- d764511: - fix fetching assets
+
 ## 1.0.11
 
 ### Patch Changes

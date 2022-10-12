@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.15.3
+
+### Patch Changes
+
+- d764511: - fix fetching assets
+
 ## 1.15.2
 
 ### Patch Changes
