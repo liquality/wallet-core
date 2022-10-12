@@ -54,6 +54,7 @@ export default new SolanaChain({
   gasLimit: {
     send: {
       native: 1_000_000_000,
+      nonNative: 1_000_000_000,
     },
   },
   fees: {
