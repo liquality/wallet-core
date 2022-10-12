@@ -1,4 +1,4 @@
-import { getAsset, getChain } from '@liquality/cryptoassets';
+import { getChain } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionContext, rootActionContext } from '..';
@@ -37,7 +37,7 @@ export const sendTransaction = async (
   }
 ): Promise<SendHistoryItem> => {
   const { dispatch, commit, getters } = rootActionContext(context);
-  const chainId = getAsset(network, asset).chain;
+  const chainId = getters.cryptoassets[asset].chain;
   const client = getters.client({ network, walletId, chainId, accountId });
 
   const _asset = assetsAdapter(asset)[0];
