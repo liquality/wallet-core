@@ -1,5 +1,16 @@
 # @liquality/wallet-core
 
+## 1.31.0-next.1
+
+### Minor Changes
+
+- b9db052: increment
+
+### Patch Changes
+
+- Updated dependencies [b9db052]
+  - @liquality/cryptoassets@1.16.0-next.1
+
 ## 1.31.0-next.0
 
 ### Minor Changes

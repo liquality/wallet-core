@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.16.0-next.1
+
+### Minor Changes
+
+- b9db052: increment
+
 ## 1.16.0-next.0
 
 ### Minor Changes
