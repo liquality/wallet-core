@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.16.0-next.3
+
+### Minor Changes
+
+- 7454432: lifi + debridge + goerli
+
 ## 1.16.0-next.2
 
 ### Minor Changes
