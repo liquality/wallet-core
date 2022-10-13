@@ -1,6 +1,23 @@
 # @liquality/error-parser
 
+## 1.1.0-next.0
+
+### Minor Changes
+
+- 3d90aee: Lifi + debridge + goerli testnet
+- e45d2cb: fix: debridge rpc url
+- 61c228e: feat: eth testnet to goerli
+
+### Patch Changes
+
+- Updated dependencies [3d90aee]
+- Updated dependencies [e45d2cb]
+- Updated dependencies [61c228e]
+  - @liquality/cryptoassets@1.16.0-next.0
+  - @liquality/wallet-core@1.31.0-next.0
+
 <<<<<<< HEAD
+
 ## 1.1.0-next.2
 
 ### Minor Changes
@@ -43,8 +60,8 @@
 - Updated dependencies [7fa751e]
 - Updated dependencies [cb2c60a]
   - @liquality/wallet-core@1.31.0-next.0
-  - @liquality/cryptoassets@1.16.0-next.0
-=======
+  - # @liquality/cryptoassets@1.16.0-next.0
+
 ## 1.0.12
 
 ### Patch Changes
@@ -62,7 +79,7 @@
 ### Patch Changes
 
 - 1ae3e84: fix: bump versions from master
->>>>>>> master
+  > > > > > > > master
 
 ## 1.0.9
 

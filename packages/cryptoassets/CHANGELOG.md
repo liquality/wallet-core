@@ -1,5 +1,13 @@
 # @liquality/cryptoassets
 
+## 1.16.0-next.0
+
+### Minor Changes
+
+- 3d90aee: Lifi + debridge + goerli testnet
+- e45d2cb: fix: debridge rpc url
+- 61c228e: feat: eth testnet to goerli
+
 ## 1.15.3
 
 ### Patch Changes
