@@ -2,9 +2,9 @@
   "mode": "pre",
   "tag": "next",
   "initialVersions": {
-    "@liquality/cryptoassets": "1.15.0",
-    "@liquality/error-parser": "1.0.9",
-    "@liquality/wallet-core": "1.30.0"
+    "@liquality/cryptoassets": "1.15.3",
+    "@liquality/error-parser": "1.0.12",
+    "@liquality/wallet-core": "1.30.3"
   },
   "changesets": [
     "big-dryers-hang",
