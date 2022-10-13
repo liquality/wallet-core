@@ -1,25 +1,22 @@
 # @liquality/cryptoassets
 
-## 1.16.0-next.2
+## 1.15.3
 
-### Minor Changes
+### Patch Changes
 
-- e80e6eb: feat: debridge swap provider
-- 5e3607c: feat: debridge swap provider
+- d764511: - fix fetching assets
 
-## 1.16.0-next.1
+## 1.15.2
 
-### Minor Changes
+### Patch Changes
 
-- 31a975e: bump
-- eadd70c: fix: getQuotes has slow quotes propery
+- efdc92d: fix: pass solana rpc as environmnet variable
 
-## 1.16.0-next.0
+## 1.15.1
 
-### Minor Changes
+### Patch Changes
 
-- cb2c60a: feat: lifi swap provider
-  refactor: get quotes returns fast quotes first. `getSlowQuotes` action to retrieve restr
+- 1ae3e84: fix: bump versions from master
 
 ## 1.15.0
 

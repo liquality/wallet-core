@@ -1,4 +1,3 @@
-import { getAsset } from '@liquality/cryptoassets';
 import BigNumber from 'bignumber.js';
 import store, { ActionContext } from '../store';
 import { createNotification } from '../store/broker/notification';
@@ -89,7 +88,7 @@ export abstract class SwapProvider {
    * Gets the blockchain client
    */
   public getClient(network: Network, walletId: string, asset: string, accountId: string) {
-    const chainId = getAsset(network, asset).chain;
+    const chainId = store.getters.cryptoassets[asset].chain;
     return store.getters.client({ network, walletId, chainId, accountId });
   }
 

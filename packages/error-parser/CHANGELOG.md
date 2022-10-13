@@ -1,5 +1,6 @@
 # @liquality/error-parser
 
+<<<<<<< HEAD
 ## 1.1.0-next.2
 
 ### Minor Changes
@@ -43,6 +44,25 @@
 - Updated dependencies [cb2c60a]
   - @liquality/wallet-core@1.31.0-next.0
   - @liquality/cryptoassets@1.16.0-next.0
+=======
+## 1.0.12
+
+### Patch Changes
+
+- d764511: - fix fetching assets
+
+## 1.0.11
+
+### Patch Changes
+
+- efdc92d: fix: pass solana rpc as environmnet variable
+
+## 1.0.10
+
+### Patch Changes
+
+- 1ae3e84: fix: bump versions from master
+>>>>>>> master
 
 ## 1.0.9
 

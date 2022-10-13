@@ -1,44 +1,28 @@
 # @liquality/wallet-core
 
-## 1.31.0-next.2
-
-### Minor Changes
-
-- e80e6eb: feat: debridge swap provider
-- 5e3607c: feat: debridge swap provider
+## 1.30.3
 
 ### Patch Changes
 
-- Updated dependencies [e80e6eb]
-- Updated dependencies [5e3607c]
-  - @liquality/cryptoassets@1.16.0-next.2
+- d764511: - fix fetching assets
+- Updated dependencies [d764511]
+  - @liquality/cryptoassets@1.15.3
 
-## 1.31.0-next.1
-
-### Minor Changes
-
-- 31a975e: bump
-- eadd70c: fix: getQuotes has slow quotes propery
+## 1.30.2
 
 ### Patch Changes
 
-- Updated dependencies [31a975e]
-- Updated dependencies [eadd70c]
-  - @liquality/cryptoassets@1.16.0-next.1
+- efdc92d: fix: pass solana rpc as environmnet variable
+- Updated dependencies [efdc92d]
+  - @liquality/cryptoassets@1.15.2
 
-## 1.31.0-next.0
-
-### Minor Changes
-
-- 7fa751e: feat: lifi swap provider
-  refactor: get quotes returns fast quotes first. getSlowQuotes action to retrieve restr
-- cb2c60a: feat: lifi swap provider
-  refactor: get quotes returns fast quotes first. `getSlowQuotes` action to retrieve restr
+## 1.30.1
 
 ### Patch Changes
 
-- Updated dependencies [cb2c60a]
-  - @liquality/cryptoassets@1.16.0-next.0
+- 1ae3e84: fix: bump versions from master
+- Updated dependencies [1ae3e84]
+  - @liquality/cryptoassets@1.15.1
 
 ## 1.30.0
 

@@ -26,7 +26,10 @@ export const ChainNetworks: ChainNetworksType = {
 
   [ChainId.Solana]: {
     testnet: SolanaNetworks.solana_testnet,
-    mainnet: SolanaNetworks.solana_mainnet,
+    mainnet: {
+      ...SolanaNetworks.solana_mainnet,
+      rpcUrl: process.env.VUE_APP_SOLANA_MAINNET_URL || SolanaNetworks.solana_mainnet.rpcUrl,
+    },
   },
 
   [ChainId.Terra]: {
