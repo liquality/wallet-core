@@ -1,26 +1,70 @@
 import { ChainId, getChain } from '@liquality/cryptoassets';
-import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
+import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, wrapCustomError } from '@liquality/error-parser';
 import { AccountInfo, Network } from '../../store/types';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import { createEvmClient } from './evm';
 
 export const createClient = (chainId: ChainId, network: Network, mnemonic: string, accountInfo: AccountInfo) => {
+  let client;
   const chain = getChain(network, chainId);
 
   if (chain.isEVM) {
-    return createEvmClient(chain, mnemonic, accountInfo);
+    client = createEvmClient(chain, mnemonic, accountInfo);
   }
 
   switch (chainId) {
     case ChainId.Bitcoin:
-      return createBtcClient(network, mnemonic, accountInfo);
+      client = createBtcClient(network, mnemonic, accountInfo);
+      break;
     case ChainId.Near:
-      return createNearClient(network, mnemonic, accountInfo);
+      client = createNearClient(network, mnemonic, accountInfo);
+      break;
     case ChainId.Terra:
-      return createTerraClient(network, mnemonic, accountInfo);
+      client = createTerraClient(network, mnemonic, accountInfo);
+      break;
     case ChainId.Solana:
-      return createSolanaClient(network, mnemonic, accountInfo);
+      client = createSolanaClient(network, mnemonic, accountInfo);
+      break;
     default:
       throw wrapCustomError(CUSTOM_ERRORS.NotFound.Client(chainId));
   }
+
+  // Proxify Client so that thrown errors are parsed and rethrown
+  if (client.chain) client.chain = proxify(client.chain);
+  if (client.swap) client.swap = proxify(client.swap);
+  if (client.nft) client.nft = proxify(client.nft);
+  if (client.wallet) client.wallet = proxify(client.wallet);
+
+  return client;
 };
+
+const parser = getErrorParser(ChainifyErrorParser);
+function proxify(obj: any) {
+  return new Proxy(obj, {
+    get(target, prop) {
+      if (target[prop] instanceof Function) {
+        if (target[prop].constructor.name === 'AsyncFunction') {
+          return async (...args: any) => {
+            try {
+              const result = await target[prop](...args);
+              return result;
+            } catch (e) {
+              throw parser.parseError(e, null);
+            }
+          };
+        } else {
+          return (...args: any) => {
+            try {
+              const result = target[prop](...args);
+              return result;
+            } catch (e) {
+              throw parser.parseError(e, null);
+            }
+          };
+        }
+      } else {
+        return target[prop];
+      }
+    },
+  });
+}

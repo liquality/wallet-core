@@ -1,7 +1,7 @@
 import { UnsupportedMethodError } from '@chainify/errors';
 import { Nullable, TokenDetails } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
-import { ChainifyErrorParser, getErrorParser, LiqualityError } from '@liquality/error-parser';
+import { LiqualityError } from '@liquality/error-parser';
 import { ActionContext, rootActionContext } from '..';
 import { Network, WalletId } from '../types';
 
@@ -21,10 +21,7 @@ export const fetchTokenDetails = async (
   const client = getters.client({ network, walletId, chainId: chain });
 
   try {
-    const parser = getErrorParser(ChainifyErrorParser);
-    return (await parser.wrapAsync(async () => {
-      return await client.chain.getTokenDetails(contractAddress);
-    }, null)) as Nullable<TokenDetails>;
+    return await client.chain.getTokenDetails(contractAddress);
   } catch (err) {
     if (((err as LiqualityError).rawError as any) instanceof UnsupportedMethodError) {
       return null;

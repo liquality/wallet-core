@@ -1,5 +1,5 @@
 import { Transaction } from '@chainify/types';
-import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, wrapCustomError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
 import { isObject } from 'lodash';
 import { ActionContext, rootActionContext } from '..';
 import { getSwapProvider } from '../../factory/swap';
@@ -61,14 +61,10 @@ export const updateTransactionFee = async (
     asset,
   });
   try {
-    const parser = getErrorParser(ChainifyErrorParser);
     if (client.swap.canUpdateFee()) {
-      newTx = (await parser.wrapAsync(async () => await client.swap.updateTransactionFee(oldTx, newFee), null)) as any;
+      newTx = await client.swap.updateTransactionFee(oldTx, newFee);
     } else {
-      newTx = (await parser.wrapAsync(
-        async () => await client.wallet.updateTransactionFee(oldTx, newFee),
-        null
-      )) as any;
+      newTx = await client.wallet.updateTransactionFee(oldTx, newFee);
     }
   } catch (e) {
     console.warn(e);

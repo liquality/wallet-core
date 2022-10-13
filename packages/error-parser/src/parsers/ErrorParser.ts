@@ -9,7 +9,7 @@ export abstract class ErrorParser<SourceError, DataType> {
     try {
       return func();
     } catch (error) {
-      this.parseError(error, data);
+      throw this.parseError(error, data);
     }
   }
   async wrapAsync<F extends (...args: Array<any>) => Promise<any>>(
@@ -19,12 +19,12 @@ export abstract class ErrorParser<SourceError, DataType> {
     try {
       return await func();
     } catch (error) {
-      this.parseError(error, data);
+      throw this.parseError(error, data);
     }
   }
 
   parseError(error: SourceError, data: DataType) {
     const parsedError = this._parseError(error, data);
-    throw parsedError;
+    return parsedError;
   }
 }
