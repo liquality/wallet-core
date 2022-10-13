@@ -1,5 +1,20 @@
 # @liquality/wallet-core
 
+## 1.31.0-next.0
+
+### Minor Changes
+
+- 3d90aee: Lifi + debridge + goerli testnet
+- e45d2cb: fix: debridge rpc url
+- 61c228e: feat: eth testnet to goerli
+
+### Patch Changes
+
+- Updated dependencies [3d90aee]
+- Updated dependencies [e45d2cb]
+- Updated dependencies [61c228e]
+  - @liquality/cryptoassets@1.16.0-next.0
+
 ## 1.30.3
 
 ### Patch Changes
