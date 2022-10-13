@@ -1,5 +1,12 @@
 # @liquality/cryptoassets
 
+## 1.16.0-next.2
+
+### Minor Changes
+
+- 412e1d1: bump
+- 412e1d1: bump2
+
 ## 1.16.0-next.1
 
 ### Minor Changes

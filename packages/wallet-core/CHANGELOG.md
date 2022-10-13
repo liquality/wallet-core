@@ -1,5 +1,18 @@
 # @liquality/wallet-core
 
+## 1.31.0-next.2
+
+### Minor Changes
+
+- 412e1d1: bump
+- 412e1d1: bump2
+
+### Patch Changes
+
+- Updated dependencies [412e1d1]
+- Updated dependencies [412e1d1]
+  - @liquality/cryptoassets@1.16.0-next.2
+
 ## 1.31.0-next.1
 
 ### Minor Changes
