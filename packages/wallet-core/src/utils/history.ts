@@ -1,4 +1,4 @@
-import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
 import moment from 'moment';
 import { getSwapProvider } from '../factory/swap';
 import { HistoryItem, SendStatus, TransactionType } from '../store/types';
@@ -46,7 +46,7 @@ export function getStep(item: HistoryItem) {
     return swapProvider.statuses[item.status].step;
   }
 
-  throw wrapCustomError(CUSTOM_ERRORS.Invalid.TransactionType(itemType));
+  throw new InternalError(CUSTOM_ERRORS.Invalid.TransactionType(itemType));
 }
 
 export const ACTIVITY_FILTER_TYPES = {

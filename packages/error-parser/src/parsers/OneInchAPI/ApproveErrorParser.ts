@@ -33,7 +33,7 @@ export class OneInchApproveErrorParser extends ErrorParser<OneInchError, null> {
 
     liqError.source = OneInchApproveErrorParser.errorSource;
     liqError.devMsg = { desc: devDesc, data: null };
-    liqError.rawError = error as never;
+    liqError.rawError = error;
 
     return liqError;
   }

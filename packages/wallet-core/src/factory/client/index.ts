@@ -1,5 +1,5 @@
 import { ChainId, getChain } from '@liquality/cryptoassets';
-import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, wrapCustomError } from '@liquality/error-parser';
+import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, InternalError } from '@liquality/error-parser';
 import { AccountInfo, Network } from '../../store/types';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import { createEvmClient } from './evm';
@@ -26,10 +26,10 @@ export const createClient = (chainId: ChainId, network: Network, mnemonic: strin
       client = createSolanaClient(network, mnemonic, accountInfo);
       break;
     default:
-      throw wrapCustomError(CUSTOM_ERRORS.NotFound.Client(chainId));
+      throw new InternalError(CUSTOM_ERRORS.NotFound.Client(chainId));
   }
 
-  // Proxify Client so that thrown errors are parsed and rethrown
+  // Proxify Client so that chainify errors are parsed and rethrown as Liquality Errors.
   if (client.chain) client.chain = proxify(client.chain);
   if (client.swap) client.swap = proxify(client.swap);
   if (client.nft) client.nft = proxify(client.nft);

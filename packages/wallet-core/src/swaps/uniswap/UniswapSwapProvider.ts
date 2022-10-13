@@ -32,7 +32,7 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
-import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
 
 const SWAP_DEADLINE = 30 * 60; // 30 minutes
 
@@ -107,7 +107,7 @@ class UniswapSwapProvider extends SwapProvider {
   getChainId(asset: Asset, network: Network) {
     const chainId = cryptoassets[asset].chain;
     if (chainId !== ChainId.Ethereum) {
-      throw wrapCustomError(CUSTOM_ERRORS.Unsupported.Chain);
+      throw new InternalError(CUSTOM_ERRORS.Unsupported.Chain);
     }
     const chain = getChain(network, chainId);
     return Number(chain.network.chainId);
@@ -140,7 +140,7 @@ class UniswapSwapProvider extends SwapProvider {
     const token1 = [tokenA, tokenB].find((token) => token.address === token1Address);
 
     if (!token0 || !token1) {
-      throw wrapCustomError(CUSTOM_ERRORS.FailedAssert.UniswapTokenCalculation);
+      throw new InternalError(CUSTOM_ERRORS.FailedAssert.UniswapTokenCalculation);
     }
     const pair = new Pair(
       CurrencyAmount.fromRawAmount(token0, reserves.reserve0.toString()),
@@ -313,13 +313,13 @@ class UniswapSwapProvider extends SwapProvider {
 
   async estimateFees({ network, walletId, asset, txType, quote, feePrices }: EstimateFeeRequest) {
     if (txType !== this.fromTxType) {
-      throw wrapCustomError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
+      throw new InternalError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
     }
 
     const nativeAsset = getChain(network, cryptoassets[asset].chain).nativeAsset;
     const account = this.getAccount(quote.fromAccountId);
     if (!account) {
-      throw wrapCustomError(CUSTOM_ERRORS.NotFound.Account(quote.fromAccountId));
+      throw new InternalError(CUSTOM_ERRORS.NotFound.Account(quote.fromAccountId));
     }
     const client = this.getClient(network, walletId, quote.from, account.id);
 

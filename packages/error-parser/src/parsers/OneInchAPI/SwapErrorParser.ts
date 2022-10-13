@@ -67,7 +67,7 @@ export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwa
 
     liqError.source = OneInchSwapErrorParser.errorSource;
     liqError.devMsg = { desc: devDesc, data };
-    liqError.rawError = error as never;
+    liqError.rawError = error;
 
     return liqError;
   }

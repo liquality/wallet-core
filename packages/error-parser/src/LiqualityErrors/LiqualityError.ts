@@ -8,7 +8,7 @@ export abstract class LiqualityError<Context = any> extends Error {
   causeKey: string;
   suggestionKey: string;
   devMsg: { desc: string; data: any };
-  rawError: never;
+  rawError: any;
   data: Context | { errorId: string };
   errorId: string;
 

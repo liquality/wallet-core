@@ -77,7 +77,7 @@ export class LifiQuoteErrorParser extends ErrorParser<LifiQuoteError, LifiQuoteE
 
     liqError.source = LifiQuoteErrorParser.errorSource;
     liqError.devMsg = { desc: devDesc, data };
-    liqError.rawError = error as never;
+    liqError.rawError = error;
 
     return liqError;
   }

@@ -4,7 +4,7 @@ import { SolanaNetworks } from '@chainify/solana';
 import { TerraNetworks } from '@chainify/terra';
 import { Network as ChainifyNetwork } from '@chainify/types';
 import { ChainId, getChain } from '@liquality/cryptoassets';
-import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
 import { Network } from '../store/types';
 
 export const Networks = [Network.Mainnet, Network.Testnet];
@@ -49,7 +49,7 @@ export const ChainNetworks: ChainNetworksType = {
 export function getRpcUrl(chainId: ChainId, network = Network.Mainnet) {
   const rpcUrl = getChain(network, chainId).network.rpcUrls[0];
   if (!rpcUrl) {
-    throw wrapCustomError(CUSTOM_ERRORS.NotFound.RPC(chainId, network));
+    throw new InternalError(CUSTOM_ERRORS.NotFound.RPC(chainId, network));
   }
   return rpcUrl;
 }

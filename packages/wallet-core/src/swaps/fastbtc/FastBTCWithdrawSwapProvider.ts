@@ -26,7 +26,7 @@ import {
   SwapStatus,
 } from '../types';
 import { BitcoinTransferStatus, BRIDGE_CONTRACT_ABI } from './fastBtcBridgeContract';
-import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
 
 export interface FastBtcWithdrawSwapHistoryItem extends SwapHistoryItem {
   transferId: string;
@@ -207,14 +207,14 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
       const tx = await getTransactionByHash(client, swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         if (!tx.logs) {
-          throw wrapCustomError(CUSTOM_ERRORS.NotFound.FastBTC.Logs);
+          throw new InternalError(CUSTOM_ERRORS.NotFound.FastBTC.Logs);
         }
         const receipt = await client.chain.getProvider().getTransactionReceipt(swap.swapTxHash);
         const fastBtcBridge = this.getFastBtcBridge(client.chain.getProvider());
         const events = receipt.logs.map((log) => fastBtcBridge.interface.parseLog(log));
         const event = events.find((event) => event.name === 'NewBitcoinTransfer');
         if (!event) {
-          throw wrapCustomError(CUSTOM_ERRORS.NotFound.FastBTC.NewBitcoinTransferEvent);
+          throw new InternalError(CUSTOM_ERRORS.NotFound.FastBTC.NewBitcoinTransferEvent);
         }
         const transferId: string = event.args.transferId;
 

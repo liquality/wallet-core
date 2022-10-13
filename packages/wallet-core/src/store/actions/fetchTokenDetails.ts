@@ -23,7 +23,7 @@ export const fetchTokenDetails = async (
   try {
     return await client.chain.getTokenDetails(contractAddress);
   } catch (err) {
-    if (((err as LiqualityError).rawError as any) instanceof UnsupportedMethodError) {
+    if ((err as LiqualityError).rawError instanceof UnsupportedMethodError) {
       return null;
     }
     throw err;

@@ -1,5 +1,5 @@
 import { AssetTypes, ChainId, getChain, getNativeAssetCode, isEvmChain } from '@liquality/cryptoassets';
-import { CUSTOM_ERRORS, wrapCustomError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
 import * as ethers from 'ethers';
 import { Asset, Network } from '../store/types';
 import cryptoassets from '../utils/cryptoassets';
@@ -8,7 +8,7 @@ function getChainExplorer(chainId: ChainId, network: Network) {
   const chain = getChain(network, chainId);
   const chainExplorer = chain.explorerViews[0];
   if (!chainExplorer) {
-    throw wrapCustomError(CUSTOM_ERRORS.NotFound.Chain.Explorer(chainId));
+    throw new InternalError(CUSTOM_ERRORS.NotFound.Chain.Explorer(chainId));
   }
   return chainExplorer;
 }
@@ -45,7 +45,7 @@ export const getNativeAsset = (asset: Asset, network = Network.Mainnet) => {
 
 export const getFeeAsset = (asset: Asset) => {
   if (!cryptoassets[asset]) {
-    throw wrapCustomError(CUSTOM_ERRORS.NotFound.Asset.Default);
+    throw new InternalError(CUSTOM_ERRORS.NotFound.Asset.Default);
   }
   return cryptoassets[asset].feeAsset;
 };
@@ -149,7 +149,7 @@ const NFT_ASSETS_MAP: {
 const getNftAssetsMap = (chainId: ChainId, network: Network) => {
   const nftAssetsMap = NFT_ASSETS_MAP[chainId];
   if (!nftAssetsMap) {
-    throw wrapCustomError(CUSTOM_ERRORS.Unsupported.NftAssetMap(chainId, network));
+    throw new InternalError(CUSTOM_ERRORS.Unsupported.NftAssetMap(chainId, network));
   }
   return nftAssetsMap;
 };
@@ -160,7 +160,7 @@ export const getMarketplaceName = (asset: Asset, network: Network) => {
 
   const marketplaceName = nftAssetsMap[network].marketplaceName;
   if (!marketplaceName) {
-    throw wrapCustomError(CUSTOM_ERRORS.NotFound.Nft.MarketPlaceName(chainId, network));
+    throw new InternalError(CUSTOM_ERRORS.NotFound.Nft.MarketPlaceName(chainId, network));
   } else {
     return marketplaceName;
   }
@@ -172,7 +172,7 @@ export const getNftTransferLink = (asset: Asset, network: Network, tokenId: stri
 
   const transferLink = nftAssetsMap[network].transfer;
   if (!transferLink) {
-    throw wrapCustomError(CUSTOM_ERRORS.NotFound.Nft.TransferLink(chainId, network));
+    throw new InternalError(CUSTOM_ERRORS.NotFound.Nft.TransferLink(chainId, network));
   } else {
     return transferLink
       .replace('{contract_address}', contract_address)
@@ -188,7 +188,7 @@ export const getNftLink = (asset: Asset, network: Network) => {
 
   const url = nftAssetsMap[network].url;
   if (!url) {
-    throw wrapCustomError(CUSTOM_ERRORS.NotFound.Nft.ExplorerLink(chainId, network));
+    throw new InternalError(CUSTOM_ERRORS.NotFound.Nft.ExplorerLink(chainId, network));
   } else {
     return url;
   }
