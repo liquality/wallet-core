@@ -1,5 +1,16 @@
 # @liquality/wallet-core
 
+## 1.31.0-next.3
+
+### Minor Changes
+
+- 7454432: lifi + debridge + goerli
+
+### Patch Changes
+
+- Updated dependencies [7454432]
+  - @liquality/cryptoassets@1.16.0-next.3
+
 ## 1.31.0-next.2
 
 ### Minor Changes
