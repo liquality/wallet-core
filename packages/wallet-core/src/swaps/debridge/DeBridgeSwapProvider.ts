@@ -47,9 +47,9 @@ interface FullSubmissionInfo {
 
 export interface DebridgeSwapHistoryItem extends SwapHistoryItem {
   approveTxHash: string;
-  swapTxHash: string;
   approveTx: Transaction<EvmTypes.EthersTransactionResponse>;
-  swapTx: Transaction<EvmTypes.EthersTransactionResponse>;
+  fromFundHash: string;
+  fromFundTx: Transaction<EvmTypes.EthersTransactionResponse>;
 }
 
 export interface DebridgeSwapProviderConfig extends BaseSwapProviderConfig {
@@ -235,7 +235,7 @@ class DeBridgeSwapProvider extends SwapProvider {
   public async waitForSwapConfirmations({ swap, network, walletId }: NextSwapActionRequest<DebridgeSwapHistoryItem>) {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
     try {
-      const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
+      const tx = await client.chain.getTransactionByHash(swap.fromFundHash);
       const chainIdFrom = getChain(network, cryptoassets[swap.from].chain).network.chainId;
       if (
         chainIdFrom &&
@@ -243,7 +243,7 @@ class DeBridgeSwapProvider extends SwapProvider {
         tx.confirmations &&
         tx.confirmations > this.config.chains[chainIdFrom as number].minBlockConfirmation
       ) {
-        const { status } = await client.chain.getProvider().getTransactionReceipt(swap.swapTxHash);
+        const { status } = await client.chain.getProvider().getTransactionReceipt(swap.fromFundHash);
         this.updateBalances(network, walletId, [swap.fromAccountId]);
         if (Number(status) === 1) {
           const provider = client.chain.getProvider();
@@ -253,7 +253,7 @@ class DeBridgeSwapProvider extends SwapProvider {
             provider
           );
           const minConfirmations = await signatureVerifier.minConfirmations();
-          const count = await this.getConfirmationsCount(swap.swapTxHash);
+          const count = await this.getConfirmationsCount(swap.fromFundHash);
           if (count >= minConfirmations) {
             return {
               endTime: Date.now(),
@@ -426,7 +426,7 @@ class DeBridgeSwapProvider extends SwapProvider {
 
     await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
     try {
-      const swapTx = await client.wallet.sendTransaction({
+      const fromFundTx = await client.wallet.sendTransaction({
         to: trade.to,
         value: trade.value,
         data: trade.data,
@@ -434,8 +434,8 @@ class DeBridgeSwapProvider extends SwapProvider {
       });
       return {
         status: 'WAITING_FOR_SEND_SWAP_CONFIRMATIONS',
-        swapTx,
-        swapTxHash: swapTx.hash,
+        fromFundTx,
+        fromFundHash: fromFundTx.hash,
       };
     } catch (e) {
       console.warn(e);
@@ -468,7 +468,7 @@ class DeBridgeSwapProvider extends SwapProvider {
 
   private async waitForSwapExecution({ swap, network, walletId }: NextSwapActionRequest<DebridgeSwapHistoryItem>) {
     try {
-      const submissionInfo = await this.getFullSubmissionInfo(swap.swapTxHash);
+      const submissionInfo = await this.getFullSubmissionInfo(swap.fromFundHash);
 
       if (submissionInfo?.send?.isExecuted && submissionInfo?.claim) {
         const client = this.getClient(network, walletId, swap.to, swap.toAccountId);
