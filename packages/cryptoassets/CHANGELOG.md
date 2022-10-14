@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.16.0-next.4
+
+### Minor Changes
+
+- fa3595a: fix debridge and testnet issues
+
 ## 1.16.0-next.3
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @liquality/error-parser
 
+## 1.1.0-next.4
+
+### Minor Changes
+
+- fa3595a: fix debridge and testnet issues
+
+### Patch Changes
+
+- Updated dependencies [fa3595a]
+  - @liquality/cryptoassets@1.16.0-next.4
+  - @liquality/wallet-core@1.31.0-next.4
+
 ## 1.1.0-next.3
 
 ### Minor Changes
