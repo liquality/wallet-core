@@ -2,7 +2,6 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/
 import { Client, HttpClient } from '@chainify/client';
 import { Transaction } from '@chainify/types';
 import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
-import { getTransactionByHash } from '../../utils/getTransactionByHash';
 import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import { getDoubleSwapOutput, getSwapMemo, getValueOfAsset1InAsset2 } from '@thorchain/asgardex-util';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
@@ -539,7 +538,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await getTransactionByHash(client, swap.approveTxHash);
+      const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
 
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
@@ -557,7 +556,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await getTransactionByHash(client, swap.fromFundHash);
+      const tx = await client.chain.getTransactionByHash(swap.fromFundHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
@@ -594,7 +593,7 @@ class ThorchainSwapProvider extends SwapProvider {
             }
 
             const client = this.getClient(network, walletId, asset, accountId);
-            const receiveTx = await getTransactionByHash(client, receiveHash);
+            const receiveTx = await client.chain.getTransactionByHash(receiveHash);
             if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
               this.updateBalances(network, walletId, [accountId]);
               const status = OUT_MEMO_TO_STATUS[memoAction];

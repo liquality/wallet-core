@@ -2,7 +2,6 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider, BitcoinTypes } fr
 import { Client } from '@chainify/client';
 import { Transaction } from '@chainify/types';
 import { currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
-import { getTransactionByHash } from '../../utils/getTransactionByHash';
 import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import BN from 'bignumber.js';
 import { mapValues } from 'lodash';
@@ -217,7 +216,7 @@ class FastBTCDepositSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await getTransactionByHash(client, swap.swapTxHash);
+      const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),

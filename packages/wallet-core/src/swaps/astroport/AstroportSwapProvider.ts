@@ -1,6 +1,5 @@
 import { TerraNetworks, TerraTypes } from '@chainify/terra';
 import { Transaction, TxStatus } from '@chainify/types';
-import { getTransactionByHash } from '../../utils/getTransactionByHash';
 import {
   AssetTypes,
   ChainId,
@@ -142,7 +141,7 @@ class AstroportSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await getTransactionByHash(client, swap.swapTxHash);
+      const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         const { status } = tx;
         this.updateBalances(network, walletId, [swap.fromAccountId]);

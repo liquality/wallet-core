@@ -3,7 +3,6 @@ import { EvmChainProvider, EvmTypes, Typechain } from '@chainify/evm';
 import { toEthereumTxRequest } from '@chainify/evm/dist/lib/utils';
 import { Transaction, TxStatus } from '@chainify/types';
 import { getChain } from '@liquality/cryptoassets';
-import { getTransactionByHash } from '../utils/getTransactionByHash';
 import { isTransactionNotFoundError } from '../utils/isTransactionNotFoundError';
 import * as ethers from 'ethers';
 import { SwapHistoryItem } from '../store/types';
@@ -103,7 +102,7 @@ export abstract class EvmSwapProvider extends SwapProvider {
     const isLSP = swapRequest.swap.provider === SwapProviderType.Liquality;
 
     try {
-      const tx = await getTransactionByHash(client, swap.approveTxHash);
+      const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
       if (tx.status === TxStatus.Success) {
         return {
           endTime: Date.now(),

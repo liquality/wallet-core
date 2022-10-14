@@ -1,5 +1,4 @@
 import { TxStatus } from '@chainify/types';
-import { getTransactionByHash } from '../../../utils/getTransactionByHash';
 import { ActionContext, rootActionContext } from '../..';
 import { Network, SendHistoryItem, SendStatus, WalletId } from '../../types';
 import { withInterval } from './utils';
@@ -25,7 +24,7 @@ async function waitForConfirmations(
   const chain = getters.cryptoassets[from].chain;
   const client = getters.client({ network, walletId, chainId: chain, accountId });
   try {
-    const tx = await getTransactionByHash(client, transaction.txHash);
+    const tx = await client.chain.getTransactionByHash(transaction.txHash);
     if (tx && tx.confirmations && tx.confirmations > 0) {
       dispatch.updateBalances({
         network,

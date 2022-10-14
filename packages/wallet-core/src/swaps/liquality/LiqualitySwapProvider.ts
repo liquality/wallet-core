@@ -3,7 +3,6 @@ import { Client, HttpClient } from '@chainify/client';
 import { Asset as ChainifyAsset, Transaction } from '@chainify/types';
 import { sha256 } from '@chainify/utils';
 import { currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
-import { getTransactionByHash } from '../../utils/getTransactionByHash';
 import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
@@ -285,7 +284,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
 
     try {
-      const tx = await getTransactionByHash(toClient, swap.toClaimHash);
+      const tx = await toClient.chain.getTransactionByHash(swap.toClaimHash);
 
       if (tx && tx.confirmations && tx.confirmations > 0) {
         this.updateBalances(network, walletId, [swap.toAccountId, swap.fromAccountId]);
@@ -498,7 +497,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
     const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
     try {
-      const tx = await getTransactionByHash(fromClient, swap.refundHash);
+      const tx = await fromClient.chain.getTransactionByHash(swap.refundHash);
 
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
@@ -560,7 +559,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     const fromClient = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await getTransactionByHash(fromClient, swap.fromFundHash);
+      const tx = await fromClient.chain.getTransactionByHash(swap.fromFundHash);
 
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
@@ -638,7 +637,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
     const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
 
-    const tx = await getTransactionByHash(toClient, swap.toFundHash);
+    const tx = await toClient.chain.getTransactionByHash(swap.toFundHash);
 
     if (
       tx &&

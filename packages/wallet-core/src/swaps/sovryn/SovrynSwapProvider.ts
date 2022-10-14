@@ -6,7 +6,6 @@ import { Client } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Transaction, TxStatus } from '@chainify/types';
 import { AssetTypes, ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
-import { getTransactionByHash } from '../../utils/getTransactionByHash';
 import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import BN from 'bignumber.js';
@@ -322,7 +321,7 @@ class SovrynSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await getTransactionByHash(client, swap.approveTxHash);
+      const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
 
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
@@ -340,7 +339,7 @@ class SovrynSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 
     try {
-      const tx = await getTransactionByHash(client, swap.swapTxHash);
+      const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
         const { status } = tx;
