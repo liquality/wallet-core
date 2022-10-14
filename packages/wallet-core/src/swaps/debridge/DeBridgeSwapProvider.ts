@@ -21,7 +21,6 @@ import {
 import cryptoassets from '../../utils/cryptoassets';
 import { Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
 import { isChainEvmCompatible, isERC20 } from '../../utils/asset';
-import { ChainNetworks } from '../../utils/networks';
 import { Transaction } from '@chainify/types';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { ActionContext } from '../../store';
@@ -81,8 +80,8 @@ class DeBridgeSwapProvider extends SwapProvider {
       return null;
     }
 
-    const chainIdFrom = ChainNetworks[cryptoassets[from].chain][network].chainId as number;
-    const chainIdTo = ChainNetworks[cryptoassets[to].chain][network].chainId as number;
+    const chainIdFrom = getChain(network, cryptoassets[from].chain).network.chainId as number;
+    const chainIdTo = getChain(network, cryptoassets[to].chain).network.chainId as number;
 
     if (chainIdTo === chainIdFrom) {
       return null;
@@ -171,7 +170,7 @@ class DeBridgeSwapProvider extends SwapProvider {
       const fromToken = cryptoassets[quote.from].contractAddress || zeroAddress;
       if (fromToken === zeroAddress) {
         const provider = client.chain.getProvider();
-        const chainIdFrom = ChainNetworks[cryptoassets[quote.from].chain][network].chainId;
+        const chainIdFrom = getChain(network, cryptoassets[quote.from].chain).network.chainId;
         const debridgeGate = new ethers.Contract(
           this.config.chains[chainIdFrom as number].deBridgeGateAddress,
           DeBridgeGate.abi,
@@ -237,7 +236,7 @@ class DeBridgeSwapProvider extends SwapProvider {
     const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
     try {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
-      const chainIdFrom = ChainNetworks[cryptoassets[swap.from].chain][network].chainId;
+      const chainIdFrom = getChain(network, cryptoassets[swap.from].chain).network.chainId;
       if (
         chainIdFrom &&
         tx &&
@@ -369,8 +368,8 @@ class DeBridgeSwapProvider extends SwapProvider {
     if (toChain === fromChain) return null;
 
     const toAddress = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
-    const chainIdFrom = ChainNetworks[cryptoassets[quote.from].chain][network].chainId;
-    const chainIdTo = ChainNetworks[cryptoassets[quote.to].chain][network].chainId;
+    const chainIdFrom = getChain(network, cryptoassets[quote.from].chain).network.chainId;
+    const chainIdTo = getChain(network, cryptoassets[quote.to].chain).network.chainId;
     const fromToken = cryptoassets[quote.from].contractAddress || zeroAddress;
     const toToken = cryptoassets[quote.to].contractAddress || zeroAddress;
     try {
@@ -605,7 +604,7 @@ class DeBridgeSwapProvider extends SwapProvider {
   }
 
   private async getGasLimit(network: Network, from: Asset, toAddress: string): Promise<number> {
-    const chainIdFrom = ChainNetworks[cryptoassets[from].chain][network].chainId;
+    const chainIdFrom = getChain(network, cryptoassets[from].chain).network.chainId;
     try {
       const result = await axios({
         url: this.config.url + 'srcTxOptimisticGasConsumption',
