@@ -122,12 +122,6 @@ const config: WalletCoreConfig = {
         type: SwapProviderType.UniswapV2,
         routerAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
       },
-      [SwapProviderType.Thorchain]: {
-        name: 'Thorchain',
-        icon: 'thorchain.svg',
-        type: SwapProviderType.Thorchain,
-        thornode: 'https://testnet.thornode.thorchain.info',
-      },
       [SwapProviderType.Sovryn]: {
         name: 'Sovryn',
         icon: 'sovryn.svg',
