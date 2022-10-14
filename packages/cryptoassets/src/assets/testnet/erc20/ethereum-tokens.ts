@@ -6,7 +6,7 @@ const TOKENS = {
     name: 'Dai Stablecoin',
     code: 'DAI',
     decimals: 18,
-    contractAddress: '0xad6d458402f60fd3bd25163575031acdce07538d',
+    contractAddress: '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844',
     color: '#AB7E21',
     priceSource: {
       coinGeckoId: 'dai',
@@ -16,7 +16,7 @@ const TOKENS = {
     name: 'Wrapped BTC',
     code: 'WBTC',
     decimals: 8,
-    contractAddress: '0x1371597fc11aedbd2446f5390fa1dbf22491752a',
+    contractAddress: '0xC04B0d3107736C32e19F1c62b2aF67BE61d63a05',
     priceSource: {
       coinGeckoId: 'wrapped-bitcoin',
     },
