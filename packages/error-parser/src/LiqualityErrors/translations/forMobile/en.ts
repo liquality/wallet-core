@@ -8,12 +8,18 @@ import {
   LedgerDeviceConnectionError,
   LowSpeedupFeeError,
   NoActiveWalletError,
+  NoMaxFeeError,
+  NoTipError,
   PairNotSupportedError,
   PasswordError,
   QuoteExpiredError,
   SlippageTooHighError,
   ThirdPartyError,
   UnknownError,
+  VeryHighMaxFeeWarning,
+  VeryHighTipWarning,
+  VeryLowMaxFeeError,
+  VeryLowTipError,
   WalletLockedError,
 } from '../../';
 import { SUGGESTION_DELIMETER } from '..';
@@ -178,6 +184,50 @@ export const en = {
     [PLAIN]: {
       [CAUSE]: 'Incorrect Password',
       [SUGGESTIONS]: 'Try Again (Password should have 8 or more characters)',
+    },
+  },
+  [NoTipError.name]: {
+    [PLAIN]: {
+      [CAUSE]: 'Miner tip must be greater than 0 GWEI',
+      [SUGGESTIONS]: '',
+    },
+  },
+  [VeryLowTipError.name]: {
+    [PLAIN]: {
+      [CAUSE]: 'Miner tip is extremely low and the transaction could fail',
+      [SUGGESTIONS]: "Use 'Low'",
+    },
+  },
+  [VeryHighTipWarning.name]: {
+    [PLAIN]: {
+      [CAUSE]: 'Miner tip is higher than necessary. You may pay more than needed',
+      [SUGGESTIONS]: "Use 'High'",
+    },
+  },
+  [NoMaxFeeError.name]: {
+    [PLAIN]: {
+      [CAUSE]: 'Max fee must be greater than 0 GWEI',
+      [SUGGESTIONS]: '',
+    },
+  },
+  [VeryLowMaxFeeError.name]: {
+    [PLACEHOLDER]: {
+      [CAUSE]: 'Max fee too low. Must be > %{maxFeePerGas} GWEI (Base Fee plus Miner Tip)',
+      [SUGGESTIONS]: '',
+    },
+    [PLAIN]: {
+      [CAUSE]: 'Max fee too low. Must be > (Base Fee plus Miner Tip)',
+      [SUGGESTIONS]: '',
+    },
+  },
+  [VeryHighMaxFeeWarning.name]: {
+    [PLACEHOLDER]: {
+      [CAUSE]: 'Max fee is higher than necessary %{maxFeePerGas} GWEI (Base Fee plus Miner Tip)',
+      [SUGGESTIONS]: "Review  your maximum 'New Fee Total'",
+    },
+    [PLAIN]: {
+      [CAUSE]: 'Max fee is higher than necessary',
+      [SUGGESTIONS]: "Review  your maximum 'New Fee Total'",
     },
   },
 };

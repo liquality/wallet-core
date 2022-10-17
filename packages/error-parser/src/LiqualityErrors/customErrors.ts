@@ -71,6 +71,7 @@ export const CUSTOM_ERRORS = {
     ThorchainMemoAction: (memoAction: string) => `Unknown memo action ${memoAction}`,
     ChainGasFeeMisMatch: 'suggestedGasFee does not match chain!',
     MessageType: (type: string) => `Received an invalid message type: ${type}`,
+    DuplicateTokenSymbol: 'Token with this symbol exists',
   },
   Unsupported: {
     Default: 'Something is unsupported',
@@ -78,6 +79,7 @@ export const CUSTOM_ERRORS = {
     Chain: `chain not supported`,
     NftAssetMap: (chainId: string, network: string) => `NFT asset map for ${chainId} ${network} is not supported`,
     PaymentURI: 'Unsupported payment URI',
+    Method: 'Method not allowed',
   },
   FailedAssert: {
     Default: 'An assertion failed',

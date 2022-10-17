@@ -14,5 +14,12 @@ export { QuoteExpiredError } from './QuoteExpiredError';
 export { SlippageTooHighError } from './SlippageTooHighError';
 export { ThirdPartyError } from './ThirdPartyError';
 export { UnknownError } from './UnknownError';
+export { NoTipError } from './NoTipError';
 export { WalletLockedError } from './WalletLockedError';
+export { VeryLowTipError } from './VeryLowTipError';
+export { VeryHighTipWarning } from './VeryHighTipWarning';
+export { NoMaxFeeError } from './NoMaxFeeError';
+export { VeryLowMaxFeeError } from './VeryLowMaxFeeError';
+export { VeryHighMaxFeeWarning } from './VeryHighMaxFeeWarning';
+
 export { CUSTOM_ERRORS } from './customErrors';
