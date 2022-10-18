@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { reportLiqualityError } from '../reporters';
 import { LiqualityError } from '../LiqualityErrors/LiqualityError';
 
 export abstract class ErrorParser<SourceError, DataType> {
@@ -9,7 +10,9 @@ export abstract class ErrorParser<SourceError, DataType> {
     try {
       return func();
     } catch (error) {
-      throw this.parseError(error, data);
+      const liqualityError = this.parseError(error, data);
+      reportLiqualityError(liqualityError);
+      throw liqualityError;
     }
   }
   async wrapAsync<F extends (...args: Array<any>) => Promise<any>>(
@@ -19,7 +22,9 @@ export abstract class ErrorParser<SourceError, DataType> {
     try {
       return await func();
     } catch (error) {
-      throw this.parseError(error, data);
+      const liqualityError = this.parseError(error, data);
+      reportLiqualityError(liqualityError);
+      throw liqualityError;
     }
   }
 

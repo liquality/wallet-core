@@ -1,20 +1,10 @@
-import { REPORTERS } from '../config';
 import { LiqualityError } from '../LiqualityErrors/LiqualityError';
-import { ReportConfig, ReportType } from '../types/types';
+import { ReportTargets } from '../types/types';
+import { reportToConsole } from './console';
+import { reportToDiscord } from './discord';
 
-let reportConfig: ReportConfig = {};
-
-export function setReportConfig(_reportConfig: ReportConfig) {
-  reportConfig = _reportConfig;
-}
-
-export function reportLiqError(error: LiqualityError) {
-  const reportTypes = Object.keys(reportConfig) as Array<ReportType>;
-  const validReportTypes = Object.values(ReportType);
-  if (reportTypes.length === 0) return;
-  reportTypes.forEach((reportType) => {
-    if (validReportTypes.find((validReportType) => validReportType === reportType)) {
-      REPORTERS[reportType](error);
-    }
-  });
+export function reportLiqualityError(error: LiqualityError) {
+  const reportTargets = process.env.VUE_APP_REPORT_TARGETS;
+  if (reportTargets?.includes(ReportTargets.Console)) reportToConsole(error);
+  if (reportTargets?.includes(ReportTargets.Discord)) reportToDiscord(error);
 }

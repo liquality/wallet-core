@@ -3,14 +3,14 @@ import randomBytes = require('randombytes');
 import { ERROR_ID_LENGTH } from '../config';
 import { CAUSE, PLACEHOLDER, PLAIN, SUGGESTIONS } from './translations/translationKeys';
 
-export abstract class LiqualityError<Context = any> extends Error {
+type ObjectLiteral = { [key: string]: any };
+export abstract class LiqualityError<Context extends ObjectLiteral = ObjectLiteral> extends Error {
   source: string;
   causeKey: string;
   suggestionKey: string;
   devMsg: { desc: string; data: any };
   rawError: any;
   data: Context | { errorId: string };
-  errorId: string;
 
   constructor(data?: Context) {
     super();

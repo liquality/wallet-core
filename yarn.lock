@@ -526,7 +526,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/client@npm:1.2.33":
+"@chainify/client@npm:1.2.33, @chainify/client@npm:^1.2.33":
   version: 1.2.33
   resolution: "@chainify/client@npm:1.2.33"
   dependencies:
@@ -2737,6 +2737,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@liquality/error-parser@workspace:packages/error-parser"
   dependencies:
+    "@chainify/client": ^1.2.33
     "@chainify/errors": ^1.2.33
     "@liquality/cryptoassets": "workspace:*"
     "@types/randombytes": ^2.0.0

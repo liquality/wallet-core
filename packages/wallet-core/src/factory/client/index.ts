@@ -1,5 +1,6 @@
 import { ChainId, getChain } from '@liquality/cryptoassets';
 import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, InternalError } from '@liquality/error-parser';
+import { reportLiqualityError } from '@liquality/error-parser/dist/src/reporters';
 import { AccountInfo, Network } from '../../store/types';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import { createEvmClient } from './evm';
@@ -49,7 +50,9 @@ function proxify(obj: any) {
               const result = await target[prop](...args);
               return result;
             } catch (e) {
-              throw parser.parseError(e, null);
+              const liqualityError = parser.parseError(e, null);
+              reportLiqualityError(liqualityError);
+              throw liqualityError;
             }
           };
         } else {
@@ -58,7 +61,9 @@ function proxify(obj: any) {
               const result = target[prop](...args);
               return result;
             } catch (e) {
-              throw parser.parseError(e, null);
+              const liqualityError = parser.parseError(e, null);
+              reportLiqualityError(liqualityError);
+              throw liqualityError;
             }
           };
         }
