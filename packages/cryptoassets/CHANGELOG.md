@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.16.0-next.5
+
+### Patch Changes
+
+- 840dbd8: chore: bump versions after lifi integration
+
 ## 1.16.0-next.4
 
 ### Minor Changes
