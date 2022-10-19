@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.16.1
+
+### Patch Changes
+
+- 0dd1f89: test: bump versions from master
+
 ## 1.16.0
 
 ### Patch Changes
