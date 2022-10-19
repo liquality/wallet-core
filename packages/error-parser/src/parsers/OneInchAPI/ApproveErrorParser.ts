@@ -4,10 +4,12 @@ import { ErrorParser } from '../ErrorParser';
 import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
 import InternalError from '../../LiqualityErrors/InternalError';
 import UnknownError from '../../LiqualityErrors/UnknownError';
-import { oneInchInternalErrReason, OneInchError, ONE_INCH_ERRORS } from '.';
+import { oneInchInternalErrReason, OneInchError, ONE_INCH_ERRORS, oneInchApproveSourceName } from '.';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export class OneInchApproveErrorParser extends ErrorParser<OneInchError, null> {
+  public static readonly errorSource = oneInchApproveSourceName;
+
   protected _parseError(error: OneInchError): LiqualityError {
     let liqError: LiqualityError;
     let devDesc = '';
@@ -31,12 +33,10 @@ export class OneInchApproveErrorParser extends ErrorParser<OneInchError, null> {
       }
     }
 
-    liqError.source = this.errorSource;
+    liqError.source = OneInchApproveErrorParser.errorSource;
     liqError.devMsg = { desc: devDesc, data: null };
     liqError.rawError = error as never;
 
     return liqError;
   }
 }
-
-OneInchApproveErrorParser.prototype.errorSource = 'OneInchApproveAPI';

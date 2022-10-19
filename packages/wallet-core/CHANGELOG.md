@@ -1,5 +1,66 @@
 # @liquality/wallet-core
 
+## 1.31.0-next.4
+
+### Minor Changes
+
+- fa3595a: fix debridge and testnet issues
+
+### Patch Changes
+
+- Updated dependencies [fa3595a]
+  - @liquality/cryptoassets@1.16.0-next.4
+
+## 1.31.0-next.3
+
+### Minor Changes
+
+- 7454432: lifi + debridge + goerli
+
+### Patch Changes
+
+- Updated dependencies [7454432]
+  - @liquality/cryptoassets@1.16.0-next.3
+
+## 1.31.0-next.2
+
+### Minor Changes
+
+- 412e1d1: bump
+- 412e1d1: bump2
+
+### Patch Changes
+
+- Updated dependencies [412e1d1]
+- Updated dependencies [412e1d1]
+  - @liquality/cryptoassets@1.16.0-next.2
+
+## 1.31.0-next.1
+
+### Minor Changes
+
+- b9db052: increment
+
+### Patch Changes
+
+- Updated dependencies [b9db052]
+  - @liquality/cryptoassets@1.16.0-next.1
+
+## 1.31.0-next.0
+
+### Minor Changes
+
+- 3d90aee: Lifi + debridge + goerli testnet
+- e45d2cb: fix: debridge rpc url
+- 61c228e: feat: eth testnet to goerli
+
+### Patch Changes
+
+- Updated dependencies [3d90aee]
+- Updated dependencies [e45d2cb]
+- Updated dependencies [61c228e]
+  - @liquality/cryptoassets@1.16.0-next.0
+
 ## 1.30.3
 
 ### Patch Changes

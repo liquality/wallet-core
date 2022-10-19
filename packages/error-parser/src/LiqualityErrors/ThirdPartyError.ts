@@ -1,5 +1,7 @@
 import { LiqualityError } from '.';
 class ThirdPartyError extends LiqualityError {
+  public readonly name = 'ThirdPartyError';
+
   constructor(context?: ThirdPartyErrorContext, lang?: string) {
     super();
     this.wrapUserErrorMessage(context, lang);
@@ -22,8 +24,6 @@ class ThirdPartyError extends LiqualityError {
     }
   }
 }
-
-ThirdPartyError.prototype.name = 'ThirdPartyError';
 
 export enum UserActivity {
   SWAP = 'SWAP',

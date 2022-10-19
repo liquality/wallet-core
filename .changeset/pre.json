@@ -1,0 +1,25 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "@liquality/cryptoassets": "1.15.3",
+    "@liquality/error-parser": "1.0.12",
+    "@liquality/wallet-core": "1.30.3"
+  },
+  "changesets": [
+    "big-dryers-hang",
+    "breezy-horses-wonder",
+    "chatty-forks-allow",
+    "early-foxes-nail",
+    "giant-gorillas-obey",
+    "nasty-rings-count",
+    "ninety-jars-love",
+    "polite-carpets-reflect",
+    "shiny-emus-give",
+    "small-grapes-confess",
+    "stale-coats-smash",
+    "sweet-roses-sin",
+    "tiny-cobras-peel",
+    "wicked-stingrays-think"
+  ]
+}

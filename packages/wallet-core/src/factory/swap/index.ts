@@ -5,6 +5,7 @@ import { FastBTCDepositSwapProvider } from '../../swaps/fastbtc/FastBTCDepositSw
 import { FastBTCWithdrawSwapProvider } from '../../swaps/fastbtc/FastBTCWithdrawSwapProvider';
 import { HopSwapProvider } from '../../swaps/hop/HopSwapProvider';
 import { JupiterSwapProvider } from '../../swaps/jupiter/JupiterSwapProvider';
+import { LifiSwapProvider } from '../../swaps/lifi/LifiSwapProvider';
 import { LiqualitySwapProvider } from '../../swaps/liquality/LiqualitySwapProvider';
 import { LiqualityBoostERC20toNative } from '../../swaps/liqualityboost/liqualityBoostERC20toNative/LiqualityBoostERC20toNative';
 import { LiqualityBoostNativeToERC20 } from '../../swaps/liqualityboost/liqualityBoostNativeToERC20/LiqualityBoostNativeToERC20';
@@ -13,6 +14,7 @@ import { SovrynSwapProvider } from '../../swaps/sovryn/SovrynSwapProvider';
 import { SwapProvider } from '../../swaps/SwapProvider';
 import { ThorchainSwapProvider } from '../../swaps/thorchain/ThorchainSwapProvider';
 import { UniswapSwapProvider } from '../../swaps/uniswap/UniswapSwapProvider';
+import { DeBridgeSwapProvider } from '../../swaps/debridge/DeBridgeSwapProvider';
 
 const providers = {
   [SwapProviderType.Liquality]: LiqualitySwapProvider,
@@ -27,6 +29,8 @@ const providers = {
   [SwapProviderType.Astroport]: AstroportSwapProvider,
   [SwapProviderType.Hop]: HopSwapProvider,
   [SwapProviderType.Jupiter]: JupiterSwapProvider,
+  [SwapProviderType.DeBridge]: DeBridgeSwapProvider,
+  [SwapProviderType.LiFi]: LifiSwapProvider,
 };
 
 const createSwapProvider = (network: Network, providerId: SwapProviderType) => {

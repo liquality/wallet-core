@@ -50,10 +50,10 @@ describe('quotes utils tests', () => {
       amount: '1',
     });
     expect(quotes).toBeDefined();
-    expect(quotes.length).toBeGreaterThan(0);
+    expect(quotes.quotes.length).toBeGreaterThan(0);
 
     // sort quotes
-    const result = calculateQuoteRate(quotes[0]);
+    const result = calculateQuoteRate(quotes.quotes[0]);
     expect(result).toBeDefined();
     expect(result).not.toBeNaN();
   });
@@ -76,10 +76,10 @@ describe('quotes utils tests', () => {
       amount: '1',
     });
     expect(quotes).toBeDefined();
-    expect(quotes.length).toBeGreaterThan(0);
+    expect(quotes.quotes.length).toBeGreaterThan(0);
 
     // sort quotes
-    let result = sortQuotes(quotes, Network.Testnet);
+    let result = sortQuotes(quotes.quotes, Network.Testnet);
     expect(result).toBeDefined();
     expect(result).not.toBeNaN();
 
@@ -92,10 +92,10 @@ describe('quotes utils tests', () => {
       amount: '1',
     });
     expect(quotes).toBeDefined();
-    expect(quotes.length).toBeGreaterThan(0);
+    expect(quotes.quotes.length).toBeGreaterThan(0);
 
     // sort quotes
-    result = sortQuotes(quotes, Network.Testnet);
+    result = sortQuotes(quotes.quotes, Network.Testnet);
     expect(result).toBeDefined();
     expect(result).not.toBeNaN();
   });

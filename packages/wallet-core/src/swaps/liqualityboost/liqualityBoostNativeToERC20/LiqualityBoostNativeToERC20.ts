@@ -138,7 +138,7 @@ class LiqualityBoostNativeToERC20 extends SwapProvider {
       ...result,
       ..._quote,
       slippage: slippagePercentage * 100,
-      bridgeAssetAmount: result.toAmount,
+      bridgeAssetAmount: (result as LiqualitySwapHistoryItem).toAmount,
     };
   }
 
