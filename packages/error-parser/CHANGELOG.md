@@ -1,5 +1,14 @@
 # @liquality/error-parser
 
+## 1.1.0-next.5
+
+### Patch Changes
+
+- 840dbd8: chore: bump versions after lifi integration
+- Updated dependencies [840dbd8]
+  - @liquality/cryptoassets@1.16.0-next.5
+  - @liquality/wallet-core@1.31.0-next.5
+
 ## 1.1.0-next.4
 
 ### Minor Changes
