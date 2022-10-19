@@ -4,4 +4,4 @@
 '@liquality/wallet-core': patch
 ---
 
-test: bump versions for 0.76.0 release
+test: bump versions for rc 0.76.0 wallet
