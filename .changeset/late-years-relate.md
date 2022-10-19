@@ -4,4 +4,4 @@
 '@liquality/wallet-core': patch
 ---
 
-chore: bump versions after lifi integration
+test: bump versions for 0.76.0 release
