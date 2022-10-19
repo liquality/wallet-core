@@ -378,7 +378,7 @@ export default {
   },
   analyticsEnabled(...context: GetterContext): boolean {
     const { state } = rootGetterContext(context);
-    if (state.analytics && state.analytics.acceptedDate != null) {
+    if (state.analytics && state.analytics.acceptedDate != null && state.analytics.acceptedDate > 0) {
       return true;
     }
     return false;
