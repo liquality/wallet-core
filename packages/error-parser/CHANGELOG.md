@@ -1,5 +1,12 @@
 # @liquality/error-parser
 
+## 1.1.0-next.5
+
+### Patch Changes
+
+- Updated dependencies [86df249]
+  - @liquality/wallet-core@1.31.0-next.5
+
 ## 1.1.0-next.4
 
 ### Minor Changes

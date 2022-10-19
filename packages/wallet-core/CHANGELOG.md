@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 1.31.0-next.5
+
+### Patch Changes
+
+- 86df249: make updates to analyticsEnabled returned value
+
 ## 1.31.0-next.4
 
 ### Minor Changes
