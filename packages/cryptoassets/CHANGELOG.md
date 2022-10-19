@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.16.0
+
+### Patch Changes
+
+- 17378a0: test: bump versions for 0.76.0 release
+
 ## 1.16.0-next.5
 
 ### Patch Changes
