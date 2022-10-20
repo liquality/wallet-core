@@ -72,6 +72,7 @@ export const CUSTOM_ERRORS = {
     ChainGasFeeMisMatch: 'suggestedGasFee does not match chain!',
     MessageType: (type: string) => `Received an invalid message type: ${type}`,
     DuplicateTokenSymbol: 'Token with this symbol exists',
+    Json: (err: any) => `Invalid Json: ${err}`,
   },
   Unsupported: {
     Default: 'Something is unsupported',
