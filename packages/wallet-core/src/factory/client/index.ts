@@ -1,6 +1,6 @@
 import { ChainId, getChain } from '@liquality/cryptoassets';
 import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, InternalError } from '@liquality/error-parser';
-import { reportLiqualityError } from '@liquality/error-parser/dist/src/reporters';
+import { reportLiqualityError } from '@liquality/error-parser';
 import { AccountInfo, Network } from '../../store/types';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import { createEvmClient } from './evm';
