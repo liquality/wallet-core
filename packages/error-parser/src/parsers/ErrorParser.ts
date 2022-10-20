@@ -29,6 +29,7 @@ export abstract class ErrorParser<SourceError, DataType> {
   }
 
   parseError(error: SourceError, data: DataType) {
+    if (error instanceof LiqualityError) return error;
     const parsedError = this._parseError(error, data);
     return parsedError;
   }
