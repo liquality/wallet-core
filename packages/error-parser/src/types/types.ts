@@ -9,3 +9,5 @@ export interface UserErrorMessage {
   cause: string;
   suggestions: Array<string>;
 }
+
+export type ObjectLiteral = { [key: string]: any };

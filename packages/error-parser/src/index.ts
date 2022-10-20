@@ -1,3 +1,5 @@
+export { isLiqualityErrorString, LiqualityErrorStringToJson } from './utils';
+
 export * from './LiqualityErrors';
 
 export { getErrorParser } from './factory';
