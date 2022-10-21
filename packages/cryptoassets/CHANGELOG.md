@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.16.2
+
+### Patch Changes
+
+- 2ecbc28: test: bump versions with toggle fix
+
 ## 1.16.1
 
 ### Patch Changes

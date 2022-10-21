@@ -1,5 +1,13 @@
 # @liquality/wallet-core
 
+## 1.31.2
+
+### Patch Changes
+
+- 2ecbc28: test: bump versions with toggle fix
+- Updated dependencies [2ecbc28]
+  - @liquality/cryptoassets@1.16.2
+
 ## 1.31.1
 
 ### Patch Changes
