@@ -34,7 +34,7 @@ import {
   getRateNativeToAsset,
 } from './queries';
 import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
-import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 interface RateResponse {
   amount: number;
@@ -103,7 +103,7 @@ class AstroportSwapProvider extends SwapProvider {
 
     if (isFromNative) {
       if (!denom) {
-        throw new InternalError(CUSTOM_ERRORS.NotFound.AstroPortDenom);
+        throw createInternalError(CUSTOM_ERRORS.NotFound.AstroPortDenom);
       }
       txData = buildSwapFromNativeTokenMsg(quote, denom, address, pairAddress);
     } else if (isFromERC20ToUST) {
@@ -176,7 +176,7 @@ class AstroportSwapProvider extends SwapProvider {
 
   async estimateFees({ asset, txType, quote, feePrices, network }: EstimateFeeRequest) {
     if (txType !== this.fromTxType) {
-      throw new InternalError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
+      throw createInternalError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
     }
 
     const nativeAsset = getNativeAssetCode(network, cryptoassets[asset].chain);
@@ -234,14 +234,14 @@ class AstroportSwapProvider extends SwapProvider {
       fromTokenAddress = fromInfo.contractAddress;
       toTokenAddress = toInfo.contractAddress;
       if (!fromTokenAddress || !toTokenAddress) {
-        throw new InternalError(CUSTOM_ERRORS.NotFound.ContractAddress);
+        throw createInternalError(CUSTOM_ERRORS.NotFound.ContractAddress);
       }
 
       contractData = getRateERC20ToERC20(fromAmount, fromTokenAddress, toTokenAddress);
     } else if (nativeToErc20) {
       toTokenAddress = toInfo.contractAddress;
       if (!toTokenAddress) {
-        throw new InternalError(CUSTOM_ERRORS.NotFound.ContractAddress);
+        throw createInternalError(CUSTOM_ERRORS.NotFound.ContractAddress);
       }
 
       const fromDenom = this._getDenom(fromInfo.code);
@@ -255,7 +255,7 @@ class AstroportSwapProvider extends SwapProvider {
     } else if (erc20ToNative) {
       fromTokenAddress = fromInfo.contractAddress;
       if (!fromTokenAddress) {
-        throw new InternalError(CUSTOM_ERRORS.NotFound.ContractAddress);
+        throw createInternalError(CUSTOM_ERRORS.NotFound.ContractAddress);
       }
 
       const toDenom = this._getDenom(toInfo.code);
@@ -267,7 +267,7 @@ class AstroportSwapProvider extends SwapProvider {
           ? getRateERC20ToERC20(fromAmount, fromTokenAddress, toDenom)
           : getRateNativeToAsset(fromAmount, fromTokenAddress, pairAddress);
     } else {
-      throw new InternalError(CUSTOM_ERRORS.Invalid.AstroPortSwapPair(fromInfo.type, toInfo.type));
+      throw createInternalError(CUSTOM_ERRORS.Invalid.AstroPortSwapPair(fromInfo.type, toInfo.type));
     }
 
     const { address, query } = contractData;

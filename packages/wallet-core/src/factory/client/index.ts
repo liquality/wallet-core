@@ -1,6 +1,5 @@
 import { ChainId, getChain } from '@liquality/cryptoassets';
-import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, InternalError } from '@liquality/error-parser';
-import { reportLiqualityError } from '@liquality/error-parser';
+import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, createInternalError } from '@liquality/error-parser';
 import { AccountInfo, Network } from '../../store/types';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import { createEvmClient } from './evm';
@@ -27,7 +26,7 @@ export const createClient = (chainId: ChainId, network: Network, mnemonic: strin
       client = createSolanaClient(network, mnemonic, accountInfo);
       break;
     default:
-      throw new InternalError(CUSTOM_ERRORS.NotFound.Client(chainId));
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Client(chainId));
   }
 
   // Proxify Client so that chainify errors are parsed and rethrown as Liquality Errors.
@@ -50,9 +49,7 @@ function proxify(obj: any) {
               const result = await target[prop](...args);
               return result;
             } catch (e) {
-              const liqualityError = parser.parseError(e, null);
-              reportLiqualityError(liqualityError);
-              throw liqualityError;
+              throw parser.parseError(e, null);
             }
           };
         } else {
@@ -61,9 +58,7 @@ function proxify(obj: any) {
               const result = target[prop](...args);
               return result;
             } catch (e) {
-              const liqualityError = parser.parseError(e, null);
-              reportLiqualityError(liqualityError);
-              throw liqualityError;
+              throw parser.parseError(e, null);
             }
           };
         }

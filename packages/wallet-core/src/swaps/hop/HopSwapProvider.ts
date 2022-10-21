@@ -25,7 +25,7 @@ import {
   SwapStatus,
 } from '../types';
 import { getDestinationTxGQL, getTransferIdByTxHash } from './queries';
-import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 export interface HopSwapProviderConfig extends BaseSwapProviderConfig {
   graphqlBaseURL: string;
@@ -311,7 +311,7 @@ class HopSwapProvider extends SwapProvider {
     feePricesL1,
   }: EstimateFeeRequest<HopTxTypes, HopSwapQuote>) {
     if (txType !== this.fromTxType) {
-      throw new InternalError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
+      throw createInternalError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
     }
 
     const chainId = cryptoassets[asset].chain;
@@ -330,8 +330,8 @@ class HopSwapProvider extends SwapProvider {
     // Gas limit l1
     const isMultiLayered = getChain(network, chainId).isMultiLayered;
     if (isMultiLayered && (!feePricesL1 || !limits.sendL1 || !limits.approveL1)) {
-      if (!feePricesL1) throw new InternalError(CUSTOM_ERRORS.NotFound.Chain.FeePrice);
-      throw new InternalError(CUSTOM_ERRORS.NotFound.Chain.L1GasLimit);
+      if (!feePricesL1) throw createInternalError(CUSTOM_ERRORS.NotFound.Chain.FeePrice);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Chain.L1GasLimit);
     }
 
     let gasLimitL1: number = 0;

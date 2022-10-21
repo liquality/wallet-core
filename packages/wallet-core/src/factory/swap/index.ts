@@ -1,4 +1,4 @@
-import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import buildConfig from '../../build.config';
 import { Network, SwapProviderType } from '../../store/types';
 import { AstroportSwapProvider } from '../../swaps/astroport/AstroportSwapProvider';
@@ -37,7 +37,7 @@ const providers = {
 const createSwapProvider = (network: Network, providerId: SwapProviderType) => {
   const swapProviderConfig = buildConfig.swapProviders[network][providerId];
   if (!swapProviderConfig) {
-    throw new InternalError(CUSTOM_ERRORS.NotFound.SwapProvider.Config(providerId, network));
+    throw createInternalError(CUSTOM_ERRORS.NotFound.SwapProvider.Config(providerId, network));
   }
   const SwapProvider = providers[swapProviderConfig.type];
   // @ts-ignore TODO: i'll fix it

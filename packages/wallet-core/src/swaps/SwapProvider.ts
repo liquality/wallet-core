@@ -1,4 +1,4 @@
-import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import BigNumber from 'bignumber.js';
 import store, { ActionContext } from '../store';
 import { createNotification } from '../store/broker/notification';
@@ -119,14 +119,14 @@ export abstract class SwapProvider {
 
   public get statuses() {
     const statuses = this._getStatuses();
-    if (typeof statuses === 'undefined') throw new InternalError(CUSTOM_ERRORS.NotFound.SwapProvider.Statuses);
+    if (typeof statuses === 'undefined') throw createInternalError(CUSTOM_ERRORS.NotFound.SwapProvider.Statuses);
     return statuses;
   }
 
   public get fromTxType() {
     const fromTxType = this._fromTxType();
     if (typeof fromTxType === 'undefined') {
-      throw new InternalError(CUSTOM_ERRORS.NotFound.SwapProvider.FromTxType);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.SwapProvider.FromTxType);
     }
     return fromTxType;
   }
@@ -134,7 +134,7 @@ export abstract class SwapProvider {
   public get toTxType() {
     const toTxType = this._toTxType();
     if (typeof toTxType === 'undefined') {
-      throw new InternalError(CUSTOM_ERRORS.NotFound.SwapProvider.ToTxType);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.SwapProvider.ToTxType);
     }
     return toTxType;
   }
@@ -142,7 +142,7 @@ export abstract class SwapProvider {
   public get timelineDiagramSteps() {
     const timelineDiagramSteps = this._timelineDiagramSteps();
     if (typeof timelineDiagramSteps === 'undefined') {
-      throw new InternalError(CUSTOM_ERRORS.NotFound.SwapProvider.timelineDiagramSteps);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.SwapProvider.timelineDiagramSteps);
     }
     return timelineDiagramSteps;
   }
@@ -150,7 +150,7 @@ export abstract class SwapProvider {
   public get totalSteps() {
     const totalSteps = this._totalSteps();
     if (typeof totalSteps === 'undefined') {
-      throw new InternalError(CUSTOM_ERRORS.NotFound.SwapProvider.totalSteps);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.SwapProvider.totalSteps);
     }
     return totalSteps;
   }
@@ -158,7 +158,7 @@ export abstract class SwapProvider {
   public get txTypes() {
     const totalSteps = this._txTypes();
     if (typeof totalSteps === 'undefined') {
-      throw new InternalError(CUSTOM_ERRORS.NotFound.SwapProvider._txTypes);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.SwapProvider._txTypes);
     }
     return totalSteps;
   }

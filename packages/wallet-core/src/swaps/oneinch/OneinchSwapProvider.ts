@@ -30,7 +30,7 @@ import {
   OneInchQuoteErrorParser,
   OneInchSwapErrorParser,
   SlippageTooHighError,
-  InternalError,
+  createInternalError,
 } from '@liquality/error-parser';
 
 const NATIVE_ASSET_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
@@ -294,7 +294,7 @@ class OneinchSwapProvider extends SwapProvider {
     // @ts-ignore TODO: Fix chain networks
     const chainId = Number(getChain(network, toChain).network.chainId);
     if (toChain !== fromChain || !supportedChains[Number(chainId)]) {
-      throw new InternalError(CUSTOM_ERRORS.Unsupported.SwapRoute(fromChain, toChain));
+      throw createInternalError(CUSTOM_ERRORS.Unsupported.SwapRoute(fromChain, toChain));
     }
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);

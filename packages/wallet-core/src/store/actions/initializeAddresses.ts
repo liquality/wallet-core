@@ -1,4 +1,4 @@
-import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import { ActionContext, rootActionContext } from '..';
 import { Network, WalletId } from '../types';
 
@@ -9,7 +9,7 @@ export const initializeAddresses = async (
   const { state, dispatch } = rootActionContext(context);
   const accounts = state.accounts[walletId]?.[network];
   if (!accounts) {
-    throw new InternalError(CUSTOM_ERRORS.NotFound.Accounts);
+    throw createInternalError(CUSTOM_ERRORS.NotFound.Accounts);
   }
   for (const account of accounts) {
     if (!account.addresses.length) {

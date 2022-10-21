@@ -25,7 +25,7 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
-import SlippageError, { CUSTOM_ERRORS, QuoteExpiredError, InternalError } from '@liquality/error-parser';
+import SlippageError, { CUSTOM_ERRORS, QuoteExpiredError, createInternalError } from '@liquality/error-parser';
 
 const VERSION_STRING = `Wallet ${pkg.version} (Chainify ${pkg.dependencies['@chainify/client']
   .replace('^', '')
@@ -477,7 +477,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       return this._httpClient.nodePost('/api/swap/order', { from, to, fromAmount: amount }, { headers });
     } catch (e) {
       if (e?.response?.data?.error) {
-        throw new InternalError(CUSTOM_ERRORS.Unknown(e.response.data.error));
+        throw createInternalError(CUSTOM_ERRORS.Unknown(e.response.data.error));
       } else {
         throw e;
       }

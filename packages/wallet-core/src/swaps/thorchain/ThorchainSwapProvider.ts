@@ -29,7 +29,7 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
-import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 // Pool balances are denominated with 8 decimals
 const THORCHAIN_DECIMAL = 8;
@@ -195,14 +195,14 @@ class ThorchainSwapProvider extends SwapProvider {
   async getInboundAddress(chain: string) {
     const inboundAddresses = await this._getInboundAddresses();
     const inboundAddress = inboundAddresses.find((inbound) => inbound.chain === chain);
-    if (!inboundAddress) throw new InternalError(CUSTOM_ERRORS.NotFound.Thorchain.InboundAddress(chain));
+    if (!inboundAddress) throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.InboundAddress(chain));
     return inboundAddress;
   }
 
   async getRouterAddress(chain: string) {
     const inboundAddress = await this.getInboundAddress(chain);
     const router = inboundAddress.router;
-    if (!router) throw new InternalError(CUSTOM_ERRORS.NotFound.Thorchain.RouterAddress(chain));
+    if (!router) throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.RouterAddress(chain));
     return router;
   }
 
@@ -245,14 +245,14 @@ class ThorchainSwapProvider extends SwapProvider {
     const swapOutput = getDoubleSwapOutput(inputAmount, fromPool, toPool);
 
     const baseNetworkFee = await this.networkFees(to, network);
-    if (!baseNetworkFee) throw new InternalError(CUSTOM_ERRORS.NotFound.Thorchain.BaseNetworkFee);
+    if (!baseNetworkFee) throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.BaseNetworkFee);
     let networkFee = convertBaseAmountDecimal(baseNetworkFee, 8);
 
     if (isERC20(to)) {
       // in case of ERC20
       const poolData = pools.find((pool) => pool.asset === 'ETH.ETH');
       if (!poolData) {
-        throw new InternalError(CUSTOM_ERRORS.NotFound.Thorchain.PoolData);
+        throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.PoolData);
       }
       const ethPool = toThorchainAsset(from) !== 'ETH.ETH' ? getPool(poolData) : fromPool;
       networkFee = getValueOfAsset1InAsset2(networkFee, ethPool, toPool);
@@ -326,7 +326,7 @@ class ThorchainSwapProvider extends SwapProvider {
 
     const fromThorchainAsset = assetFromString(toThorchainAsset(swap.from));
     if (!fromThorchainAsset) {
-      throw new InternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
     }
     const routerAddress = this.getRouterAddress(fromThorchainAsset.chain);
 
@@ -374,7 +374,7 @@ class ThorchainSwapProvider extends SwapProvider {
 
     const fromThorchainAsset = assetFromString(toThorchainAsset(quote.from));
     if (!fromThorchainAsset) {
-      throw new InternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
     }
     const to = (await this.getInboundAddress(fromThorchainAsset.chain)).address; // Will be `router` for ETH
     const value = new BN(quote.fromAmount);
@@ -405,7 +405,7 @@ class ThorchainSwapProvider extends SwapProvider {
 
     const fromThorchainAsset = assetFromString(toThorchainAsset(quote.from));
     if (!fromThorchainAsset) {
-      throw new InternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
     }
     const routerAddress = await this.getRouterAddress(fromThorchainAsset.chain);
     // @ts-ignore
@@ -444,7 +444,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const limit = convertBaseAmountDecimal(baseAmount(new BN(swap.toAmount), cryptoassets[swap.to].decimals), 8);
     const thorchainAsset = assetFromString(toThorchainAsset(swap.to));
     if (!thorchainAsset) {
-      throw new InternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
     }
     return getSwapMemo({ asset: thorchainAsset, address: toAddress, limit });
   }
@@ -469,7 +469,7 @@ class ThorchainSwapProvider extends SwapProvider {
     }
 
     if (!fromFundTx) {
-      throw new InternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction);
+      throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction);
     }
 
     return {
@@ -589,7 +589,7 @@ class ThorchainSwapProvider extends SwapProvider {
               asset = swap.from;
               accountId = swap.fromAccountId;
             } else {
-              throw new InternalError(CUSTOM_ERRORS.Invalid.ThorchainMemoAction(memoAction));
+              throw createInternalError(CUSTOM_ERRORS.Invalid.ThorchainMemoAction(memoAction));
             }
 
             const client = this.getClient(network, walletId, asset, accountId);

@@ -15,7 +15,7 @@ import thorchainInfo from '../swaps/thorchain/info.json';
 import uniswapInfo from '../swaps/uniswap/info.json';
 import debridgeInfo from '../swaps/debridge/info.json';
 import { LiqualitySwapProvider } from './liquality/LiqualitySwapProvider';
-import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 const swapProviderInfo = {
   [SwapProviderType.Liquality]: liqualityInfo,
@@ -41,7 +41,7 @@ function getSwapProviderConfig(network: Network, providerId: SwapProviderType) {
 function getSwapProviderInfo(network: Network, providerId: SwapProviderType) {
   const config = getSwapProviderConfig(network, providerId);
   if (!config) {
-    throw new InternalError(CUSTOM_ERRORS.NotFound.SwapProvider.Config(providerId, network));
+    throw createInternalError(CUSTOM_ERRORS.NotFound.SwapProvider.Config(providerId, network));
   }
   return swapProviderInfo[config.type];
 }

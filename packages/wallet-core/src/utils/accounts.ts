@@ -1,5 +1,5 @@
 import { ChainId, getChain } from '@liquality/cryptoassets';
-import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import { v4 as uuidv4 } from 'uuid';
 import { Account, AccountDefinition, Network, WalletId } from '../store/types';
 import { getDerivationPath } from '../utils/derivationPath';
@@ -64,7 +64,7 @@ export const accountColors = [
 export const getNextAccountColor = (chain: ChainId, index: number) => {
   const defaultColor = getChain(Network.Mainnet, chain).color;
   if (!defaultColor) {
-    throw new InternalError(CUSTOM_ERRORS.NotFound.Chain.DefaultColor(chain));
+    throw createInternalError(CUSTOM_ERRORS.NotFound.Chain.DefaultColor(chain));
   }
   const defaultIndex = accountColors.findIndex((c) => c === defaultColor);
   if (defaultIndex === -1) {

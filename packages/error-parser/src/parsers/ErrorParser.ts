@@ -11,7 +11,6 @@ export abstract class ErrorParser<SourceError, DataType> {
       return func();
     } catch (error) {
       const liqualityError = this.parseError(error, data);
-      reportLiqualityError(liqualityError);
       throw liqualityError;
     }
   }
@@ -23,7 +22,6 @@ export abstract class ErrorParser<SourceError, DataType> {
       return await func();
     } catch (error) {
       const liqualityError = this.parseError(error, data);
-      reportLiqualityError(liqualityError);
       throw liqualityError;
     }
   }
@@ -31,6 +29,7 @@ export abstract class ErrorParser<SourceError, DataType> {
   parseError(error: SourceError, data: DataType) {
     if (error instanceof LiqualityError) return error;
     const parsedError = this._parseError(error, data);
+    reportLiqualityError(parsedError);
     return parsedError;
   }
 }

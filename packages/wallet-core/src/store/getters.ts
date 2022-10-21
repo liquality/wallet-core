@@ -1,7 +1,7 @@
 import { Client } from '@chainify/client';
 import { FeeDetails, Nullable } from '@chainify/types';
 import { AssetTypes, ChainId, getAllAssets, IAsset, unitToCurrency } from '@liquality/cryptoassets';
-import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
 import { rootGetterContext } from '.';
@@ -57,7 +57,7 @@ export default {
       const _accountIndex = account?.index || accountIndex;
 
       if (account && chainId !== account.chain) {
-        throw new InternalError(CUSTOM_ERRORS.Invalid.AssetChainNotAccountChain(chainId, accountId as string));
+        throw createInternalError(CUSTOM_ERRORS.Invalid.AssetChainNotAccountChain(chainId, accountId as string));
       }
 
       let derivationPath: string;
@@ -78,7 +78,7 @@ export default {
       const wallet = state.wallets.find((w) => w.id === walletId);
 
       if (!wallet) {
-        throw new InternalError(CUSTOM_ERRORS.NotFound.Wallet);
+        throw createInternalError(CUSTOM_ERRORS.NotFound.Wallet);
       }
 
       const { mnemonic } = wallet;

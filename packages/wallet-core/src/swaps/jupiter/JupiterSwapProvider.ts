@@ -19,7 +19,7 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
-import { CUSTOM_ERRORS, InternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 const SOL_MINT_ADDRESS = 'So11111111111111111111111111111111111111112';
 export interface JupiterSwapHistoryItem extends SwapHistoryItem {
@@ -170,7 +170,7 @@ class JupiterSwapProvider extends SwapProvider {
     network,
   }: EstimateFeeRequest<string, JupiterSwapHistoryItem>): Promise<EstimateFeeResponse | null> {
     if (txType != this.fromTxType) {
-      throw new InternalError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
+      throw createInternalError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
     }
 
     const nativeAsset = getNativeAssetCode(network, cryptoassets[asset].chain);
