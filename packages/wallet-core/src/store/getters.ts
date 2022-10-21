@@ -378,10 +378,7 @@ export default {
   },
   analyticsEnabled(...context: GetterContext): boolean {
     const { state } = rootGetterContext(context);
-    if (state.analytics && state.analytics.acceptedDate != null) {
-      return true;
-    }
-    return false;
+    return !!(state.analytics && state.analytics.acceptedDate != null && state.analytics.acceptedDate > 0);
   },
   allNftCollections(...context: GetterContext): NFTCollections<NFTWithAccount> {
     const { getters } = rootGetterContext(context);
