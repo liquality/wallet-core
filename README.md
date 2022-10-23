@@ -32,7 +32,7 @@ Wallet Core is a cryptocurrency wallet library in Typescript. It provides an abs
 
 ```typescript
 import { setupWallet } from '@liquality/wallet-core';
-import defaultOptions from '@liquality/wallet-core/dist/walletOptions/defaultOptions'; // Default options
+import defaultOptions from '@liquality/wallet-core/dist/src/walletOptions/defaultOptions' // Default options
 
 const wallet = setupWallet({
   ...defaultOptions,
