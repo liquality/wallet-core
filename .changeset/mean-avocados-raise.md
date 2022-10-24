@@ -5,7 +5,7 @@
 
 feat: add chainify error parser
 fix: wrap(with errorparser) some calls to chainify  
-fix: wrap(with Error Parser) calls to oneinch API using error parser
+fix: wrap(with Error Parser) calls to oneinch gitAPI using error parser
 fix: wrap(with Error Parser) Lifi quote request
 fix: extract error messages from error objects into translation files
 fix: add more liquality errors types
