@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 1.31.3
+
+### Patch Changes
+
+- 2173cb9: feat: bump wallet core version with slippage % debridge
+
 ## 1.31.2
 
 ### Patch Changes
