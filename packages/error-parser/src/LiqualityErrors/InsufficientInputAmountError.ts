@@ -1,10 +1,8 @@
 import { LiqualityError } from './LiqualityError';
 
 export class InsufficientInputAmountError extends LiqualityError<InsufficientInputAmountErrorContext> {
-  public readonly name = InsufficientInputAmountError.name;
-
   constructor(data?: InsufficientInputAmountErrorContext) {
-    super(data);
+    super(InsufficientInputAmountError.name, data);
   }
 }
 

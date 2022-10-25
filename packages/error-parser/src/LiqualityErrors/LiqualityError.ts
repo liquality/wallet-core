@@ -13,8 +13,9 @@ export abstract class LiqualityError<Context extends ObjectLiteral = ObjectLiter
   rawError: any;
   data: Context | { errorId: string };
 
-  constructor(data?: Context) {
+  constructor(name: string, data?: Context) {
     super();
+    this.name = name;
     this.setKeys(data);
     if (!data) data = {} as Context;
     this.data = { ...data, errorId: randomBytes(ERROR_ID_LENGTH).toString('hex') };

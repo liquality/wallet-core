@@ -1,10 +1,8 @@
 import { LiqualityError } from './LiqualityError';
 
 export class PairNotSupportedError extends LiqualityError<PairNotSupportedErrorContext> {
-  public readonly name = PairNotSupportedError.name;
-
   constructor(data?: PairNotSupportedErrorContext) {
-    super(data);
+    super(PairNotSupportedError.name, data);
   }
 }
 

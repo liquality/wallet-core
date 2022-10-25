@@ -1,9 +1,7 @@
 import { LiqualityError } from './LiqualityError';
 export class HighInputAmountError extends LiqualityError<HighInputAmountErrorContext> {
-  public readonly name = HighInputAmountError.name;
-
   constructor(data?: HighInputAmountErrorContext) {
-    super(data);
+    super(HighInputAmountError.name, data);
   }
 }
 
