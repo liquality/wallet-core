@@ -1,4 +1,5 @@
 import base58 from 'bs58';
+import { PublicKey } from '@solana/web3.js';
 import { EvmChain } from './EvmChain';
 
 const BASE58_LENGTH = 32;
@@ -15,7 +16,16 @@ export abstract class NonEvmChain extends EvmChain {
 
 export class SolanaChain extends NonEvmChain {
   public isValidAddress(address: string) {
-    return typeof address === 'string' && address.length >= 32 && address.length <= 44;
+    try {
+      const isValidLength = address.length >= 32 && address.length <= 44;
+      if (!address || !isValidLength) {
+        return false;
+      }
+      new PublicKey(address); // throws if address is invalid
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   public isValidTransactionHash(_hash: string) {

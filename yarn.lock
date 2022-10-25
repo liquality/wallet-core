@@ -2724,6 +2724,7 @@ __metadata:
   resolution: "@liquality/cryptoassets@workspace:packages/cryptoassets"
   dependencies:
     "@ethersproject/address": 5.7.0
+    "@solana/web3.js": ^1.66.2
     "@types/bs58": 4.0.1
     bignumber.js: ^9.0.2
     bitcoin-address-validation: 2.2.1
@@ -3167,6 +3168,29 @@ __metadata:
     rpc-websockets: ^7.5.0
     superstruct: ^0.14.2
   checksum: c29eb24de6264020cd00c30e19c9aa48dd69d0ebae2d415a11b30f5a6b47f34e4162c69f27f023a5836c43b828f7876b874c1f80493c088f1489ed76f53a81df
+  languageName: node
+  linkType: hard
+
+"@solana/web3.js@npm:^1.66.2":
+  version: 1.66.2
+  resolution: "@solana/web3.js@npm:1.66.2"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+    "@noble/ed25519": ^1.7.0
+    "@noble/hashes": ^1.1.2
+    "@noble/secp256k1": ^1.6.3
+    "@solana/buffer-layout": ^4.0.0
+    bigint-buffer: ^1.1.5
+    bn.js: ^5.0.0
+    borsh: ^0.7.0
+    bs58: ^4.0.1
+    buffer: 6.0.1
+    fast-stable-stringify: ^1.0.0
+    jayson: ^3.4.4
+    node-fetch: 2
+    rpc-websockets: ^7.5.0
+    superstruct: ^0.14.2
+  checksum: e2f293bfa43bb5703c1489f005a2d5843249ccf62001dbce143ffc8b0a662c56630f601a4249bbc40b029e3bc0ab7b4011fabda902322cb3545b02bf2626150a
   languageName: node
   linkType: hard
 

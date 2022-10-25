@@ -12,6 +12,7 @@
   ],
   "dependencies": {
     "@ethersproject/address": "5.7.0",
+    "@solana/web3.js": "^1.66.2",
     "@types/bs58": "4.0.1",
     "bignumber.js": "^9.0.2",
     "bitcoin-address-validation": "2.2.1",
