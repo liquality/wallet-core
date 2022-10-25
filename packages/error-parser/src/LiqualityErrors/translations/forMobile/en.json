@@ -1,0 +1,170 @@
+{
+  "HighInputAmountError": {
+    "placeholder": {
+      "cause": "Input amount is too high, expected maximum amount is  %{expectedMaximum} %{assetCode} ",
+      "suggestions": "Please decrease input amount"
+    },
+    "plain": {
+      "cause": "Input amount is too high",
+      "suggestions": "Please decrease input amount"
+    }
+  },
+  "InsufficientFundsError": {
+    "placeholder": {
+      "cause": "Insufficient funds: Sorry, You have %{availAmt}%{currency} but you need %{neededAmt}%{currency}",
+      "suggestions": ""
+    },
+    "plain": {
+      "cause": "Insufficient funds",
+      "suggestions": ""
+    }
+  },
+  "InsufficientGasFeeError": {
+    "placeholder": {
+      "cause": "Sorry, you do not have enough %{currency} to cover transaction fee. You need a buffer of atleast %{gasFee}%{currency} to be fine",
+      "suggestions": ""
+    },
+    "plain": {
+      "cause": "Sorry, you do not have enough funds to cover transaction fee",
+      "suggestions": ""
+    }
+  },
+  "InsufficientInputAmountError": {
+    "placeholder": {
+      "cause": "Input amount is too low, expected minimum amount is  %{expectedMinimum} %{assetCode} ",
+      "suggestions": "Please increase input amount"
+    },
+    "plain": {
+      "cause": "Input amount is too low",
+      "suggestions": "Please increase input amount"
+    }
+  },
+  "InsufficientLiquidityError": {
+    "placeholder": {
+      "cause": "Sorry, your swap of %{amount} from %{from} to %{to} could not be completed due to insufficient liquidity",
+      "suggestions": "Reduce your swap amount,Try a different swap pair,Select a different swap provider from our list of swap providers,Try again at a later time"
+    },
+    "plain": {
+      "cause": "Sorry, your swap could not be completed due to insufficient liquidity",
+      "suggestions": "Reduce your swap amount,Try a different swap pair,Select a different swap provider from our list of swap providers,Try again at a later time"
+    }
+  },
+  "InternalError": {
+    "plain": {
+      "cause": "Sorry, something went wrong while processing this transaction.",
+      "suggestions": "Try again at a later time,If it persist, please contact support on discord with errorId: %{errorId}"
+    }
+  },
+  "LowSpeedupFeeError": {
+    "plain": {
+      "cause": "Replacement Fee to speed up transaction is less than or equals the old fee.",
+      "suggestions": "Try Speeding up transaction with a higher fee"
+    }
+  },
+  "PairNotSupportedError": {
+    "placeholder": {
+      "cause": "Sorry, swap provider does not support selected pair %{from}/%{to}",
+      "suggestions": "Select a different swap provider"
+    },
+    "plain": {
+      "cause": "Sorry, swap provider does not support selected pair",
+      "suggestions": "Select a different swap provider"
+    }
+  },
+  "ThirdPartyError": {
+    "plain": {
+      "cause": "Sorry, something went wrong in a third party service we use in processing this transaction",
+      "suggestions": ["Object"]
+    }
+  },
+  "UnknownError": {
+    "plain": {
+      "cause": "Sorry, something went wrong while processing this transaction",
+      "suggestions": ""
+    }
+  },
+  "SlippageTooHighError": {
+    "placeholder": {
+      "cause": "Slippage is too high. You expect %{expectedAmount} but you are going to receive %{actualAmount} %{currency}",
+      "suggestions": "Try again"
+    },
+    "plain": {
+      "cause": "Slippage is too high",
+      "suggestions": "Try again"
+    }
+  },
+  "QuoteExpiredError": {
+    "plain": {
+      "cause": "The quote has expired",
+      "suggestions": "Try again"
+    }
+  },
+  "WalletLockedError": {
+    "plain": {
+      "cause": "Wallet is locked",
+      "suggestions": "Unlock the wallet first"
+    }
+  },
+  "NoActiveWalletError": {
+    "plain": {
+      "cause": "No active wallet found",
+      "suggestions": "Create a wallet first"
+    }
+  },
+  "LedgerDeviceConnectionError": {
+    "plain": {
+      "cause": "Ledger device not connected or not unlocked",
+      "suggestions": ""
+    }
+  },
+  "PasswordError": {
+    "plain": {
+      "cause": "Incorrect Password",
+      "suggestions": "Try Again (Password should have 8 or more characters)"
+    }
+  },
+  "NoTipError": {
+    "plain": {
+      "cause": "Miner tip must be greater than 0 GWEI",
+      "suggestions": ""
+    }
+  },
+  "VeryLowTipError": {
+    "plain": {
+      "cause": "Miner tip is extremely low and the transaction could fail",
+      "suggestions": "Use 'Low'"
+    }
+  },
+  "VeryHighTipWarning": {
+    "plain": {
+      "cause": "Miner tip is higher than necessary. You may pay more than needed",
+      "suggestions": "Use High"
+    }
+  },
+  "NoMaxFeeError": {
+    "plain": {
+      "cause": "Max fee must be greater than 0 GWEI",
+      "suggestions": ""
+    }
+  },
+  "VeryLowMaxFeeError": {
+    "placeholder": {
+      "cause": "Max fee too low. Must be > %{maxFeePerGas} GWEI (Base Fee plus Miner Tip)",
+      "suggestions": ""
+    },
+    "plain": {
+      "cause": "Max fee too low. Must be > (Base Fee plus Miner Tip)",
+      "suggestions": ""
+    }
+  },
+  "VeryHighMaxFeeWarning": {
+    "placeholder": {
+      "cause": "Max fee is higher than necessary %{maxFeePerGas} GWEI (Base Fee plus Miner Tip)",
+      "suggestions": "Review  your maximum 'New Fee Total'"
+    },
+    "plain": {
+      "cause": "Max fee is higher than necessary",
+      "suggestions": "Review  your maximum 'New Fee Total'"
+    }
+  }
+}
