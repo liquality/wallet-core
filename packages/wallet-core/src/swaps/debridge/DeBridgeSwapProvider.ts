@@ -64,7 +64,7 @@ export interface DebridgeSwapProviderConfig extends BaseSwapProviderConfig {
 }
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
-const slippagePercentage = 1;
+const slippagePercentage = 3;
 const slippageBps = slippagePercentage * 100;
 const chainIds = [1, 56, 137, 42161, 43114];
 
