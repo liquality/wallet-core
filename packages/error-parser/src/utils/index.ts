@@ -6,7 +6,7 @@ export function isLiqualityErrorString(error: string): boolean {
   return error.startsWith(LIQUALITY_ERROR_STRING_STARTER);
 }
 
-export function LiqualityErrorStringToJson(error: string): ObjectLiteral {
+export function liqualityErrorStringToJson(error: string): ObjectLiteral {
   return JSON.parse(error.replace(LIQUALITY_ERROR_STRING_STARTER, ''));
 }
 
