@@ -19,9 +19,7 @@ export class SolanaChain extends NonEvmChain {
       const PUBLIC_KEY_LENGTH = 32;
 
       const publicKey = base58.decode(address);
-      if (publicKey.length !== PUBLIC_KEY_LENGTH) return false;
-
-      return true;
+      return publicKey.length === PUBLIC_KEY_LENGTH;
     } catch (error) {
       return false;
     }
