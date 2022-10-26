@@ -84,37 +84,3 @@ Integration tests are written in [Jest](https://jestjs.io/).
 yarn test
 ```
 
-## Publish to npm
-
-- GitHub actions will publish to NPM automatically after a successful pull request merge, follow the below steps to publish to NPM.
-
-```bash
-yarn changeset
-```
-
-![Alt text](docs/img.png)
-
-![Alt text](docs/img_1.png)
-
-Under [changeset](.changeset/) you will notice a new markdown file (its name is randomly generated), with the change-type and summary.
-
-![Alt text](docs/img_3.png)
-
-Push the file along with the rest of the changes, and let the GitHub actions do the heavy-lifting for you. As for the markdown file, it will be deleted by our GitHub action when the entry that's referencing is added to the changelog.
-
-![Alt text](docs/img_2.png)
-
-### How to do [prerelease](https://github.com/changesets/changesets/blob/main/docs/prereleases.md) version from a branch
-
-- Create a changed file with the version you want to release, for example `v0.1.0-alpha.1`
-
-```bash
- yarn changeset
-```
-_Note:_ Ensure `pre.json` file is present in the `.changeset` directory of the project, then create a pull request with the changeset file and merge it to the develop branch.
-
-If `pre.json` file is not present, create a new file with the following command & it will to the `.changeset` directory of the project,push the changes and create a pull request with the changeset file and merge it to the develop branch.
-
-```bash
-yarn changeset pre enter next
-```
