@@ -10,23 +10,23 @@ export const createClient = (chainId: ChainId, network: Network, mnemonic: strin
 
   if (chain.isEVM) {
     client = createEvmClient(chain, mnemonic, accountInfo);
-  }
-
-  switch (chainId) {
-    case ChainId.Bitcoin:
-      client = createBtcClient(network, mnemonic, accountInfo);
-      break;
-    case ChainId.Near:
-      client = createNearClient(network, mnemonic, accountInfo);
-      break;
-    case ChainId.Terra:
-      client = createTerraClient(network, mnemonic, accountInfo);
-      break;
-    case ChainId.Solana:
-      client = createSolanaClient(network, mnemonic, accountInfo);
-      break;
-    default:
-      throw createInternalError(CUSTOM_ERRORS.NotFound.Client(chainId));
+  } else {
+    switch (chainId) {
+      case ChainId.Bitcoin:
+        client = createBtcClient(network, mnemonic, accountInfo);
+        break;
+      case ChainId.Near:
+        client = createNearClient(network, mnemonic, accountInfo);
+        break;
+      case ChainId.Terra:
+        client = createTerraClient(network, mnemonic, accountInfo);
+        break;
+      case ChainId.Solana:
+        client = createSolanaClient(network, mnemonic, accountInfo);
+        break;
+      default:
+        throw createInternalError(CUSTOM_ERRORS.NotFound.Client(chainId));
+    }
   }
 
   // Proxify Client so that chainify errors are parsed and rethrown as Liquality Errors.
