@@ -18,7 +18,7 @@ export class SolanaChain extends NonEvmChain {
   public isValidAddress(address: string) {
     try {
       const isValidLength = address.length >= 32 && address.length <= 44;
-      if (!address || !isValidLength) {
+      if (typeof address !== 'string' || !isValidLength) {
         return false;
       }
       new PublicKey(address); // throws if address is invalid
