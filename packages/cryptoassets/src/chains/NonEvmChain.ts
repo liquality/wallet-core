@@ -17,10 +17,7 @@ export abstract class NonEvmChain extends EvmChain {
 export class SolanaChain extends NonEvmChain {
   public isValidAddress(address: string) {
     try {
-      const isValidLength = address.length >= 32 && address.length <= 44;
-      if (typeof address !== 'string' || !isValidLength) {
-        return false;
-      }
+      if (typeof address !== 'string') return false; // check is reliable when type is definitely a string
       new PublicKey(address); // throws if address is invalid
       return true;
     } catch (error) {
