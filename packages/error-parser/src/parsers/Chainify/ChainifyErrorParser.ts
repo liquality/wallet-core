@@ -43,7 +43,7 @@ export class ChainifyErrorParser extends ErrorParser<Error, null> {
     }
 
     liqError.source = ChainifyErrorParser.errorSource;
-    liqError.devMsg = { desc: '', data };
+    liqError.devMsg = { desc: '', data: data || {} };
     liqError.rawError = error;
 
     return liqError;

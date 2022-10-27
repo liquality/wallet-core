@@ -47,7 +47,7 @@ describe('OneInchApproveAPI parser', () => {
 
     expect(error.name).toBe(liqError);
     expect(error.source).toBe(OneInchApproveErrorParser.errorSource);
-    expect(error.devMsg.data).toBe(null);
+    expect(error.devMsg.data).toEqual({});
     expect(error.rawError).toBe(validError);
   });
 
