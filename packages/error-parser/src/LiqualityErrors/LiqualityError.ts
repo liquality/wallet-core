@@ -12,10 +12,12 @@ export abstract class LiqualityError<Context extends ObjectLiteral = ObjectLiter
   devMsg: { desc: string; data: any };
   rawError: any;
   data: Context | { errorId: string };
+  reported: boolean;
 
   constructor(name: string, data?: Context) {
     super();
     this.name = name;
+    this.reported = false;
     this.setKeys(data);
     if (!data) data = {} as Context;
     this.data = { ...data, errorId: randomBytes(ERROR_ID_LENGTH).toString('hex') };
