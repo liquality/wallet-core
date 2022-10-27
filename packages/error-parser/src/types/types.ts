@@ -10,4 +10,18 @@ export interface UserErrorMessage {
   suggestions: Array<string>;
 }
 
-export type ObjectLiteral = { [key: string]: any };
+type JSONArray = Array<JSONValue>;
+type JSONValue = string | number | boolean | JSONObject | JSONArray;
+export type JSONObject = { [key: string]: JSONValue };
+
+export type LiqualityErrorJSON = {
+  name: string;
+  source: string;
+  causeKey: string;
+  suggestionKey: string;
+  devMsg: { desc: string; data: JSONObject };
+  rawError: any;
+  data: JSONObject | { errorId: string };
+  reported: boolean;
+  stack: string;
+};

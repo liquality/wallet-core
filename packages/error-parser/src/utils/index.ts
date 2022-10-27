@@ -1,12 +1,12 @@
 import { CUSTOM_ERRORS, InternalError, LiqualityError } from '../LiqualityErrors';
 import { reportLiqualityError } from '../reporters';
-import { ObjectLiteral } from '../types/types';
+import { LiqualityErrorJSON } from '../types/types';
 
 export function isLiqualityErrorString(error: string): boolean {
   return error.startsWith(LIQUALITY_ERROR_STRING_STARTER);
 }
 
-export function liqualityErrorStringToJson(error: string): ObjectLiteral {
+export function liqualityErrorStringToJson(error: string): LiqualityErrorJSON {
   return JSON.parse(error.replace(LIQUALITY_ERROR_STRING_STARTER, ''));
 }
 
