@@ -1,3 +1,4 @@
+import { SUGGESTION_DELIMETER } from 'src/LiqualityErrors/translations';
 import { CUSTOM_ERRORS, InternalError, LiqualityError } from '../LiqualityErrors';
 import { reportLiqualityError } from '../reporters';
 import { LiqualityErrorJSON } from '../types/types';
@@ -22,4 +23,9 @@ export function errorToLiqualityErrorString(error: any): string {
   if (error instanceof LiqualityError) return error.toString();
   else if (error instanceof Error && isLiqualityErrorString(error.message)) return error.message;
   else return createInternalError(CUSTOM_ERRORS.Unknown(error)).toString();
+}
+
+export function splitSuggestions(suggestionsString: string): { prelude: string; actions: Array<string> } {
+  const suggestionsArray = suggestionsString.split(SUGGESTION_DELIMETER);
+  return { prelude: suggestionsArray.shift() as string, actions: suggestionsArray };
 }
