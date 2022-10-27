@@ -1,4 +1,4 @@
-import { LiqualityErrorJSON } from '../types/types';
+import { LiqualityErrorJSON } from '../types';
 import { LiqualityError } from '../LiqualityErrors/LiqualityError';
 
 export function reportToConsole(error: LiqualityError | LiqualityErrorJSON) {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import randomBytes = require('randombytes');
-import { JSONObject } from '../types/types';
+import { JSONObject } from '../types';
 import { ERROR_ID_LENGTH } from '../config';
 import { CAUSE, PLACEHOLDER, PLAIN, SUGGESTIONS } from './translations/translationKeys';
 import { LIQUALITY_ERROR_STRING_STARTER } from '../utils';

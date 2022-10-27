@@ -1,7 +1,7 @@
 import { InternalError, CUSTOM_ERRORS } from '../LiqualityErrors';
 import { isLiqualityErrorString, liqualityErrorStringToJson } from '../utils';
 import { LiqualityError } from '../LiqualityErrors/LiqualityError';
-import { LiqualityErrorJSON, ReportTargets } from '../types/types';
+import { LiqualityErrorJSON, ReportTargets } from '../types';
 import { reportToConsole } from './console';
 import { reportToDiscord } from './discord';
 
