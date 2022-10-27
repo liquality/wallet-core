@@ -1,5 +1,43 @@
 # @liquality/wallet-core
 
+## 1.31.3
+
+### Patch Changes
+
+- 2173cb9: feat: bump wallet core version with slippage % debridge
+
+## 1.31.2
+
+### Patch Changes
+
+- 2ecbc28: test: bump versions with toggle fix
+- Updated dependencies [2ecbc28]
+  - @liquality/cryptoassets@1.16.2
+
+## 1.31.1
+
+### Patch Changes
+
+- 0dd1f89: test: bump versions from master
+- Updated dependencies [0dd1f89]
+  - @liquality/cryptoassets@1.16.1
+
+## 1.31.0
+
+### Patch Changes
+
+- 17378a0: test: bump versions for 0.76.0 release
+- Updated dependencies [17378a0]
+  - @liquality/cryptoassets@1.16.0
+
+## 1.31.0-next.5
+
+### Patch Changes
+
+- 840dbd8: chore: bump versions after lifi integration
+- Updated dependencies [840dbd8]
+  - @liquality/cryptoassets@1.16.0-next.5
+
 ## 1.31.0-next.4
 
 ### Minor Changes

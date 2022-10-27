@@ -1,5 +1,29 @@
 # @liquality/cryptoassets
 
+## 1.16.2
+
+### Patch Changes
+
+- 2ecbc28: test: bump versions with toggle fix
+
+## 1.16.1
+
+### Patch Changes
+
+- 0dd1f89: test: bump versions from master
+
+## 1.16.0
+
+### Patch Changes
+
+- 17378a0: test: bump versions for 0.76.0 release
+
+## 1.16.0-next.5
+
+### Patch Changes
+
+- 840dbd8: chore: bump versions after lifi integration
+
 ## 1.16.0-next.4
 
 ### Minor Changes
