@@ -3,4 +3,4 @@
 '@liquality/wallet-core': patch
 ---
 
-Fix: fix bug with valid address checker for solana
+fix: fix bug with valid address checker for solana
