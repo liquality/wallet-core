@@ -12,11 +12,11 @@
   "InsufficientFundsError": {
     "placeholder": {
       "cause": "Insufficient funds: Sorry, You have %{availAmt}%{currency} but you need %{neededAmt}%{currency}",
-      "suggestions": "Suggestions,,,,Kindly add more funds to cover the transaction request"
+      "suggestions": ",,,,Kindly add more funds to cover the transaction request"
     },
     "plain": {
       "cause": "Insufficient funds",
-      "suggestions": "Suggestions,,,,Kindly add more funds to cover the transaction request"
+      "suggestions": ",,,,Kindly add more funds to cover the transaction request"
     }
   },
   "InsufficientGasFeeError": {
@@ -58,7 +58,7 @@
   "LowSpeedupFeeError": {
     "plain": {
       "cause": "Replacement Fee to speed up transaction is less than or equals the old fee.",
-      "suggestions": "Suggestions,,,,Try Speeding up transaction with a higher fee"
+      "suggestions": ",,,,Try Speeding up transaction with a higher fee"
     }
   },
   "PairNotSupportedError": {
@@ -76,7 +76,7 @@
       "cause": "Sorry, something went wrong in a third party service we use in processing this transaction",
       "suggestions": {
         "swap": "There is an unknown issue with the provider's service,,,,Please select a different swap provider,,,,try again at a later time.",
-        "unknown": "Suggestions,,,,Kindly try again at a later time while the provider fixes this issue"
+        "unknown": ",,,,Kindly try again at a later time while the provider fixes this issue"
       }
     }
   },
@@ -89,85 +89,85 @@
   "SlippageTooHighError": {
     "placeholder": {
       "cause": "Slippage is too high. You expect %{expectedAmount} but you are going to receive %{actualAmount} %{currency}",
-      "suggestions": "Suggestions,,,,Please try again (Slippage is too high)"
+      "suggestions": ",,,,Please try again (Slippage is too high)"
     },
     "plain": {
       "cause": "Slippage is too high",
-      "suggestions": "Suggestions,,,,Please try again (Slippage is too high)"
+      "suggestions": ",,,,Please try again (Slippage is too high)"
     }
   },
   "QuoteExpiredError": {
     "plain": {
       "cause": "The quote has expired",
-      "suggestions": "Suggestions,,,,Please try again (the quote has expired)"
+      "suggestions": ",,,,Please try again (the quote has expired)"
     }
   },
   "WalletLockedError": {
     "plain": {
       "cause": "Wallet is locked",
-      "suggestions": "Suggestions,,,,please unlock the wallet first"
+      "suggestions": ",,,,please unlock the wallet first"
     }
   },
   "NoActiveWalletError": {
     "plain": {
       "cause": "No active wallet found",
-      "suggestions": "Suggestions,,,,Create a wallet first"
+      "suggestions": ",,,,Create a wallet first"
     }
   },
   "LedgerDeviceConnectionError": {
     "plain": {
       "cause": "Ledger device not connected or not unlocked",
-      "suggestions": "Suggestions,,,,Please verify if your Ledger is connected and unlocked"
+      "suggestions": ",,,,Please verify if your Ledger is connected and unlocked"
     }
   },
   "PasswordError": {
     "plain": {
       "cause": "Incorrect Password",
-      "suggestions": "Suggestions,,,,Please Try Again (Password should have 8 or more characters)"
+      "suggestions": ",,,,Please Try Again (Password should have 8 or more characters)"
     }
   },
   "NoTipError": {
     "plain": {
       "cause": "Miner tip must be greater than 0 GWEI",
-      "suggestions": "Suggestions,,,,Please set up the miner tip greater than 0 GWEI"
+      "suggestions": ",,,,Please set up the miner tip greater than 0 GWEI"
     }
   },
   "VeryLowTipError": {
     "plain": {
       "cause": "Miner tip is extremely low and the transaction could fail",
-      "suggestions": "Suggestions,,,,Please use the 'Low' option. (Miner tip is extremely low)"
+      "suggestions": ",,,,Please use the 'Low' option. (Miner tip is extremely low)"
     }
   },
   "VeryHighTipWarning": {
     "plain": {
       "cause": "Miner tip is higher than necessary. You may pay more than needed",
-      "suggestions": "Suggestions,,,,Please use the 'High' option. (Miner tip was higher than necessary)"
+      "suggestions": ",,,,Please use the 'High' option. (Miner tip was higher than necessary)"
     }
   },
   "NoMaxFeeError": {
     "plain": {
       "cause": "Max fee must be greater than 0 GWEI",
-      "suggestions": "Suggestions,,,,Please set the Max fee to a number higher than '0'"
+      "suggestions": ",,,,Please set the Max fee to a number higher than '0'"
     }
   },
   "VeryLowMaxFeeError": {
     "placeholder": {
       "cause": "Max fee too low. Must be > %{maxFeePerGas} GWEI (Base Fee plus Miner Tip)",
-      "suggestions": "Suggestions,,,,Please review the 'Max Fee' value set. (The fee must be set higher)"
+      "suggestions": ",,,,Please review the 'Max Fee' value set. (The fee must be set higher)"
     },
     "plain": {
       "cause": "Max fee too low. Must be > (Base Fee plus Miner Tip)",
-      "suggestions": "Suggestions,,,,Please review the 'Max Fee' value set. (The fee must be set higher)"
+      "suggestions": ",,,,Please review the 'Max Fee' value set. (The fee must be set higher)"
     }
   },
   "VeryHighMaxFeeWarning": {
     "placeholder": {
       "cause": "Max fee is higher than necessary %{maxFeePerGas} GWEI (Base Fee plus Miner Tip)",
-      "suggestions": "Suggestions,,,,Please review 'Max Fee', as it is higher than necessary"
+      "suggestions": ",,,,Please review 'Max Fee', as it is higher than necessary"
     },
     "plain": {
       "cause": "Max fee is higher than necessary",
-      "suggestions": "Suggestions,,,,Please review 'Max Fee', as it is higher than necessary"
+      "suggestions": ",,,,Please review 'Max Fee', as it is higher than necessary"
     }
   }
 }
