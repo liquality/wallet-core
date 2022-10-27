@@ -9,7 +9,7 @@ export abstract class LiqualityError<Context extends JSONObject = JSONObject> ex
   source: string;
   causeKey: string;
   suggestionKey: string;
-  devMsg: { desc: string; data: any };
+  devMsg: { desc: string; data: JSONObject };
   rawError: any;
   data: Context | { errorId: string };
   reported: boolean;
@@ -34,7 +34,10 @@ export abstract class LiqualityError<Context extends JSONObject = JSONObject> ex
   }
 
   toString(): string {
-    return `${LIQUALITY_ERROR_STRING_STARTER}${JSON.stringify(this)}`;
+    const jsonifiedErrorWithoutStack = JSON.parse(JSON.stringify(this));
+    const jsonifiedErrorWithStack = { ...jsonifiedErrorWithoutStack, stack: this.stack };
+
+    return `${LIQUALITY_ERROR_STRING_STARTER}${JSON.stringify(jsonifiedErrorWithStack)}`;
   }
 }
 
