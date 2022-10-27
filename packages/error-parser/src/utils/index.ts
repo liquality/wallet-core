@@ -1,7 +1,7 @@
-import { SUGGESTION_DELIMETER } from 'src/LiqualityErrors/translations';
+import { SUGGESTION_DELIMETER } from '../LiqualityErrors/translations';
 import { CUSTOM_ERRORS, InternalError, LiqualityError } from '../LiqualityErrors';
 import { reportLiqualityError } from '../reporters';
-import { LiqualityErrorJSON } from '../types/types';
+import { LiqualityErrorJSON } from '../types';
 
 export function isLiqualityErrorString(error: string): boolean {
   return error.startsWith(LIQUALITY_ERROR_STRING_STARTER);

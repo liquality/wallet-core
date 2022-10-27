@@ -1,6 +1,6 @@
 import { LiqualityError } from '../LiqualityErrors/LiqualityError';
 import { HttpClient } from '@chainify/client';
-import { LiqualityErrorJSON } from 'src/types/types';
+import { LiqualityErrorJSON } from '../types';
 
 export const reportToDiscord = async (error: LiqualityError | LiqualityErrorJSON) => {
   new HttpClient({})
