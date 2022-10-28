@@ -3,5 +3,4 @@ export class UserDeclinedError extends LiqualityError {
   constructor() {
     super(UserDeclinedError.name);
   }
-
 }

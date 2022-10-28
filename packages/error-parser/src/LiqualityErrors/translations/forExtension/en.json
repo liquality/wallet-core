@@ -175,5 +175,21 @@
       "cause": "Token with this symbol exists",
       "suggestions": ""
     }
+  },
+  "UserDeclinedError": {
+    "plain": {
+      "cause": "Requested Permission was declined by you",
+      "suggestions": ""
+    }
+  },
+  "DappNotConnectedError": {
+    "placeholder": {
+      "cause": "You are trying to use the Dapp, %{dapp}, on chain, %{chain} but your wallet isn't connected to it",
+      "suggestions": "Please Try the following,,,,change the default chain on your wallet to correct one,,,,if problem continues, start allover and use the connect button to connect dapp again"
+    },
+    "plain": {
+      "cause": "The Dapp you are trying to use is either not connected or connected to the wrong chain on your wallet",
+      "suggestions": "Please Try the following,,,,change the default chain on your wallet to correct one,,,,if problem continues, start allover and use the connect button to connect dapp again"
+    }
   }
 }

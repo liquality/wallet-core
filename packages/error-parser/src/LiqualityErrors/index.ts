@@ -22,5 +22,7 @@ export { NoMaxFeeError } from './NoMaxFeeError';
 export { VeryLowMaxFeeError } from './VeryLowMaxFeeError';
 export { VeryHighMaxFeeWarning } from './VeryHighMaxFeeWarning';
 export { DuplicateTokenSymbolError } from './DuplicateTokenSymbolError';
+export { UserDeclinedError } from './UserDeclinedError';
+export { DappNotConnectedError } from './DappNotConnectedError';
 
 export { CUSTOM_ERRORS } from './customErrors';
