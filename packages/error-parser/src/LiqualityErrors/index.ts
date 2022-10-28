@@ -21,5 +21,6 @@ export { VeryHighTipWarning } from './VeryHighTipWarning';
 export { NoMaxFeeError } from './NoMaxFeeError';
 export { VeryLowMaxFeeError } from './VeryLowMaxFeeError';
 export { VeryHighMaxFeeWarning } from './VeryHighMaxFeeWarning';
+export { DuplicateTokenSymbolError } from './DuplicateTokenSymbolError';
 
 export { CUSTOM_ERRORS } from './customErrors';

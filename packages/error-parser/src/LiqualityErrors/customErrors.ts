@@ -71,7 +71,6 @@ export const CUSTOM_ERRORS = {
     ThorchainMemoAction: (memoAction: string) => `Unknown memo action ${memoAction}`,
     ChainGasFeeMisMatch: 'suggestedGasFee does not match chain!',
     MessageType: (type: string) => `Received an invalid message type: ${type}`,
-    DuplicateTokenSymbol: 'Token with this symbol exists',
     Json: (err: any) => `Invalid Json: ${err}`,
   },
   Unsupported: {

@@ -3,5 +3,4 @@ export class DuplicateTokenSymbolError extends LiqualityError {
   constructor() {
     super(DuplicateTokenSymbolError.name);
   }
-
 }

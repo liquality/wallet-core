@@ -169,5 +169,11 @@
       "cause": "Max fee is higher than necessary",
       "suggestions": ",,,,Please review 'Max Fee', as it is higher than necessary"
     }
+  },
+  "DuplicateTokenSymbolError": {
+    "plain": {
+      "cause": "Token with this symbol exists",
+      "suggestions": ""
+    }
   }
 }
