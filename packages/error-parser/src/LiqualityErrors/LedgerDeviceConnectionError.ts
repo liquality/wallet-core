@@ -3,4 +3,8 @@ export class LedgerDeviceConnectionError extends LiqualityError {
   constructor() {
     super(LedgerDeviceConnectionError.name);
   }
+
+  setTranslationKey() {
+    this.translationKey = ""
+   }
 }

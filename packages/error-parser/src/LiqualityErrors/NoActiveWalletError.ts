@@ -3,4 +3,8 @@ export class NoActiveWalletError extends LiqualityError {
   constructor() {
     super(NoActiveWalletError.name);
   }
+
+  setTranslationKey() {
+    this.translationKey = ""
+   }
 }

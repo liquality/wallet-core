@@ -3,6 +3,10 @@ export class HighInputAmountError extends LiqualityError<HighInputAmountErrorCon
   constructor(data?: HighInputAmountErrorContext) {
     super(HighInputAmountError.name, data);
   }
+
+  setTranslationKey() {
+    this.translationKey = ""
+  }
 }
 
 export type HighInputAmountErrorContext = { expectedMaximum: string; assetCode: string };

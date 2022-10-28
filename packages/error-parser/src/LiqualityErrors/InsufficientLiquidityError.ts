@@ -3,6 +3,10 @@ export class InsufficientLiquidityError extends LiqualityError<InsufficientLiqui
   constructor(data?: InsufficientLiquidityErrorContext) {
     super(InsufficientLiquidityError.name, data);
   }
+
+  setTranslationKey() {
+    this.translationKey = ""
+  }
 }
 
 export type InsufficientLiquidityErrorContext = { from: string; to: string; amount: string };
