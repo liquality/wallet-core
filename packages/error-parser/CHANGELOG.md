@@ -1,5 +1,14 @@
 # @liquality/error-parser
 
+## 1.1.4-next.0
+
+### Patch Changes
+
+- test: bump versions
+- Updated dependencies
+  - @liquality/cryptoassets@1.16.3-next.0
+  - @liquality/wallet-core@1.31.4-next.0
+
 ## 1.1.3
 
 ### Patch Changes

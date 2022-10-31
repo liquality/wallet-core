@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.16.3-next.0
+
+### Patch Changes
+
+- test: bump versions
+
 ## 1.16.2
 
 ### Patch Changes

@@ -1,6 +1,7 @@
 ---
 '@liquality/cryptoassets': patch
+'@liquality/error-parser': patch
 '@liquality/wallet-core': patch
 ---
 
-fix: fix bug with valid address checker for solana
+test: bump pre release versions
