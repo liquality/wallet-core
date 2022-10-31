@@ -4,4 +4,4 @@
 '@liquality/wallet-core': patch
 ---
 
-test: bump pre release versions
+test: bump versions to next
