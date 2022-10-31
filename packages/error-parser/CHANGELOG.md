@@ -1,5 +1,14 @@
 # @liquality/error-parser
 
+## 1.1.4-next.1
+
+### Patch Changes
+
+- a156f8e: test: bump versions to next
+- Updated dependencies [a156f8e]
+  - @liquality/cryptoassets@1.16.3-next.1
+  - @liquality/wallet-core@1.31.4-next.1
+
 ## 1.1.4-next.0
 
 ### Patch Changes

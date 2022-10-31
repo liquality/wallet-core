@@ -6,5 +6,7 @@
     "@liquality/error-parser": "1.1.4-next.0",
     "@liquality/wallet-core": "1.31.4-next.0"
   },
-  "changesets": []
+  "changesets": [
+    "popular-berries-collect"
+  ]
 }
