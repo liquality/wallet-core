@@ -1,5 +1,14 @@
 # @liquality/error-parser
 
+## 1.1.4-next.2
+
+### Patch Changes
+
+- 3c309e1: fix: covalent api key
+- Updated dependencies [3c309e1]
+  - @liquality/cryptoassets@1.16.3-next.2
+  - @liquality/wallet-core@1.31.4-next.2
+
 ## 1.1.4-next.1
 
 ### Patch Changes
