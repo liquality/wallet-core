@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 1.16.3-next.2
+
+### Patch Changes
+
+- 3c309e1: fix: covalent api key
+
 ## 1.16.3-next.1
 
 ### Patch Changes
