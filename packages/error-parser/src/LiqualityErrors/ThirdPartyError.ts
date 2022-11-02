@@ -1,17 +1,17 @@
 import { LiqualityError, UserActivity } from './LiqualityError';
-import { CAUSE, PLAIN, SUGGESTIONS, SWAP_ACTIVITY, UNKNOWN_ACTIVITY } from './translations/translationKeys';
+import { PLAIN, SWAP_ACTIVITY, UNKNOWN_ACTIVITY } from './translations/translationKeys';
 export class ThirdPartyError extends LiqualityError<ThirdPartyErrorContext> {
   constructor(data?: ThirdPartyErrorContext) {
     super(ThirdPartyError.name, data);
   }
 
   setKeys(data?: ThirdPartyErrorContext): void {
-    this.causeKey = `${this.name}.${PLAIN}.${CAUSE}`;
+    this.translationKey = `${this.name}.${PLAIN}`;
 
     if (data?.activity === UserActivity.SWAP) {
-      this.suggestionKey = `${this.name}.${PLAIN}.${SUGGESTIONS}.${SWAP_ACTIVITY}`;
+      this.translationKey = `${this.name}.${PLAIN}.${SWAP_ACTIVITY}`;
     } else {
-      this.suggestionKey = `${this.name}.${PLAIN}.${SUGGESTIONS}.${UNKNOWN_ACTIVITY}`;
+      this.translationKey = `${this.name}.${PLAIN}.${UNKNOWN_ACTIVITY}`;
     }
   }
 }

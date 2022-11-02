@@ -2,13 +2,12 @@
 import randomBytes = require('randombytes');
 import { JSONObject } from '../types';
 import { ERROR_ID_LENGTH } from '../config';
-import { CAUSE, PLACEHOLDER, PLAIN, SUGGESTIONS } from './translations/translationKeys';
+import { PLACEHOLDER, PLAIN } from './translations/translationKeys';
 import { LIQUALITY_ERROR_STRING_STARTER } from '../utils';
 
 export abstract class LiqualityError<Context extends JSONObject = JSONObject> extends Error {
   source: string;
-  causeKey: string;
-  suggestionKey: string;
+  translationKey: string;
   devMsg: { desc: string; data: JSONObject };
   rawError: any;
   data: Context | { errorId: string };
@@ -25,11 +24,9 @@ export abstract class LiqualityError<Context extends JSONObject = JSONObject> ex
 
   setKeys(data?: Context) {
     if (data) {
-      this.causeKey = `${this.name}.${PLACEHOLDER}.${CAUSE}`;
-      this.suggestionKey = `${this.name}.${PLACEHOLDER}.${SUGGESTIONS}`;
+      this.translationKey = `${this.name}.${PLACEHOLDER}`;
     } else {
-      this.causeKey = `${this.name}.${PLAIN}.${CAUSE}`;
-      this.suggestionKey = `${this.name}.${PLAIN}.${SUGGESTIONS}`;
+      this.translationKey = `${this.name}.${PLAIN}`;
     }
   }
 
