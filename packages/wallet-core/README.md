@@ -70,7 +70,7 @@ See `WalletOptions` in [types](src/types.ts)
 
 ## Examples
 
-- [Add Custom Token](packages/wallet-core/src/store/actions/addCustomToken.test.ts)
+- [Add Custom Token](https://github.com/liquality/wallet-core/blob/develop/packages/wallet-core/src/store/actions/addCustomToken.test.ts)
 - [Export Private Key](packages/wallet-core/src/store/actions/exportPrivateKey.test.ts)
 - [Send Transaction](packages/wallet-core/src/store/actions/sendTransaction.test.ts)
 - [Update Fees](packages/wallet-core/src/store/actions/updateFees.test.ts)
