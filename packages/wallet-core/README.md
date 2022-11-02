@@ -70,11 +70,11 @@ See `WalletOptions` in [types](src/types.ts)
 
 ## Examples
 
-- [Add Custom Token](src/store/actions/addCustomToken.test.ts)
-- [Export Private Key](src/store/actions/exportPrivateKey.test.ts)
-- [Send Transaction](src/store/actions/sendTransaction.test.ts)
-- [Update Fees](src/store/actions/updateFees.test.ts)
-- [Update Balance](src/store/actions/updateBalances.test.ts)
+- [Add Custom Token](packages/wallet-core/src/store/actions/addCustomToken.test.ts)
+- [Export Private Key](packages/wallet-core/src/store/actions/exportPrivateKey.test.ts)
+- [Send Transaction](packages/wallet-core/src/store/actions/sendTransaction.test.ts)
+- [Update Fees](packages/wallet-core/src/store/actions/updateFees.test.ts)
+- [Update Balance](packages/wallet-core/src/store/actions/updateBalances.test.ts)
 
 ## How to run tests
 
