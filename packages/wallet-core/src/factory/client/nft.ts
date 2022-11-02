@@ -29,7 +29,7 @@ export function getNftProvider(
     case NftProviderType.Covalent:
       return new CovalentNftProvider(walletProvider, {
         url: 'https://api.covalenthq.com/v1',
-        apiKey: 'ckey_e26519be33bb4587a8145b2df06',
+        apiKey: 'ckey_d87425e55bac4d78aa8ac902a34',
       });
   }
 }
