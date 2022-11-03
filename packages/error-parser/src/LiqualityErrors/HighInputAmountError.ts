@@ -5,7 +5,7 @@ export class HighInputAmountError extends LiqualityError<HighInputAmountErrorCon
   }
 
   setTranslationKey() {
-    this.translationKey = ""
+    this.translationKey = '';
   }
 }
 

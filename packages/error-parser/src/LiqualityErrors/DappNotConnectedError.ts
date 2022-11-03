@@ -4,6 +4,9 @@ export class DappNotConnectedError extends LiqualityError<DappNotConnectedErrorC
   constructor(data?: DappNotConnectedErrorContext) {
     super(DappNotConnectedError.name, data);
   }
+  setTranslationKey() {
+    this.translationKey = '';
+  }
 }
 
 export type DappNotConnectedErrorContext = { dapp: string; chain: string };

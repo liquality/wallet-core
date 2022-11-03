@@ -5,6 +5,6 @@ export class NoActiveWalletError extends LiqualityError {
   }
 
   setTranslationKey() {
-    this.translationKey = ""
-   }
+    this.translationKey = '';
+  }
 }

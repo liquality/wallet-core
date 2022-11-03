@@ -5,7 +5,7 @@ export class InsufficientLiquidityError extends LiqualityError<InsufficientLiqui
   }
 
   setTranslationKey() {
-    this.translationKey = ""
+    this.translationKey = '';
   }
 }
 

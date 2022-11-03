@@ -5,6 +5,6 @@ export class LedgerDeviceConnectionError extends LiqualityError {
   }
 
   setTranslationKey() {
-    this.translationKey = ""
-   }
+    this.translationKey = '';
+  }
 }
