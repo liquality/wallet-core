@@ -1,5 +1,6 @@
 import { BitcoinTypes } from '@chainify/bitcoin';
 import { ChainId, getChain } from '@liquality/cryptoassets';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import { AccountType, Network } from '../store/types';
 import { BTC_ADDRESS_TYPE_TO_PREFIX } from '../utils/address';
 import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
@@ -18,7 +19,7 @@ export const getDerivationPath = (chainId: ChainId, network: Network, index: num
     if (chain.isEVM) {
       return getEVMBasedDerivationPath(chain.network.coinType, index, accountType);
     } else {
-      throw new Error(`Derivation path creator for chain ${chainId} not implemented`);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Chain.DerivationPath(chainId));
     }
   }
 
@@ -67,7 +68,7 @@ const getBitcoinDerivationPath = (accountType: AccountType, coinType: string, in
   if (accountType.includes('ledger')) {
     const option = LEDGER_BITCOIN_OPTIONS.find((o) => o.name === accountType);
     if (!option) {
-      throw new Error(`Option not found for account type ${accountType}`);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.AccountTypeOption(accountType));
     }
     const { addressType } = option;
     return `${BTC_ADDRESS_TYPE_TO_PREFIX[addressType]}'/${coinType}'/${index}'`;

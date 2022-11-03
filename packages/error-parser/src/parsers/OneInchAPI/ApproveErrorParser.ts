@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LiqualityError } from '../../LiqualityErrors';
+import { LiqualityError, UserActivity } from '../../LiqualityErrors/LiqualityError';
 import { ErrorParser } from '../ErrorParser';
-import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
-import InternalError from '../../LiqualityErrors/InternalError';
-import UnknownError from '../../LiqualityErrors/UnknownError';
 import { oneInchInternalErrReason, OneInchError, ONE_INCH_ERRORS, oneInchApproveSourceName } from '.';
+import { InternalError, ThirdPartyError, UnknownError } from '../../LiqualityErrors';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export class OneInchApproveErrorParser extends ErrorParser<OneInchError, null> {
@@ -21,7 +19,7 @@ export class OneInchApproveErrorParser extends ErrorParser<OneInchError, null> {
       const errorDesc = error?.description;
       switch (true) {
         case ONE_INCH_ERRORS.INTERNAL_ERROR.test(errorDesc):
-          liqError = new ThirdPartyError();
+          liqError = new ThirdPartyError({ activity: UserActivity.SWAP });
           devDesc = oneInchInternalErrReason();
           break;
         case ONE_INCH_ERRORS.INVALID_TOKEN_ADDRESS.test(errorDesc):
@@ -34,8 +32,8 @@ export class OneInchApproveErrorParser extends ErrorParser<OneInchError, null> {
     }
 
     liqError.source = OneInchApproveErrorParser.errorSource;
-    liqError.devMsg = { desc: devDesc, data: null };
-    liqError.rawError = error as never;
+    liqError.devMsg = { desc: devDesc, data: {} };
+    liqError.rawError = error;
 
     return liqError;
   }

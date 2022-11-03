@@ -2,6 +2,7 @@ import { Client } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Transaction, TxStatus } from '@chainify/types';
 import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import { CurrencyAmount, Fraction, Percent, Token, TradeType, WETH9 } from '@uniswap/sdk-core';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import UniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json';
@@ -30,6 +31,7 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 const SWAP_DEADLINE = 30 * 60; // 30 minutes
 
@@ -104,7 +106,7 @@ class UniswapSwapProvider extends SwapProvider {
   getChainId(asset: Asset, network: Network) {
     const chainId = cryptoassets[asset].chain;
     if (chainId !== ChainId.Ethereum) {
-      throw new Error('UniswapSwapProvider: chain not supported');
+      throw createInternalError(CUSTOM_ERRORS.Unsupported.Chain);
     }
     const chain = getChain(network, chainId);
     return Number(chain.network.chainId);
@@ -137,7 +139,7 @@ class UniswapSwapProvider extends SwapProvider {
     const token1 = [tokenA, tokenB].find((token) => token.address === token1Address);
 
     if (!token0 || !token1) {
-      throw new Error('UniswapSwapProvider: unable to calculate token0 token1');
+      throw createInternalError(CUSTOM_ERRORS.FailedAssert.UniswapTokenCalculation);
     }
     const pair = new Pair(
       CurrencyAmount.fromRawAmount(token0, reserves.reserve0.toString()),
@@ -310,13 +312,13 @@ class UniswapSwapProvider extends SwapProvider {
 
   async estimateFees({ network, walletId, asset, txType, quote, feePrices }: EstimateFeeRequest) {
     if (txType !== this.fromTxType) {
-      throw new Error(`Invalid tx type ${txType}`);
+      throw createInternalError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
     }
 
     const nativeAsset = getChain(network, cryptoassets[asset].chain).nativeAsset;
     const account = this.getAccount(quote.fromAccountId);
     if (!account) {
-      throw new Error(`UniswapSwapProvider: Account with id ${quote.fromAccountId} not found`);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Account(quote.fromAccountId));
     }
     const client = this.getClient(network, walletId, quote.from, account.id);
 
@@ -369,6 +371,7 @@ class UniswapSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
+
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
@@ -376,7 +379,7 @@ class UniswapSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -396,7 +399,7 @@ class UniswapSwapProvider extends SwapProvider {
         } as ActionStatus;
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }

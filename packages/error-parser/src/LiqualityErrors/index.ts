@@ -1,23 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import randomBytes = require('randombytes');
-import { ERROR_ID_LENGTH } from '../config';
-import { UserErrorMessage } from '../types/types';
+export { HighInputAmountError } from './HighInputAmountError';
+export { InsufficientFundsError } from './InsufficientFundsError';
+export { InsufficientGasFeeError } from './InsufficientGasFeeError';
+export { InsufficientInputAmountError } from './InsufficientInputAmountError';
+export { InsufficientLiquidityError } from './InsufficientLiquidityError';
+export { InternalError } from './InternalError';
+export { LedgerDeviceConnectionError } from './LedgerDeviceConnectionError';
+export { LiqualityError } from './LiqualityError';
+export { LowSpeedupFeeError } from './LowSpeedupFeeError';
+export { NoActiveWalletError } from './NoActiveWalletError';
+export { PairNotSupportedError } from './PairNotSupportedError';
+export { PasswordError } from './PasswordError';
+export { SlippageTooHighError } from './SlippageTooHighError';
+export { ThirdPartyError } from './ThirdPartyError';
+export { UnknownError } from './UnknownError';
+export { NoTipError } from './NoTipError';
+export { WalletLockedError } from './WalletLockedError';
+export { VeryLowTipError } from './VeryLowTipError';
+export { VeryHighTipWarning } from './VeryHighTipWarning';
+export { VeryLowMaxFeeError } from './VeryLowMaxFeeError';
+export { VeryHighMaxFeeWarning } from './VeryHighMaxFeeWarning';
+export { DuplicateTokenSymbolError } from './DuplicateTokenSymbolError';
+export { UserDeclinedError } from './UserDeclinedError';
+export { DappNotConnectedError } from './DappNotConnectedError';
 
-export abstract class LiqualityError extends Error {
-  source: string;
-  userMsg: UserErrorMessage;
-  devMsg: { desc: string; data: any };
-  rawError: never;
-
-  constructor() {
-    super();
-  }
-
-  abstract wrapUserErrorMessage(context?: any, lang?: string): void;
-
-  suggestContactSupport(): string {
-    return `If it persist, please contact support on discord with errorId: ${randomBytes(ERROR_ID_LENGTH).toString(
-      'hex'
-    )}`;
-  }
-}
+export { CUSTOM_ERRORS } from './customErrors';

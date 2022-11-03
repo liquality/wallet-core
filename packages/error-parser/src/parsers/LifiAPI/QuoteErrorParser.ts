@@ -1,22 +1,29 @@
-import { LifiQuoteRequest } from '@liquality/wallet-core/src/swaps/lifi/LifiSwapProvider';
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LiqualityError } from '../../LiqualityErrors';
+import { LiqualityError, UserActivity } from '../../LiqualityErrors/LiqualityError';
 import { ErrorParser } from '../ErrorParser';
-import PairNotSupported, { UserActivity } from '../../LiqualityErrors/PairNotSupportedError';
-import InternalError from '../../LiqualityErrors/InternalError';
-import UnknownError from '../../LiqualityErrors/UnknownError';
-import InsufficientInputAmountError from '../../LiqualityErrors/InsufficientInputAmountError';
-import HighInputAmountError from '../../LiqualityErrors/HighInputAmountError';
-import InsufficientLiquidityError from '../../LiqualityErrors/InsufficientLiquidityError';
-import ThirdPartyError from '../../LiqualityErrors/ThirdPartyError';
 
-import { LifiQuoteError, lifiQuoteErrorSource, LIFI_QUOTE_ERRORS, LIFI_ERROR_REASON, ToolErrorCode } from '.';
+import {
+  LifiQuoteError,
+  lifiQuoteErrorSource,
+  LIFI_QUOTE_ERRORS,
+  LIFI_ERROR_REASON,
+  ToolErrorCode,
+  LifiQuoteErrorParserDataType,
+} from '.';
+import {
+  HighInputAmountError,
+  InsufficientInputAmountError,
+  InsufficientLiquidityError,
+  InternalError,
+  PairNotSupportedError,
+  ThirdPartyError,
+  UnknownError,
+} from '../../LiqualityErrors';
 
-export class LifiQuoteErrorParser extends ErrorParser<LifiQuoteError, LifiQuoteRequest> {
+export class LifiQuoteErrorParser extends ErrorParser<LifiQuoteError, LifiQuoteErrorParserDataType> {
   public static readonly errorSource = lifiQuoteErrorSource;
 
-  protected _parseError(error: LifiQuoteError, data: LifiQuoteRequest): LiqualityError {
+  protected _parseError(error: LifiQuoteError, data: LifiQuoteErrorParserDataType): LiqualityError {
     let liqError: LiqualityError;
     let devDesc = '';
 
@@ -32,7 +39,7 @@ export class LifiQuoteErrorParser extends ErrorParser<LifiQuoteError, LifiQuoteR
           liqError = new InternalError();
           break;
         case LIFI_QUOTE_ERRORS.NoToolsCanCompleteTheAction.test(errorDesc):
-          liqError = new PairNotSupported({ activity: UserActivity.SWAP });
+          liqError = new PairNotSupportedError();
           break;
         case LIFI_QUOTE_ERRORS.NoQuoteFound.test(errorDesc): {
           const errorCodes = error.errors.map((toolError) => toolError.code);
@@ -70,7 +77,7 @@ export class LifiQuoteErrorParser extends ErrorParser<LifiQuoteError, LifiQuoteR
 
     liqError.source = LifiQuoteErrorParser.errorSource;
     liqError.devMsg = { desc: devDesc, data };
-    liqError.rawError = error as never;
+    liqError.rawError = error;
 
     return liqError;
   }

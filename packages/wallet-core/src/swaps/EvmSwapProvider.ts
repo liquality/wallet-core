@@ -3,6 +3,7 @@ import { EvmChainProvider, EvmTypes, Typechain } from '@chainify/evm';
 import { toEthereumTxRequest } from '@chainify/evm/dist/lib/utils';
 import { Transaction, TxStatus } from '@chainify/types';
 import { getChain } from '@liquality/cryptoassets';
+import { isTransactionNotFoundError } from '../utils/isTransactionNotFoundError';
 import * as ethers from 'ethers';
 import { SwapHistoryItem } from '../store/types';
 import { assetsAdapter } from '../utils/chainify';
@@ -109,9 +110,8 @@ export abstract class EvmSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') {
-        console.warn(e);
-      } else {
+      if (isTransactionNotFoundError(e)) console.warn(e);
+      else {
         throw e;
       }
     }

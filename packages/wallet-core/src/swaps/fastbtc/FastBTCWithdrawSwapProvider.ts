@@ -4,6 +4,7 @@ import { EvmChainProvider, EvmTypes, EvmWalletProvider } from '@chainify/evm';
 import { Transaction } from '@chainify/types';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import BN from 'bignumber.js';
 import * as ethers from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
@@ -24,6 +25,7 @@ import {
   SwapStatus,
 } from '../types';
 import { BitcoinTransferStatus, BRIDGE_CONTRACT_ABI } from './fastBtcBridgeContract';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 export interface FastBtcWithdrawSwapHistoryItem extends SwapHistoryItem {
   transferId: string;
@@ -204,14 +206,14 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
       if (tx && tx.confirmations && tx.confirmations > 0) {
         if (!tx.logs) {
-          throw new Error('FastBTC logs missing');
+          throw createInternalError(CUSTOM_ERRORS.NotFound.FastBTC.Logs);
         }
         const receipt = await client.chain.getProvider().getTransactionReceipt(swap.swapTxHash);
         const fastBtcBridge = this.getFastBtcBridge(client.chain.getProvider());
         const events = receipt.logs.map((log) => fastBtcBridge.interface.parseLog(log));
         const event = events.find((event) => event.name === 'NewBitcoinTransfer');
         if (!event) {
-          throw new Error('FastBTC NewBitcoinTransfer event not found');
+          throw createInternalError(CUSTOM_ERRORS.NotFound.FastBTC.NewBitcoinTransferEvent);
         }
         const transferId: string = event.args.transferId;
 
@@ -221,7 +223,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -283,7 +285,7 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }

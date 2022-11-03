@@ -1,5 +1,6 @@
 import { TxStatus } from '@chainify/types';
 import { ChainId, currencyToUnit, getNativeAssetCode, unitToCurrency } from '@liquality/cryptoassets';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import { Transaction } from '@solana/web3.js';
 import axios from 'axios';
 import BN, { BigNumber } from 'bignumber.js';
@@ -18,6 +19,7 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 const SOL_MINT_ADDRESS = 'So11111111111111111111111111111111111111112';
 export interface JupiterSwapHistoryItem extends SwapHistoryItem {
@@ -168,7 +170,7 @@ class JupiterSwapProvider extends SwapProvider {
     network,
   }: EstimateFeeRequest<string, JupiterSwapHistoryItem>): Promise<EstimateFeeResponse | null> {
     if (txType != this.fromTxType) {
-      throw new Error(`Invalid tx type ${txType}`);
+      throw createInternalError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
     }
 
     const nativeAsset = getNativeAssetCode(network, cryptoassets[asset].chain);
@@ -222,7 +224,7 @@ class JupiterSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }

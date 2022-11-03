@@ -1,22 +1,7 @@
-import { LiqualityError } from '.';
-class InternalError extends LiqualityError {
-  public readonly name = 'InternalError';
-
-  constructor(lang?: string) {
-    super();
-    this.wrapUserErrorMessage(lang);
-  }
-
-  wrapUserErrorMessage(lang?: string): void {
-    switch (lang) {
-      default:
-        this.userMsg = {
-          cause: 'Sorry, something went wrong while processing this transaction.',
-          suggestions: ['Try again at a later time', this.suggestContactSupport()],
-        };
-        break;
-    }
+import { LiqualityError } from './LiqualityError';
+export class InternalError extends LiqualityError {
+  constructor(rawError?: any) {
+    super(InternalError.name);
+    if (rawError) this.rawError = rawError;
   }
 }
-
-export default InternalError;

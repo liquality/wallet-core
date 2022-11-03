@@ -1,4 +1,5 @@
 import { TxStatus } from '@chainify/types';
+import { isTransactionNotFoundError } from '../../../utils/isTransactionNotFoundError';
 import { ActionContext, rootActionContext } from '../..';
 import { Network, NFTSendHistoryItem, SendStatus, WalletId } from '../../types';
 import { withInterval } from './utils';
@@ -33,7 +34,7 @@ async function waitForConfirmations(
       };
     }
   } catch (e) {
-    if (e.name === 'TxNotFoundError') console.warn(e);
+    if (isTransactionNotFoundError(e)) console.warn(e);
     else throw e;
   }
 }

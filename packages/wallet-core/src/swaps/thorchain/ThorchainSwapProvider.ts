@@ -2,6 +2,7 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/
 import { Client, HttpClient } from '@chainify/client';
 import { Transaction } from '@chainify/types';
 import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import { getDoubleSwapOutput, getSwapMemo, getValueOfAsset1InAsset2 } from '@thorchain/asgardex-util';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import { assetFromString, BaseAmount, baseAmount, baseToAsset } from '@xchainjs/xchain-util';
@@ -28,6 +29,7 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 // Pool balances are denominated with 8 decimals
 const THORCHAIN_DECIMAL = 8;
@@ -193,14 +195,14 @@ class ThorchainSwapProvider extends SwapProvider {
   async getInboundAddress(chain: string) {
     const inboundAddresses = await this._getInboundAddresses();
     const inboundAddress = inboundAddresses.find((inbound) => inbound.chain === chain);
-    if (!inboundAddress) throw new Error(`ThorchainSwapProvider: Inbound address for chain ${chain} not found`);
+    if (!inboundAddress) throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.InboundAddress(chain));
     return inboundAddress;
   }
 
   async getRouterAddress(chain: string) {
     const inboundAddress = await this.getInboundAddress(chain);
     const router = inboundAddress.router;
-    if (!router) throw new Error(`ThorchainSwapProvider: Router address for chain ${chain} not found`);
+    if (!router) throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.RouterAddress(chain));
     return router;
   }
 
@@ -243,14 +245,14 @@ class ThorchainSwapProvider extends SwapProvider {
     const swapOutput = getDoubleSwapOutput(inputAmount, fromPool, toPool);
 
     const baseNetworkFee = await this.networkFees(to, network);
-    if (!baseNetworkFee) throw new Error(`ThorchainSwapProvider: baseNetworkFee not found while getting quote.`);
+    if (!baseNetworkFee) throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.BaseNetworkFee);
     let networkFee = convertBaseAmountDecimal(baseNetworkFee, 8);
 
     if (isERC20(to)) {
       // in case of ERC20
       const poolData = pools.find((pool) => pool.asset === 'ETH.ETH');
       if (!poolData) {
-        throw new Error(`ThorchainSwapProvider: pool data for ETH.ETH not found`);
+        throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.PoolData);
       }
       const ethPool = toThorchainAsset(from) !== 'ETH.ETH' ? getPool(poolData) : fromPool;
       networkFee = getValueOfAsset1InAsset2(networkFee, ethPool, toPool);
@@ -324,7 +326,7 @@ class ThorchainSwapProvider extends SwapProvider {
 
     const fromThorchainAsset = assetFromString(toThorchainAsset(swap.from));
     if (!fromThorchainAsset) {
-      throw new Error('Thorchain asset does not exist');
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
     }
     const routerAddress = this.getRouterAddress(fromThorchainAsset.chain);
 
@@ -372,7 +374,7 @@ class ThorchainSwapProvider extends SwapProvider {
 
     const fromThorchainAsset = assetFromString(toThorchainAsset(quote.from));
     if (!fromThorchainAsset) {
-      throw new Error('Thorchain asset does not exist');
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
     }
     const to = (await this.getInboundAddress(fromThorchainAsset.chain)).address; // Will be `router` for ETH
     const value = new BN(quote.fromAmount);
@@ -403,7 +405,7 @@ class ThorchainSwapProvider extends SwapProvider {
 
     const fromThorchainAsset = assetFromString(toThorchainAsset(quote.from));
     if (!fromThorchainAsset) {
-      throw new Error('Thorchain asset does not exist');
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
     }
     const routerAddress = await this.getRouterAddress(fromThorchainAsset.chain);
     // @ts-ignore
@@ -442,7 +444,7 @@ class ThorchainSwapProvider extends SwapProvider {
     const limit = convertBaseAmountDecimal(baseAmount(new BN(swap.toAmount), cryptoassets[swap.to].decimals), 8);
     const thorchainAsset = assetFromString(toThorchainAsset(swap.to));
     if (!thorchainAsset) {
-      throw new Error('Thorchain asset does not exist');
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
     }
     return getSwapMemo({ asset: thorchainAsset, address: toAddress, limit });
   }
@@ -467,7 +469,7 @@ class ThorchainSwapProvider extends SwapProvider {
     }
 
     if (!fromFundTx) {
-      throw new Error('ThorchainSwapProvider: Did not send swap transaction');
+      throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction);
     }
 
     return {
@@ -537,6 +539,7 @@ class ThorchainSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
+
       if (tx && tx.confirmations && tx.confirmations > 0) {
         return {
           endTime: Date.now(),
@@ -544,7 +547,7 @@ class ThorchainSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -561,7 +564,7 @@ class ThorchainSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -586,12 +589,11 @@ class ThorchainSwapProvider extends SwapProvider {
               asset = swap.from;
               accountId = swap.fromAccountId;
             } else {
-              throw new Error(`ThorchainSwapProvider: Unknown memo action ${memoAction}.`);
+              throw createInternalError(CUSTOM_ERRORS.Invalid.ThorchainMemoAction(memoAction));
             }
 
             const client = this.getClient(network, walletId, asset, accountId);
             const receiveTx = await client.chain.getTransactionByHash(receiveHash);
-
             if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
               this.updateBalances(network, walletId, [accountId]);
               const status = OUT_MEMO_TO_STATUS[memoAction];

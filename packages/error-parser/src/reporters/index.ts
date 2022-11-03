@@ -1,20 +1,24 @@
-import { REPORTERS } from '../config';
-import { LiqualityError } from '../LiqualityErrors';
-import { ReportConfig, ReportType } from '../types/types';
+import { InternalError, CUSTOM_ERRORS } from '../LiqualityErrors';
+import { isLiqualityErrorString, liqualityErrorStringToJson } from '../utils';
+import { LiqualityError } from '../LiqualityErrors/LiqualityError';
+import { LiqualityErrorJSON, ReportTargets } from '../types';
+import { reportToConsole } from './console';
+import { reportToDiscord } from './discord';
 
-let reportConfig: ReportConfig = {};
+export function reportLiqualityError(error: any) {
+  const liqualityError = errorToLiqualityErrorObj(error);
 
-export function setReportConfig(_reportConfig: ReportConfig) {
-  reportConfig = _reportConfig;
+  if (liqualityError.reported) return;
+  const reportTargets = process.env.VUE_APP_REPORT_TARGETS;
+  if (reportTargets?.includes(ReportTargets.Console)) reportToConsole(liqualityError);
+  if (reportTargets?.includes(ReportTargets.Discord)) reportToDiscord(liqualityError);
+
+  liqualityError.reported = true;
 }
 
-export function reportLiqError(error: LiqualityError) {
-  const reportTypes = Object.keys(reportConfig) as Array<ReportType>;
-  const validReportTypes = Object.values(ReportType);
-  if (reportTypes.length === 0) return;
-  reportTypes.forEach((reportType) => {
-    if (validReportTypes.find((validReportType) => validReportType === reportType)) {
-      REPORTERS[reportType](error);
-    }
-  });
+function errorToLiqualityErrorObj(error: any): LiqualityError | LiqualityErrorJSON {
+  if (error instanceof LiqualityError) return error;
+  else if (error instanceof Error && isLiqualityErrorString(error.message))
+    return liqualityErrorStringToJson(error.message);
+  else return new InternalError(CUSTOM_ERRORS.Unknown(error));
 }

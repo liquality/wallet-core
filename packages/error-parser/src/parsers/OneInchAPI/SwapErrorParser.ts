@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LiqualityError } from '../../LiqualityErrors';
+import { LiqualityError, UserActivity } from '../../LiqualityErrors/LiqualityError';
 import { ErrorParser } from '../ErrorParser';
-import ThirdPartyError, { UserActivity } from '../../LiqualityErrors/ThirdPartyError';
-import InsufficientFundsError from '../../LiqualityErrors/InsufficientFundsError';
-import InsufficientGasFeeError from '../../LiqualityErrors/InsufficientGasFeeError';
-import InsufficientLiquidityError from '../../LiqualityErrors/InsufficientLiquidityError';
-import InternalError from '../../LiqualityErrors/InternalError';
-import UnknownError from '../../LiqualityErrors/UnknownError';
 import { oneInchInternalErrReason, OneInchError, ONE_INCH_ERRORS, oneInchSwapSourceName } from '.';
+import {
+  InsufficientFundsError,
+  InsufficientGasFeeError,
+  InsufficientLiquidityError,
+  InternalError,
+  ThirdPartyError,
+  UnknownError,
+} from '../../LiqualityErrors';
 
 export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwapParserDataType> {
   public static readonly errorSource = oneInchSwapSourceName;
@@ -30,7 +32,7 @@ export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwa
           devDesc = 'see https://bit.ly/3Bu3e7U';
           break;
         case ONE_INCH_ERRORS.INSUFFICIENT_GAS_FEE.test(errorDesc):
-          liqError = new InsufficientGasFeeError({ currency: data.from });
+          liqError = new InsufficientGasFeeError();
           break;
         case ONE_INCH_ERRORS.INVALID_TOKEN_ADDRESS.test(errorDesc):
           liqError = new InternalError();
@@ -54,7 +56,7 @@ export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwa
           devDesc = 'Check the approval process for 1inch, approvals are not being made correctly';
           break;
         case ONE_INCH_ERRORS.INTERNAL_ERROR.test(errorDesc):
-          liqError = new ThirdPartyError();
+          liqError = new ThirdPartyError({ activity: UserActivity.SWAP });
           devDesc = oneInchInternalErrReason();
           break;
         default:
@@ -65,7 +67,7 @@ export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwa
 
     liqError.source = OneInchSwapErrorParser.errorSource;
     liqError.devMsg = { desc: devDesc, data };
-    liqError.rawError = error as never;
+    liqError.rawError = error;
 
     return liqError;
   }

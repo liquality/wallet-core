@@ -1,3 +1,4 @@
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import { ActionContext, rootActionContext } from '..';
 import { Asset, Network, WalletId } from '../types';
 
@@ -9,7 +10,7 @@ export const disableAssets = async (
   commit.DISABLE_ASSETS({ network, walletId, assets });
   const accounts = state.accounts[walletId]?.[network];
   if (!accounts) {
-    throw new Error('No accounts');
+    throw createInternalError(CUSTOM_ERRORS.NotFound.Accounts);
   }
   accounts
     .filter((a) => a.assets.some((s) => assets.includes(s)))
