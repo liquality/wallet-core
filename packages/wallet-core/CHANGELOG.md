@@ -1,5 +1,14 @@
 # @liquality/wallet-core
 
+## 1.31.4-next.3
+
+### Patch Changes
+
+- 07bd108: test: bump pre release
+- Updated dependencies [07bd108]
+  - @liquality/cryptoassets@1.16.3-next.3
+  - @liquality/error-parser@1.1.4-next.3
+
 ## 1.31.4-next.2
 
 ### Patch Changes
