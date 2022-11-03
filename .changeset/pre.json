@@ -6,5 +6,5 @@
     "@liquality/error-parser": "1.1.4-next.2",
     "@liquality/wallet-core": "1.31.4-next.2"
   },
-  "changesets": ["mean-avocados-raise"]
+  "changesets": []
 }
