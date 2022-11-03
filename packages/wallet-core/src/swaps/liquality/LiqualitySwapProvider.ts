@@ -3,7 +3,6 @@ import { Client, HttpClient } from '@chainify/client';
 import { Asset as ChainifyAsset, Transaction } from '@chainify/types';
 import { sha256 } from '@chainify/utils';
 import { currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
-import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,7 +24,6 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
-import SlippageError, { CUSTOM_ERRORS, QuoteExpiredError, createInternalError } from '@liquality/error-parser';
 
 const VERSION_STRING = `Wallet ${pkg.version} (Chainify ${pkg.dependencies['@chainify/client']
   .replace('^', '')
@@ -153,7 +151,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
     delete lockedQuote.id;
 
     if (new BN(lockedQuote.toAmount).lt(new BN(_quote.toAmount).times(0.995))) {
-      throw SlippageError;
+      throw new Error('The quote slippage is too high (> 0.5%). Try again.');
     }
 
     const quote = {
@@ -161,7 +159,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       ...lockedQuote,
     };
     if (await this.hasQuoteExpired(quote)) {
-      throw new QuoteExpiredError();
+      throw new Error('The quote is expired.');
     }
 
     quote.fromAddress = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
@@ -477,7 +475,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
       return this._httpClient.nodePost('/api/swap/order', { from, to, fromAmount: amount }, { headers });
     } catch (e) {
       if (e?.response?.data?.error) {
-        throw createInternalError(CUSTOM_ERRORS.Unknown(e.response.data.error));
+        throw new Error(e.response.data.error);
       } else {
         throw e;
       }
@@ -506,7 +504,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
         };
       }
     } catch (e) {
-      if (isTransactionNotFoundError(e)) console.warn(e);
+      if (e.name === 'TxNotFoundError') console.warn(e);
       else throw e;
     }
   }
