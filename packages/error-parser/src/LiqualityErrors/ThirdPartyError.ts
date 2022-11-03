@@ -5,7 +5,7 @@ export class ThirdPartyError extends LiqualityError<ThirdPartyErrorContext> {
     super(ThirdPartyError.name, data);
   }
 
-  setKeys(data?: ThirdPartyErrorContext): void {
+  setTranslationKey(data?: ThirdPartyErrorContext): void {
     this.translationKey = `${this.name}.${PLAIN}`;
 
     if (data?.activity === UserActivity.SWAP) {

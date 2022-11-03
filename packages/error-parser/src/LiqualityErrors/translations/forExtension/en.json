@@ -1,7 +1,4 @@
 {
-  "HighInputAmountError": {
-    "plain": "Due to the parameters of the provider, kindly try the following, Reduce the swap amount, Try a different swap pair, Select a different swap provider, Try again at a later time."
-  },
   "InsufficientFundsError": {
     "plain": "Kindly add more funds to cover the transaction request"
   },
@@ -10,9 +7,6 @@
   },
   "InsufficientInputAmountError": {
     "plain": "Due to the provider's parameters, kindly add more funds to cover the transaction request."
-  },
-  "InsufficientLiquidityError": {
-    "plain": "Due to the parameters of the provider, kindly try the following, Reduce your swap amount, Try a different swap pair, Select a different swap provider, Try again at a later time"
   },
   "InternalError": {
     "plain": "There is an unknown issue, Please try again at a later time, If the problem persists, get in touch with support on discord with errorId: %{errorId}"
@@ -35,18 +29,6 @@
   "SlippageTooHighError": {
     "plain": "Please try again (Slippage is too high)"
   },
-  "QuoteExpiredError": {
-    "plain": "Please try again (the quote has expired)"
-  },
-  "WalletLockedError": {
-    "plain": "please unlock the wallet first"
-  },
-  "NoActiveWalletError": {
-    "plain": "Create a wallet first"
-  },
-  "LedgerDeviceConnectionError": {
-    "plain": "Please verify if your Ledger is connected and unlocked"
-  },
   "PasswordError": {
     "plain": "Please Try Again (Password should have 8 or more characters)"
   },
@@ -59,9 +41,6 @@
   "VeryHighTipWarning": {
     "plain": "Please use the 'High' option. (Miner tip was higher than necessary)"
   },
-  "NoMaxFeeError": {
-    "plain": "Please set the Max fee to a number higher than '0'"
-  },
   "VeryLowMaxFeeError": {
     "plain": "Please review the 'Max Fee' value set. (The fee must be set higher)"
   },
@@ -70,11 +49,5 @@
   },
   "DuplicateTokenSymbolError": {
     "plain": "Token with this symbol exists"
-  },
-  "UserDeclinedError": {
-    "plain": "Requested Permission was declined by you"
-  },
-  "DappNotConnectedError": {
-    "plain": "Please Try the following, change the default chain on your wallet to correct one, if problem continues, start allover and use the connect button to connect dapp again"
   }
 }

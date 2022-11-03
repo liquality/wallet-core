@@ -17,12 +17,12 @@ export abstract class LiqualityError<Context extends JSONObject = JSONObject> ex
     super();
     this.name = name;
     this.reported = false;
-    this.setKeys(data);
+    this.setTranslationKey(data);
     if (!data) data = {} as Context;
     this.data = { ...data, errorId: randomBytes(ERROR_ID_LENGTH).toString('hex') };
   }
 
-  setKeys(data?: Context) {
+  setTranslationKey(data?: Context) {
     if (data) {
       this.translationKey = `${this.name}.${PLACEHOLDER}`;
     } else {
