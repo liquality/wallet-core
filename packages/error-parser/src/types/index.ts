@@ -23,5 +23,6 @@ export type LiqualityErrorJSON = {
   rawError: any;
   data: JSONObject | { errorId: string };
   reported: boolean;
+  reportable: boolean;
   stack: string;
 };
