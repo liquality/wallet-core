@@ -1,5 +1,13 @@
 # @liquality/error-parser
 
+## 1.1.4-next.4
+
+### Patch Changes
+
+- b1dbb31: test: bump pre release version
+- Updated dependencies [b1dbb31]
+  - @liquality/cryptoassets@1.16.3-next.4
+
 ## 1.1.4-next.3
 
 ### Patch Changes
