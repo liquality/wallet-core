@@ -8,7 +8,7 @@ import { reportToDiscord } from './discord';
 export function reportLiqualityError(error: any) {
   const liqualityError = errorToLiqualityErrorObj(error);
 
-  if (liqualityError.reported) return;
+  if (!liqualityError.reportable || liqualityError.reported) return;
   const reportTargets = process.env.VUE_APP_REPORT_TARGETS;
   if (reportTargets?.includes(ReportTargets.Console)) reportToConsole(liqualityError);
   if (reportTargets?.includes(ReportTargets.Discord)) reportToDiscord(liqualityError);

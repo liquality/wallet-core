@@ -11,12 +11,12 @@ export abstract class LiqualityError<Context extends JSONObject = JSONObject> ex
   devMsg: { desc: string; data: JSONObject };
   rawError: any;
   data: Context | { errorId: string };
-  reported: boolean;
+  reported = false;
+  reportable = false;
 
   constructor(name: string, data?: Context) {
     super();
     this.name = name;
-    this.reported = false;
     this.setTranslationKey(data);
     if (!data) data = {} as Context;
     this.data = { ...data, errorId: randomBytes(ERROR_ID_LENGTH).toString('hex') };
