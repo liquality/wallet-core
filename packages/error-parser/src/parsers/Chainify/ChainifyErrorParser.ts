@@ -11,30 +11,30 @@ export class ChainifyErrorParser extends ErrorParser<Error, null> {
     let liqError: LiqualityError;
 
     switch (error.name) {
-      case ChainifyErrors.NodeError.name:
+      case ChainifyErrors.NodeError.prototype.name:
         liqError = new ThirdPartyError({ activity: UserActivity.UNKNOWN });
         break;
-      case ChainifyErrors.InvalidAddressError.name:
-      case ChainifyErrors.InvalidDestinationAddressError.name:
-      case ChainifyErrors.InvalidExpirationError.name:
-      case ChainifyErrors.InvalidProviderError.name:
-      case ChainifyErrors.InvalidProviderResponseError.name:
-      case ChainifyErrors.InvalidSwapParamsError.name:
-      case ChainifyErrors.InvalidValueError.name:
-      case ChainifyErrors.BlockNotFoundError.name:
-      case ChainifyErrors.TxNotFoundError.name:
-      case ChainifyErrors.TxFailedError.name:
-      case ChainifyErrors.PendingTxError.name:
-      case ChainifyErrors.NoProviderError.name:
-      case ChainifyErrors.ProviderNotFoundError.name:
-      case ChainifyErrors.DuplicateProviderError.name:
-      case ChainifyErrors.StandardError.name:
-      case ChainifyErrors.UnimplementedMethodError.name:
-      case ChainifyErrors.UnsupportedMethodError.name:
-      case ChainifyErrors.WalletError.name:
+      case ChainifyErrors.InvalidAddressError.prototype.name:
+      case ChainifyErrors.InvalidDestinationAddressError.prototype.name:
+      case ChainifyErrors.InvalidExpirationError.prototype.name:
+      case ChainifyErrors.InvalidProviderError.prototype.name:
+      case ChainifyErrors.InvalidProviderResponseError.prototype.name:
+      case ChainifyErrors.InvalidSwapParamsError.prototype.name:
+      case ChainifyErrors.InvalidValueError.prototype.name:
+      case ChainifyErrors.BlockNotFoundError.prototype.name:
+      case ChainifyErrors.TxNotFoundError.prototype.name:
+      case ChainifyErrors.TxFailedError.prototype.name:
+      case ChainifyErrors.PendingTxError.prototype.name:
+      case ChainifyErrors.NoProviderError.prototype.name:
+      case ChainifyErrors.ProviderNotFoundError.prototype.name:
+      case ChainifyErrors.DuplicateProviderError.prototype.name:
+      case ChainifyErrors.StandardError.prototype.name:
+      case ChainifyErrors.UnimplementedMethodError.prototype.name:
+      case ChainifyErrors.UnsupportedMethodError.prototype.name:
+      case ChainifyErrors.WalletError.prototype.name:
         liqError = new InternalError();
         break;
-      case ChainifyErrors.ReplaceFeeInsufficientError.name:
+      case ChainifyErrors.ReplaceFeeInsufficientError.prototype.name:
         liqError = new LowSpeedupFeeError();
         break;
       default:
