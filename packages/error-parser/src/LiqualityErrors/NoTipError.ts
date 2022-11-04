@@ -1,6 +1,7 @@
+import { ERROR_NAMES } from '../config';
 import { LiqualityError } from './LiqualityError';
 export class NoTipError extends LiqualityError {
   constructor() {
-    super(NoTipError.name);
+    super(ERROR_NAMES.NoTipError);
   }
 }

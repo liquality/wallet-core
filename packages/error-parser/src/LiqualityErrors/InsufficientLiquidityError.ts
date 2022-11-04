@@ -1,7 +1,8 @@
+import { ERROR_NAMES } from '../config';
 import { LiqualityError } from './LiqualityError';
 export class InsufficientLiquidityError extends LiqualityError<InsufficientLiquidityErrorContext> {
   constructor(data?: InsufficientLiquidityErrorContext) {
-    super(InsufficientLiquidityError.name, data);
+    super(ERROR_NAMES.InsufficientLiquidityError, data);
   }
 
   setTranslationKey() {

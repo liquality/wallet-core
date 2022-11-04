@@ -1,7 +1,8 @@
+import { ERROR_NAMES } from '../config';
 import { LiqualityError } from './LiqualityError';
 export class InsufficientFundsError extends LiqualityError<InsufficientFundsErrorContext> {
   constructor(data?: InsufficientFundsErrorContext) {
-    super(InsufficientFundsError.name, data);
+    super(ERROR_NAMES.InsufficientFundsError, data);
   }
 }
 
