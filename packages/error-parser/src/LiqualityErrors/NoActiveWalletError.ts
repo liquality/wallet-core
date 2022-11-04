@@ -1,7 +1,8 @@
+import { ERROR_NAMES } from '../config';
 import { LiqualityError } from './LiqualityError';
 export class NoActiveWalletError extends LiqualityError {
   constructor() {
-    super(NoActiveWalletError.name);
+    super(ERROR_NAMES.NoActiveWalletError);
   }
 
   setTranslationKey() {

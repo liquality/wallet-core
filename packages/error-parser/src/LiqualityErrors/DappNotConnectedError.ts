@@ -1,8 +1,9 @@
+import { ERROR_NAMES } from '../config';
 import { LiqualityError } from './LiqualityError';
 
 export class DappNotConnectedError extends LiqualityError<DappNotConnectedErrorContext> {
   constructor(data?: DappNotConnectedErrorContext) {
-    super(DappNotConnectedError.name, data);
+    super(ERROR_NAMES.DappNotConnectedError, data);
   }
   setTranslationKey() {
     this.translationKey = '';

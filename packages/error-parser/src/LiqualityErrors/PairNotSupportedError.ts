@@ -1,8 +1,9 @@
+import { ERROR_NAMES } from '../config';
 import { LiqualityError } from './LiqualityError';
 
 export class PairNotSupportedError extends LiqualityError<PairNotSupportedErrorContext> {
   constructor(data?: PairNotSupportedErrorContext) {
-    super(PairNotSupportedError.name, data);
+    super(ERROR_NAMES.PairNotSupportedError, data);
   }
 }
 

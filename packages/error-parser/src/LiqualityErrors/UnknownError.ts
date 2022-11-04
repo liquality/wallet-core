@@ -1,6 +1,7 @@
+import { ERROR_NAMES } from '../config';
 import { LiqualityError } from './LiqualityError';
 export class UnknownError extends LiqualityError {
   constructor() {
-    super(UnknownError.name);
+    super(ERROR_NAMES.UnknownError);
   }
 }

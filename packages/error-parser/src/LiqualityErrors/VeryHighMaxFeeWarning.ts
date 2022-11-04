@@ -1,7 +1,8 @@
+import { ERROR_NAMES } from '../config';
 import { LiqualityError } from './LiqualityError';
 export class VeryHighMaxFeeWarning extends LiqualityError<VeryHighMaxFeeWarningContext> {
   constructor(data?: VeryHighMaxFeeWarningContext) {
-    super(VeryHighMaxFeeWarning.name, data);
+    super(ERROR_NAMES.VeryHighMaxFeeWarning, data);
   }
 }
 

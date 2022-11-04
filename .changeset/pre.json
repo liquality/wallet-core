@@ -2,11 +2,9 @@
   "mode": "pre",
   "tag": "next",
   "initialVersions": {
-    "@liquality/cryptoassets": "1.16.3-next.2",
-    "@liquality/error-parser": "1.1.4-next.2",
-    "@liquality/wallet-core": "1.31.4-next.2"
+    "@liquality/cryptoassets": "1.16.3-next.3",
+    "@liquality/error-parser": "1.1.4-next.3",
+    "@liquality/wallet-core": "1.31.4-next.3"
   },
-  "changesets": [
-    "clever-steaks-return"
-  ]
+  "changesets": ["clean-ghosts-rule"]
 }

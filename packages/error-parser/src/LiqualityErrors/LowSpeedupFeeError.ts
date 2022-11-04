@@ -1,6 +1,7 @@
+import { ERROR_NAMES } from '../config';
 import { LiqualityError } from './LiqualityError';
 export class LowSpeedupFeeError extends LiqualityError {
   constructor() {
-    super(LowSpeedupFeeError.name);
+    super(ERROR_NAMES.LowSpeedupFeeError);
   }
 }
