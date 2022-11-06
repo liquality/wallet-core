@@ -1,5 +1,16 @@
 # @liquality/error-parser
 
+## 2.0.0-next.5
+
+### Major Changes
+
+- bc9b6a3: test: bump all along with error parser
+
+### Patch Changes
+
+- Updated dependencies [bc9b6a3]
+  - @liquality/cryptoassets@2.0.0-next.5
+
 ## 1.1.4-next.4
 
 ### Patch Changes
