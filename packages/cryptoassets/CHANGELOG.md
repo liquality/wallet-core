@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.0.0-next.5
+
+### Major Changes
+
+- bc9b6a3: test: bump all along with error parser
+
 ## 1.16.3-next.4
 
 ### Patch Changes
