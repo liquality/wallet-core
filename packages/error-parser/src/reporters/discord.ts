@@ -19,6 +19,7 @@ function prepareErrorForDiscord(error: LiqualityError | LiqualityErrorJSON) {
   return `**New Error From Error Parser** \n
           ID: ${error.data.errorId} \n
           Name: ${error.name} \n
+          Source: ${error.source} \n
           Developer Message: ${JSON.stringify(error.devMsg)} \n
           Raw Error: ${JSON.stringify(error.rawError)} \n
           Data: ${JSON.stringify(error.data)} \n

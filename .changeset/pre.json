@@ -2,12 +2,9 @@
   "mode": "pre",
   "tag": "next",
   "initialVersions": {
-    "@liquality/cryptoassets": "1.16.3-next.4",
-    "@liquality/error-parser": "1.1.4-next.4",
-    "@liquality/wallet-core": "1.31.4-next.4"
+    "@liquality/cryptoassets": "2.0.0-next.5",
+    "@liquality/error-parser": "2.0.0-next.5",
+    "@liquality/wallet-core": "2.0.0-next.5"
   },
-  "changesets": [
-    "calm-eagles-suffer",
-    "fuzzy-turtles-turn"
-  ]
+  "changesets": ["fair-bugs-rush"]
 }
