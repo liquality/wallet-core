@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.0.0-next.6
+
+### Patch Changes
+
+- 5bb19d0: bump version after fix
+
 ## 2.0.0-next.5
 
 ### Major Changes
