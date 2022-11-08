@@ -4,4 +4,4 @@
 '@liquality/wallet-core': patch
 ---
 
-bump version after fix
+test: bump versions from master for 0.78.0 release
