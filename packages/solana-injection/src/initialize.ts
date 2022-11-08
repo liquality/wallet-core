@@ -1,7 +1,7 @@
 import { registerWallet } from './register.js';
-import { GhostWallet } from './wallet.js';
-import type { Ghost } from './window.js';
+import { LiqualityWallet } from './wallet.js';
+import type { Liquality } from './window.js';
 
-export function initialize(ghost: Ghost): void {
-    registerWallet(new GhostWallet(ghost));
+export function initialize(Liquality: Liquality): void {
+    registerWallet(new LiqualityWallet(Liquality));
 }
