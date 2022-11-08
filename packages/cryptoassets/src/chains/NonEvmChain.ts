@@ -15,7 +15,14 @@ export abstract class NonEvmChain extends EvmChain {
 
 export class SolanaChain extends NonEvmChain {
   public isValidAddress(address: string) {
-    return typeof address === 'string' && address.length >= 32 && address.length <= 44;
+    try {
+      const PUBLIC_KEY_LENGTH = 32;
+
+      const publicKey = base58.decode(address);
+      return publicKey.length === PUBLIC_KEY_LENGTH;
+    } catch (error) {
+      return false;
+    }
   }
 
   public isValidTransactionHash(_hash: string) {

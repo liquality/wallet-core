@@ -2,6 +2,7 @@ import { EIP1559Fee } from '@chainify/types';
 import { ensure0x } from '@chainify/utils';
 import { Chain, Hop, HopBridge, TToken } from '@hop-protocol/sdk';
 import { ChainId, currencyToUnit, getChain, getNativeAssetCode, IAsset, unitToCurrency } from '@liquality/cryptoassets';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import BN from 'bignumber.js';
 import { ethers, Wallet } from 'ethers';
 import { createClient } from 'urql';
@@ -24,6 +25,7 @@ import {
   SwapStatus,
 } from '../types';
 import { getDestinationTxGQL, getTransferIdByTxHash } from './queries';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 export interface HopSwapProviderConfig extends BaseSwapProviderConfig {
   graphqlBaseURL: string;
@@ -309,7 +311,7 @@ class HopSwapProvider extends SwapProvider {
     feePricesL1,
   }: EstimateFeeRequest<HopTxTypes, HopSwapQuote>) {
     if (txType !== this.fromTxType) {
-      throw new Error(`Invalid tx type ${txType}`);
+      throw createInternalError(CUSTOM_ERRORS.Invalid.TransactionType(txType));
     }
 
     const chainId = cryptoassets[asset].chain;
@@ -328,7 +330,8 @@ class HopSwapProvider extends SwapProvider {
     // Gas limit l1
     const isMultiLayered = getChain(network, chainId).isMultiLayered;
     if (isMultiLayered && (!feePricesL1 || !limits.sendL1 || !limits.approveL1)) {
-      throw new Error(`Hop: Layer 1 fee prices and/or limits are not available for a multilayerchain ${chainId}`);
+      if (!feePricesL1) throw createInternalError(CUSTOM_ERRORS.NotFound.Chain.FeePrice);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Chain.L1GasLimit);
     }
 
     let gasLimitL1: number = 0;
@@ -365,6 +368,7 @@ class HopSwapProvider extends SwapProvider {
     const client = this._getClient(network, walletId, swap.from, swap.fromAccountId);
     try {
       const tx = await client.chain.getTransactionByHash(swap.approveTxHash);
+
       if (tx && tx.confirmations && tx.confirmations >= 1) {
         return {
           endTime: Date.now(),
@@ -372,7 +376,7 @@ class HopSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -441,7 +445,7 @@ class HopSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }

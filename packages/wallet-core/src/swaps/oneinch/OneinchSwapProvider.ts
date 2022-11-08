@@ -2,11 +2,12 @@ import { Client, HttpClient } from '@chainify/client';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { Transaction, TxStatus } from '@chainify/types';
 import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import BN, { BigNumber } from 'bignumber.js';
 import * as ethers from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
-import { ActionContext } from '../../store';
+import store, { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem } from '../../store/types';
 import { isChainEvmCompatible, isERC20 } from '../../utils/asset';
@@ -22,6 +23,15 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
+import {
+  CUSTOM_ERRORS,
+  getErrorParser,
+  OneInchApproveErrorParser,
+  OneInchQuoteErrorParser,
+  OneInchSwapErrorParser,
+  SlippageTooHighError,
+  createInternalError,
+} from '@liquality/error-parser';
 
 const NATIVE_ASSET_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
@@ -69,6 +79,10 @@ const optimismL1GasLimits = {
   approve: 6500,
   send: 100000,
 };
+
+const oneInchSwapErrorParser = getErrorParser(OneInchSwapErrorParser);
+const oneInchApproveErrorParser = getErrorParser(OneInchApproveErrorParser);
+const oneInchQuoteErrorParser = getErrorParser(OneInchQuoteErrorParser);
 
 class OneinchSwapProvider extends SwapProvider {
   public config: OneinchSwapProviderConfig;
@@ -221,12 +235,21 @@ class OneinchSwapProvider extends SwapProvider {
     const referrerAddress = this.config.referrerAddress?.[cryptoassets[from].chain];
     const fee = referrerAddress && this.config.referrerFee;
 
-    return await this._httpClient.nodeGet(`/${chainIdFrom}/quote`, {
-      fromTokenAddress: fromToken || NATIVE_ASSET_ADDRESS,
-      toTokenAddress: toToken || NATIVE_ASSET_ADDRESS,
-      amount,
-      fee,
-    });
+    return await oneInchQuoteErrorParser.wrapAsync(
+      async () =>
+        await this._httpClient.nodeGet(`/${chainIdFrom}/quote`, {
+          fromTokenAddress: fromToken || NATIVE_ASSET_ADDRESS,
+          toTokenAddress: toToken || NATIVE_ASSET_ADDRESS,
+          amount,
+          fee,
+        }),
+      {
+        from: from,
+        to: to,
+        amount: unitToCurrency(cryptoassets[from], amount).toString(),
+        balance: 'NA',
+      }
+    );
   }
 
   private async _buildApproval({ network, walletId, quote }: SwapRequest<OneinchSwapHistoryItem>) {
@@ -253,10 +276,14 @@ class OneinchSwapProvider extends SwapProvider {
       };
     }
 
-    const callData = await this._httpClient.nodeGet(`/${chainId}/approve/transaction`, {
-      tokenAddress: cryptoassets[quote.from].contractAddress,
-      amount: inputAmount.toString(),
-    });
+    const callData = await oneInchApproveErrorParser.wrapAsync(
+      async () =>
+        await this._httpClient.nodeGet(`/${chainId}/approve/transaction`, {
+          tokenAddress: cryptoassets[quote.from].contractAddress,
+          amount: inputAmount.toString(),
+        }),
+      null
+    );
 
     return callData;
   }
@@ -267,7 +294,7 @@ class OneinchSwapProvider extends SwapProvider {
     // @ts-ignore TODO: Fix chain networks
     const chainId = Number(getChain(network, toChain).network.chainId);
     if (toChain !== fromChain || !supportedChains[Number(chainId)]) {
-      throw new Error(`Route ${fromChain} - ${toChain} not supported`);
+      throw createInternalError(CUSTOM_ERRORS.Unsupported.SwapRoute(fromChain, toChain));
     }
 
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
@@ -288,12 +315,22 @@ class OneinchSwapProvider extends SwapProvider {
       swapParams.fee = this.config.referrerFee;
     }
 
-    const swap = await this._httpClient.nodeGet(`/${chainId}/swap`, swapParams);
+    const swap = await oneInchSwapErrorParser.wrapAsync(
+      async () => await this._httpClient.nodeGet(`/${chainId}/swap`, swapParams),
+      {
+        from: quote.from,
+        to: quote.to,
+        amount: unitToCurrency(cryptoassets[quote.from], new BN(quote.fromAmount)).toString(),
+        balance: store.getters.accountItem(quote.fromAccountId)?.balances[quote.from] || 'NA',
+      }
+    );
 
     if (new BN(quote.toAmount).times(1 - swapParams.slippage / 100).gt(swap?.toTokenAmount)) {
-      throw new Error(
-        `Slippage is too high. You expect ${quote.toAmount} but you are going to receive ${swap?.toTokenAmount} ${quote.to}`
-      );
+      throw new SlippageTooHighError({
+        expectedAmount: quote.toAmount,
+        actualAmount: swap?.toTokenAmount,
+        currency: quote.to,
+      });
     }
 
     return swap;
@@ -314,7 +351,7 @@ class OneinchSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -324,6 +361,7 @@ class OneinchSwapProvider extends SwapProvider {
 
     try {
       const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
+
       if (tx && tx.confirmations && tx.confirmations > 0) {
         // Check transaction status - it may fail due to slippage
         const { status } = tx;
@@ -334,7 +372,7 @@ class OneinchSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }

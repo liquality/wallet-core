@@ -1,5 +1,47 @@
 # @liquality/cryptoassets
 
+## 2.0.0-next.6
+
+### Patch Changes
+
+- 5bb19d0: bump version after fix
+
+## 2.0.0-next.5
+
+### Major Changes
+
+- bc9b6a3: test: bump all along with error parser
+
+## 1.16.3-next.4
+
+### Patch Changes
+
+- b1dbb31: test: bump pre release version
+
+## 1.16.3-next.3
+
+### Patch Changes
+
+- 07bd108: test: bump pre release
+
+## 1.16.3-next.2
+
+### Patch Changes
+
+- 3c309e1: fix: covalent api key
+
+## 1.16.3-next.1
+
+### Patch Changes
+
+- a156f8e: test: bump versions to next
+
+## 1.16.3-next.0
+
+### Patch Changes
+
+- test: bump versions
+
 ## 1.16.2
 
 ### Patch Changes

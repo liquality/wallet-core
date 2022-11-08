@@ -17,6 +17,7 @@ import { AccountInfo, Network } from '../../store/types';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { ChainNetworks } from '../../utils/networks';
 import { walletOptionsStore } from '../../walletOptions';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 export function createBtcClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
   const isMainnet = network === 'mainnet';
@@ -45,11 +46,11 @@ export function createBtcClient(network: Network, mnemonic: string, accountInfo:
   if (accountInfo.type.includes('bitcoin_ledger')) {
     const option = LEDGER_BITCOIN_OPTIONS.find((o) => o.name === accountInfo.type);
     if (!option) {
-      throw new Error(`Account type ${accountInfo.type} not an option`);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.AccountTypeOption(accountInfo.type));
     }
     const { addressType } = option;
     if (!walletOptionsStore.walletOptions.ledgerTransportCreator) {
-      throw new Error('Wallet Options: ledgerTransportCreator is not defined - unable to build ledger client');
+      throw createInternalError(CUSTOM_ERRORS.NotFound.LedgerTransportCreator);
     }
     const ledgerProvider = new BitcoinLedgerProvider(
       {

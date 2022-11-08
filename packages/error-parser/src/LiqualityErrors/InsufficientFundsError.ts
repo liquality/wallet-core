@@ -1,27 +1,9 @@
-import { LiqualityError } from '.';
-
-class InsufficientFundsError extends LiqualityError {
-  public readonly name = 'InsufficientFundsError';
-
-  constructor(context?: InsufficientFundsErrorContext, lang?: string) {
-    super();
-    if (context) {
-      this.wrapUserErrorMessage(context, lang);
-    }
-  }
-
-  wrapUserErrorMessage(context: InsufficientFundsErrorContext, lang?: string): void {
-    const { availAmt, currency, neededAmt } = context;
-    switch (lang) {
-      default:
-        this.userMsg = {
-          cause: `Insufficient funds: Sorry, You have ${availAmt}${currency} but you need ${neededAmt}${currency} `,
-          suggestions: [],
-        };
-        break;
-    }
+import { ERROR_NAMES } from '../config';
+import { LiqualityError } from './LiqualityError';
+export class InsufficientFundsError extends LiqualityError<InsufficientFundsErrorContext> {
+  constructor(data?: InsufficientFundsErrorContext) {
+    super(ERROR_NAMES.InsufficientFundsError, data);
   }
 }
 
 export type InsufficientFundsErrorContext = { availAmt: string; neededAmt: string; currency: string };
-export default InsufficientFundsError;

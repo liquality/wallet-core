@@ -1,13 +1,27 @@
-import { reportToConsole } from './reporters/console';
-import { reportToDiscord } from './reporters/discord';
-import { reportToEmail } from './reporters/email';
-import { ReportType } from './types/types';
-import { LiqualityError } from './LiqualityErrors';
-
-export const REPORTERS: Record<ReportType, <T extends LiqualityError>(error: T) => void> = {
-  [ReportType.Console]: reportToConsole,
-  [ReportType.Discord]: reportToDiscord,
-  [ReportType.Email]: reportToEmail,
-};
-
 export const ERROR_ID_LENGTH = 10;
+export const ERROR_NAMES = {
+  HighInputAmountError: 'HighInputAmountError',
+  InsufficientFundsError: 'InsufficientFundsError',
+  InsufficientGasFeeError: 'InsufficientGasFeeError',
+  InsufficientInputAmountError: 'InsufficientInputAmountError',
+  InsufficientLiquidityError: 'InsufficientLiquidityError',
+  InternalError: 'InternalError',
+  LedgerDeviceConnectionError: 'LedgerDeviceConnectionError',
+  LiqualityError: 'LiqualityError',
+  LowSpeedupFeeError: 'LowSpeedupFeeError',
+  NoActiveWalletError: 'NoActiveWalletError',
+  PairNotSupportedError: 'PairNotSupportedError',
+  PasswordError: 'PasswordError',
+  SlippageTooHighError: 'SlippageTooHighError',
+  ThirdPartyError: 'ThirdPartyError',
+  UnknownError: 'UnknownError',
+  NoTipError: 'NoTipError',
+  WalletLockedError: 'WalletLockedError',
+  VeryLowTipError: 'VeryLowTipError',
+  VeryHighTipWarning: 'VeryHighTipWarning',
+  VeryLowMaxFeeError: 'VeryLowMaxFeeError',
+  VeryHighMaxFeeWarning: 'VeryHighMaxFeeWarning',
+  DuplicateTokenSymbolError: 'DuplicateTokenSymbolError',
+  UserDeclinedError: 'UserDeclinedError',
+  DappNotConnectedError: 'DappNotConnectedError',
+};

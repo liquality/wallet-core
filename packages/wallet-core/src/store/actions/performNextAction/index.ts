@@ -1,3 +1,4 @@
+import { errorToLiqualityErrorString } from '@liquality/error-parser/dist/src/utils';
 import { ActionContext, rootActionContext } from '../..';
 import { getSwapProvider } from '../../../factory/swap';
 import { createHistoryNotification } from '../../broker/notification';
@@ -41,7 +42,7 @@ export const performNextAction = async (
       });
     }
   } catch (e) {
-    updates = { error: e.toString() };
+    updates = { error: errorToLiqualityErrorString(e) };
   }
   if (updates) {
     if (!updates.error) {

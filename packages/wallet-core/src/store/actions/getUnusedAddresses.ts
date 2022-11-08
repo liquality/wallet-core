@@ -1,4 +1,5 @@
 import { ChainId } from '@liquality/cryptoassets';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import Bluebird from 'bluebird';
 import cryptoassets from '../../utils/cryptoassets';
 import { ActionContext, rootActionContext } from '..';
@@ -19,7 +20,7 @@ export const getUnusedAddresses = async (
     async (asset) => {
       const accounts = state.accounts[walletId]?.[network];
       if (!accounts) {
-        throw new Error('getUnusedAddresses: Accounts not found ');
+        throw createInternalError(CUSTOM_ERRORS.NotFound.Accounts);
       }
 
       const chainId = cryptoassets[asset].chain;

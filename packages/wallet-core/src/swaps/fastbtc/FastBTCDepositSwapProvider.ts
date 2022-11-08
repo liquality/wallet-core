@@ -2,6 +2,7 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider, BitcoinTypes } fr
 import { Client } from '@chainify/client';
 import { Transaction } from '@chainify/types';
 import { currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import BN from 'bignumber.js';
 import { mapValues } from 'lodash';
 import { io, Socket } from 'socket.io-client';
@@ -223,7 +224,7 @@ class FastBTCDepositSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }

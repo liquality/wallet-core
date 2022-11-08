@@ -1,5 +1,67 @@
 # @liquality/error-parser
 
+## 2.0.0-next.6
+
+### Patch Changes
+
+- 5bb19d0: bump version after fix
+- Updated dependencies [5bb19d0]
+  - @liquality/cryptoassets@2.0.0-next.6
+
+## 2.0.0-next.5
+
+### Major Changes
+
+- bc9b6a3: test: bump all along with error parser
+
+### Patch Changes
+
+- Updated dependencies [bc9b6a3]
+  - @liquality/cryptoassets@2.0.0-next.5
+
+## 1.1.4-next.4
+
+### Patch Changes
+
+- b1dbb31: test: bump pre release version
+- Updated dependencies [b1dbb31]
+  - @liquality/cryptoassets@1.16.3-next.4
+
+## 1.1.4-next.3
+
+### Patch Changes
+
+- 07bd108: test: bump pre release
+- Updated dependencies [07bd108]
+  - @liquality/cryptoassets@1.16.3-next.3
+
+## 1.1.4-next.2
+
+### Patch Changes
+
+- 3c309e1: fix: covalent api key
+- Updated dependencies [3c309e1]
+  - @liquality/cryptoassets@1.16.3-next.2
+  - @liquality/wallet-core@1.31.4-next.2
+
+## 1.1.4-next.1
+
+### Patch Changes
+
+- a156f8e: test: bump versions to next
+- Updated dependencies [a156f8e]
+  - @liquality/cryptoassets@1.16.3-next.1
+  - @liquality/wallet-core@1.31.4-next.1
+
+## 1.1.4-next.0
+
+### Patch Changes
+
+- test: bump versions
+- Updated dependencies
+  - @liquality/cryptoassets@1.16.3-next.0
+  - @liquality/wallet-core@1.31.4-next.0
+
 ## 1.1.3
 
 ### Patch Changes
