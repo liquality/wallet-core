@@ -2758,6 +2758,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@liquality/solana-wallet-standard@workspace:packages/solana-wallet-standard":
+  version: 0.0.0-use.local
+  resolution: "@liquality/solana-wallet-standard@workspace:packages/solana-wallet-standard"
+  dependencies:
+    "@solana/wallet-standard-features": ^1.0.0
+    "@solana/web3.js": ^1.58.0
+    "@types/bs58": ^4.0.1
+    "@types/node-fetch": ^2.6.2
+    "@wallet-standard/base": ^1.0.0
+    "@wallet-standard/features": ^1.0.0
+    bs58: ^4.0.1
+    prettier: ^2.7.1
+    shx: ^0.3.4
+    typescript: ^4.8.4
+  languageName: unknown
+  linkType: soft
+
 "@liquality/wallet-core@workspace:packages/wallet-core":
   version: 0.0.0-use.local
   resolution: "@liquality/wallet-core@workspace:packages/wallet-core"
@@ -2810,23 +2827,6 @@ __metadata:
     urql: ^2.2.0
     vue: ^2.6.11
     vuex: ^3.1.3
-  languageName: unknown
-  linkType: soft
-
-"@liquality/wallet-standard-solana@workspace:packages/solana-injection":
-  version: 0.0.0-use.local
-  resolution: "@liquality/wallet-standard-solana@workspace:packages/solana-injection"
-  dependencies:
-    "@solana/wallet-standard-features": ^1.0.0
-    "@solana/web3.js": ^1.58.0
-    "@types/bs58": ^4.0.1
-    "@types/node-fetch": ^2.6.2
-    "@wallet-standard/base": ^1.0.0
-    "@wallet-standard/features": ^1.0.0
-    bs58: ^4.0.1
-    prettier: ^2.7.1
-    shx: ^0.3.4
-    typescript: ^4.8.4
   languageName: unknown
   linkType: soft
 
