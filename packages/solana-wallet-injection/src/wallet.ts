@@ -1,10 +1,19 @@
 /* eslint-disable no-console */
 import { Liquality, LiqualityEvent } from '@liquality/solana-wallet-standard/src/window';
-import { PublicKey, Transaction, VersionedTransaction, SendOptions, Connection, Message } from '@solana/web3.js';
+import {
+  PublicKey,
+  Transaction,
+  VersionedTransaction,
+  SendOptions,
+  Connection,
+  Message,
+  Keypair,
+} from '@solana/web3.js';
 import { SolanaParser, ParsedInstruction } from '@debridge-finance/solana-transaction-parser';
 import { Idl } from '@project-serum/anchor';
 import { COMMON_REQUEST_MAP } from './types';
 import { BigNumber } from '@chainify/types';
+import base58 from 'bs58';
 
 /**
  * @dev users are paying a fixed fee of 5000 lamports per transaction/signature
@@ -69,40 +78,38 @@ export class LiqualitySolanaWallet implements Liquality {
     return { signature };
   }
 
-  public async signTransaction<T extends Transaction | VersionedTransaction>(transaction: T): Promise<T> {
+  public async signTransaction<T extends Transaction | VersionedTransaction>(transaction: T): Promise<any> {
     console.debug('signTransaction');
     const instructions = this.getTransactionDetails(transaction);
-    const signer = await this.callMethod(COMMON_REQUEST_MAP.wallet_getSigner, {
+    const secretKeyBase58 = await this.callMethod(COMMON_REQUEST_MAP.wallet_getSigner, {
       transaction,
       instructions,
       fee: DEFAULT_FEE,
     });
-
-    transaction.sign([signer] as any);
-
-    return transaction;
+    return this._signTransaction(transaction, secretKeyBase58);
   }
 
   public async signAllTransactions<T extends Transaction | VersionedTransaction>(transactions: T[]): Promise<T[]> {
     console.debug('signAllTransactions');
     const instructions: ParsedInstruction<Idl, string>[] = [];
+    const signedTransactions: T[] = [];
 
     for (const t of transactions) {
       const _instructions = this.getTransactionDetails(t);
       instructions.push(..._instructions);
     }
 
-    const signer = await this.callMethod(COMMON_REQUEST_MAP.wallet_getSigner, {
+    const secretKeyBase58 = await this.callMethod(COMMON_REQUEST_MAP.wallet_getSigner, {
       transactions,
       instructions,
       fee: new BigNumber(transactions.length).multipliedBy(DEFAULT_FEE).toString(),
     });
 
     for (const t of transactions) {
-      t.sign([signer] as any);
+      const signedTx = this._signTransaction(t, secretKeyBase58);
+      signedTransactions.push(signedTx);
     }
-
-    return transactions;
+    return signedTransactions;
   }
 
   public async signMessage(message: Uint8Array): Promise<{ signature: Uint8Array }> {
@@ -145,6 +152,23 @@ export class LiqualitySolanaWallet implements Liquality {
     console.debug(`instructions: `, instructions);
 
     return instructions;
+  }
+
+  private _signTransaction<T extends Transaction | VersionedTransaction>(transaction: T, secretKeyBase58: string) {
+    const secretKey = base58.decode(secretKeyBase58);
+    const keypair = Keypair.fromSecretKey(secretKey);
+
+    // Legacy Transaction
+    if (transaction instanceof Transaction) {
+      transaction.feePayer = keypair.publicKey;
+      transaction.partialSign(keypair);
+    }
+    // Versioned Transaction
+    else {
+      transaction.sign([keypair]);
+    }
+
+    return transaction;
   }
 
   private async enable() {
