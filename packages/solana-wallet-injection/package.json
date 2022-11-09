@@ -1,40 +1,41 @@
 {
-    "version": "1.0.0",
-    "name": "@liquality/solana-wallet-injection",
-    "author": "Solana Maintainers <maintainers@solana.foundation>",
-    "repository": "https://github.com/solana-labs/wallet-standard",
-    "license": "Apache-2.0",
-    "engines": {
-        "node": ">=16"
-    },
-    "type": "module",
-    "sideEffects": false,
-    "main": "./dist/src/index.js",
-    "types": "./dist/src/index.d.ts",
-    "files": [
-        "dist/**"
-    ],
-    "scripts": {
-        "fmt": "prettier --write '{*,**/*}.{ts,tsx,js,jsx,json}'",
-        "clean": "shx mkdir -p dist && shx rm -rf dist",
-        "tsc": "tsc --build",
-        "package": "shx echo '{ \"type\": \"commonjs\" }' > dist/package.json",
-        "build": "yarn clean && yarn tsc"
-    },
-    "dependencies": {
-        "@debridge-finance/solana-transaction-parser": "github:debridge-finance/solana-tx-parser-public",
-        "@liquality/solana-wallet-standard": "workspace:*",
-        "@solana/wallet-standard-features": "^1.0.0",
-        "@solana/web3.js": "^1.58.0",
-        "@wallet-standard/base": "^1.0.0",
-        "@wallet-standard/features": "^1.0.0",
-        "bs58": "^4.0.1"
-    },
-    "devDependencies": {
-        "@types/bs58": "^4.0.1",
-        "@types/node-fetch": "^2.6.2",
-        "prettier": "^2.7.1",
-        "shx": "^0.3.4",
-        "typescript": "^4.8.4"
-    }
+  "version": "1.0.0",
+  "name": "@liquality/solana-wallet-injection",
+  "author": "Solana Maintainers <maintainers@solana.foundation>",
+  "repository": "https://github.com/solana-labs/wallet-standard",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=16"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "fmt": "prettier --write '{*,**/*}.{ts,tsx,js,jsx,json}'",
+    "clean": "shx mkdir -p dist && shx rm -rf dist",
+    "tsc": "tsc --build",
+    "package": "shx echo '{ \"type\": \"commonjs\" }' > dist/package.json",
+    "build": "yarn clean && yarn tsc"
+  },
+  "dependencies": {
+    "@chainify/types": "1.2.33",
+    "@debridge-finance/solana-transaction-parser": "github:debridge-finance/solana-tx-parser-public",
+    "@liquality/solana-wallet-standard": "workspace:*",
+    "@solana/wallet-standard-features": "^1.0.0",
+    "@solana/web3.js": "^1.58.0",
+    "@wallet-standard/base": "^1.0.0",
+    "@wallet-standard/features": "^1.0.0",
+    "bs58": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/bs58": "^4.0.1",
+    "@types/node-fetch": "^2.6.2",
+    "prettier": "^2.7.1",
+    "shx": "^0.3.4",
+    "typescript": "^4.8.4"
+  }
 }

@@ -2775,6 +2775,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@liquality/solana-wallet-injection@workspace:packages/solana-wallet-injection"
   dependencies:
+    "@chainify/types": 1.2.33
     "@debridge-finance/solana-transaction-parser": "github:debridge-finance/solana-tx-parser-public"
     "@liquality/solana-wallet-standard": "workspace:*"
     "@solana/wallet-standard-features": ^1.0.0
