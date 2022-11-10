@@ -36,6 +36,7 @@ export class LiqualitySolanaWallet implements Liquality {
 
   constructor(window: Window) {
     this.window = window;
+    // TODO: take rpc url from cryptoassets
     this.connection = new Connection(
       'https://red-sleek-rain.solana-mainnet.discover.quiknode.pro/fc112deb1e0228d09d0d8c12b8de5a601d251d80'
     );
@@ -112,6 +113,7 @@ export class LiqualitySolanaWallet implements Liquality {
     return signedTransactions;
   }
 
+  // TODO: to be tested
   public async signMessage(message: Uint8Array): Promise<{ signature: Uint8Array }> {
     console.debug('signMessage', message);
     console.debug('signMessage: string', message.toString());
