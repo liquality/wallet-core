@@ -8,11 +8,10 @@ import {
   LiqualityError,
   UnknownError,
 } from '../../LiqualityErrors';
-import { ledgerErrorSourceName, LEDGER_ERRORS } from '.';
+import { LEDGER_ERROR_SOURCE_NAME, LEDGER_ERRORS } from '.';
 import { ErrorParser } from '../ErrorParser';
-
 export class LedgerErrorParser extends ErrorParser<Error, LedgerParserDataType> {
-  public static readonly errorSource = ledgerErrorSourceName;
+  public static readonly errorSource = LEDGER_ERROR_SOURCE_NAME;
 
   protected _parseError(error: Error): LiqualityError {
     let liqError: LiqualityError;
