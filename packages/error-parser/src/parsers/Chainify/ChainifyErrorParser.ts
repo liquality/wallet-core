@@ -4,6 +4,7 @@ import { LiqualityError, UserActivity } from '../../LiqualityErrors/LiqualityErr
 import { ErrorParser } from '../ErrorParser';
 import { ChainifyErrorSource } from '.';
 import { InternalError, LowSpeedupFeeError, ThirdPartyError, UnknownError } from '../../LiqualityErrors';
+import { LedgerErrorParser } from './LedgerErrorParser';
 export class ChainifyErrorParser extends ErrorParser<Error, null> {
   public static readonly errorSource = ChainifyErrorSource;
 
@@ -31,7 +32,12 @@ export class ChainifyErrorParser extends ErrorParser<Error, null> {
       case ChainifyErrors.StandardError.prototype.name:
       case ChainifyErrors.UnimplementedMethodError.prototype.name:
       case ChainifyErrors.UnsupportedMethodError.prototype.name:
+        liqError = new InternalError();
+        break;
       case ChainifyErrors.WalletError.prototype.name:
+        if (error.message.includes('Ledger device: UNKNOWN_ERROR') || error.message.includes('Invalid data received')) {
+          return new LedgerErrorParser().parseError(error, null);
+        }
         liqError = new InternalError();
         break;
       case ChainifyErrors.ReplaceFeeInsufficientError.prototype.name:

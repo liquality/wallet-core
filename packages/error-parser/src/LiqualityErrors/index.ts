@@ -22,5 +22,9 @@ export { VeryHighMaxFeeWarning } from './VeryHighMaxFeeWarning';
 export { DuplicateTokenSymbolError } from './DuplicateTokenSymbolError';
 export { UserDeclinedError } from './UserDeclinedError';
 export { DappNotConnectedError } from './DappNotConnectedError';
+export { LedgerAppMismatchError } from './LedgerAppMismatchError';
+export { LedgerDappConflictError } from './LedgerDappConflictError';
+export { LedgerDeviceLockedError } from './LedgerDeviceLockedError';
+export { LedgerDeviceNotUpdatedError } from './LedgerDeviceNotUpdatedError';
 
 export { CUSTOM_ERRORS } from './customErrors';
