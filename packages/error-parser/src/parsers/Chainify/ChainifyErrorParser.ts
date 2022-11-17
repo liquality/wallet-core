@@ -36,7 +36,7 @@ export class ChainifyErrorParser extends ErrorParser<Error, null> {
         liqError = new InternalError();
         break;
       case ChainifyErrors.WalletError.prototype.name:
-        if (error.message.includes('Ledger device: UNKNOWN_ERROR') || error.message.includes('Invalid data received')) {
+        if (error.message.startsWith('Ledger device:') || error.message.includes('Invalid data received')) {
           return getErrorParser(LedgerErrorParser).parseError(error, null);
         }
         liqError = new InternalError();

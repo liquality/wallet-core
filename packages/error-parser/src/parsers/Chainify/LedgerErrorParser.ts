@@ -7,6 +7,7 @@ import {
   LedgerDeviceNotUpdatedError,
   LiqualityError,
   UnknownError,
+  UserDeclinedError,
 } from '../../LiqualityErrors';
 import { LEDGER_ERROR_SOURCE_NAME, LEDGER_ERRORS } from '.';
 import { ErrorParser } from '../ErrorParser';
@@ -29,6 +30,9 @@ export class LedgerErrorParser extends ErrorParser<Error, LedgerParserDataType> 
       case LEDGER_ERRORS.NOT_UPDATED_ERROR:
       case LEDGER_ERRORS.INVALID_DATA_ERROR:
         liqError = new LedgerDeviceNotUpdatedError();
+        break;
+      case LEDGER_ERRORS.USER_REJECTED:
+        liqError = new UserDeclinedError();
         break;
       default:
         liqError = new UnknownError();

@@ -1,4 +1,4 @@
-export { isLiqualityErrorString, liqualityErrorStringToJson, createInternalError } from './utils';
+export { isLiqualityErrorString, liqualityErrorStringToJson, createInternalError, errorName } from './utils';
 
 export * from './LiqualityErrors';
 
