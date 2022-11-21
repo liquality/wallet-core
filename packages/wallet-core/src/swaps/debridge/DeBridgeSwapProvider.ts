@@ -25,6 +25,9 @@ import { Transaction } from '@chainify/types';
 import { EvmChainProvider, EvmTypes } from '@chainify/evm';
 import { ActionContext } from '../../store';
 import { Client } from '@chainify/client';
+import { getErrorParser, SlippageTooHighError } from '@liquality/error-parser';
+import { DebridgeAPIErrorParser } from '@liquality/error-parser';
+import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 
 interface BuildSwapQuote extends SwapQuote {
   fee?: number;
@@ -70,9 +73,11 @@ const chainIds = [1, 56, 137, 42161, 43114];
 
 class DeBridgeSwapProvider extends SwapProvider {
   public config: DebridgeSwapProviderConfig;
+  public debridgeApiErrorParser: DebridgeAPIErrorParser;
 
   constructor(config: DebridgeSwapProviderConfig) {
     super(config);
+    this.debridgeApiErrorParser = getErrorParser(DebridgeAPIErrorParser);
   }
 
   public async getQuote({ network, from, to, amount }: QuoteRequest) {
@@ -96,18 +101,23 @@ class DeBridgeSwapProvider extends SwapProvider {
     try {
       const fromToken = cryptoassets[from].contractAddress || zeroAddress;
       const toToken = cryptoassets[to].contractAddress || zeroAddress;
-      const trade = await axios({
-        url: this.config.url + 'estimation',
-        method: 'get',
-        params: {
-          srcChainId: chainIdFrom,
-          srcChainTokenIn: fromToken,
-          srcChainTokenInAmount: fromAmountInUnit.toFixed(),
-          slippage: slippagePercentage,
-          dstChainId: chainIdTo,
-          dstChainTokenOut: toToken,
-        },
-      });
+      const trade = (await this.debridgeApiErrorParser.wrapAsync(
+        async () =>
+          await axios({
+            url: this.config.url + 'estimation',
+            method: 'get',
+            params: {
+              srcChainId: chainIdFrom,
+              srcChainTokenIn: fromToken,
+              srcChainTokenInAmount: fromAmountInUnit.toFixed(),
+              slippage: slippagePercentage,
+              dstChainId: chainIdTo,
+              dstChainTokenOut: toToken,
+            },
+          }),
+        null
+      )) as any;
+
       return {
         from,
         to,
@@ -141,7 +151,6 @@ class DeBridgeSwapProvider extends SwapProvider {
       }
 
       const swapTx = await this.loadSwapTx({ network, walletId, quote });
-      if (!swapTx) return null;
       const toChain = cryptoassets[quote.to].chain;
       const fromChain = cryptoassets[quote.from].chain;
       if (toChain === fromChain) return null;
@@ -268,7 +277,7 @@ class DeBridgeSwapProvider extends SwapProvider {
         }
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -372,56 +381,56 @@ class DeBridgeSwapProvider extends SwapProvider {
     const chainIdTo = getChain(network, cryptoassets[quote.to].chain).network.chainId;
     const fromToken = cryptoassets[quote.from].contractAddress || zeroAddress;
     const toToken = cryptoassets[quote.to].contractAddress || zeroAddress;
-    try {
-      const result = await axios({
-        url: this.config.url + 'transaction',
-        method: 'get',
-        params: {
-          srcChainId: chainIdFrom,
-          srcChainTokenIn: fromToken,
-          srcChainTokenInAmount: quote.fromAmount,
-          slippage: slippagePercentage,
-          dstChainId: chainIdTo,
-          dstChainTokenOut: toToken,
-          dstChainTokenOutRecipient: toAddress,
-          dstChainFallbackAddress: toAddress,
-        },
-      });
+    const result = (await this.debridgeApiErrorParser.wrapAsync(
+      async () =>
+        await axios({
+          url: this.config.url + 'transaction',
+          method: 'get',
+          params: {
+            srcChainId: chainIdFrom,
+            srcChainTokenIn: fromToken,
+            srcChainTokenInAmount: quote.fromAmount,
+            slippage: slippagePercentage,
+            dstChainId: chainIdTo,
+            dstChainTokenOut: toToken,
+            dstChainTokenOutRecipient: toAddress,
+            dstChainFallbackAddress: toAddress,
+          },
+        }),
+      null
+    )) as any;
 
-      if (result?.data?.tx) {
-        const estimation = result?.data?.estimation;
-        const txInfo = {
-          ...result.data.tx,
-          amount: estimation?.dstChainTokenOut.amount,
+    if (result?.data?.tx) {
+      const estimation = result?.data?.estimation;
+      const txInfo = {
+        ...result.data.tx,
+        amount: estimation?.dstChainTokenOut.amount,
+      };
+      if (estimation?.srcChainTokenIn && estimation?.srcChainTokenOut) {
+        txInfo.preSwap = {
+          toAddress: estimation?.srcChainTokenOut.address,
+          fromAddress: estimation?.srcChainTokenIn.address,
         };
-        if (estimation?.srcChainTokenIn && estimation?.srcChainTokenOut) {
-          txInfo.preSwap = {
-            toAddress: estimation?.srcChainTokenOut.address,
-            fromAddress: estimation?.srcChainTokenIn.address,
-          };
-        }
-        return txInfo;
       }
-    } catch (e) {
-      console.warn(e);
+      return txInfo;
     }
+
     return null;
   }
 
   private async sendSwap({ network, walletId, quote }: BuildSwapRequest) {
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
     const trade = await this.loadSwapTx({ network, walletId, quote });
-    if (trade === null) {
-      throw new Error(`Couldn't load swap tx`);
-    }
     if (
       BN(quote.toAmount)
         .times(1 - slippagePercentage / 100)
         .gt(trade.amount)
     ) {
-      throw new Error(
-        `Slippage is too high. You expect ${quote.toAmount} but you are going to receive ${trade.amount} ${quote.to}`
-      );
+      throw new SlippageTooHighError({
+        expectedAmount: quote.toAmount,
+        actualAmount: trade.amount,
+        currency: quote.to,
+      });
     }
 
     await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
@@ -461,7 +470,7 @@ class DeBridgeSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
@@ -482,7 +491,7 @@ class DeBridgeSwapProvider extends SwapProvider {
         };
       }
     } catch (e) {
-      if (e.name === 'TxNotFoundError') console.warn(e);
+      if (isTransactionNotFoundError(e)) console.warn(e);
       else throw e;
     }
   }
