@@ -1,5 +1,6 @@
 ---
 '@liquality/error-parser': patch
+'@liquality/wallet-core': patch
 ---
 
 fix: add ledger error parser
