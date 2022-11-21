@@ -2,6 +2,7 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/
 import { Client, HttpClient } from '@chainify/client';
 import { Transaction } from '@chainify/types';
 import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
+import { getErrorParser, ThorchainAPIErrorParser } from '@liquality/error-parser';
 import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import { getDoubleSwapOutput, getSwapMemo, getValueOfAsset1InAsset2 } from '@thorchain/asgardex-util';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
@@ -165,10 +166,12 @@ export interface ThorchainSwapQuote extends SwapQuote {
 class ThorchainSwapProvider extends SwapProvider {
   public config: ThorchainSwapProviderConfig;
   private _httpClient: HttpClient;
+  public thorchainAPIErrorParser: ThorchainAPIErrorParser;
 
   constructor(config: ThorchainSwapProviderConfig) {
     super(config);
     this._httpClient = new HttpClient({ baseURL: this.config.thornode });
+    this.thorchainAPIErrorParser = getErrorParser(ThorchainAPIErrorParser);
   }
 
   async getSupportedPairs() {
@@ -176,18 +179,19 @@ class ThorchainSwapProvider extends SwapProvider {
   }
 
   async _getPools(): Promise<ThorchainPool[]> {
-    return this._httpClient.nodeGet('/thorchain/pools');
+    return this.thorchainAPIErrorParser.wrapAsync(() => this._httpClient.nodeGet('/thorchain/pools'), {});
   }
 
   async _getInboundAddresses(): Promise<ThorchainInboundAddress[]> {
-    return this._httpClient.nodeGet('/thorchain/inbound_addresses');
+    return this.thorchainAPIErrorParser.wrapAsync(() => this._httpClient.nodeGet('/thorchain/inbound_addresses'), {});
   }
 
   async _getTransaction(hash: string): Promise<ThorchainTransactionResponse | null> {
     try {
-      return this._httpClient.nodeGet(`/thorchain/tx/${hash}`);
+      return await this.thorchainAPIErrorParser.wrapAsync(() => this._httpClient.nodeGet(`/thorchain/tx/${hash}`), {
+        txHash: hash,
+      });
     } catch (e) {
-      console.error(`Thorchain get transaction failed ${hash}`, e);
       return null;
     }
   }
