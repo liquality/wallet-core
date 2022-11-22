@@ -23,3 +23,11 @@ export function errorToLiqualityErrorString(error: any): string {
   else if (error instanceof Error && isLiqualityErrorString(error.message)) return error.message;
   else return createInternalError(CUSTOM_ERRORS.Unknown(error)).toString();
 }
+
+/// @dev gets the name of the error if it's a liquality error and returns '' otherwise
+export function errorName(error: any): string {
+  if (error instanceof LiqualityError) return error.name;
+  else if (error instanceof Error && isLiqualityErrorString(error.message))
+    return liqualityErrorStringToJson(error.message).name;
+  else return '';
+}

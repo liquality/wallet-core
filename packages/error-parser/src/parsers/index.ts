@@ -3,4 +3,6 @@ export * from './OneInchAPI/QuoteErrorParser';
 export * from './OneInchAPI/ApproveErrorParser';
 export * from './LifiAPI/QuoteErrorParser';
 export * from './Chainify/ChainifyErrorParser';
+export * from './Debridge/DebridgeAPIErrorParser';
+export * from './Thorchain/ThorchainAPIErrorParser';
 export * from './ErrorParser';

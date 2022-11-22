@@ -24,4 +24,8 @@ export const ERROR_NAMES = {
   DuplicateTokenSymbolError: 'DuplicateTokenSymbolError',
   UserDeclinedError: 'UserDeclinedError',
   DappNotConnectedError: 'DappNotConnectedError',
+  LedgerAppMismatchError: 'LedgerAppMismatchError',
+  LedgerDappConflictError: 'LedgerDappConflictError',
+  LedgerDeviceLockedError: 'LedgerDeviceLockedError',
+  LedgerDeviceNotUpdatedError: 'LedgerDeviceNotUpdatedError',
 };
