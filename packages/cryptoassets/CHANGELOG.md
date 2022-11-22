@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.1.0-next.0
+
+### Minor Changes
+
+- aa5fe04: update testnets
+
 ## 2.0.0
 
 ### Patch Changes
