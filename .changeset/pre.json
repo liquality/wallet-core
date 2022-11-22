@@ -6,5 +6,9 @@
     "@liquality/error-parser": "2.0.0",
     "@liquality/wallet-core": "2.0.0"
   },
-  "changesets": ["clever-ears-live"]
+  "changesets": [
+    "clever-ears-live",
+    "cyan-eyes-eat",
+    "lazy-melons-judge"
+  ]
 }

@@ -1,5 +1,15 @@
 # @liquality/wallet-core
 
+## 2.0.1-next.0
+
+### Patch Changes
+
+- 594615f: test: bump versions
+- Updated dependencies [aa5fe04]
+- Updated dependencies [594615f]
+  - @liquality/cryptoassets@2.1.0-next.0
+  - @liquality/error-parser@2.0.1-next.0
+
 ## 2.0.0
 
 ### Patch Changes
