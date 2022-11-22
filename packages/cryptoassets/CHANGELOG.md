@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.0.0
+
+### Patch Changes
+
+- 1673543: test: bump versions from master for 0.78.0 release
+
 ## 2.0.0-next.6
 
 ### Patch Changes

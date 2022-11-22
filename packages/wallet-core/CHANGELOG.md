@@ -1,5 +1,14 @@
 # @liquality/wallet-core
 
+## 2.0.0
+
+### Patch Changes
+
+- 1673543: test: bump versions from master for 0.78.0 release
+- Updated dependencies [1673543]
+  - @liquality/cryptoassets@2.0.0
+  - @liquality/error-parser@2.0.0
+
 ## 2.0.0-next.6
 
 ### Patch Changes
