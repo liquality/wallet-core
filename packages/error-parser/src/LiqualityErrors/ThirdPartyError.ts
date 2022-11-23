@@ -1,6 +1,8 @@
-import { ERROR_NAMES } from '../config';
+import { ERROR_NAMES, TRANSLATION_KEYS } from '../config';
 import { LiqualityError, UserActivity } from './LiqualityError';
-import { PLAIN, SWAP_ACTIVITY, UNKNOWN_ACTIVITY } from './translations/translationKeys';
+
+const { PLAIN, PLACEHOLDER, SWAP_ACTIVITY, UNKNOWN_ACTIVITY } = TRANSLATION_KEYS;
+
 export class ThirdPartyError extends LiqualityError<ThirdPartyErrorContext> {
   reportable = true;
 
@@ -12,7 +14,7 @@ export class ThirdPartyError extends LiqualityError<ThirdPartyErrorContext> {
     this.translationKey = `${this.name}.${PLAIN}`;
 
     if (data?.activity === UserActivity.SWAP) {
-      this.translationKey = `${this.name}.${PLAIN}.${SWAP_ACTIVITY}`;
+      this.translationKey = `${this.name}.${PLACEHOLDER}.${SWAP_ACTIVITY}`;
     } else {
       this.translationKey = `${this.name}.${PLAIN}.${UNKNOWN_ACTIVITY}`;
     }
