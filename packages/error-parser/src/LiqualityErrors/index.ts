@@ -26,5 +26,6 @@ export { LedgerAppMismatchError } from './LedgerAppMismatchError';
 export { LedgerDappConflictError } from './LedgerDappConflictError';
 export { LedgerDeviceLockedError } from './LedgerDeviceLockedError';
 export { LedgerDeviceNotUpdatedError } from './LedgerDeviceNotUpdatedError';
+export { LedgerDeviceSmartContractTransactionDisabledError } from './LedgerDeviceSmartContractTransactionDisabledError';
 
 export { CUSTOM_ERRORS } from './customErrors';

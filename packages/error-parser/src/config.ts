@@ -28,4 +28,5 @@ export const ERROR_NAMES = {
   LedgerDappConflictError: 'LedgerDappConflictError',
   LedgerDeviceLockedError: 'LedgerDeviceLockedError',
   LedgerDeviceNotUpdatedError: 'LedgerDeviceNotUpdatedError',
+  LedgerDeviceSmartContractTransactionDisabledError: 'LedgerDeviceSmartContractTransactionDisabledError',
 };

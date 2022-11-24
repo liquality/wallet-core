@@ -11,6 +11,8 @@ export const LEDGER_ERRORS = {
   NOT_UPDATED_ERROR: 'Ledger device: UNKNOWN_ERROR [object Object]',
   INVALID_DATA_ERROR: 'Invalid data received (0x6a80)',
   USER_REJECTED: 'Ledger device: Condition of use not satisfied (denied by the user?) (0x6985)',
+  SMART_CONTRACT_INTERACTION_DISABLED:
+    'EthAppPleaseEnableContractData: Please enable Blind signing or Contract data in the Ethereum app Settings',
 };
 
 export const JSON_RPC_NODE_ERRORS = {
