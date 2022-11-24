@@ -31,3 +31,7 @@ export function errorName(error: any): string {
     return liqualityErrorStringToJson(error.message).name;
   else return '';
 }
+
+export function is1001ValidationError(error: any) {
+  return error.code === 1001 && error.name === 'ValidationError';
+}
