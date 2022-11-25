@@ -36,6 +36,12 @@ export const updateNFTs = async (
       const nfts = nftAssetsFetched.map((nftAsset: NFT) => {
         const nftAssetStoredInState = nftAssetsStoredInState.find((asset: NFT) => asset.token_id === nftAsset.token_id);
         const starred = nftAssetStoredInState ? nftAssetStoredInState.starred : false;
+        if (!nftAsset.token_id && nftAsset.name) {
+          const hash = nftAsset.name.match(/#(\d+)/);
+          if (hash) {
+            nftAsset.token_id = hash[1];
+          }
+        }
 
         return {
           ...nftAsset,
