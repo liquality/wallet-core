@@ -29,3 +29,10 @@ export const ERROR_NAMES = {
   LedgerDeviceLockedError: 'LedgerDeviceLockedError',
   LedgerDeviceNotUpdatedError: 'LedgerDeviceNotUpdatedError',
 };
+
+export const TRANSLATION_KEYS = {
+  PLAIN: 'plain',
+  PLACEHOLDER: 'placeholder',
+  SWAP_ACTIVITY: 'swap',
+  UNKNOWN_ACTIVITY: 'unknown',
+};
