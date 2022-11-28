@@ -15,6 +15,7 @@ export const ERROR_NAMES = {
   SlippageTooHighError: 'SlippageTooHighError',
   ThirdPartyError: 'ThirdPartyError',
   UnknownError: 'UnknownError',
+  ValidationError: 'ValidationError',
   NoTipError: 'NoTipError',
   WalletLockedError: 'WalletLockedError',
   VeryLowTipError: 'VeryLowTipError',

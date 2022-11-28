@@ -13,6 +13,7 @@ export { PasswordError } from './PasswordError';
 export { SlippageTooHighError } from './SlippageTooHighError';
 export { ThirdPartyError } from './ThirdPartyError';
 export { UnknownError } from './UnknownError';
+export { ValidationError } from './ValidationError';
 export { NoTipError } from './NoTipError';
 export { WalletLockedError } from './WalletLockedError';
 export { VeryLowTipError } from './VeryLowTipError';
