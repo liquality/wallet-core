@@ -43,28 +43,30 @@ function proxify(obj: any) {
   return new Proxy(obj, {
     get(target, prop) {
       if (target[prop] instanceof Function) {
-        if (target[prop].constructor.name === 'AsyncFunction') {
-          return async (...args: any) => {
-            try {
-              const result = await target[prop](...args);
-              return result;
-            } catch (e) {
-              throw parser.parseError(e, null);
+        return (...args: any) => {
+          try {
+            const result = target[prop](...args);
+            if (isPromise(result)) {
+              return result.catch((e: any) => {
+                throw parser.parseError(e, null);
+              });
             }
-          };
-        } else {
-          return (...args: any) => {
-            try {
-              const result = target[prop](...args);
-              return result;
-            } catch (e) {
-              throw parser.parseError(e, null);
-            }
-          };
-        }
+            return result;
+          } catch (e) {
+            throw parser.parseError(e, null);
+          }
+        };
       } else {
         return target[prop];
       }
     },
   });
+}
+
+function isPromise(p: any) {
+  if (p !== null && typeof p === 'object' && typeof p.then === 'function' && typeof p.catch === 'function') {
+    return true;
+  }
+
+  return false;
 }

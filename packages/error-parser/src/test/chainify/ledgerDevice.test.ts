@@ -6,6 +6,7 @@ import {
   LedgerDappConflictError,
   LedgerDeviceLockedError,
   LedgerDeviceNotUpdatedError,
+  LedgerDeviceSmartContractTransactionDisabledError,
   UserDeclinedError,
 } from '../../';
 import { ChainifyErrorParser } from '../../parsers';
@@ -23,6 +24,7 @@ describe('Ledger parser', () => {
     [LEDGER_ERRORS.NOT_UPDATED_ERROR, LedgerDeviceNotUpdatedError.name],
     [LEDGER_ERRORS.INVALID_DATA_ERROR, LedgerDeviceNotUpdatedError.name],
     [LEDGER_ERRORS.USER_REJECTED, UserDeclinedError.name],
+    [LEDGER_ERRORS.SMART_CONTRACT_INTERACTION_DISABLED, LedgerDeviceSmartContractTransactionDisabledError.name],
   ];
 
   it('should not log anything to console', async () => {

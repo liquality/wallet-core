@@ -5,6 +5,7 @@ import {
   LedgerDappConflictError,
   LedgerDeviceLockedError,
   LedgerDeviceNotUpdatedError,
+  LedgerDeviceSmartContractTransactionDisabledError,
   LiqualityError,
   UnknownError,
   UserDeclinedError,
@@ -33,6 +34,9 @@ export class LedgerErrorParser extends ErrorParser<Error, LedgerParserDataType> 
         break;
       case LEDGER_ERRORS.USER_REJECTED:
         liqError = new UserDeclinedError();
+        break;
+      case LEDGER_ERRORS.SMART_CONTRACT_INTERACTION_DISABLED:
+        liqError = new LedgerDeviceSmartContractTransactionDisabledError();
         break;
       default:
         liqError = new UnknownError();
