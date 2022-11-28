@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.1.0-next.1
+
+### Patch Changes
+
+- 839c9eb: test: bump to next pre release version
+
 ## 2.1.0-next.0
 
 ### Minor Changes

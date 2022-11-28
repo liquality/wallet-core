@@ -1,5 +1,20 @@
 # @liquality/wallet-core
 
+## 2.0.1-next.1
+
+### Patch Changes
+
+- 839c9eb: test: bump to next pre release version
+- 366cf25: fix NFTs without token_id
+- a9ffd93: fix: add new liquality error, LedgerDeviceSmartContractTransactionDisabledError
+  fix: make chainify proxy work after transpilation. sendTransaction, an async function is made into a regular function and causes undesireable effects
+- Updated dependencies [839c9eb]
+- Updated dependencies [196dd88]
+- Updated dependencies [a9ffd93]
+- Updated dependencies [a9110e3]
+  - @liquality/cryptoassets@2.1.0-next.1
+  - @liquality/error-parser@2.0.1-next.1
+
 ## 2.0.1-next.0
 
 ### Patch Changes
