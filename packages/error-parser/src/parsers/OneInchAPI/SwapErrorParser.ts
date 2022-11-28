@@ -7,9 +7,11 @@ import {
   InsufficientGasFeeError,
   InsufficientLiquidityError,
   InternalError,
+  PairNotSupportedError,
   ThirdPartyError,
   UnknownError,
 } from '../../LiqualityErrors';
+import { is1001ValidationError } from '../../utils';
 
 export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwapParserDataType> {
   public static readonly errorSource = oneInchSwapSourceName;
@@ -18,7 +20,9 @@ export class OneInchSwapErrorParser extends ErrorParser<OneInchError, OneInchSwa
     let liqError: LiqualityError;
     let devDesc = '';
 
-    if (error?.name !== 'NodeError') {
+    if (is1001ValidationError(error)) {
+      liqError = new PairNotSupportedError();
+    } else if (error?.name !== 'NodeError') {
       // All OneInch errors must satisfy this because they are already wrapped in chainify
       liqError = new UnknownError();
     } else {
