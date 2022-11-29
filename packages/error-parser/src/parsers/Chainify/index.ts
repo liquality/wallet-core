@@ -17,5 +17,4 @@ export const LEDGER_ERRORS = {
 
 export const JSON_RPC_NODE_ERRORS = {
   INSUFFICIENT_GAS_PRICE_RSK: "transaction's gas price lower than block's minimum",
-  UNSUPPORTED_SWAP_METHOD_FOR_TOKEN_TYPE: '',
 };
