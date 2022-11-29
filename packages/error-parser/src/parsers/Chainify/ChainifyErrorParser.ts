@@ -7,6 +7,7 @@ import { InternalError, LowSpeedupFeeError, UnknownError } from '../../Liquality
 import { LedgerErrorParser } from './LedgerErrorParser';
 import { getErrorParser } from '../../factory';
 import { JsonRPCNodeErrorParser } from './JsonRPCNodeErrorParser';
+import { UniswapV2SwapErroParser } from '../UniswapV2/UniswapV2SwapErrorParser';
 export class ChainifyErrorParser extends ErrorParser<Error, null> {
   public static readonly errorSource = ChainifyErrorSource;
 
@@ -15,6 +16,7 @@ export class ChainifyErrorParser extends ErrorParser<Error, null> {
 
     switch (error.name) {
       case ChainifyErrors.NodeError.prototype.name:
+        if (error.message.includes('UniswapV2')) return getErrorParser(UniswapV2SwapErroParser).parseError(error, null);
         return getErrorParser(JsonRPCNodeErrorParser).parseError(error, null);
       case ChainifyErrors.InvalidAddressError.prototype.name:
       case ChainifyErrors.InvalidDestinationAddressError.prototype.name:

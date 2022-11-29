@@ -5,4 +5,5 @@ export * from './LifiAPI/QuoteErrorParser';
 export * from './Chainify/ChainifyErrorParser';
 export * from './Debridge/DebridgeAPIErrorParser';
 export * from './Thorchain/ThorchainAPIErrorParser';
+export * from './UniswapV2/UniswapV2SwapErrorParser';
 export * from './ErrorParser';
