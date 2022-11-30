@@ -42,3 +42,5 @@ export * from './updateFiatRates';
 export * from './updateMarketData';
 export * from './updateNFTs';
 export * from './updateTransactionFee';
+export * from './logError';
+export * from './clearErrorLog';

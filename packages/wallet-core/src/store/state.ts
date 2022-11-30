@@ -50,6 +50,8 @@ const initialState: RootState = {
   experiments: {},
   whatsNewModalVersion: '',
   enabledChains: {},
+
+  errorLog: [],
 };
 
 export default initialState;

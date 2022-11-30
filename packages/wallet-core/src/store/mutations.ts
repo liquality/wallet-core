@@ -1,6 +1,11 @@
 import { FeeDetails, Nullable } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
-import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
+import {
+  CUSTOM_ERRORS,
+  createInternalError,
+  updateErrorReporterConfig,
+  LiqualityErrorJSON,
+} from '@liquality/error-parser';
 import Vue from 'vue';
 import {
   Account,
@@ -492,6 +497,8 @@ export default {
       ...state.analytics,
       ...payload,
     };
+
+    updateErrorReporterConfig({ useReporter: state.analytics.acceptedDate > 0 || state.experiments.reportErrors });
   },
   UPDATE_NFTS(
     state: RootState,
@@ -522,6 +529,10 @@ export default {
       ...experiments,
       [name]: experiments && experiments[name] ? !experiments[name] : true,
     };
+
+    if (name === ExperimentType.ReportErrors) {
+      updateErrorReporterConfig({ useReporter: state.analytics.acceptedDate > 0 || state.experiments.reportErrors });
+    }
   },
   SET_WHATS_NEW_MODAL_VERSION(state: RootState, { version }: { version: string }) {
     state.whatsNewModalVersion = version;
@@ -576,5 +587,13 @@ export default {
 
       Vue.set(state.accounts[walletId]![network], index, updatedAccount);
     }
+  },
+  LOG_ERROR(state: RootState, error: LiqualityErrorJSON) {
+    const maxLogSize = Number(process.env.VUE_APP_MAX_ERROR_LOG_SIZE).valueOf();
+    if (state.errorLog.length === maxLogSize) state.errorLog.shift();
+    state.errorLog.push(error);
+  },
+  CLEAR_ERROR_LOG(state: RootState) {
+    state.errorLog = [];
   },
 };
