@@ -23,6 +23,7 @@ import { useLedgerLiveDefault } from './6_use_ledger_live_default';
 import { multiProviderSwaps } from './7_multi_provider_swaps';
 import { removeUseLedgerLive } from './8_remove_use_ledger_live';
 import { injectEthereumAssetChain } from './9_inject_ethereum_asset_chain';
+import { addErrorLog } from './23_add_error_log';
 
 const migrations = [
   firstMigration, // v1
@@ -47,6 +48,7 @@ const migrations = [
   addMissingAccounts, // v20
   enableSolanaChain, // v21
   enableOptimismChain, // v22
+  addErrorLog, // v23
 ];
 
 const LATEST_VERSION = migrations[migrations.length - 1].version;
