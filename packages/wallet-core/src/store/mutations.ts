@@ -7,6 +7,7 @@ import {
   LiqualityErrorJSON,
 } from '@liquality/error-parser';
 import Vue from 'vue';
+import store from '.';
 import {
   Account,
   AccountId,
@@ -589,6 +590,10 @@ export default {
     }
   },
   LOG_ERROR(state: RootState, error: LiqualityErrorJSON) {
+    if (!state.errorLog) {
+      state.errorLog = [];
+      updateErrorReporterConfig({ fallback: (error: LiqualityErrorJSON) => store.dispatch.logError(error) });
+    }
     const maxLogSize = Number(process.env.VUE_APP_MAX_ERROR_LOG_SIZE).valueOf();
     if (state.errorLog.length === maxLogSize) state.errorLog.shift();
     state.errorLog.push(error);
