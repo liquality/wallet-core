@@ -7,24 +7,24 @@ import { reportToDiscord } from './discord';
 
 const reporterConfig = new (class ReporterConfig {
   public useReporter: boolean;
-  public fallback: (error: LiqualityErrorJSON) => any;
+  public callback: (error: LiqualityErrorJSON) => any;
 
   constructor() {
     this.useReporter = false;
-    this.fallback = false as any;
+    this.callback = false as any;
   }
 })();
 
 export function updateErrorReporterConfig({
   useReporter,
-  fallback,
+  callback,
 }: {
   useReporter?: boolean;
-  fallback?: (error: LiqualityErrorJSON) => any;
+  callback?: (error: LiqualityErrorJSON) => any;
 }) {
   if (typeof useReporter !== 'undefined') reporterConfig.useReporter = useReporter;
-  if (fallback) {
-    reporterConfig.fallback = fallback;
+  if (callback) {
+    reporterConfig.callback = callback;
   }
 }
 
@@ -37,9 +37,8 @@ export function reportLiqualityError(error: any) {
     if (reportTargets?.includes(ReportTargets.Discord)) reportToDiscord(liqualityError);
 
     liqualityError.reported = true;
-  } else {
-    reporterConfig.fallback && reporterConfig.fallback(liqualityErrorStringToJson(errorToLiqualityErrorString(error)));
   }
+  reporterConfig.callback && reporterConfig.callback(liqualityErrorStringToJson(errorToLiqualityErrorString(error)));
 }
 
 function errorToLiqualityErrorObj(error: any): LiqualityError | LiqualityErrorJSON {
