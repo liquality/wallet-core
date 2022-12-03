@@ -1,5 +1,5 @@
-import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import moment from 'moment';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import { getSwapProvider } from '../factory/swap';
 import { HistoryItem, SendStatus, TransactionType } from '../store/types';
 
@@ -102,13 +102,15 @@ export const applyActivityFilters = (
   filters: { types: TransactionType[]; statuses: string[]; dates: { start: string; end: string } }
 ) => {
   const { types, statuses, dates } = filters;
-  let data = [...activity];
+
+  let filteredByType = [...activity];
   if (types.length > 0) {
-    data = data.filter((i) => types.includes(i.type));
+    filteredByType = [...filteredByType].filter((i) => types.includes(i.type));
   }
 
+  let fiteredByStatus = [...filteredByType];
   if (statuses.length > 0) {
-    data = data.filter((i) => {
+    fiteredByStatus = [...fiteredByStatus].filter((i) => {
       if (i.type === 'SWAP') {
         const swapProvider = getSwapProvider(i.network, i.provider);
         return statuses.includes(swapProvider.statuses[i.status].filterStatus);
@@ -122,21 +124,27 @@ export const applyActivityFilters = (
     });
   }
 
+  let filteredByStartDate = [...fiteredByStatus];
   if (dates.start) {
-    const filter = moment(dates.start);
-    data = data.filter((i) => {
+    const startDateFilter = moment(dates.start);
+    filteredByStartDate = [...filteredByStartDate].filter((i) => {
       const start = moment(i.startTime);
-      return filter >= start;
+      const diffInDays = start.diff(startDateFilter, 'days');
+
+      return diffInDays >= 0;
     });
   }
 
+  let filteredByEndDate = [...filteredByStartDate];
   if (dates.end) {
-    const filter = moment(dates.end);
-    data = data.filter((i) => {
+    const endDateFilter = moment(dates.end);
+    filteredByEndDate = [...filteredByEndDate].filter((i) => {
       const end = moment(i.startTime);
-      return filter <= end;
+      const diffInDays = end.diff(endDateFilter, 'days');
+
+      return diffInDays <= 0;
     });
   }
 
-  return data;
+  return filteredByEndDate;
 };
