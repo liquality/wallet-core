@@ -9,6 +9,7 @@ import {
   InsufficientLiquidityError,
   InternalError,
   OneInchSwapErrorParser,
+  PairNotSupportedError,
   ThirdPartyError,
   UnknownError,
 } from '../../';
@@ -90,6 +91,29 @@ describe('OneInchSwapAPI parser', () => {
     expect(error1.source).toBe(OneInchSwapErrorParser.errorSource);
     expect(error1.devMsg.data).toBe(data);
     expect(error1.rawError).toBe(validError);
+  });
+
+  const recordLevelErrorMap = [
+    ['ValidationError', 1001],
+    ['NotFoundError', 1006],
+  ];
+
+  it.each(recordLevelErrorMap)("should map '%s' => '%s'", (errorName, errorCode) => {
+    const validError = {
+      code: +errorCode,
+      name: errorName,
+    };
+
+    const error: LiqualityError = getError(() => {
+      parser.wrap(() => {
+        throw validError;
+      }, data);
+    });
+
+    expect(error.name).toBe(PairNotSupportedError.name);
+    expect(error.source).toBe(OneInchSwapErrorParser.errorSource);
+    expect(error.devMsg.data).toEqual(data);
+    expect(error.rawError).toBe(validError);
   });
 
   const wrongErrors = [

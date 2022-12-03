@@ -35,3 +35,7 @@ export function errorName(error: any): string {
 export function is1001ValidationError(error: any) {
   return error.code === 1001 && error.name === 'ValidationError';
 }
+
+export function is1006NotFoundError(error: any) {
+  return error.code === 1006 && error.name === 'NotFoundError';
+}
