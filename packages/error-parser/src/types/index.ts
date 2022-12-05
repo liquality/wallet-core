@@ -13,8 +13,7 @@ export type JSONObject = { [key: string]: JSONValue };
 export type LiqualityErrorJSON = {
   name: string;
   source: string;
-  causeKey: string;
-  suggestionKey: string;
+  translationKey: string;
   devMsg: { desc: string; data: JSONObject };
   rawError: any;
   data: JSONObject | { errorId: string };
