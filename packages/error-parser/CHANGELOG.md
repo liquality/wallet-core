@@ -1,5 +1,12 @@
 # @liquality/error-parser
 
+## 2.0.1-next.3
+
+### Patch Changes
+
+- 118f1a0: fix: map 1006NotFound error to pair not supported- - 1inch probably didn't find token in their list enabled/supported ones
+- 9e5ff10: fix: report error iff users wish to
+
 ## 2.0.1-next.2
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @liquality/wallet-core
 
+## 2.0.1-next.3
+
+### Patch Changes
+
+- 9e5ff10: fix: report error iff users wish to
+- Updated dependencies [118f1a0]
+- Updated dependencies [9e5ff10]
+  - @liquality/error-parser@2.0.1-next.3
+
 ## 2.0.1-next.2
 
 ### Patch Changes
