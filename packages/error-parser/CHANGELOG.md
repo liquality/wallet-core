@@ -1,5 +1,30 @@
 # @liquality/error-parser
 
+## 2.0.1
+
+### Patch Changes
+
+- 25567cb: fix: add ledger error parser
+  fix: add jsonRPC error parser
+  fix: add error parser for debridge
+  fix: add error parser for thorchain
+- 118f1a0: fix: map 1006NotFound error to pair not supported- - 1inch probably didn't find token in their list enabled/supported ones
+- 839c9eb: test: bump to next pre release version
+- 594615f: test: bump versions
+- 196dd88: fix: move translations out of error-parser - translation strings should be in the clients that use them
+- 7f192b5: fix: add error parser for uniswapV2
+  fix: split messages going to discord
+- 4b3b100: test: bump pre release version
+- a9ffd93: fix: add new liquality error, LedgerDeviceSmartContractTransactionDisabledError
+  fix: make chainify proxy work after transpilation. sendTransaction, an async function is made into a regular function and causes undesireable effects
+- a9110e3: fix: map more errors to PairNotSupportedError
+- 9e5ff10: fix: report error iff users wish to
+- Updated dependencies [aa5fe04]
+- Updated dependencies [839c9eb]
+- Updated dependencies [594615f]
+- Updated dependencies [4b3b100]
+  - @liquality/cryptoassets@2.1.0
+
 ## 2.0.1-next.3
 
 ### Patch Changes
