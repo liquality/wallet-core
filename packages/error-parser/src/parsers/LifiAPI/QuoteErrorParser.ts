@@ -19,6 +19,7 @@ import {
   ThirdPartyError,
   UnknownError,
 } from '../../LiqualityErrors';
+import { is1001ValidationError } from '../../utils';
 
 export class LifiQuoteErrorParser extends ErrorParser<LifiQuoteError, LifiQuoteErrorParserDataType> {
   public static readonly errorSource = lifiQuoteErrorSource;
@@ -26,8 +27,9 @@ export class LifiQuoteErrorParser extends ErrorParser<LifiQuoteError, LifiQuoteE
   protected _parseError(error: LifiQuoteError, data: LifiQuoteErrorParserDataType): LiqualityError {
     let liqError: LiqualityError;
     let devDesc = '';
-
-    if (!error.message) {
+    if (is1001ValidationError(error)) {
+      liqError = new PairNotSupportedError();
+    } else if (!error.message) {
       liqError = new UnknownError();
     } else {
       const errorDesc = error?.message;

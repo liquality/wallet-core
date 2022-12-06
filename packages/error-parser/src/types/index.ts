@@ -5,10 +5,6 @@ export enum ReportTargets {
   Console = 'Console',
   Discord = 'Discord',
 }
-export interface UserErrorMessage {
-  cause: string;
-  suggestions: Array<string>;
-}
 
 type JSONArray = Array<JSONValue>;
 type JSONValue = string | number | boolean | JSONObject | JSONArray;
@@ -17,8 +13,7 @@ export type JSONObject = { [key: string]: JSONValue };
 export type LiqualityErrorJSON = {
   name: string;
   source: string;
-  causeKey: string;
-  suggestionKey: string;
+  translationKey: string;
   devMsg: { desc: string; data: JSONObject };
   rawError: any;
   data: JSONObject | { errorId: string };

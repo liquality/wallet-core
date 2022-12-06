@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import randomBytes = require('randombytes');
 import { JSONObject } from '../types';
-import { ERROR_ID_LENGTH } from '../config';
-import { PLACEHOLDER, PLAIN } from './translations/translationKeys';
+import { ERROR_ID_LENGTH, TRANSLATION_KEYS } from '../config';
 import { LIQUALITY_ERROR_STRING_STARTER } from '../utils';
 
+const { PLAIN, PLACEHOLDER } = TRANSLATION_KEYS;
 export abstract class LiqualityError<Context extends JSONObject = JSONObject> extends Error {
   source: string;
   translationKey: string;

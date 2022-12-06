@@ -2,7 +2,8 @@
 import { LiqualityError, UserActivity } from '../../LiqualityErrors/LiqualityError';
 import { ErrorParser } from '../ErrorParser';
 import { oneInchInternalErrReason, OneInchError, ONE_INCH_ERRORS, oneInchApproveSourceName } from '.';
-import { InternalError, ThirdPartyError, UnknownError } from '../../LiqualityErrors';
+import { InternalError, PairNotSupportedError, ThirdPartyError, UnknownError } from '../../LiqualityErrors';
+import { is1001ValidationError, is1006NotFoundError } from '../../utils';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export class OneInchApproveErrorParser extends ErrorParser<OneInchError, null> {
@@ -12,7 +13,9 @@ export class OneInchApproveErrorParser extends ErrorParser<OneInchError, null> {
     let liqError: LiqualityError;
     let devDesc = '';
 
-    if (error?.name !== 'NodeError') {
+    if (is1001ValidationError(error) || is1006NotFoundError(error)) {
+      liqError = new PairNotSupportedError();
+    } else if (error?.name !== 'NodeError') {
       // All OneInch errors must satisfy this because they are already wrapped in chainify
       liqError = new UnknownError();
     } else {

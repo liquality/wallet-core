@@ -3,6 +3,7 @@ import { ChainId } from '@liquality/cryptoassets';
 import { Step } from '@lifi/sdk';
 import { SwapProviderError } from '../swaps/types';
 import BN from 'bignumber.js';
+import { LiqualityErrorJSON } from '@liquality/error-parser';
 
 export type NetworkWalletIdMap<T> = Partial<Record<Network, Record<WalletId, T>>>;
 export type WalletIdNetworkMap<T> = Partial<Record<WalletId, Record<Network, T>>>;
@@ -202,6 +203,7 @@ export type HistoryItem = NFTSendHistoryItem | SendHistoryItem | SwapHistoryItem
 
 export enum ExperimentType {
   ManageAccounts = 'manageAccounts',
+  ReportErrors = 'reportErrors',
 }
 
 export type ChainAccountIdMap = {
@@ -256,6 +258,8 @@ export interface RootState {
   experiments: Partial<Record<ExperimentType, boolean>>;
   whatsNewModalVersion: string;
   enabledChains: WalletIdNetworkMap<ChainId[]>;
+
+  errorLog: LiqualityErrorJSON[];
 }
 
 export type NFTCollections<T> = {

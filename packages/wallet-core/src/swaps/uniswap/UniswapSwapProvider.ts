@@ -31,7 +31,7 @@ import {
   SwapRequest,
   SwapStatus,
 } from '../types';
-import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError, errorName, ERROR_NAMES } from '@liquality/error-parser';
 
 const SWAP_DEADLINE = 30 * 60; // 30 minutes
 
@@ -222,7 +222,7 @@ class UniswapSwapProvider extends SwapProvider {
     };
   }
 
-  async buildSwapTx({ network, walletId, quote }: BuildSwapRequest) {
+  async buildSwapTx({ network, walletId, quote }: BuildSwapRequest, supportingFeeOnTransferTokens = false) {
     const toChain = cryptoassets[quote.to].chain;
     const chainId = this.getChainId(quote.from, network);
 
@@ -249,8 +249,19 @@ class UniswapSwapProvider extends SwapProvider {
     const uniswap = new ethers.Contract(this.config.routerAddress, UniswapV2Router.abi, api);
 
     let encodedData;
+
+    const SWAP_EXACT_TOKEN_FOR_TOKENS = supportingFeeOnTransferTokens
+      ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
+      : 'swapExactTokensForTokens';
+    const SWAP_EXACT_TOKEN_FOR_ETH = supportingFeeOnTransferTokens
+      ? 'swapExactTokensForETHSupportingFeeOnTransferTokens'
+      : 'swapExactTokensForETH';
+    const SWAP_EXACT_ETH_FOR_TOKENS = supportingFeeOnTransferTokens
+      ? 'swapExactETHForTokensSupportingFeeOnTransferTokens'
+      : 'swapExactETHForTokens';
+
     if (isERC20(quote.from)) {
-      const swapTokensMethod = isERC20(quote.to) ? 'swapExactTokensForTokens' : 'swapExactTokensForETH';
+      const swapTokensMethod = isERC20(quote.to) ? SWAP_EXACT_TOKEN_FOR_TOKENS : SWAP_EXACT_TOKEN_FOR_ETH;
       encodedData = uniswap.interface.encodeFunctionData(swapTokensMethod, [
         inputAmountHex,
         outputAmountHex,
@@ -259,7 +270,7 @@ class UniswapSwapProvider extends SwapProvider {
         deadline,
       ]);
     } else {
-      encodedData = uniswap.interface.encodeFunctionData('swapExactETHForTokens', [
+      encodedData = uniswap.interface.encodeFunctionData(SWAP_EXACT_ETH_FOR_TOKENS, [
         outputAmountHex,
         path,
         toAddress,
@@ -283,17 +294,30 @@ class UniswapSwapProvider extends SwapProvider {
   }
 
   async sendSwap({ network, walletId, quote }: SwapRequest) {
-    const txData = await this.buildSwapTx({ network, walletId, quote });
-    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-
-    await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
-    const swapTx = await client.wallet.sendTransaction(txData);
+    let swapTx;
+    try {
+      swapTx = await this._sendSwap({ network, walletId, quote });
+    } catch (e) {
+      if (errorName(e) === ERROR_NAMES.ValidationError) {
+        swapTx = await this._sendSwap({ network, walletId, quote }, true);
+      } else {
+        throw e;
+      }
+    }
 
     return {
       status: 'WAITING_FOR_SWAP_CONFIRMATIONS',
       swapTx,
       swapTxHash: swapTx.hash,
     };
+  }
+
+  async _sendSwap({ network, walletId, quote }: SwapRequest, supportingFeeOnTransferTokens = false) {
+    const txData = await this.buildSwapTx({ network, walletId, quote }, supportingFeeOnTransferTokens);
+    const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
+
+    await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
+    return await client.wallet.sendTransaction(txData);
   }
 
   async newSwap({ network, walletId, quote }: SwapRequest) {

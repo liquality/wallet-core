@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as ChainifyErrors from '@chainify/errors';
-import { LiqualityError, UserActivity } from '../../LiqualityErrors/LiqualityError';
+import { LiqualityError } from '../../LiqualityErrors/LiqualityError';
 import { ErrorParser } from '../ErrorParser';
 import { ChainifyErrorSource } from '.';
-import { InternalError, LowSpeedupFeeError, ThirdPartyError, UnknownError } from '../../LiqualityErrors';
+import { InternalError, LowSpeedupFeeError, UnknownError } from '../../LiqualityErrors';
+import { LedgerErrorParser } from './LedgerErrorParser';
+import { getErrorParser } from '../../factory';
+import { JsonRPCNodeErrorParser } from './JsonRPCNodeErrorParser';
+import { UniswapV2SwapErroParser } from '../UniswapV2/UniswapV2SwapErrorParser';
 export class ChainifyErrorParser extends ErrorParser<Error, null> {
   public static readonly errorSource = ChainifyErrorSource;
 
@@ -12,8 +16,8 @@ export class ChainifyErrorParser extends ErrorParser<Error, null> {
 
     switch (error.name) {
       case ChainifyErrors.NodeError.prototype.name:
-        liqError = new ThirdPartyError({ activity: UserActivity.UNKNOWN });
-        break;
+        if (error.message.includes('UniswapV2')) return getErrorParser(UniswapV2SwapErroParser).parseError(error, null);
+        return getErrorParser(JsonRPCNodeErrorParser).parseError(error, null);
       case ChainifyErrors.InvalidAddressError.prototype.name:
       case ChainifyErrors.InvalidDestinationAddressError.prototype.name:
       case ChainifyErrors.InvalidExpirationError.prototype.name:
@@ -31,7 +35,16 @@ export class ChainifyErrorParser extends ErrorParser<Error, null> {
       case ChainifyErrors.StandardError.prototype.name:
       case ChainifyErrors.UnimplementedMethodError.prototype.name:
       case ChainifyErrors.UnsupportedMethodError.prototype.name:
+        liqError = new InternalError();
+        break;
       case ChainifyErrors.WalletError.prototype.name:
+        if (
+          error.message.startsWith('Ledger device:') ||
+          error.message.startsWith('EthAppPleaseEnableContractData') ||
+          error.message.includes('Invalid data received')
+        ) {
+          return getErrorParser(LedgerErrorParser).parseError(error, null);
+        }
         liqError = new InternalError();
         break;
       case ChainifyErrors.ReplaceFeeInsufficientError.prototype.name:

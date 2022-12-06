@@ -2,7 +2,14 @@ import { OneInchError, ONE_INCH_ERRORS } from '../../parsers/OneInchAPI';
 import { FAKE_ERROR, getError } from '..';
 import { LiqualityError } from '../../LiqualityErrors/LiqualityError';
 import RandExp = require('randexp');
-import { getErrorParser, InternalError, OneInchApproveErrorParser, ThirdPartyError, UnknownError } from '../..';
+import {
+  getErrorParser,
+  InternalError,
+  OneInchApproveErrorParser,
+  PairNotSupportedError,
+  ThirdPartyError,
+  UnknownError,
+} from '../..';
 
 describe('OneInchApproveAPI parser', () => {
   const parser = getErrorParser(OneInchApproveErrorParser);
@@ -46,6 +53,29 @@ describe('OneInchApproveAPI parser', () => {
     });
 
     expect(error.name).toBe(liqError);
+    expect(error.source).toBe(OneInchApproveErrorParser.errorSource);
+    expect(error.devMsg.data).toEqual({});
+    expect(error.rawError).toBe(validError);
+  });
+
+  const recordLevelErrorMap = [
+    ['ValidationError', 1001],
+    ['NotFoundError', 1006],
+  ];
+
+  it.each(recordLevelErrorMap)("should map '%s' => '%s'", (errorName, errorCode) => {
+    const validError = {
+      code: +errorCode,
+      name: errorName,
+    };
+
+    const error: LiqualityError = getError(() => {
+      parser.wrap(() => {
+        throw validError;
+      }, null);
+    });
+
+    expect(error.name).toBe(PairNotSupportedError.name);
     expect(error.source).toBe(OneInchApproveErrorParser.errorSource);
     expect(error.devMsg.data).toEqual({});
     expect(error.rawError).toBe(validError);

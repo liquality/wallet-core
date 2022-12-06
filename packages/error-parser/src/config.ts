@@ -15,6 +15,7 @@ export const ERROR_NAMES = {
   SlippageTooHighError: 'SlippageTooHighError',
   ThirdPartyError: 'ThirdPartyError',
   UnknownError: 'UnknownError',
+  ValidationError: 'ValidationError',
   NoTipError: 'NoTipError',
   WalletLockedError: 'WalletLockedError',
   VeryLowTipError: 'VeryLowTipError',
@@ -24,4 +25,16 @@ export const ERROR_NAMES = {
   DuplicateTokenSymbolError: 'DuplicateTokenSymbolError',
   UserDeclinedError: 'UserDeclinedError',
   DappNotConnectedError: 'DappNotConnectedError',
+  LedgerAppMismatchError: 'LedgerAppMismatchError',
+  LedgerDappConflictError: 'LedgerDappConflictError',
+  LedgerDeviceLockedError: 'LedgerDeviceLockedError',
+  LedgerDeviceNotUpdatedError: 'LedgerDeviceNotUpdatedError',
+  LedgerDeviceSmartContractTransactionDisabledError: 'LedgerDeviceSmartContractTransactionDisabledError',
+};
+
+export const TRANSLATION_KEYS = {
+  PLAIN: 'plain',
+  PLACEHOLDER: 'placeholder',
+  SWAP_ACTIVITY: 'swap',
+  UNKNOWN_ACTIVITY: 'unknown',
 };

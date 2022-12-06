@@ -110,7 +110,6 @@ class LifiSwapProvider extends EvmSwapProvider {
 
       return { from, to, fromAmount: fromAmountInUnit, toAmount: lifiRoute.estimate.toAmount, lifiRoute };
     } catch (e) {
-      console.warn('LifiSwapProvider error : ', e);
       return null;
     }
   }
