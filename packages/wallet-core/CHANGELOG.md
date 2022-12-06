@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 4.0.0
+
+### Major Changes
+
+- 984c9c6: User consent for error parsing
+
 ## 3.0.0
 
 ### Major Changes
