@@ -11,7 +11,9 @@
 ![](https://img.shields.io/npm/v/@liquality/wallet-core?label=wallet-core)
 ![master](https://github.com/liquality/wallet-core/actions/workflows/build-test.yml/badge.svg?branch=master)
 
-Wallet Core is a cryptocurrency wallet library in Typescript. It provides an abstracted interface that handles all the necessary internals of a muilti chain wallet. Featuring:
+Wallet Core is a cryptocurrency wallet library in Typescript. It provides an abstracted interface that handles all the necessary internals of a muilti chain wallet.
+
+# Features
 
 - State management
 - Seed management and security
