@@ -4,6 +4,7 @@
 export enum ReportTargets {
   Console = 'Console',
   Discord = 'Discord',
+  Sentry = 'Sentry',
 }
 
 type JSONArray = Array<JSONValue>;
