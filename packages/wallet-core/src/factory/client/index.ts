@@ -1,10 +1,15 @@
 import { ChainId, getChain } from '@liquality/cryptoassets';
 import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, createInternalError } from '@liquality/error-parser';
-import { AccountInfo, Network } from '../../store/types';
+import { AccountInfo, BitcoinClientSettings } from '../../store/types';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import { createEvmClient } from './evm';
 
-export const createClient = (chainId: ChainId, network: Network, mnemonic: string, accountInfo: AccountInfo) => {
+export const createClient = ({
+  chainId: ChainId, 
+  settings: ClientSettings, 
+  mnemonic: string, 
+  accountInfo: AccountInfo
+}) => {
   let client;
   const chain = getChain(network, chainId);
 
@@ -13,7 +18,7 @@ export const createClient = (chainId: ChainId, network: Network, mnemonic: strin
   } else {
     switch (chainId) {
       case ChainId.Bitcoin:
-        client = createBtcClient(network, mnemonic, accountInfo);
+        client = createBtcClient(settings as BitcoinClientSettings, mnemonic, accountInfo);
         break;
       case ChainId.Near:
         client = createNearClient(network, mnemonic, accountInfo);

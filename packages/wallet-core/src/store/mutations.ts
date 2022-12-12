@@ -1,4 +1,4 @@
-import { FeeDetails, Nullable } from '@chainify/types';
+import { FeeDetails, Nullable, Network as ChainifyNetwork } from '@chainify/types';
 import { ChainId } from '@liquality/cryptoassets';
 import {
   CUSTOM_ERRORS,
@@ -600,5 +600,12 @@ export default {
   },
   CLEAR_ERROR_LOG(state: RootState) {
     state.errorLog = [];
+  },
+  SET_CUSTOM_CHAIN_SETTINGS(
+    state: RootState,
+    { network, walletId, chainId, chanifyNetwork }: { network: Network; walletId: WalletId; chainId: ChainId, chanifyNetwork: ChainifyNetwork }
+  ) {
+    ensureNetworkWalletTree(state.customChainSeetings, network, walletId, {});
+    state.customChainSeetings[network]![walletId][chainId] = chanifyNetwork;
   },
 };

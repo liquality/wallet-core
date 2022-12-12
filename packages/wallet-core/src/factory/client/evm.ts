@@ -9,16 +9,16 @@ import {
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
 import { Address, Network as ChainifyNetwork } from '@chainify/types';
 import { JsonRpcProvider, StaticJsonRpcProvider } from '@ethersproject/providers';
-import { AccountInfo, AccountType } from '../../store/types';
+import { AccountInfo, AccountType, ClientSettings } from '../../store/types';
 import { walletOptionsStore } from '../../walletOptions';
 import { getNftProvider } from './nft';
 import { EvmChain } from '@liquality/cryptoassets';
 import { asL2Provider } from '@eth-optimism/sdk';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
-export function createEvmClient(chain: EvmChain, mnemonic: string, accountInfo: AccountInfo) {
-  const network = chain.network;
-  const chainProvider = getEvmProvider(chain);
+export function createEvmClient(chain: EvmChain, settings: ClientSettings<ChainifyNetwork>, mnemonic: string, accountInfo: AccountInfo) {
+  const network = settings.network;
+  const chainProvider = getEvmProvider(chain, settings);
   const walletProvider = getEvmWalletProvider(network, accountInfo, chainProvider, mnemonic);
   const client = new Client().connect(walletProvider);
 
@@ -62,8 +62,8 @@ function getEvmWalletProvider(
   }
 }
 
-function getEvmProvider(chain: EvmChain) {
-  const network = chain.network;
+function getEvmProvider(chain: EvmChain, settings: ClientSettings<ChainifyNetwork>) {
+  const network = settings.network;
   if (chain.isMultiLayered) {
     const provider = asL2Provider(new StaticJsonRpcProvider(network.rpcUrls[0], network.chainId));
     return new OptimismChainProvider(network, provider, chain.feeMultiplier);
