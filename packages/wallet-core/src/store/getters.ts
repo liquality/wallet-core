@@ -1,9 +1,10 @@
 import { Client } from '@chainify/client';
-import { FeeDetails, Nullable } from '@chainify/types';
+import { FeeDetails, Nullable, Network as ChainifyNetwork } from '@chainify/types';
 import { AssetTypes, ChainId, getAllAssets, IAsset, unitToCurrency } from '@liquality/cryptoassets';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
+import { defaultChainSettings } from 'src/factory/settings';
 import { rootGetterContext } from '.';
 import { createClient } from '../factory';
 import { cryptoToFiat } from '../utils/coinFormatter';
@@ -89,7 +90,18 @@ export default {
         publicKey: account?.publicKey,
         address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined,
       };
-      const client = createClient(chainId, network, mnemonic, accountInfo);
+
+      let chainifyNetwork = state.customChainSeetings[state.activeWalletId]?.[network]?.[chainId];
+      if(!chainifyNetwork) {
+        chainifyNetwork = {
+          ...defaultChainSettings[network]?.[chainId] as ChainifyNetwork
+        }
+      }
+      const settings = {
+        network,
+        chainifyNetwork
+      };
+      const client = createClient({chainId, settings, mnemonic, accountInfo});
       clientCache[cacheKey] = client;
 
       return client;
@@ -395,6 +407,28 @@ export default {
   },
   accountNftCollections(...context: GetterContext) {
     const { getters } = rootGetterContext(context);
+    return (accountId: AccountId): NFTCollections<NFT> => {
+      const account = getters.accountItem(accountId);
+      if (!account?.nfts || !account.nfts.length) return {};
+
+      return account.nfts.reduce((collections: NFTCollections<NFT>, nft: NFT) => {
+        (collections[nft.collection!.name] ||= []).push(nft);
+        collections[nft.collection!.name].sort((nftA: NFT, nftB: NFT) => {
+          return nftA.starred === nftB.starred ? 0 : nftA.starred ? -1 : 1;
+        });
+        return collections;
+      }, {});
+    };
+  },
+  chainSettings(...context: GetterContext) {
+    const { state } = rootGetterContext(context);
+    const { customChainSeetings, activeNetwork, activeWalletId, enabledChains } = state;
+    const _customSettings = customChainSeetings[activeWalletId]?.[activeNetwork] || {};
+
+    enabledChains[activeWalletId]?.[activeNetwork]?.includes(account.chain)
+    
+    
+
     return (accountId: AccountId): NFTCollections<NFT> => {
       const account = getters.accountItem(accountId);
       if (!account?.nfts || !account.nfts.length) return {};

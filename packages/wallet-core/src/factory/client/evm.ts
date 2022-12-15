@@ -17,13 +17,12 @@ import { asL2Provider } from '@eth-optimism/sdk';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 export function createEvmClient(chain: EvmChain, settings: ClientSettings<ChainifyNetwork>, mnemonic: string, accountInfo: AccountInfo) {
-  const network = settings.network;
   const chainProvider = getEvmProvider(chain, settings);
-  const walletProvider = getEvmWalletProvider(network, accountInfo, chainProvider, mnemonic);
+  const walletProvider = getEvmWalletProvider(settings.chainifyNetwork, accountInfo, chainProvider, mnemonic);
   const client = new Client().connect(walletProvider);
 
   if (chain.nftProviderType) {
-    const nftProvider = getNftProvider(chain.nftProviderType, walletProvider, network.isTestnet);
+    const nftProvider = getNftProvider(chain.nftProviderType, walletProvider, settings.chainifyNetwork.isTestnet);
     client.connect(nftProvider);
   }
 
@@ -63,12 +62,12 @@ function getEvmWalletProvider(
 }
 
 function getEvmProvider(chain: EvmChain, settings: ClientSettings<ChainifyNetwork>) {
-  const network = settings.network;
+  const network = settings.chainifyNetwork;
   if (chain.isMultiLayered) {
-    const provider = asL2Provider(new StaticJsonRpcProvider(network.rpcUrls[0], network.chainId));
-    return new OptimismChainProvider(network, provider, chain.feeMultiplier);
+    const provider = asL2Provider(new StaticJsonRpcProvider(network.rpcUrl, network.chainId));
+    return new OptimismChainProvider(settings.chainifyNetwork, provider, chain.feeMultiplier);
   } else {
-    const provider = new StaticJsonRpcProvider(network.rpcUrls[0], network.chainId);
+    const provider = new StaticJsonRpcProvider(network.rpcUrl, network.chainId);
     const feeProvider = getFeeProvider(chain, provider);
     return new EvmChainProvider(network, provider, feeProvider, chain.multicallSupport);
   }

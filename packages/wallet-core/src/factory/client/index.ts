@@ -1,33 +1,41 @@
 import { ChainId, getChain } from '@liquality/cryptoassets';
 import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, createInternalError } from '@liquality/error-parser';
-import { AccountInfo, BitcoinClientSettings } from '../../store/types';
+import { AccountInfo, ClientSettings, BitcoinClientSettings } from '../../store/types';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import { createEvmClient } from './evm';
+import { Network as ChainifyNetwork } from '@chainify/types';
+import { NearTypes } from '@chainify/near';
+import { TerraTypes } from '@chainify/terra';
 
 export const createClient = ({
+  chainId, 
+  settings, 
+  mnemonic, 
+  accountInfo
+}: {
   chainId: ChainId, 
-  settings: ClientSettings, 
+  settings: ClientSettings<NearTypes.NearNetwork | TerraTypes.TerraNetwork | ChainifyNetwork>, 
   mnemonic: string, 
   accountInfo: AccountInfo
 }) => {
   let client;
-  const chain = getChain(network, chainId);
+  const chain = getChain(settings.network, chainId);
 
   if (chain.isEVM) {
-    client = createEvmClient(chain, mnemonic, accountInfo);
+    client = createEvmClient(chain, settings, mnemonic, accountInfo);
   } else {
     switch (chainId) {
       case ChainId.Bitcoin:
         client = createBtcClient(settings as BitcoinClientSettings, mnemonic, accountInfo);
         break;
       case ChainId.Near:
-        client = createNearClient(network, mnemonic, accountInfo);
+        client = createNearClient(settings as ClientSettings<NearTypes.NearNetwork>, mnemonic, accountInfo);
         break;
       case ChainId.Terra:
-        client = createTerraClient(network, mnemonic, accountInfo);
+        client = createTerraClient(settings as ClientSettings<TerraTypes.TerraNetwork>, mnemonic, accountInfo);
         break;
       case ChainId.Solana:
-        client = createSolanaClient(network, mnemonic, accountInfo);
+        client = createSolanaClient(settings, mnemonic, accountInfo);
         break;
       default:
         throw createInternalError(CUSTOM_ERRORS.NotFound.Client(chainId));
