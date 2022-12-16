@@ -16,7 +16,12 @@ import { EvmChain } from '@liquality/cryptoassets';
 import { asL2Provider } from '@eth-optimism/sdk';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
-export function createEvmClient(chain: EvmChain, settings: ClientSettings<ChainifyNetwork>, mnemonic: string, accountInfo: AccountInfo) {
+export function createEvmClient(
+  chain: EvmChain,
+  settings: ClientSettings<ChainifyNetwork>,
+  mnemonic: string,
+  accountInfo: AccountInfo
+) {
   const chainProvider = getEvmProvider(chain, settings);
   const walletProvider = getEvmWalletProvider(settings.chainifyNetwork, accountInfo, chainProvider, mnemonic);
   const client = new Client().connect(walletProvider);

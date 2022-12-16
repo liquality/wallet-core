@@ -5,9 +5,7 @@ import { SwapProviderError } from '../swaps/types';
 import BN from 'bignumber.js';
 import { LiqualityErrorJSON } from '@liquality/error-parser';
 import { Network as ChainifyNetwork } from '@chainify/types';
-import {
-  BitcoinTypes,
-} from '@chainify/bitcoin';
+import { BitcoinTypes } from '@chainify/bitcoin';
 export type NetworkWalletIdMap<T> = Partial<Record<Network, Record<WalletId, T>>>;
 export type WalletIdNetworkMap<T> = Partial<Record<WalletId, Record<Network, T>>>;
 
@@ -26,7 +24,6 @@ export interface BitcoinClientSettings extends ClientSettings<BitcoinTypes.Bitco
   batchEsploraApi: string;
   feeProvider: string;
 }
-
 
 export type WalletId = string;
 export type AccountId = string;

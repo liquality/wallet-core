@@ -3,7 +3,7 @@ import {
   BitcoinEsploraApiProvider,
   BitcoinFeeApiProvider,
   BitcoinHDWalletProvider,
-  BitcoinSwapEsploraProvider
+  BitcoinSwapEsploraProvider,
 } from '@chainify/bitcoin';
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
 import { Network as ChainifyNetwork } from '@chainify/types';
@@ -70,15 +70,27 @@ export function createBtcClient(settings: BitcoinClientSettings, mnemonic: strin
   return new Client().connect(swapProvider);
 }
 
-export function createNearClient(settings: ClientSettings<NearTypes.NearNetwork>, mnemonic: string, accountInfo: AccountInfo) {
-  const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath, helperUrl: settings.chainifyNetwork.helperUrl };
+export function createNearClient(
+  settings: ClientSettings<NearTypes.NearNetwork>,
+  mnemonic: string,
+  accountInfo: AccountInfo
+) {
+  const walletOptions = {
+    mnemonic,
+    derivationPath: accountInfo.derivationPath,
+    helperUrl: settings.chainifyNetwork.helperUrl,
+  };
   const chainProvider = new NearChainProvider(settings.chainifyNetwork);
   const walletProvider = new NearWalletProvider(walletOptions, chainProvider);
   const swapProvider = new NearSwapProvider(settings.chainifyNetwork.helperUrl, walletProvider);
   return new Client().connect(swapProvider);
 }
 
-export function createTerraClient(settings: ClientSettings<TerraTypes.TerraNetwork>, mnemonic: string, accountInfo: AccountInfo) {
+export function createTerraClient(
+  settings: ClientSettings<TerraTypes.TerraNetwork>,
+  mnemonic: string,
+  accountInfo: AccountInfo
+) {
   const { helperUrl } = settings.chainifyNetwork;
   const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath, helperUrl };
   const chainProvider = new TerraChainProvider(settings.chainifyNetwork);
@@ -87,7 +99,11 @@ export function createTerraClient(settings: ClientSettings<TerraTypes.TerraNetwo
   return new Client().connect(swapProvider);
 }
 
-export function createSolanaClient(settings: ClientSettings<ChainifyNetwork>, mnemonic: string, accountInfo: AccountInfo) {
+export function createSolanaClient(
+  settings: ClientSettings<ChainifyNetwork>,
+  mnemonic: string,
+  accountInfo: AccountInfo
+) {
   const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath };
   const chainProvider = new SolanaChainProvider(settings.chainifyNetwork);
   const walletProvider = new SolanaWalletProvider(walletOptions, chainProvider);

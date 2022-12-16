@@ -603,9 +603,14 @@ export default {
   },
   SET_CUSTOM_CHAIN_SETTINGS(
     state: RootState,
-    { network, walletId, chainId, chanifyNetwork }: { network: Network; walletId: WalletId; chainId: ChainId, chanifyNetwork: ChainifyNetwork }
+    {
+      network,
+      walletId,
+      chainId,
+      chanifyNetwork,
+    }: { network: Network; walletId: WalletId; chainId: ChainId; chanifyNetwork: ChainifyNetwork }
   ) {
     ensureNetworkWalletTree(state.customChainSeetings, network, walletId, {});
-    state.customChainSeetings[walletId]![network][chainId] = {...chanifyNetwork};
+    state.customChainSeetings[walletId]![network][chainId] = { ...chanifyNetwork };
   },
 };

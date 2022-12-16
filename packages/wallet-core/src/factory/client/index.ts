@@ -8,15 +8,15 @@ import { NearTypes } from '@chainify/near';
 import { TerraTypes } from '@chainify/terra';
 
 export const createClient = ({
-  chainId, 
-  settings, 
-  mnemonic, 
-  accountInfo
+  chainId,
+  settings,
+  mnemonic,
+  accountInfo,
 }: {
-  chainId: ChainId, 
-  settings: ClientSettings<NearTypes.NearNetwork | TerraTypes.TerraNetwork | ChainifyNetwork>, 
-  mnemonic: string, 
-  accountInfo: AccountInfo
+  chainId: ChainId;
+  settings: ClientSettings<NearTypes.NearNetwork | TerraTypes.TerraNetwork | ChainifyNetwork>;
+  mnemonic: string;
+  accountInfo: AccountInfo;
 }) => {
   let client;
   const chain = getChain(settings.network, chainId);

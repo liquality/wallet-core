@@ -4,36 +4,41 @@ import { ChainNetworks } from '../utils/networks';
 import buildConfig from '../build.config';
 import { Network } from '../store/types';
 
-export const defaultChainSettings: Record<Network, Record<ChainId, ChainifyNetwork>> = buildConfig.networks.reduce((prev, curr) => {
-    const chains =  buildConfig.chains.map( (chainId) => {
-        const chain = getChain(curr, chainId);
-        const { network } = chain;
-        const { name, coinType, isTestnet, rpcUrls} = network;
-        const chainNetwork = ChainNetworks[chainId] ? ChainNetworks[chainId][curr] : {} || {};
-        const chainifyNetwork = {
-            name,
-            coinType,
-            isTestnet,
-            chainId,
-            rpcUrl: rpcUrls && rpcUrls.length > 0 ? rpcUrls[0] : undefined,
-            ...chainNetwork,
-            custom: false
+export const defaultChainSettings: Record<Network, Record<ChainId, ChainifyNetwork>> = buildConfig.networks.reduce(
+  (prevNetwork, currNetwork) => {
+    const chains = buildConfig.chains.reduce((prevChain, currChain) => {
+      const chain = getChain(currNetwork, currChain);
+      const { network } = chain;
+      const { name, coinType, isTestnet, rpcUrls } = network;
+      const chainNetwork = ChainNetworks[currChain] ? ChainNetworks[currChain][currNetwork] : {} || {};
+      let chainifyNetwork: any = {
+        name,
+        coinType,
+        isTestnet,
+        chainId: currChain,
+        rpcUrl: rpcUrls && rpcUrls.length > 0 ? rpcUrls[0] : undefined,
+        ...chainNetwork,
+        custom: false,
+      };
+
+      if (currChain === ChainId.Bitcoin) {
+        chainifyNetwork = {
+          ...chainifyNetwork,
+          esploraApi: buildConfig.exploraApis[currNetwork],
+          batchEsploraApi: buildConfig.batchEsploraApis[currNetwork],
+          feeProvider: 'https://liquality.io/swap/mempool/v1/fees/recommended',
         };
+      }
 
-        if (chainId === ChainId.Bitcoin) {
-            return {
-                ...chainifyNetwork,
-                esploraApi: buildConfig.exploraApis[curr],
-                batchEsploraApi: buildConfig.batchEsploraApis[curr],
-                feeProvider: 'https://liquality.io/swap/mempool/v1/fees/recommended'
-            } as ChainifyNetwork
-        }
-
-        return chainifyNetwork;
-    });
+      return {
+        ...prevChain,
+        [currChain]: chainifyNetwork,
+      };
+    }, {});
     return {
-        ...prev,
-        [curr]: chains
+      ...prevNetwork,
+      [currNetwork]: chains,
     };
-
-}, {} as Record<Network, Record<ChainId, ChainifyNetwork>>)
+  },
+  {} as Record<Network, Record<ChainId, ChainifyNetwork>>
+);

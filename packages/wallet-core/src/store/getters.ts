@@ -4,7 +4,7 @@ import { AssetTypes, ChainId, getAllAssets, IAsset, unitToCurrency } from '@liqu
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
-import { defaultChainSettings } from 'src/factory/settings';
+import { defaultChainSettings } from '../factory/settings';
 import { rootGetterContext } from '.';
 import { createClient } from '../factory';
 import { cryptoToFiat } from '../utils/coinFormatter';
@@ -90,12 +90,12 @@ export default {
         publicKey: account?.publicKey,
         address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined,
       };
-      
+
       const settings = {
         network,
-        chainifyNetwork: getters.chainSettings[chainId]
+        chainifyNetwork: getters.chainSettings[chainId],
       };
-      const client = createClient({chainId, settings, mnemonic, accountInfo});
+      const client = createClient({ chainId, settings, mnemonic, accountInfo });
       clientCache[cacheKey] = client;
 
       return client;
@@ -421,7 +421,7 @@ export default {
     const settings = defaultChainSettings[activeNetwork] || {};
     return {
       ...settings,
-      ..._customSettings
+      ..._customSettings,
     };
   },
 };
