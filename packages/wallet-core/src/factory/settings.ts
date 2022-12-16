@@ -4,7 +4,7 @@ import { ChainNetworks } from '../utils/networks';
 import buildConfig from '../build.config';
 import { Network } from '../store/types';
 
-export const defaultChainSettings: Partial<Record<Network, Record<ChainId, ChainifyNetwork>>> = buildConfig.networks.reduce((prev, curr) => {
+export const defaultChainSettings: Record<Network, Record<ChainId, ChainifyNetwork>> = buildConfig.networks.reduce((prev, curr) => {
     const chains =  buildConfig.chains.map( (chainId) => {
         const chain = getChain(curr, chainId);
         const { network } = chain;
@@ -16,7 +16,8 @@ export const defaultChainSettings: Partial<Record<Network, Record<ChainId, Chain
             isTestnet,
             chainId,
             rpcUrl: rpcUrls && rpcUrls.length > 0 ? rpcUrls[0] : undefined,
-            ...chainNetwork
+            ...chainNetwork,
+            custom: false
         };
 
         if (chainId === ChainId.Bitcoin) {
@@ -35,4 +36,4 @@ export const defaultChainSettings: Partial<Record<Network, Record<ChainId, Chain
         [curr]: chains
     };
 
-}, {})
+}, {} as Record<Network, Record<ChainId, ChainifyNetwork>>)

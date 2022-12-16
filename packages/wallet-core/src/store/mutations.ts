@@ -606,6 +606,6 @@ export default {
     { network, walletId, chainId, chanifyNetwork }: { network: Network; walletId: WalletId; chainId: ChainId, chanifyNetwork: ChainifyNetwork }
   ) {
     ensureNetworkWalletTree(state.customChainSeetings, network, walletId, {});
-    state.customChainSeetings[network]![walletId][chainId] = chanifyNetwork;
+    state.customChainSeetings[walletId]![network][chainId] = {...chanifyNetwork};
   },
 };

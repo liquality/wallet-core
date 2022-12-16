@@ -90,16 +90,10 @@ export default {
         publicKey: account?.publicKey,
         address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined,
       };
-
-      let chainifyNetwork = state.customChainSeetings[state.activeWalletId]?.[network]?.[chainId];
-      if(!chainifyNetwork) {
-        chainifyNetwork = {
-          ...defaultChainSettings[network]?.[chainId] as ChainifyNetwork
-        }
-      }
+      
       const settings = {
         network,
-        chainifyNetwork
+        chainifyNetwork: getters.chainSettings[chainId]
       };
       const client = createClient({chainId, settings, mnemonic, accountInfo});
       clientCache[cacheKey] = client;
@@ -420,26 +414,14 @@ export default {
       }, {});
     };
   },
-  chainSettings(...context: GetterContext) {
+  chainSettings(...context: GetterContext): Record<ChainId, ChainifyNetwork> {
     const { state } = rootGetterContext(context);
-    const { customChainSeetings, activeNetwork, activeWalletId, enabledChains } = state;
+    const { customChainSeetings, activeNetwork, activeWalletId } = state;
     const _customSettings = customChainSeetings[activeWalletId]?.[activeNetwork] || {};
-
-    enabledChains[activeWalletId]?.[activeNetwork]?.includes(account.chain)
-    
-    
-
-    return (accountId: AccountId): NFTCollections<NFT> => {
-      const account = getters.accountItem(accountId);
-      if (!account?.nfts || !account.nfts.length) return {};
-
-      return account.nfts.reduce((collections: NFTCollections<NFT>, nft: NFT) => {
-        (collections[nft.collection!.name] ||= []).push(nft);
-        collections[nft.collection!.name].sort((nftA: NFT, nftB: NFT) => {
-          return nftA.starred === nftB.starred ? 0 : nftA.starred ? -1 : 1;
-        });
-        return collections;
-      }, {});
+    const settings = defaultChainSettings[activeNetwork] || {};
+    return {
+      ...settings,
+      ..._customSettings
     };
   },
 };
