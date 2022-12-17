@@ -272,7 +272,7 @@ export interface RootState {
   enabledChains: WalletIdNetworkMap<ChainId[]>;
 
   errorLog: LiqualityErrorJSON[];
-  customChainSeetings: WalletIdNetworkMap<Record<ChainId, ChainifyNetwork>>;
+  customChainSeetings: NetworkWalletIdMap<Record<ChainId, ChainifyNetwork>>;
 }
 
 export type NFTCollections<T> = {

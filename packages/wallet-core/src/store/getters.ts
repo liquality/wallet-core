@@ -417,7 +417,7 @@ export default {
   chainSettings(...context: GetterContext): Record<ChainId, ChainifyNetwork> {
     const { state } = rootGetterContext(context);
     const { customChainSeetings, activeNetwork, activeWalletId } = state;
-    const _customSettings = customChainSeetings[activeWalletId]?.[activeNetwork] || {};
+    const _customSettings = customChainSeetings[activeNetwork]?.[activeWalletId] || {};
     const settings = defaultChainSettings[activeNetwork] || {};
     return {
       ...settings,
