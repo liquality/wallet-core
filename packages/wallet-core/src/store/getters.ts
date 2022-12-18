@@ -1,6 +1,6 @@
 import { Client } from '@chainify/client';
 import { FeeDetails, Nullable, Network as ChainifyNetwork } from '@chainify/types';
-import { AssetTypes, ChainId, getAllAssets, IAsset, unitToCurrency } from '@liquality/cryptoassets';
+import { AssetTypes, ChainId, getAllAssets, IAsset, unitToCurrency, getNativeAssetCode, isEvmChain } from '@liquality/cryptoassets';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
@@ -90,10 +90,10 @@ export default {
         publicKey: account?.publicKey,
         address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined,
       };
-
+      
       const settings = {
         network,
-        chainifyNetwork: getters.chainSettings[chainId],
+        chainifyNetwork: getters.mergedChainSettings[chainId]
       };
       const client = createClient({ chainId, settings, mnemonic, accountInfo });
       clientCache[cacheKey] = client;
@@ -202,101 +202,101 @@ export default {
 
     const _accounts = accounts[activeWalletId]?.[activeNetwork]
       ? accounts[activeWalletId]![activeNetwork].filter(
-          (account) =>
-            account.assets &&
-            account.enabled &&
-            account.assets.length > 0 &&
-            enabledChains[activeWalletId]?.[activeNetwork]?.includes(account.chain)
-        )
-          .map((account) => {
-            /*
-              Calculate fiat balances and asset balances
-              Sort and group assets by dollar value / token amount / market cap
-          */
-            const totalFiatBalance = accountFiatBalance(activeWalletId, activeNetwork, account.id);
-            const assetsWithFiat: AssetInfo[] = [];
-            const assetsWithMarketCap: AssetInfo[] = [];
-            const assetsWithTokenBalance: AssetInfo[] = [];
-            let assetsMarketCap: CurrenciesInfo = {} as any;
-            let hasFiat = false;
-            let hasTokenBalance = false;
-            let nativeAssetMarketCap = new BigNumber(0);
+        (account) =>
+          account.assets &&
+          account.enabled &&
+          account.assets.length > 0 &&
+          enabledChains[activeWalletId]?.[activeNetwork]?.includes(account.chain)
+      )
+        .map((account) => {
+          /*
+            Calculate fiat balances and asset balances
+            Sort and group assets by dollar value / token amount / market cap
+        */
+          const totalFiatBalance = accountFiatBalance(activeWalletId, activeNetwork, account.id);
+          const assetsWithFiat: AssetInfo[] = [];
+          const assetsWithMarketCap: AssetInfo[] = [];
+          const assetsWithTokenBalance: AssetInfo[] = [];
+          let assetsMarketCap: CurrenciesInfo = {} as any;
+          let hasFiat = false;
+          let hasTokenBalance = false;
+          let nativeAssetMarketCap = new BigNumber(0);
 
-            const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
-              const fiat = assetFiatBalance(asset, new BigNumber(balance));
-              const marketCap = assetMarketCap(asset);
-              const tokenBalance = account.balances[asset];
-              let type = AssetTypes.erc20;
-              let matchingAsset;
+          const fiatBalances = Object.entries(account.balances).reduce((accum, [asset, balance]) => {
+            const fiat = assetFiatBalance(asset, new BigNumber(balance));
+            const marketCap = assetMarketCap(asset);
+            const tokenBalance = account.balances[asset];
+            let type = AssetTypes.erc20;
+            let matchingAsset;
 
-              const assetByCode = cryptoassets[asset];
+            const assetByCode = cryptoassets[asset];
 
-              if (assetByCode) {
-                type = assetByCode.type;
-                matchingAsset = assetByCode.matchingAsset;
+            if (assetByCode) {
+              type = assetByCode.type;
+              matchingAsset = assetByCode.matchingAsset;
+            }
+
+            if (fiat) {
+              hasFiat = true;
+              assetsWithFiat.push({ asset, type, amount: fiat });
+            } else if (marketCap) {
+              if (type === AssetTypes.native && !matchingAsset) {
+                nativeAssetMarketCap = marketCap;
               }
 
-              if (fiat) {
-                hasFiat = true;
-                assetsWithFiat.push({ asset, type, amount: fiat });
-              } else if (marketCap) {
-                if (type === AssetTypes.native && !matchingAsset) {
-                  nativeAssetMarketCap = marketCap;
-                }
-
-                assetsWithMarketCap.push({ asset, type, amount: marketCap || new BigNumber(0) });
-              } else {
-                if (!hasTokenBalance) {
-                  hasTokenBalance = new BigNumber(tokenBalance).gt(0);
-                }
-
-                assetsWithTokenBalance.push({ asset, type, amount: new BigNumber(tokenBalance) });
+              assetsWithMarketCap.push({ asset, type, amount: marketCap || new BigNumber(0) });
+            } else {
+              if (!hasTokenBalance) {
+                hasTokenBalance = new BigNumber(tokenBalance).gt(0);
               }
 
-              assetsMarketCap = {
-                ...assetsMarketCap,
-                [asset]: marketCap || new BigNumber(0),
-              };
+              assetsWithTokenBalance.push({ asset, type, amount: new BigNumber(tokenBalance) });
+            }
 
-              return {
-                ...accum,
-                [asset]: fiat,
-              };
-            }, {});
-
-            const sortedAssetsByFiat = orderBy(assetsWithFiat, 'amount', 'desc');
-            const sortedAssetsByMarketCap = orderBy(assetsWithMarketCap, 'amount', 'desc');
-            const sortedAssetsByTokenBalance = orderBy(assetsWithTokenBalance, 'amount', 'desc');
-
-            const orderedAssets = orderAssets(
-              hasFiat,
-              hasTokenBalance,
-              sortedAssetsByFiat,
-              sortedAssetsByMarketCap,
-              sortedAssetsByTokenBalance
-            );
+            assetsMarketCap = {
+              ...assetsMarketCap,
+              [asset]: marketCap || new BigNumber(0),
+            };
 
             return {
-              ...account,
-              assets: orderedAssets.length ? orderedAssets : account.assets,
-              nativeAssetMarketCap,
-              assetsMarketCap,
-              fiatBalances,
-              totalFiatBalance,
+              ...accum,
+              [asset]: fiat,
             };
-          })
-          .sort(orderChains)
-          .reduce((acc: { [key: string]: Account[] }, account) => {
-            /*
-              Group sorted assets by chain / multiaccount ordering
-          */
-            const { chain } = account;
+          }, {});
 
-            acc[chain] = acc[chain] ?? [];
-            acc[chain].push(account);
+          const sortedAssetsByFiat = orderBy(assetsWithFiat, 'amount', 'desc');
+          const sortedAssetsByMarketCap = orderBy(assetsWithMarketCap, 'amount', 'desc');
+          const sortedAssetsByTokenBalance = orderBy(assetsWithTokenBalance, 'amount', 'desc');
 
-            return acc;
-          }, {})
+          const orderedAssets = orderAssets(
+            hasFiat,
+            hasTokenBalance,
+            sortedAssetsByFiat,
+            sortedAssetsByMarketCap,
+            sortedAssetsByTokenBalance
+          );
+
+          return {
+            ...account,
+            assets: orderedAssets.length ? orderedAssets : account.assets,
+            nativeAssetMarketCap,
+            assetsMarketCap,
+            fiatBalances,
+            totalFiatBalance,
+          };
+        })
+        .sort(orderChains)
+        .reduce((acc: { [key: string]: Account[] }, account) => {
+          /*
+            Group sorted assets by chain / multiaccount ordering
+        */
+          const { chain } = account;
+
+          acc[chain] = acc[chain] ?? [];
+          acc[chain].push(account);
+
+          return acc;
+        }, {})
       : [];
     return Object.values(_accounts).flat();
   },
@@ -414,7 +414,7 @@ export default {
       }, {});
     };
   },
-  chainSettings(...context: GetterContext): Record<ChainId, ChainifyNetwork> {
+  mergedChainSettings(...context: GetterContext): Record<ChainId, ChainifyNetwork> {
     const { state } = rootGetterContext(context);
     const { customChainSeetings, activeNetwork, activeWalletId } = state;
     const _customSettings = customChainSeetings[activeNetwork]?.[activeWalletId] || {};
@@ -423,5 +423,19 @@ export default {
       ...settings,
       ..._customSettings,
     };
+  },
+  chainSettings(...context: GetterContext): { chain: string, asset: string, network: ChainifyNetwork }[] {
+    const { state: { enabledChains, activeNetwork, activeWalletId }, getters: { mergedChainSettings } } = rootGetterContext(context);
+    
+    return Object.keys(mergedChainSettings).filter(
+      (chain) => isEvmChain(activeNetwork, chain as ChainId) &&
+        enabledChains[activeWalletId]?.[activeNetwork]?.includes(chain as ChainId))
+      .map(
+        c => {
+          const network = mergedChainSettings[c as ChainId]
+          const asset = getNativeAssetCode(activeNetwork, c as ChainId)
+          return { chain: c, asset, network }
+        }
+      )
   },
 };

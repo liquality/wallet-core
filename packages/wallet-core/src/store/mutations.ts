@@ -611,7 +611,7 @@ export default {
     }: { network: Network; walletId: WalletId; chainId: ChainId; chanifyNetwork: ChainifyNetwork }
   ) {
     ensureNetworkWalletTree(state.customChainSeetings, network, walletId, {});
-    state.customChainSeetings[network]![walletId][chainId] = { ...chanifyNetwork };
+    Vue.set(state.customChainSeetings[network]![walletId], chainId, chanifyNetwork);
   },
   REMOVE_CUSTOM_CHAIN_SETTINGS(
     state: RootState,
@@ -622,6 +622,6 @@ export default {
     }: { network: Network; walletId: WalletId; chainId: ChainId }
   ) {
     ensureNetworkWalletTree(state.customChainSeetings, network, walletId, {});
-    delete state.customChainSeetings[network]?.[walletId]?.[chainId];
+    Vue.delete(state.customChainSeetings[network]![walletId], chainId);
   },
 };
