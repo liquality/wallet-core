@@ -1,14 +1,7 @@
 import { Client } from '@chainify/client';
-import { FeeDetails, Nullable, Network as ChainifyNetwork } from '@chainify/types';
-import {
-  AssetTypes,
-  ChainId,
-  getAllAssets,
-  IAsset,
-  unitToCurrency,
-  getNativeAssetCode,
-  isEvmChain,
-} from '@liquality/cryptoassets';
+import { FeeDetails, Nullable } from '@chainify/types';
+import { ChainifyNetwork } from '../types';
+import { AssetTypes, ChainId, getAllAssets, IAsset, unitToCurrency, getNativeAssetCode } from '@liquality/cryptoassets';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
@@ -432,22 +425,17 @@ export default {
       ..._customSettings,
     };
   },
-  chainSettings(...context: GetterContext): { chain: string; asset: string; network: ChainifyNetwork }[] {
-    const {
-      state: { enabledChains, activeNetwork, activeWalletId },
-      getters: { mergedChainSettings },
-    } = rootGetterContext(context);
-
-    return Object.keys(mergedChainSettings)
-      .filter(
-        (chain) =>
-          isEvmChain(activeNetwork, chain as ChainId) &&
-          enabledChains[activeWalletId]?.[activeNetwork]?.includes(chain as ChainId)
-      )
-      .map((c) => {
-        const network = mergedChainSettings[c as ChainId];
-        const asset = getNativeAssetCode(activeNetwork, c as ChainId);
-        return { chain: c, asset, network };
-      });
+  chainSettings(...context: GetterContext): { chain: string, asset: string, network: ChainifyNetwork }[] {
+    const { state: { enabledChains, activeNetwork, activeWalletId }, getters: { mergedChainSettings } } = rootGetterContext(context);
+    
+    return Object.keys(mergedChainSettings).filter(
+      (chain) => enabledChains[activeWalletId]?.[activeNetwork]?.includes(chain as ChainId))
+      .map(
+        c => {
+          const network = mergedChainSettings[c as ChainId]
+          const asset = getNativeAssetCode(activeNetwork, c as ChainId)
+          return { chain: c, asset, network }
+        }
+      );
   },
 };

@@ -7,7 +7,8 @@ import {
   RpcFeeProvider,
 } from '@chainify/evm';
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
-import { Address, Network as ChainifyNetwork } from '@chainify/types';
+import { Address } from '@chainify/types';
+import { ChainifyNetwork } from '../../types';
 import { JsonRpcProvider, StaticJsonRpcProvider } from '@ethersproject/providers';
 import { AccountInfo, AccountType, ClientSettings } from '../../store/types';
 import { walletOptionsStore } from '../../walletOptions';

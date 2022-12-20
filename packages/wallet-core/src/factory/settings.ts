@@ -1,8 +1,9 @@
-import { Network as ChainifyNetwork } from '@chainify/types';
+
 import { ChainId, getChain } from '@liquality/cryptoassets';
 import { ChainNetworks } from '../utils/networks';
 import buildConfig from '../build.config';
 import { Network } from '../store/types';
+import { ChainifyNetwork } from '../types';
 
 export const defaultChainSettings: Record<Network, Record<ChainId, ChainifyNetwork>> = buildConfig.networks.reduce(
   (prevNetwork, currNetwork) => {
@@ -24,12 +25,11 @@ export const defaultChainSettings: Record<Network, Record<ChainId, ChainifyNetwo
       if (currChain === ChainId.Bitcoin) {
         chainifyNetwork = {
           ...chainifyNetwork,
-          esploraApi: buildConfig.exploraApis[currNetwork],
-          batchEsploraApi: buildConfig.batchEsploraApis[currNetwork],
-          feeProvider: 'https://liquality.io/swap/mempool/v1/fees/recommended',
+          scraperUrl: buildConfig.exploraApis[currNetwork],
+          batchScraperUrl: buildConfig.batchEsploraApis[currNetwork],
+          feeProviderUrl: 'https://liquality.io/swap/mempool/v1/fees/recommended',
         };
       }
-
       return {
         ...prevChain,
         [currChain]: chainifyNetwork,

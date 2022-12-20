@@ -4,8 +4,7 @@ import { Step } from '@lifi/sdk';
 import { SwapProviderError } from '../swaps/types';
 import BN from 'bignumber.js';
 import { LiqualityErrorJSON } from '@liquality/error-parser';
-import { Network as ChainifyNetwork } from '@chainify/types';
-import { BitcoinTypes } from '@chainify/bitcoin';
+import { ChainifyNetwork } from '../types';
 export type NetworkWalletIdMap<T> = Partial<Record<Network, Record<WalletId, T>>>;
 export type WalletIdNetworkMap<T> = Partial<Record<WalletId, Record<Network, T>>>;
 
@@ -17,12 +16,6 @@ export enum Network {
 export interface ClientSettings<T> {
   network: Network;
   chainifyNetwork: T;
-}
-
-export interface BitcoinClientSettings extends ClientSettings<BitcoinTypes.BitcoinNetwork> {
-  esploraApi: string;
-  batchEsploraApi: string;
-  feeProvider: string;
 }
 
 export type WalletId = string;

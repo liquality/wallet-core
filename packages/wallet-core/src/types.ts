@@ -1,4 +1,5 @@
 import { LedgerProviderTypes } from '@chainify/hw-ledger';
+import { Network } from '@chainify/types';
 import { RootState } from './store/types';
 
 export interface ParsedCipherText {
@@ -23,4 +24,11 @@ export interface WalletOptions {
 
   createNotification(notification: Notification): void;
   ledgerTransportCreator?: LedgerProviderTypes.TransportCreator;
+}
+
+
+export interface ChainifyNetwork extends Network {
+  scraperUrl?: string;
+  batchScraperUrl?: string;
+  feeProviderUrl?: string;
 }

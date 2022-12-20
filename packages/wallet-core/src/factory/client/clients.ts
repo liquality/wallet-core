@@ -4,35 +4,37 @@ import {
   BitcoinFeeApiProvider,
   BitcoinHDWalletProvider,
   BitcoinSwapEsploraProvider,
+  BitcoinTypes,
 } from '@chainify/bitcoin';
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
-import { Network as ChainifyNetwork } from '@chainify/types';
+import { ChainifyNetwork } from '../../types';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
 import { SolanaChainProvider, SolanaNftProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
 
-import { AccountInfo, ClientSettings, BitcoinClientSettings } from '../../store/types';
+import { AccountInfo, ClientSettings } from '../../store/types';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { walletOptionsStore } from '../../walletOptions';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
-export function createBtcClient(settings: BitcoinClientSettings, mnemonic: string, accountInfo: AccountInfo) {
+export function createBtcClient(settings: ClientSettings<ChainifyNetwork>, mnemonic: string, accountInfo: AccountInfo) {
   const isMainnet = settings.network === 'mainnet';
+  const { chainifyNetwork } = settings;
   const chainProvider = new BitcoinEsploraApiProvider({
-    batchUrl: settings.batchEsploraApi,
-    url: settings.esploraApi,
-    network: settings.chainifyNetwork,
-    numberOfBlockConfirmation: 2,
+    batchUrl: chainifyNetwork.batchScraperUrl!,
+    url: chainifyNetwork.scraperUrl!,
+    network: chainifyNetwork as BitcoinTypes.BitcoinNetwork,
+    numberOfBlockConfirmation: 2
   });
 
   if (isMainnet) {
-    const feeProvider = new BitcoinFeeApiProvider(settings.feeProvider);
+    const feeProvider = new BitcoinFeeApiProvider(chainifyNetwork.feeProviderUrl);
     chainProvider.setFeeProvider(feeProvider);
   }
 
   const swapProvider = new BitcoinSwapEsploraProvider({
-    network: settings.chainifyNetwork,
-    scraperUrl: settings.esploraApi,
+    network: chainifyNetwork as BitcoinTypes.BitcoinNetwork,
+    scraperUrl: chainifyNetwork.scraperUrl,
   });
 
   // TODO: make sure Ledger works
@@ -47,7 +49,7 @@ export function createBtcClient(settings: BitcoinClientSettings, mnemonic: strin
     }
     const ledgerProvider = new BitcoinLedgerProvider(
       {
-        network: settings.chainifyNetwork,
+        network: chainifyNetwork as BitcoinTypes.BitcoinNetwork,
         addressType,
         baseDerivationPath: accountInfo.derivationPath,
         basePublicKey: accountInfo?.publicKey,
@@ -59,7 +61,7 @@ export function createBtcClient(settings: BitcoinClientSettings, mnemonic: strin
     swapProvider.setWallet(ledgerProvider);
   } else {
     const walletOptions = {
-      network: settings.chainifyNetwork,
+      network: chainifyNetwork as BitcoinTypes.BitcoinNetwork,
       baseDerivationPath: accountInfo.derivationPath,
       mnemonic,
     };
