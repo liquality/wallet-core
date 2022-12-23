@@ -29,7 +29,7 @@ export function createBtcClient(
     batchUrl: chainifyNetwork.batchScraperUrl!,
     url: chainifyNetwork.scraperUrl!,
     network: chainifyNetwork as BitcoinTypes.BitcoinNetwork,
-    numberOfBlockConfirmation: 2
+    numberOfBlockConfirmation: 2,
   });
 
   if (isMainnet) {
@@ -97,7 +97,7 @@ export function createTerraClient(
   settings: ClientSettings<TerraTypes.TerraNetwork>,
   mnemonic: string,
   accountInfo: AccountInfo
-): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>>  {
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>> {
   const { helperUrl } = settings.chainifyNetwork;
   const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath, helperUrl };
   const chainProvider = new TerraChainProvider(settings.chainifyNetwork);
@@ -110,7 +110,7 @@ export function createSolanaClient(
   settings: ClientSettings<ChainifyNetwork>,
   mnemonic: string,
   accountInfo: AccountInfo
-): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>>  {
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>> {
   const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath };
   const chainProvider = new SolanaChainProvider(settings.chainifyNetwork);
   const walletProvider = new SolanaWalletProvider(walletOptions, chainProvider);

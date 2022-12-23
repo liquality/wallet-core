@@ -1,4 +1,3 @@
-
 import { ChainId, getChain } from '@liquality/cryptoassets';
 import { ChainNetworks } from '../utils/networks';
 import buildConfig from '../build.config';

@@ -425,17 +425,18 @@ export default {
       ..._customSettings,
     };
   },
-  chainSettings(...context: GetterContext): { chain: string, asset: string, network: ChainifyNetwork }[] {
-    const { state: { enabledChains, activeNetwork, activeWalletId }, getters: { mergedChainSettings } } = rootGetterContext(context);
-    
-    return Object.keys(mergedChainSettings).filter(
-      (chain) => enabledChains[activeWalletId]?.[activeNetwork]?.includes(chain as ChainId))
-      .map(
-        c => {
-          const network = mergedChainSettings[c as ChainId]
-          const asset = getNativeAssetCode(activeNetwork, c as ChainId)
-          return { chain: c, asset, network }
-        }
-      );
+  chainSettings(...context: GetterContext): { chain: string; asset: string; network: ChainifyNetwork }[] {
+    const {
+      state: { enabledChains, activeNetwork, activeWalletId },
+      getters: { mergedChainSettings },
+    } = rootGetterContext(context);
+
+    return Object.keys(mergedChainSettings)
+      .filter((chain) => enabledChains[activeWalletId]?.[activeNetwork]?.includes(chain as ChainId))
+      .map((c) => {
+        const network = mergedChainSettings[c as ChainId];
+        const asset = getNativeAssetCode(activeNetwork, c as ChainId);
+        return { chain: c, asset, network };
+      });
   },
 };

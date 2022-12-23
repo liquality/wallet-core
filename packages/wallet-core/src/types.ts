@@ -26,7 +26,6 @@ export interface WalletOptions {
   ledgerTransportCreator?: LedgerProviderTypes.TransportCreator;
 }
 
-
 export interface ChainifyNetwork extends Network {
   scraperUrl?: string;
   batchScraperUrl?: string;
