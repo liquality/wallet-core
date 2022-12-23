@@ -1,4 +1,4 @@
-import { Client } from '@chainify/client';
+import { Chain, Client, Swap, Wallet } from '@chainify/client';
 import {
   EIP1559FeeProvider,
   EvmChainProvider,
@@ -7,7 +7,7 @@ import {
   RpcFeeProvider,
 } from '@chainify/evm';
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
-import { Address } from '@chainify/types';
+import { Address, Network } from '@chainify/types';
 import { ChainifyNetwork } from '../../types';
 import { JsonRpcProvider, StaticJsonRpcProvider } from '@ethersproject/providers';
 import { AccountInfo, AccountType, ClientSettings } from '../../store/types';
@@ -22,7 +22,7 @@ export function createEvmClient(
   settings: ClientSettings<ChainifyNetwork>,
   mnemonic: string,
   accountInfo: AccountInfo
-) {
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>>  {
   const chainProvider = getEvmProvider(chain, settings);
   const walletProvider = getEvmWalletProvider(settings.chainifyNetwork, accountInfo, chainProvider, mnemonic);
   const client = new Client().connect(walletProvider);

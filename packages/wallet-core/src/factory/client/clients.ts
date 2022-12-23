@@ -1,4 +1,4 @@
-import { Client } from '@chainify/client';
+import { Chain, Client, Swap, Wallet } from '@chainify/client';
 import {
   BitcoinEsploraApiProvider,
   BitcoinFeeApiProvider,
@@ -16,8 +16,13 @@ import { AccountInfo, ClientSettings } from '../../store/types';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
 import { walletOptionsStore } from '../../walletOptions';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
+import { Network } from '@chainify/types';
 
-export function createBtcClient(settings: ClientSettings<ChainifyNetwork>, mnemonic: string, accountInfo: AccountInfo) {
+export function createBtcClient(
+  settings: ClientSettings<ChainifyNetwork>,
+  mnemonic: string,
+  accountInfo: AccountInfo
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>> {
   const isMainnet = settings.network === 'mainnet';
   const { chainifyNetwork } = settings;
   const chainProvider = new BitcoinEsploraApiProvider({
@@ -76,7 +81,7 @@ export function createNearClient(
   settings: ClientSettings<NearTypes.NearNetwork>,
   mnemonic: string,
   accountInfo: AccountInfo
-) {
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>> {
   const walletOptions = {
     mnemonic,
     derivationPath: accountInfo.derivationPath,
@@ -92,7 +97,7 @@ export function createTerraClient(
   settings: ClientSettings<TerraTypes.TerraNetwork>,
   mnemonic: string,
   accountInfo: AccountInfo
-) {
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>>  {
   const { helperUrl } = settings.chainifyNetwork;
   const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath, helperUrl };
   const chainProvider = new TerraChainProvider(settings.chainifyNetwork);
@@ -105,7 +110,7 @@ export function createSolanaClient(
   settings: ClientSettings<ChainifyNetwork>,
   mnemonic: string,
   accountInfo: AccountInfo
-) {
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>>  {
   const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath };
   const chainProvider = new SolanaChainProvider(settings.chainifyNetwork);
   const walletProvider = new SolanaWalletProvider(walletOptions, chainProvider);
