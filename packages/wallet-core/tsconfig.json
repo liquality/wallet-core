@@ -15,7 +15,10 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "rootDir": ".",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@ledgerhq/devices": ["@ledgerhq/devices/lib-es"]
+    }
   },
   "include": ["src/**/*", "package.json", "src/**/*.json"]
 }
