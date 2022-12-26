@@ -1,28 +1,42 @@
 import { ChainId, getChain } from '@liquality/cryptoassets';
 import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, createInternalError } from '@liquality/error-parser';
-import { AccountInfo, Network } from '../../store/types';
+import { AccountInfo, ClientSettings } from '../../store/types';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import { createEvmClient } from './evm';
+import { Network as ChainifyNetwork } from '@chainify/types';
+import { NearTypes } from '@chainify/near';
+import { TerraTypes } from '@chainify/terra';
+import { BitcoinTypes } from '@chainify/bitcoin';
 
-export const createClient = (chainId: ChainId, network: Network, mnemonic: string, accountInfo: AccountInfo) => {
+export const createClient = ({
+  chainId,
+  settings,
+  mnemonic,
+  accountInfo,
+}: {
+  chainId: ChainId;
+  settings: ClientSettings<NearTypes.NearNetwork | TerraTypes.TerraNetwork | ChainifyNetwork>;
+  mnemonic: string;
+  accountInfo: AccountInfo;
+}) => {
   let client;
-  const chain = getChain(network, chainId);
+  const chain = getChain(settings.network, chainId);
 
   if (chain.isEVM) {
-    client = createEvmClient(chain, mnemonic, accountInfo);
+    client = createEvmClient(chain, settings, mnemonic, accountInfo);
   } else {
     switch (chainId) {
       case ChainId.Bitcoin:
-        client = createBtcClient(network, mnemonic, accountInfo);
+        client = createBtcClient(settings as ClientSettings<BitcoinTypes.BitcoinNetwork>, mnemonic, accountInfo);
         break;
       case ChainId.Near:
-        client = createNearClient(network, mnemonic, accountInfo);
+        client = createNearClient(settings as ClientSettings<NearTypes.NearNetwork>, mnemonic, accountInfo);
         break;
       case ChainId.Terra:
-        client = createTerraClient(network, mnemonic, accountInfo);
+        client = createTerraClient(settings as ClientSettings<TerraTypes.TerraNetwork>, mnemonic, accountInfo);
         break;
       case ChainId.Solana:
-        client = createSolanaClient(network, mnemonic, accountInfo);
+        client = createSolanaClient(settings, mnemonic, accountInfo);
         break;
       default:
         throw createInternalError(CUSTOM_ERRORS.NotFound.Client(chainId));

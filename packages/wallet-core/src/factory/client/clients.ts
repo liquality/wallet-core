@@ -1,4 +1,4 @@
-import { Client } from '@chainify/client';
+import { Chain, Client, Swap, Wallet } from '@chainify/client';
 import {
   BitcoinEsploraApiProvider,
   BitcoinFeeApiProvider,
@@ -7,39 +7,39 @@ import {
   BitcoinTypes,
 } from '@chainify/bitcoin';
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
-
+import { ChainifyNetwork } from '../../types';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
 import { SolanaChainProvider, SolanaNftProvider, SolanaWalletProvider } from '@chainify/solana';
 import { TerraChainProvider, TerraSwapProvider, TerraTypes, TerraWalletProvider } from '@chainify/terra';
 
-import buildConfig from '../../build.config';
-import { AccountInfo, Network } from '../../store/types';
+import { AccountInfo, ClientSettings } from '../../store/types';
 import { LEDGER_BITCOIN_OPTIONS } from '../../utils/ledger';
-import { ChainNetworks } from '../../utils/networks';
 import { walletOptionsStore } from '../../walletOptions';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
+import { Network } from '@chainify/types';
 
-export function createBtcClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
-  const isMainnet = network === 'mainnet';
-  const bitcoinNetwork = ChainNetworks.bitcoin[network] as BitcoinTypes.BitcoinNetwork;
-  const esploraApi = buildConfig.exploraApis[network];
-  const batchEsploraApi = buildConfig.batchEsploraApis[network];
-
+export function createBtcClient(
+  settings: ClientSettings<ChainifyNetwork>,
+  mnemonic: string,
+  accountInfo: AccountInfo
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>> {
+  const isMainnet = settings.network === 'mainnet';
+  const { chainifyNetwork } = settings;
   const chainProvider = new BitcoinEsploraApiProvider({
-    batchUrl: batchEsploraApi,
-    url: esploraApi,
-    network: bitcoinNetwork,
+    batchUrl: chainifyNetwork.batchScraperUrl!,
+    url: chainifyNetwork.scraperUrl!,
+    network: chainifyNetwork as BitcoinTypes.BitcoinNetwork,
     numberOfBlockConfirmation: 2,
   });
 
   if (isMainnet) {
-    const feeProvider = new BitcoinFeeApiProvider('https://liquality.io/swap/mempool/v1/fees/recommended');
+    const feeProvider = new BitcoinFeeApiProvider(chainifyNetwork.feeProviderUrl);
     chainProvider.setFeeProvider(feeProvider);
   }
 
   const swapProvider = new BitcoinSwapEsploraProvider({
-    network: bitcoinNetwork,
-    scraperUrl: esploraApi,
+    network: chainifyNetwork as BitcoinTypes.BitcoinNetwork,
+    scraperUrl: chainifyNetwork.scraperUrl,
   });
 
   // TODO: make sure Ledger works
@@ -54,7 +54,7 @@ export function createBtcClient(network: Network, mnemonic: string, accountInfo:
     }
     const ledgerProvider = new BitcoinLedgerProvider(
       {
-        network: bitcoinNetwork,
+        network: chainifyNetwork as BitcoinTypes.BitcoinNetwork,
         addressType,
         baseDerivationPath: accountInfo.derivationPath,
         basePublicKey: accountInfo?.publicKey,
@@ -66,7 +66,7 @@ export function createBtcClient(network: Network, mnemonic: string, accountInfo:
     swapProvider.setWallet(ledgerProvider);
   } else {
     const walletOptions = {
-      network: bitcoinNetwork,
+      network: chainifyNetwork as BitcoinTypes.BitcoinNetwork,
       baseDerivationPath: accountInfo.derivationPath,
       mnemonic,
     };
@@ -77,29 +77,42 @@ export function createBtcClient(network: Network, mnemonic: string, accountInfo:
   return new Client().connect(swapProvider);
 }
 
-export function createNearClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
-  const nearNetwork = ChainNetworks.near[network] as NearTypes.NearNetwork;
-  const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath, helperUrl: nearNetwork.helperUrl };
-  const chainProvider = new NearChainProvider(nearNetwork);
+export function createNearClient(
+  settings: ClientSettings<NearTypes.NearNetwork>,
+  mnemonic: string,
+  accountInfo: AccountInfo
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>> {
+  const walletOptions = {
+    mnemonic,
+    derivationPath: accountInfo.derivationPath,
+    helperUrl: settings.chainifyNetwork.helperUrl,
+  };
+  const chainProvider = new NearChainProvider(settings.chainifyNetwork);
   const walletProvider = new NearWalletProvider(walletOptions, chainProvider);
-  const swapProvider = new NearSwapProvider(nearNetwork.helperUrl, walletProvider);
+  const swapProvider = new NearSwapProvider(settings.chainifyNetwork.helperUrl, walletProvider);
   return new Client().connect(swapProvider);
 }
 
-export function createTerraClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
-  const terraNetwork = ChainNetworks.terra[network] as TerraTypes.TerraNetwork;
-  const { helperUrl } = terraNetwork;
+export function createTerraClient(
+  settings: ClientSettings<TerraTypes.TerraNetwork>,
+  mnemonic: string,
+  accountInfo: AccountInfo
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>> {
+  const { helperUrl } = settings.chainifyNetwork;
   const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath, helperUrl };
-  const chainProvider = new TerraChainProvider(terraNetwork);
+  const chainProvider = new TerraChainProvider(settings.chainifyNetwork);
   const walletProvider = new TerraWalletProvider(walletOptions, chainProvider);
   const swapProvider = new TerraSwapProvider(helperUrl, walletProvider);
   return new Client().connect(swapProvider);
 }
 
-export function createSolanaClient(network: Network, mnemonic: string, accountInfo: AccountInfo) {
-  const solanaNetwork = ChainNetworks.solana[network];
+export function createSolanaClient(
+  settings: ClientSettings<ChainifyNetwork>,
+  mnemonic: string,
+  accountInfo: AccountInfo
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>> {
   const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath };
-  const chainProvider = new SolanaChainProvider(solanaNetwork);
+  const chainProvider = new SolanaChainProvider(settings.chainifyNetwork);
   const walletProvider = new SolanaWalletProvider(walletOptions, chainProvider);
   const nftProvider = new SolanaNftProvider(walletProvider as any, {
     url: 'https://tjgwcry8a7dd.usemoralis.com:2053/server',

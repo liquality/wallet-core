@@ -52,6 +52,8 @@ const initialState: RootState = {
   enabledChains: {},
 
   errorLog: [],
+
+  customChainSeetings: {},
 };
 
 export default initialState;

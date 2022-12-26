@@ -1,9 +1,11 @@
 import { Client } from '@chainify/client';
 import { FeeDetails, Nullable } from '@chainify/types';
-import { AssetTypes, ChainId, getAllAssets, IAsset, unitToCurrency } from '@liquality/cryptoassets';
+import { ChainifyNetwork } from '../types';
+import { AssetTypes, ChainId, getAllAssets, IAsset, unitToCurrency, getNativeAssetCode } from '@liquality/cryptoassets';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import BN, { BigNumber } from 'bignumber.js';
 import { mapValues, orderBy, uniq } from 'lodash';
+import { defaultChainSettings } from '../factory/settings';
 import { rootGetterContext } from '.';
 import { createClient } from '../factory';
 import { cryptoToFiat } from '../utils/coinFormatter';
@@ -89,7 +91,12 @@ export default {
         publicKey: account?.publicKey,
         address: account?.addresses.length || 0 > 0 ? account?.addresses[0] : undefined,
       };
-      const client = createClient(chainId, network, mnemonic, accountInfo);
+
+      const settings = {
+        network,
+        chainifyNetwork: getters.mergedChainSettings[chainId],
+      };
+      const client = createClient({ chainId, settings, mnemonic, accountInfo });
       clientCache[cacheKey] = client;
 
       return client;
@@ -204,9 +211,9 @@ export default {
         )
           .map((account) => {
             /*
-              Calculate fiat balances and asset balances
-              Sort and group assets by dollar value / token amount / market cap
-          */
+            Calculate fiat balances and asset balances
+            Sort and group assets by dollar value / token amount / market cap
+        */
             const totalFiatBalance = accountFiatBalance(activeWalletId, activeNetwork, account.id);
             const assetsWithFiat: AssetInfo[] = [];
             const assetsWithMarketCap: AssetInfo[] = [];
@@ -282,8 +289,8 @@ export default {
           .sort(orderChains)
           .reduce((acc: { [key: string]: Account[] }, account) => {
             /*
-              Group sorted assets by chain / multiaccount ordering
-          */
+            Group sorted assets by chain / multiaccount ordering
+        */
             const { chain } = account;
 
             acc[chain] = acc[chain] ?? [];
@@ -407,5 +414,29 @@ export default {
         return collections;
       }, {});
     };
+  },
+  mergedChainSettings(...context: GetterContext): Record<ChainId, ChainifyNetwork> {
+    const { state } = rootGetterContext(context);
+    const { customChainSeetings, activeNetwork, activeWalletId } = state;
+    const _customSettings = customChainSeetings[activeNetwork]?.[activeWalletId] || {};
+    const settings = defaultChainSettings[activeNetwork] || {};
+    return {
+      ...settings,
+      ..._customSettings,
+    };
+  },
+  chainSettings(...context: GetterContext): { chain: string; asset: string; network: ChainifyNetwork }[] {
+    const {
+      state: { enabledChains, activeNetwork, activeWalletId },
+      getters: { mergedChainSettings },
+    } = rootGetterContext(context);
+
+    return Object.keys(mergedChainSettings)
+      .filter((chain) => enabledChains[activeWalletId]?.[activeNetwork]?.includes(chain as ChainId))
+      .map((c) => {
+        const network = mergedChainSettings[c as ChainId];
+        const asset = getNativeAssetCode(activeNetwork, c as ChainId);
+        return { chain: c, asset, network };
+      });
   },
 };

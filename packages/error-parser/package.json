@@ -11,8 +11,8 @@
     "dist/**"
   ],
   "dependencies": {
-    "@chainify/client": "^1.2.33",
-    "@chainify/errors": "^1.2.33",
+    "@chainify/client": "2.0.0",
+    "@chainify/errors": "2.0.0",
     "@liquality/cryptoassets": "workspace:*",
     "randombytes": "^2.1.0"
   },

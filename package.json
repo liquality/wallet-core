@@ -46,6 +46,7 @@
     "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
     "prettier:check": "prettier --check \"**/*.{js,json,sol,ts}\"",
     "prettier:fix": "prettier --write ./packages",
+    "clean": "yarn workspaces foreach run clean && rm -rf node_modules ",
     "test": "turbo run test",
     "postinstall": "husky install",
     "prepack": "pinst --disable",
@@ -66,5 +67,11 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "resolutions": {
+    "@ledgerhq/devices": "6.27.1",
+    "@ledgerhq/hw-transport": "6.27.1",
+    "@ledgerhq/hw-transport-webhid": "6.27.1",
+    "@ledgerhq/hw-app-eth": "6.26.0"
+  }
 }

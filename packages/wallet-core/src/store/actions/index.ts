@@ -44,3 +44,4 @@ export * from './updateNFTs';
 export * from './updateTransactionFee';
 export * from './logError';
 export * from './clearErrorLog';
+export * from './customChainSettings';

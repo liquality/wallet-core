@@ -4,13 +4,18 @@ import { Step } from '@lifi/sdk';
 import { SwapProviderError } from '../swaps/types';
 import BN from 'bignumber.js';
 import { LiqualityErrorJSON } from '@liquality/error-parser';
-
+import { ChainifyNetwork } from '../types';
 export type NetworkWalletIdMap<T> = Partial<Record<Network, Record<WalletId, T>>>;
 export type WalletIdNetworkMap<T> = Partial<Record<WalletId, Record<Network, T>>>;
 
 export enum Network {
   Mainnet = 'mainnet',
   Testnet = 'testnet',
+}
+
+export interface ClientSettings<T> {
+  network: Network;
+  chainifyNetwork: T;
 }
 
 export type WalletId = string;
@@ -260,6 +265,7 @@ export interface RootState {
   enabledChains: WalletIdNetworkMap<ChainId[]>;
 
   errorLog: LiqualityErrorJSON[];
+  customChainSeetings: NetworkWalletIdMap<Record<ChainId, ChainifyNetwork>>;
 }
 
 export type NFTCollections<T> = {

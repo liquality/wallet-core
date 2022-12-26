@@ -1,4 +1,4 @@
-import { Client } from '@chainify/client';
+import { Chain, Client, Swap, Wallet } from '@chainify/client';
 import {
   EIP1559FeeProvider,
   EvmChainProvider,
@@ -7,23 +7,28 @@ import {
   RpcFeeProvider,
 } from '@chainify/evm';
 import { EvmLedgerProvider } from '@chainify/evm-ledger';
-import { Address, Network as ChainifyNetwork } from '@chainify/types';
+import { Address, Network } from '@chainify/types';
+import { ChainifyNetwork } from '../../types';
 import { JsonRpcProvider, StaticJsonRpcProvider } from '@ethersproject/providers';
-import { AccountInfo, AccountType } from '../../store/types';
+import { AccountInfo, AccountType, ClientSettings } from '../../store/types';
 import { walletOptionsStore } from '../../walletOptions';
 import { getNftProvider } from './nft';
 import { EvmChain } from '@liquality/cryptoassets';
 import { asL2Provider } from '@eth-optimism/sdk';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
-export function createEvmClient(chain: EvmChain, mnemonic: string, accountInfo: AccountInfo) {
-  const network = chain.network;
-  const chainProvider = getEvmProvider(chain);
-  const walletProvider = getEvmWalletProvider(network, accountInfo, chainProvider, mnemonic);
+export function createEvmClient(
+  chain: EvmChain,
+  settings: ClientSettings<ChainifyNetwork>,
+  mnemonic: string,
+  accountInfo: AccountInfo
+): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>> {
+  const chainProvider = getEvmProvider(chain, settings);
+  const walletProvider = getEvmWalletProvider(settings.chainifyNetwork, accountInfo, chainProvider, mnemonic);
   const client = new Client().connect(walletProvider);
 
   if (chain.nftProviderType) {
-    const nftProvider = getNftProvider(chain.nftProviderType, walletProvider, network.isTestnet);
+    const nftProvider = getNftProvider(chain.nftProviderType, walletProvider, settings.chainifyNetwork.isTestnet);
     client.connect(nftProvider);
   }
 
@@ -62,13 +67,13 @@ function getEvmWalletProvider(
   }
 }
 
-function getEvmProvider(chain: EvmChain) {
-  const network = chain.network;
+function getEvmProvider(chain: EvmChain, settings: ClientSettings<ChainifyNetwork>) {
+  const network = settings.chainifyNetwork;
   if (chain.isMultiLayered) {
-    const provider = asL2Provider(new StaticJsonRpcProvider(network.rpcUrls[0], network.chainId));
-    return new OptimismChainProvider(network, provider, chain.feeMultiplier);
+    const provider = asL2Provider(new StaticJsonRpcProvider(network.rpcUrl, network.chainId));
+    return new OptimismChainProvider(settings.chainifyNetwork, provider, chain.feeMultiplier);
   } else {
-    const provider = new StaticJsonRpcProvider(network.rpcUrls[0], network.chainId);
+    const provider = new StaticJsonRpcProvider(network.rpcUrl, network.chainId);
     const feeProvider = getFeeProvider(chain, provider);
     return new EvmChainProvider(network, provider, feeProvider, chain.multicallSupport);
   }
