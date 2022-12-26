@@ -1,5 +1,11 @@
 # @liquality/error-parser
 
+## 2.1.0
+
+### Minor Changes
+
+- 8a17872: Updted package from chanify and implemented custom rpc settings
+
 ## 2.0.1
 
 ### Patch Changes
