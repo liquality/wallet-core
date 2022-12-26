@@ -1,5 +1,16 @@
 # @liquality/wallet-core
 
+## 3.1.0
+
+### Minor Changes
+
+- 8a17872: Updted package from chanify and implemented custom rpc settings
+
+### Patch Changes
+
+- Updated dependencies [8a17872]
+  - @liquality/error-parser@2.1.0
+
 ## 3.0.0
 
 ### Major Changes
