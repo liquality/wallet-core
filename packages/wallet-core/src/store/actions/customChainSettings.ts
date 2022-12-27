@@ -36,17 +36,22 @@ export const removeCustomChainSettings = (
   clearClientCache({ network, walletId, chainId });
 };
 
-const clearClientCache = (
-  { network, walletId, chainId }: { network: Network; walletId: WalletId; chainId: ChainId }
-) => {
-
+const clearClientCache = ({
+  network,
+  walletId,
+  chainId,
+}: {
+  network: Network;
+  walletId: WalletId;
+  chainId: ChainId;
+}) => {
   const cacheKey = [chainId, network, walletId].join('-');
 
   Object.keys(clientCache)
-        .filter( k => k.startsWith(cacheKey))
-        .forEach( k => {
-          if (clientCache[k]) {
-            delete clientCache[k];
-          }
-        });
-}
+    .filter((k) => k.startsWith(cacheKey))
+    .forEach((k) => {
+      if (clientCache[k]) {
+        delete clientCache[k];
+      }
+    });
+};
