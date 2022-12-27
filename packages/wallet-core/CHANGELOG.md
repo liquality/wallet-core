@@ -1,5 +1,15 @@
 # @liquality/wallet-core
 
+## 4.0.0
+
+### Major Changes
+
+- c90fba9: Updated custom settings bindings
+
+### Minor Changes
+
+- f4f0143: Fixed prettier issues
+
 ## 3.1.0
 
 ### Minor Changes
