@@ -23,7 +23,6 @@ export function createEvmClient(
   mnemonic: string,
   accountInfo: AccountInfo
 ): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>> {
-
   const chainProvider = getEvmProvider(chain, settings);
   const walletProvider = getEvmWalletProvider(settings.chainifyNetwork, accountInfo, chainProvider, mnemonic);
   const client = new Client().connect(walletProvider);
