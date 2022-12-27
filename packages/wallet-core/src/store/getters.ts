@@ -26,9 +26,7 @@ import {
   NFTWithAccount,
   WalletId,
 } from './types';
-import { orderAssets, orderChains } from './utils';
-
-const clientCache: { [key: string]: Client } = {};
+import { clientCache, orderAssets, orderChains } from './utils';
 
 type GetterContext = [any, any];
 
