@@ -23,6 +23,7 @@ export function createEvmClient(
   mnemonic: string,
   accountInfo: AccountInfo
 ): Client<Chain<any, Network>, Wallet<any, any>, Swap<any, any, Wallet<any, any>>> {
+
   const chainProvider = getEvmProvider(chain, settings);
   const walletProvider = getEvmWalletProvider(settings.chainifyNetwork, accountInfo, chainProvider, mnemonic);
   const client = new Client().connect(walletProvider);
@@ -70,12 +71,12 @@ function getEvmWalletProvider(
 function getEvmProvider(chain: EvmChain, settings: ClientSettings<ChainifyNetwork>) {
   const network = settings.chainifyNetwork;
   if (chain.isMultiLayered) {
-    const provider = asL2Provider(new StaticJsonRpcProvider(network.rpcUrl, network.chainId));
+    const provider = asL2Provider(new StaticJsonRpcProvider(network.rpcUrl, chain.network.chainId));
     return new OptimismChainProvider(settings.chainifyNetwork, provider, chain.feeMultiplier);
   } else {
-    const provider = new StaticJsonRpcProvider(network.rpcUrl, network.chainId);
+    const provider = new StaticJsonRpcProvider(network.rpcUrl, chain.network.chainId);
     const feeProvider = getFeeProvider(chain, provider);
-    return new EvmChainProvider(network, provider, feeProvider, chain.multicallSupport);
+    return new EvmChainProvider(chain.network, provider, feeProvider, chain.multicallSupport);
   }
 }
 

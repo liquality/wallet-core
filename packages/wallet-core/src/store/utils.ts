@@ -1,4 +1,4 @@
-import { HttpClient } from '@chainify/client';
+import { Client, HttpClient } from '@chainify/client';
 import { EvmChainProvider, EvmWalletProvider } from '@chainify/evm';
 import { AssetTypes, ChainId, getChain } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
@@ -6,6 +6,8 @@ import EventEmitter from 'events';
 import { findKey, mapKeys, mapValues, random } from 'lodash';
 import cryptoassets from '../utils/cryptoassets';
 import { Asset, AssetInfo, CurrenciesInfo, Network, RootState, WalletId } from './types';
+
+export const clientCache: { [key: string]: Client } = {};
 
 export const CHAIN_LOCK: { [key: string]: boolean } = {};
 

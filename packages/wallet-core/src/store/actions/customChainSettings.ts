@@ -2,6 +2,7 @@ import { ActionContext, rootActionContext } from '..';
 import { ChainId } from '@liquality/cryptoassets';
 import { Network as ChainifyNetwork } from '@chainify/types';
 import { WalletId, Network } from '../types';
+import { clientCache } from '../utils';
 
 export const saveCustomChainSettings = (
   context: ActionContext,
@@ -19,6 +20,7 @@ export const saveCustomChainSettings = (
     chainId,
     chanifyNetwork,
   });
+  clearClientCache({ network, walletId, chainId });
 };
 
 export const removeCustomChainSettings = (
@@ -31,4 +33,20 @@ export const removeCustomChainSettings = (
     walletId,
     chainId,
   });
+  clearClientCache({ network, walletId, chainId });
 };
+
+const clearClientCache = (
+  { network, walletId, chainId }: { network: Network; walletId: WalletId; chainId: ChainId }
+) => {
+
+  const cacheKey = [chainId, network, walletId].join('-');
+
+  Object.keys(clientCache)
+        .filter( k => k.startsWith(cacheKey))
+        .forEach( k => {
+          if (clientCache[k]) {
+            delete clientCache[k];
+          }
+        });
+}
