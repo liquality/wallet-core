@@ -138,8 +138,8 @@ class LifiSwapProvider extends EvmSwapProvider {
     let gasLimit = txData.gasLimit; 
     const chainName = cryptoassets[quote.from]?.chain; // get the chain name
     // only for Arbitrum maybe we need to increese the gas limit if it's to low
-    if(chainName === ChainNames.Arbitrum && BN(gasLimit || 0).lt(1000000)) {
-      gasLimit = 1000000
+    if(chainName === ChainNames.Arbitrum && BN(gasLimit || 0).lt(9000000)) {
+      gasLimit = 9000000
     }
 
     const fromFundTx = await client.wallet.sendTransaction({
