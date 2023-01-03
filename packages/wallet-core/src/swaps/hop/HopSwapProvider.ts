@@ -75,7 +75,7 @@ class HopSwapProvider extends SwapProvider {
   gasLimit(networkName: string) {
     const networkToGasLimit: { [key: string]: { [key: string]: number } } = {
       arbitrum: {
-        send: 900000,
+        send: 9000000, // Gas limit needs to be at least 9,000,000
         approve: 1000000,
       },
       polygon: {
@@ -86,7 +86,7 @@ class HopSwapProvider extends SwapProvider {
         send: 300000,
         approve: 300000,
       },
-      optimism: {
+      optimism: { //
         send: 345000, // ~286000 * 120%
         sendL1: 6500, // ~5_400 * 120%
         approve: 65000, // ~54_000 * 120%
