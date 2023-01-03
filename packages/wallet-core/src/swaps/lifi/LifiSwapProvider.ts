@@ -2,7 +2,7 @@ import { HttpClient } from '@chainify/client';
 import { EvmTypes } from '@chainify/evm';
 import { Transaction, TransactionRequest, TxStatus } from '@chainify/types';
 import LiFi, { ChainId, ConfigUpdate, LifiStep, Order, Orders, RouteOptions, Step } from '@lifi/sdk';
-import { getChain, currencyToUnit, unitToCurrency, ChainId as ChainNames  } from '@liquality/cryptoassets';
+import { getChain, currencyToUnit, unitToCurrency, ChainId as ChainNames } from '@liquality/cryptoassets';
 import { getErrorParser, LifiQuoteErrorParser } from '@liquality/error-parser';
 import BN from 'bignumber.js';
 import { ethers } from 'ethers';
@@ -135,11 +135,11 @@ class LifiSwapProvider extends EvmSwapProvider {
     const txData = route.transactionRequest as TransactionRequest;
 
     // set the default gas limit
-    let gasLimit = txData.gasLimit; 
+    let gasLimit = txData.gasLimit;
     const chainName = cryptoassets[quote.from]?.chain; // get the chain name
     // only for Arbitrum maybe we need to increese the gas limit if it's to low
-    if(chainName === ChainNames.Arbitrum && BN(gasLimit || 0).lt(9000000)) {
-      gasLimit = 9000000
+    if (chainName === ChainNames.Arbitrum && BN(gasLimit || 0).lt(9000000)) {
+      gasLimit = 9000000;
     }
 
     const fromFundTx = await client.wallet.sendTransaction({
