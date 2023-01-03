@@ -1,5 +1,14 @@
 # @liquality/wallet-core
 
+## 4.1.0
+
+### Minor Changes
+
+- 2439e04: Set the right gas limit amount for Lify and Hop Providers when use Arbitrum
+- 0bd5027: Publish swap gas estimation fixes
+- fef13b7: Updated arbiutrum fixes
+- 02d4bf0: Bumped version
+
 ## 4.0.0
 
 ### Major Changes
