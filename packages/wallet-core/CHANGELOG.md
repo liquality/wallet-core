@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 4.2.0
+
+### Minor Changes
+
+- c66cf6f: Set miner tip to always be above 30 in Polygon in all speeds
+
 ## 4.1.0
 
 ### Minor Changes
