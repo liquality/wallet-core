@@ -1,5 +1,6 @@
 import { Client } from '@chainify/client';
-import { FeeDetails, Nullable } from '@chainify/types';
+import { FeeDetails, EIP1559Fee, Nullable } from '@chainify/types';
+import cryptoassets from '../utils/cryptoassets';
 import { ChainifyNetwork } from '../types';
 import { AssetTypes, ChainId, getAllAssets, IAsset, unitToCurrency, getNativeAssetCode } from '@liquality/cryptoassets';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
@@ -170,8 +171,25 @@ export default {
   },
   suggestedFeePrices(...context: GetterContext) {
     const { state } = rootGetterContext(context);
+
     return (asset: AssetType): FeeDetails | undefined => {
-      return state.fees?.[state.activeNetwork]?.[state.activeWalletId]?.[asset];
+      const assetFees = state.fees?.[state.activeNetwork]?.[state.activeWalletId]?.[asset];
+
+      if (cryptoassets[asset]?.chain !== ChainId.Polygon) {
+        return assetFees;
+      }
+
+      const fetchedFees = <FeeDetails>{ ...assetFees };
+
+      Object.keys(fetchedFees).forEach((speed: 'slow' | 'average' | 'fast') => {
+        const feeSet = (<EIP1559Fee>fetchedFees[speed].fee).maxPriorityFeePerGas;
+
+        if (feeSet < 30) {
+          (<EIP1559Fee>fetchedFees[speed].fee).maxPriorityFeePerGas = 30;
+        }
+      });
+
+      return fetchedFees;
     };
   },
   accountsWithBalance(...context: GetterContext): Account[] {
