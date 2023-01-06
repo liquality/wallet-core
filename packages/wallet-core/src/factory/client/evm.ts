@@ -71,7 +71,10 @@ function getEvmProvider(chain: EvmChain, settings: ClientSettings<ChainifyNetwor
   const network = settings.chainifyNetwork;
   if (chain.isMultiLayered) {
     const provider = asL2Provider(new StaticJsonRpcProvider(network.rpcUrl, chain.network.chainId));
-    return new OptimismChainProvider(settings.chainifyNetwork, provider, chain.feeMultiplier);
+    return new OptimismChainProvider({
+      ...settings.chainifyNetwork,
+      chainId: chain.network.chainId
+    }, provider, chain.feeMultiplier);
   } else {
     const provider = new StaticJsonRpcProvider(network.rpcUrl, chain.network.chainId);
     const feeProvider = getFeeProvider(chain, provider);
