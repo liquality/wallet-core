@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 4.3.0
+
+### Minor Changes
+
+- 7a0fe4a: Fixed Optimism provider to use the right chainId settings
+
 ## 4.2.0
 
 ### Minor Changes
