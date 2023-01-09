@@ -1,5 +1,12 @@
 # @liquality/wallet-core
 
+## 4.4.0
+
+### Minor Changes
+
+- 2ec598f: Added default enabled assets for DAI, USDC and USDT in EVM chains
+- b5e4530: Added default enabled assets for DAI, USDC and USDT in EVM chains
+
 ## 4.3.0
 
 ### Minor Changes
