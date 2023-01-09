@@ -180,12 +180,17 @@ export default {
       }
 
       const fetchedFees = <FeeDetails>{ ...assetFees };
+      const incrementMapping = {
+        slow: 1,
+        average: 2,
+        fast: 3,
+      };
 
       Object.keys(fetchedFees).forEach((speed: 'slow' | 'average' | 'fast') => {
         const feeSet = (<EIP1559Fee>fetchedFees[speed].fee).maxPriorityFeePerGas;
 
         if (feeSet < 30) {
-          (<EIP1559Fee>fetchedFees[speed].fee).maxPriorityFeePerGas = 30;
+          (<EIP1559Fee>fetchedFees[speed].fee).maxPriorityFeePerGas = 30 + incrementMapping[speed];
         }
       });
 
