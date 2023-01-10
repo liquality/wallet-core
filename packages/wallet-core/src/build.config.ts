@@ -230,12 +230,12 @@ const config: WalletCoreConfig = {
         icon: 'jupiter.svg',
         type: SwapProviderType.Jupiter,
       },
-      [SwapProviderType.Hop]: {
-        name: 'Hop',
-        icon: 'hop.svg',
-        type: SwapProviderType.Hop,
-        graphqlBaseURL: 'https://api.thegraph.com/subgraphs/name/hop-protocol',
-      },
+      // [SwapProviderType.Hop]: {
+      //   name: 'Hop',
+      //   icon: 'hop.svg',
+      //   type: SwapProviderType.Hop,
+      //   graphqlBaseURL: 'https://api.thegraph.com/subgraphs/name/hop-protocol',
+      // },
       [SwapProviderType.DeBridge]: {
         name: 'DeBridge',
         icon: 'debridge.svg',
