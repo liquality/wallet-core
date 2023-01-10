@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 4.5.0
+
+### Minor Changes
+
+- 66a384e: Disabled hop protocol from swap providers
+
 ## 4.4.0
 
 ### Minor Changes
