@@ -294,7 +294,7 @@ async function estimateTransferNFT(
     return _sendFees;
   } catch (e) {
     // in case method is not implemented (like in Solana), return fee without estimations
-    if (e.name === 'UnsupportedMethodError') {
+    if (e.name === 'UnsupportedMethodError' || e.rawError?.name === 'UnsupportedMethodError') {
       for (const [speed, fee] of Object.entries(suggestedGasFees)) {
         const _speed = speed as keyof FeeDetailsWithCustom;
         _sendFees[_speed] = new BN(feePerUnit(fee.fee, account.chain));
