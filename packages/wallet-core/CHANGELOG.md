@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 4.6.0
+
+### Minor Changes
+
+- d4db2d6: Fixed validation for Solana unsoported method for estimate transfer fees
+
 ## 4.5.0
 
 ### Minor Changes
