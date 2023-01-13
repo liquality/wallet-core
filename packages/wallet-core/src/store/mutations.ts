@@ -400,7 +400,7 @@ export default {
     state: RootState,
     { network, walletId, account }: { network: Network; walletId: WalletId; account: Account }
   ) {
-    const { id, name, alias, addresses, assets, balances, updatedAt } = account;
+    const { id, name, alias, addresses, assets, balances, color, updatedAt } = account;
     const accounts = state.accounts[walletId]![network];
     if (accounts) {
       const index = accounts.findIndex((a) => a.id === id);
@@ -415,6 +415,7 @@ export default {
           balances,
           assets,
           updatedAt,
+          color
         };
 
         Vue.set(state.accounts[walletId]![network], index, updatedAccount);
