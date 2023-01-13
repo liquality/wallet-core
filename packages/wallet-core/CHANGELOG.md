@@ -1,5 +1,12 @@
 # @liquality/wallet-core
 
+## 4.8.0
+
+### Minor Changes
+
+- bba4da2: Fixed build linting issues
+- a243592: Added color to be updated inside accounts
+
 ## 4.7.0
 
 ### Minor Changes
