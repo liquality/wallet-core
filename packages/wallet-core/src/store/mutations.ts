@@ -415,7 +415,7 @@ export default {
           balances,
           assets,
           updatedAt,
-          color
+          color,
         };
 
         Vue.set(state.accounts[walletId]![network], index, updatedAccount);
