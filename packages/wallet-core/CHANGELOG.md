@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 4.7.0
+
+### Minor Changes
+
+- ba314cc: Added account alias to be updated
+
 ## 4.6.0
 
 ### Minor Changes
