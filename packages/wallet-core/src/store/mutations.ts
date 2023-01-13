@@ -400,7 +400,7 @@ export default {
     state: RootState,
     { network, walletId, account }: { network: Network; walletId: WalletId; account: Account }
   ) {
-    const { id, name, addresses, assets, balances, updatedAt } = account;
+    const { id, name, alias, addresses, assets, balances, updatedAt } = account;
     const accounts = state.accounts[walletId]![network];
     if (accounts) {
       const index = accounts.findIndex((a) => a.id === id);
@@ -410,6 +410,7 @@ export default {
         const updatedAccount = {
           ..._account,
           name,
+          alias,
           addresses,
           balances,
           assets,
