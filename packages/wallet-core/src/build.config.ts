@@ -149,6 +149,12 @@ const config: WalletCoreConfig = {
         network: Network.Testnet,
         routerAddress: '0x10C848e9495a32acA95F6c23C92eCA2b2bE9903A',
       },
+      [SwapProviderType.TeleSwap]: {
+        name: 'TeleSwap',
+        icon: 'sovryn.svg', // TODO
+        type: SwapProviderType.TeleSwap,
+        network: Network.Testnet,
+      },
     },
     mainnet: {
       [SwapProviderType.Liquality]: {
@@ -276,6 +282,11 @@ const config: WalletCoreConfig = {
         icon: 'lifi.svg',
         type: SwapProviderType.LiFi,
         apiURL: 'https://li.quest/v1/',
+      },
+      [SwapProviderType.TeleSwap]: {
+        name: 'TeleSwap',
+        icon: 'sovryn.svg', // TODO
+        type: SwapProviderType.TeleSwap,
       },
     },
   },

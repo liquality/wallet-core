@@ -2728,7 +2728,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@liquality/wallet-core@workspace:packages/wallet-core":
+"@liquality/wallet-core@workspace:^, @liquality/wallet-core@workspace:packages/wallet-core":
   version: 0.0.0-use.local
   resolution: "@liquality/wallet-core@workspace:packages/wallet-core"
   dependencies:
@@ -10161,6 +10161,7 @@ __metadata:
     "@changesets/cli": ^2.24.3
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
+    "@liquality/wallet-core": "workspace:^"
     "@types/amplitude-js": ^8.16.0
     "@types/bluebird": ^3.5.36
     "@types/chai": ^4.3.3

@@ -16,6 +16,7 @@ import { SwapProvider } from '../../swaps/SwapProvider';
 import { ThorchainSwapProvider } from '../../swaps/thorchain/ThorchainSwapProvider';
 import { UniswapSwapProvider } from '../../swaps/uniswap/UniswapSwapProvider';
 import { DeBridgeSwapProvider } from '../../swaps/debridge/DeBridgeSwapProvider';
+import { TeleSwapSwapProvider } from '../../swaps/teleswap/TeleSwapSwapProvider';
 
 const providers = {
   [SwapProviderType.Liquality]: LiqualitySwapProvider,
@@ -32,6 +33,7 @@ const providers = {
   [SwapProviderType.Jupiter]: JupiterSwapProvider,
   [SwapProviderType.DeBridge]: DeBridgeSwapProvider,
   [SwapProviderType.LiFi]: LifiSwapProvider,
+  [SwapProviderType.TeleSwap]: TeleSwapSwapProvider,
 };
 
 const createSwapProvider = (network: Network, providerId: SwapProviderType) => {
