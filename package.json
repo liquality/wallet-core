@@ -75,6 +75,7 @@
     "@ledgerhq/hw-app-eth": "6.26.0"
   },
   "dependencies": {
-    "@liquality/wallet-core": "workspace:^"
+    "@liquality/wallet-core": "workspace:^",
+    "@sinatdt/scripts": "^0.1.1"
   }
 }
