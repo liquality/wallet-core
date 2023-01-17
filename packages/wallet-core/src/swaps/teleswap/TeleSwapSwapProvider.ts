@@ -6,6 +6,7 @@ import { getErrorParser, ThorchainAPIErrorParser } from '@liquality/error-parser
 import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 import { getDoubleSwapOutput, getSwapMemo, getValueOfAsset1InAsset2 } from '@thorchain/asgardex-util';
 import ERC20 from '@uniswap/v2-core/build/ERC20.json';
+import UniswapV2Factory from '@uniswap/v2-core/build/UniswapV2Factory.json';
 import { assetFromString, BaseAmount, baseAmount, baseToAsset } from '@xchainjs/xchain-util';
 import BN, { BigNumber } from 'bignumber.js';
 import * as ethers from 'ethers';
@@ -20,10 +21,8 @@ import { fiatToCrypto, prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { getTxFee } from '../../utils/fees';
 import { SwapProvider } from '../SwapProvider';
-import { calculateFee, getLockers } from '@sinatdt/scripts'; // TODO package name
+import { calculateFee, getLockers, getWeb3Eth } from '@sinatdt/scripts'; // TODO package name
 import { TeleportDaoPayment} from "@sinatdt/bitcoin"; // TODO package name
-
-
 
 import {
   BaseSwapProviderConfig,
@@ -40,6 +39,10 @@ import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 // Pool balances are denominated with 8 decimals
 const THORCHAIN_DECIMAL = 8;
 const SAFE_FEE_MULTIPLIER = 1.3;
+const DEADLINE = 100000000; // TODO: EDIT IT
+const EXCHANGE_FACTORY = '0x0000000000000000000000000000000000000000'; // TODO: EDIT IT
+const EXCHANGE_ROUTER = '0x0000000000000000000000000000000000000000'; // TODO: EDIT IT
+const SLIPPAGE = 10; // TODO: EDIT IT
 
 const SUPPORTED_CHAINS = [ChainId.Bitcoin, ChainId.Ethereum];
 
@@ -206,6 +209,7 @@ class TeleSwapSwapProvider extends SwapProvider {
     const isMainnet = network === Network.Mainnet? true: false;
 
     // TODO: move url to config
+    // for now, only support Polygon
     const targetNetworkConnectionInfo = {
       web3: {
           url: "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK",
@@ -214,56 +218,80 @@ class TeleSwapSwapProvider extends SwapProvider {
 
     const lockers = await getLockers({
       'amount': value, 
-      'type': 'transfer', 
+      'type': 'transfer', // for now, only for Bitcoin to EVM
       'targetNetworkConnectionInfo': targetNetworkConnectionInfo, 
       'testnet': isMainnet
     });
 
     if (!lockers.preferredLocker) {
       // TODO: edit error
-      throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.PoolData);
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Default);
     }
 
+    // return best locker bitcoin address
     return lockers.preferredLocker.bitcoinAddress;
   }
 
-  async createRequestData(quote: TeleSwapSwapHistoryItem, requestType: TeleSwapTxTypes, network: Network) {
-   // TODO: move url to config
+  async createRequestData(
+    quote: TeleSwapSwapHistoryItem, 
+    requestType: TeleSwapTxTypes, 
+    network: Network,
+    recipientAddress: String // user's evm address on liquality
+  ) {
+  
+    const api = new ethers.providers.AlchemyWebSocketProvider(
+      "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK"
+    );
+
+    // TODO: move url to config
     const targetNetworkConnectionInfo = {
       web3: {
           url: "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK",
       },
     };
-
+    let isExchange;
     const isMainnet = network === Network.Mainnet? true: false;
     // find tx type (wrap or swap)
-    const chainId = 137; // TODO: write func for it
+    const chainId = 3; // TODO: write func for it + update the amount
     let appId;
-    const receipientAddress = quote.to; // user's evm address on liquality
+    let exchangeTokenAddress;
+    let deadline;
+    let outputAmount;
+    const isFixedToken = false;
 
-    const fee = await calculateFee({
+    // calculate teleporter percentage fee
+    const percentageFee = (await calculateFee({
       'amount': quote.fromAmount,
       'type': 'transfer',
       'teleporterFeeRatio': 2,
       'minimumFee': 0.00001,
       'targetNetworkConnectionInfo': targetNetworkConnectionInfo,
       'testnet': isMainnet
-    });
-
-    const percentageFee = fee.teleporterPercentageFee;
+    })).teleporterPercentageFee;
+    // const percentageFee = fee.teleporterPercentageFee;
 
     const speed = 0; // we only support normal for now
 
     if(requestType == TeleSwapTxTypes.SWAP) {
+      isExchange = true;
       appId = 1; // we use the first registered dex in teleswap
-      const exchangeToken
-      const deadline
-      const isFixedToken = 0;
+      exchangeTokenAddress = this.getTokenAddress(quote.to);
+      deadline = (await api.getBlock('lastest')).timestamp + DEADLINE; 
+      outputAmount = await this.getOutputAmount({
+        'from': quote.from, 
+        'to': quote.to, 
+        'fromAmountInUnit': BN(quote.fromAmount)
+      });
     } else {
+      isExchange = false;
       appId = 0; // transfer app id is 0
+      exchangeTokenAddress = '0x0000000000000000000000000000000000000000';
+      deadline = 0;
+      outputAmount = 0;
     }
     
-    TeleportDaoPayment.getTransferOpReturnData({
+    // return hex format of op_return data
+    return TeleportDaoPayment.getTransferOpReturnData({
       chainId,
       appId,
       recipientAddress,
@@ -274,75 +302,105 @@ class TeleSwapSwapProvider extends SwapProvider {
       outputAmount,
       deadline,
       isFixedToken,
-    })
-
-    return 'xxx';
+    });
   }
 
-  async getOutput({
+  async getOutputAmount({
     from,
     to,
-    fromAmountInUnit,
-    slippage,
-    network,
+    fromAmountInUnit
   }: {
     from: Asset;
     to: Asset;
     fromAmountInUnit: BigNumber;
-    slippage: number;
-    network: Network;
   }) {
-    const pools = await this._getPools();
 
-    const fromPoolData = pools.find((pool) => pool.asset === toThorchainAsset(from));
-    const toPoolData = pools.find((pool) => pool.asset === toThorchainAsset(to));
-
-    if (!fromPoolData || !toPoolData) return null; // Pool doesn't exist
-    if (fromPoolData.status.toLowerCase() !== 'available' || toPoolData.status.toLowerCase() !== 'available')
-      return null; // Pool not available
-
-    const getPool = (poolData: ThorchainPool) => {
-      return {
-        assetBalance: toPoolBalance(poolData.balance_asset),
-        runeBalance: toPoolBalance(poolData.balance_rune),
-      };
-    };
-
-    const fromPool = getPool(fromPoolData);
-    const toPool = getPool(toPoolData);
-
-    const baseInputAmount = baseAmount(fromAmountInUnit, cryptoassets[from].decimals);
-    const inputAmount = convertBaseAmountDecimal(baseInputAmount, 8);
-
-    // For RUNE it's `getSwapOutput`
-    const swapOutput = getDoubleSwapOutput(inputAmount, fromPool, toPool);
-
-    const baseNetworkFee = await this.networkFees(to, network);
-    if (!baseNetworkFee) throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.BaseNetworkFee);
-    let networkFee = convertBaseAmountDecimal(baseNetworkFee, 8);
-
-    if (isERC20(to)) {
-      // in case of ERC20
-      const poolData = pools.find((pool) => pool.asset === 'ETH.ETH');
-      if (!poolData) {
-        throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.PoolData);
-      }
-      const ethPool = toThorchainAsset(from) !== 'ETH.ETH' ? getPool(poolData) : fromPool;
-      networkFee = getValueOfAsset1InAsset2(networkFee, ethPool, toPool);
+    const api = new ethers.providers.AlchemyWebSocketProvider(
+      "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK"
+    );
+    
+    // find the liquidity pool address (check that it exists)
+    const exchangeFactory = new ethers.Contract(EXCHANGE_FACTORY, UniswapV2Factory.abi, api);
+    const pair = await exchangeFactory.getPair(this.getTokenAddress(to), this.getTokenAddress(from));
+    if (pair == '0x0000000000000000000000000000000000000000') {
+      // pair not exists
+      throw createInternalError(CUSTOM_ERRORS.NotFound.Default);
     }
 
-    const receiveFeeInUnit = currencyToUnit(cryptoassets[to], baseToAsset(networkFee).amount()).times(
-      SAFE_FEE_MULTIPLIER
-    );
-    const toAmountInUnit = currencyToUnit(cryptoassets[to], baseToAsset(swapOutput).amount());
+    // get the output amount having input amount
+    // assume that a liquidty pool between to and from exists
+    const exchangeRouter = new ethers.Contract(EXCHANGE_ROUTER, UniswapV2Factory.abi, api);
+    const outputAmount = exchangeRouter.getAmountsOut(fromAmountInUnit, [this.getTokenAddress(to), this.getTokenAddress(from)]);
 
-    // Substract swap.receiveFee from toAmount as this is the minimum limit that you are going to receive
-    const baseOutputAmount = baseAmount(toAmountInUnit.minus(receiveFeeInUnit), cryptoassets[to].decimals);
-    const slippageCoefficient = new BN(1).minus(slippage);
-    const minimumOutput = baseOutputAmount.amount().multipliedBy(slippageCoefficient).dp(0);
-
-    return minimumOutput;
+    // reduce slippage from output amount
+    // return value
+    return outputAmount[outputAmount.length - 1]*(100 - SLIPPAGE);
   }
+
+  // async getOutput({
+  //   from,
+  //   to,
+  //   fromAmountInUnit,
+  //   slippage,
+  //   network,
+  // }: {
+  //   from: Asset;
+  //   to: Asset;
+  //   fromAmountInUnit: BigNumber;
+  //   slippage: number;
+  //   network: Network;
+  // }) {
+  //   const pools = await this._getPools();
+
+  //   const fromPoolData = pools.find((pool) => pool.asset === toThorchainAsset(from));
+  //   const toPoolData = pools.find((pool) => pool.asset === toThorchainAsset(to));
+
+  //   if (!fromPoolData || !toPoolData) return null; // Pool doesn't exist
+  //   if (fromPoolData.status.toLowerCase() !== 'available' || toPoolData.status.toLowerCase() !== 'available')
+  //     return null; // Pool not available
+
+  //   const getPool = (poolData: ThorchainPool) => {
+  //     return {
+  //       assetBalance: toPoolBalance(poolData.balance_asset),
+  //       runeBalance: toPoolBalance(poolData.balance_rune),
+  //     };
+  //   };
+
+  //   const fromPool = getPool(fromPoolData);
+  //   const toPool = getPool(toPoolData);
+
+  //   const baseInputAmount = baseAmount(fromAmountInUnit, cryptoassets[from].decimals);
+  //   const inputAmount = convertBaseAmountDecimal(baseInputAmount, 8);
+
+  //   // For RUNE it's `getSwapOutput`
+  //   const swapOutput = getDoubleSwapOutput(inputAmount, fromPool, toPool);
+
+  //   const baseNetworkFee = await this.networkFees(to, network);
+  //   if (!baseNetworkFee) throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.BaseNetworkFee);
+  //   let networkFee = convertBaseAmountDecimal(baseNetworkFee, 8);
+
+  //   if (isERC20(to)) {
+  //     // in case of ERC20
+  //     const poolData = pools.find((pool) => pool.asset === 'ETH.ETH');
+  //     if (!poolData) {
+  //       throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.PoolData);
+  //     }
+  //     const ethPool = toThorchainAsset(from) !== 'ETH.ETH' ? getPool(poolData) : fromPool;
+  //     networkFee = getValueOfAsset1InAsset2(networkFee, ethPool, toPool);
+  //   }
+
+  //   const receiveFeeInUnit = currencyToUnit(cryptoassets[to], baseToAsset(networkFee).amount()).times(
+  //     SAFE_FEE_MULTIPLIER
+  //   );
+  //   const toAmountInUnit = currencyToUnit(cryptoassets[to], baseToAsset(swapOutput).amount());
+
+  //   // Substract swap.receiveFee from toAmount as this is the minimum limit that you are going to receive
+  //   const baseOutputAmount = baseAmount(toAmountInUnit.minus(receiveFeeInUnit), cryptoassets[to].decimals);
+  //   const slippageCoefficient = new BN(1).minus(slippage);
+  //   const minimumOutput = baseOutputAmount.amount().multipliedBy(slippageCoefficient).dp(0);
+
+  //   return minimumOutput;
+  // }
 
   async getQuote(quoteRequest: QuoteRequest) {
     const { from, to, amount, network } = quoteRequest;
@@ -446,22 +504,21 @@ class TeleSwapSwapProvider extends SwapProvider {
     // send notif to ledger
     await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
 
-    // // check if from asset is acceptable
-    // const fromThorchainAsset = assetFromString(toThorchainAsset(quote.from));
-    // if (!fromThorchainAsset) {
-    //   throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
-    // }
-
     // TODO: test it
     const to = await this.chooseLockerAddress(Number(quote.fromAmount), network);
 
     // input amount
     const value = new BN(quote.fromAmount);
 
-    // TODO: create OP_RETURN data
+    // determine req type (wrap or swap)
     const requestType = quote.to === "TeleBTC"? TeleSwapTxTypes.WRAP: TeleSwapTxTypes.SWAP;
 
-    const requestData = await this.createRequestData(quote, requestType, network);
+    // get receipient address 
+    const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.toAccountId);
+    // const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
+
+    // create OP_RETURN data
+    const requestData = await this.createRequestData(quote, requestType, network, fromAddressRaw);
 
     // get client to sign tx
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
@@ -473,53 +530,6 @@ class TeleSwapSwapProvider extends SwapProvider {
     });
     return fromFundTx;
   }
-
-  // async sendEthereumSwap({
-  //   quote,
-  //   network,
-  //   walletId,
-  //   memo,
-  // }: {
-  //   quote: TeleSwapSwapHistoryItem;
-  //   network: Network;
-  //   walletId: WalletId;
-  //   memo: string;
-  // }) {
-  //   await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
-
-  //   const fromThorchainAsset = assetFromString(toThorchainAsset(quote.from));
-  //   if (!fromThorchainAsset) {
-  //     throw createInternalError(CUSTOM_ERRORS.NotFound.Thorchain.Asset);
-  //   }
-  //   const routerAddress = await this.getRouterAddress(fromThorchainAsset.chain);
-  //   // @ts-ignore
-  //   const chainNetwork = getChain(network, cryptoassets[quote.from].chain).network;
-  //   const chainId = chainNetwork.chainId;
-  //   const api = new ethers.providers.InfuraProvider(chainId, buildConfig.infuraApiKey);
-  //   const tokenAddress = isERC20(quote.from)
-  //     ? cryptoassets[quote.from].contractAddress
-  //     : '0x0000000000000000000000000000000000000000';
-  //   const thorchainRouter = new ethers.Contract(
-  //     routerAddress,
-  //     ['function deposit(address payable vault, address asset, uint amount, string memory memo) external payable'],
-  //     api
-  //   );
-
-  //   const amountHex = ethers.BigNumber.from(new BN(quote.fromAmount).toFixed()).toHexString();
-  //   const to = (await this.chooseLockerAddress(fromThorchainAsset.chain)).address;
-  //   const encodedData = thorchainRouter.interface.encodeFunctionData('deposit', [to, tokenAddress, amountHex, memo]);
-  //   const value = isERC20(quote.from) ? new BigNumber(0) : new BN(quote.fromAmount);
-
-  //   const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-  //   const fromFundTx = await client.wallet.sendTransaction({
-  //     to: routerAddress,
-  //     value,
-  //     data: encodedData,
-  //     fee: quote.fee,
-  //   });
-
-  //   return fromFundTx;
-  // }
 
   async sendSwap({ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
     // const memo = await this.makeMemo({ network, walletId, swap });
@@ -545,10 +555,6 @@ class TeleSwapSwapProvider extends SwapProvider {
   }
 
   async newSwap({ network, walletId, quote }: SwapRequest<TeleSwapSwapHistoryItem>) {
-    // const approvalRequired = isERC20(quote.from);
-    // const updates = approvalRequired
-      // ? await this.approveTokens({ network, walletId, swap: quote })
-      // : await this.sendSwap({ network, walletId, swap: quote });
 
     const updates = this.sendSwap({ network, walletId, swap: quote })
 
@@ -599,6 +605,11 @@ class TeleSwapSwapProvider extends SwapProvider {
       min = new BN(fiatToCrypto(200, fiatRates[quote.from]));
     }
     return min;
+  }
+
+  // return address of asset
+  getTokenAddress(asset: Asset) {
+    return cryptoassets[asset].contractAddress;
   }
 
   async waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
