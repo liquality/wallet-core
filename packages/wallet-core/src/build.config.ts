@@ -216,7 +216,7 @@ const config: WalletCoreConfig = {
         name: 'Thorchain',
         icon: 'thorchain.svg',
         type: SwapProviderType.Thorchain,
-        thornode: 'https://thornode.thorchain.info',
+        thornode: 'https://thornode.ninerealms.com',
       },
       [SwapProviderType.Astroport]: {
         name: 'Astroport',
