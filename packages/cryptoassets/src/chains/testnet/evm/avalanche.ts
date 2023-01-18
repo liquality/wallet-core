@@ -1,5 +1,5 @@
-import avalanche from '../../../chains/mainnet/evm/avalanche';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import avalanche from '../../mainnet/evm/avalanche';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 export default transformMainnetToTestnetChain(
   avalanche,

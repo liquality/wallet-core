@@ -1,5 +1,5 @@
-import terra from '../../../chains/mainnet/non-evm/terra';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import terra from '../../mainnet/non-evm/terra';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 export default transformMainnetToTestnetChain(
   terra,

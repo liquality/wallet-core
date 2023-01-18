@@ -1,6 +1,6 @@
 import { NftProviderType } from '../../../types';
-import ethereum from '../../../chains/mainnet/evm/ethereum';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import ethereum from '../../mainnet/evm/ethereum';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 export default transformMainnetToTestnetChain(
   ethereum,

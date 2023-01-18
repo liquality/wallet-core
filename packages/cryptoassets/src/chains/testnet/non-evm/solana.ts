@@ -1,5 +1,5 @@
-import solana from '../../../chains/mainnet/non-evm/solana';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import solana from '../../mainnet/non-evm/solana';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 export default transformMainnetToTestnetChain(
   solana,

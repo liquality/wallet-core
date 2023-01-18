@@ -1,5 +1,5 @@
-import rsk from '../../../chains/mainnet/evm/rsk';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import rsk from '../../mainnet/evm/rsk';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 export default transformMainnetToTestnetChain(
   rsk,

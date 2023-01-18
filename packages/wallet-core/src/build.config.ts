@@ -1,8 +1,8 @@
 import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-mainnet.json';
-import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
+// import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
 import { ChainId } from '@liquality/cryptoassets';
 import { Asset, Network, SwapProviderType } from './store/types';
-import { HTLC_CONTRACT_ADDRESS } from './utils/chainify';
+// import { HTLC_CONTRACT_ADDRESS } from './utils/chainify'; // TODO: UNCOMMENT IT (COMMENTED ALL TESTNET APPS)
 
 export interface SwapProviderDefinition {
   name: string;
@@ -107,53 +107,55 @@ const config: WalletCoreConfig = {
   },
   swapProviders: {
     testnet: {
-      [SwapProviderType.Liquality]: {
-        name: 'Liquality',
-        icon: 'liquality.svg',
-        type: SwapProviderType.Liquality,
-        routerAddress: HTLC_CONTRACT_ADDRESS,
-        agent: process.env.VUE_APP_AGENT_TESTNET_URL || 'https://testnet-dev-agent.liq-chainhub.net',
-      },
-      [SwapProviderType.LiqualityBoostNativeToERC20]: {
-        name: 'Liquality Boost',
-        type: SwapProviderType.LiqualityBoostNativeToERC20,
-        network: Network.Testnet,
-        icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
-      },
-      [SwapProviderType.LiqualityBoostERC20ToNative]: {
-        name: 'Liquality Boost',
-        type: SwapProviderType.LiqualityBoostERC20ToNative,
-        network: Network.Testnet,
-        icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
-      },
-      [SwapProviderType.UniswapV2]: {
-        name: 'Uniswap V2',
-        icon: 'uniswap.svg',
-        type: SwapProviderType.UniswapV2,
-        routerAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-      },
-      [SwapProviderType.Sovryn]: {
-        name: 'Sovryn',
-        icon: 'sovryn.svg',
-        type: SwapProviderType.Sovryn,
-        routerAddress: SovrynTestnetAddresses.swapNetwork,
-        routerAddressRBTC: SovrynTestnetAddresses.proxy3,
-        rpcURL: 'https://testnet.sovryn.app/rpc',
-      },
-      [SwapProviderType.FastBTCWithdraw]: {
-        name: 'FastBTC',
-        icon: 'sovryn.svg',
-        type: SwapProviderType.FastBTCWithdraw,
-        network: Network.Testnet,
-        routerAddress: '0x10C848e9495a32acA95F6c23C92eCA2b2bE9903A',
-      },
+      // [SwapProviderType.Liquality]: {
+      //   name: 'Liquality',
+      //   icon: 'liquality.svg',
+      //   type: SwapProviderType.Liquality,
+      //   routerAddress: HTLC_CONTRACT_ADDRESS,
+      //   agent: process.env.VUE_APP_AGENT_TESTNET_URL || 'https://testnet-dev-agent.liq-chainhub.net',
+      // },
+      // [SwapProviderType.LiqualityBoostNativeToERC20]: {
+      //   name: 'Liquality Boost',
+      //   type: SwapProviderType.LiqualityBoostNativeToERC20,
+      //   network: Network.Testnet,
+      //   icon: 'liqualityboost.svg',
+      //   supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
+      // },
+      // [SwapProviderType.LiqualityBoostERC20ToNative]: {
+      //   name: 'Liquality Boost',
+      //   type: SwapProviderType.LiqualityBoostERC20ToNative,
+      //   network: Network.Testnet,
+      //   icon: 'liqualityboost.svg',
+      //   supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
+      // },
+      // [SwapProviderType.UniswapV2]: {
+      //   name: 'Uniswap V2',
+      //   icon: 'uniswap.svg',
+      //   type: SwapProviderType.UniswapV2,
+      //   routerAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+      // },
+      // [SwapProviderType.Sovryn]: {
+      //   name: 'Sovryn',
+      //   icon: 'sovryn.svg',
+      //   type: SwapProviderType.Sovryn,
+      //   routerAddress: SovrynTestnetAddresses.swapNetwork,
+      //   routerAddressRBTC: SovrynTestnetAddresses.proxy3,
+      //   rpcURL: 'https://testnet.sovryn.app/rpc',
+      // },
+      // [SwapProviderType.FastBTCWithdraw]: {
+      //   name: 'FastBTC',
+      //   icon: 'sovryn.svg',
+      //   type: SwapProviderType.FastBTCWithdraw,
+      //   network: Network.Testnet,
+      //   routerAddress: '0x10C848e9495a32acA95F6c23C92eCA2b2bE9903A',
+      // },
       [SwapProviderType.TeleSwap]: {
         name: 'TeleSwap',
         icon: 'sovryn.svg', // TODO
         type: SwapProviderType.TeleSwap,
         network: Network.Testnet,
+        QuickSwapRouterAddress: '0x0000000000000000000000000000000000000000',
+        QuickSwapFactoryAddress: '0x0000000000000000000000000000000000000000'
       },
     },
     mainnet: {
@@ -287,6 +289,8 @@ const config: WalletCoreConfig = {
         name: 'TeleSwap',
         icon: 'sovryn.svg', // TODO
         type: SwapProviderType.TeleSwap,
+        QuickSwapRouterAddress: '0x0000000000000000000000000000000000000000',
+        QuickSwapFactoryAddress: '0x0000000000000000000000000000000000000000'
       },
     },
   },
