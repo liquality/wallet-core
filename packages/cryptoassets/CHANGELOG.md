@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.2.0
+
+### Minor Changes
+
+- 7f7f84f: Fix thorchain url
+
 ## 2.1.0
 
 ### Minor Changes

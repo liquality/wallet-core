@@ -1,5 +1,17 @@
 # @liquality/wallet-core
 
+## 4.9.0
+
+### Minor Changes
+
+- 7f7f84f: Fix thorchain url
+
+### Patch Changes
+
+- Updated dependencies [7f7f84f]
+  - @liquality/cryptoassets@2.2.0
+  - @liquality/error-parser@2.2.0
+
 ## 4.8.0
 
 ### Minor Changes
