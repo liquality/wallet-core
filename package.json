@@ -76,6 +76,6 @@
   },
   "dependencies": {
     "@liquality/wallet-core": "workspace:^",
-    "@sinatdt/scripts": "^0.1.1"
+    "@sinatdt/scripts": "^0.1.16"
   }
 }
