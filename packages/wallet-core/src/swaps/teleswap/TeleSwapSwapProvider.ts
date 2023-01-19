@@ -2,8 +2,8 @@ import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/
 import { Client } from '@chainify/client';
 // HttpClient
 import { Transaction } from '@chainify/types';
-import { unitToCurrency, getChain } from '@liquality/cryptoassets';
-// currencyToUnit  ChainId
+import { currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
+// ChainId
 // import { getErrorParser, ThorchainAPIErrorParser } from '@liquality/error-parser';
 import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 // import ERC20 from '@uniswap/v2-core/build/ERC20.json';
@@ -15,11 +15,13 @@ import * as ethers from 'ethers';
 import { mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import buildConfig from '../../build.config';
-import store, { ActionContext } from '../../store';
+import { ActionContext } from '../../store';
+// store
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
 // import { isERC20 } from '../../utils/asset';
-import { fiatToCrypto, prettyBalance } from '../../utils/coinFormatter';
+import { prettyBalance } from '../../utils/coinFormatter';
+// fiatToCrypto
 import cryptoassets from '../../utils/cryptoassets';
 // import { getTxFee } from '../../utils/fees';
 import { SwapProvider } from '../SwapProvider';
@@ -93,19 +95,6 @@ export interface TeleSwapSwapProviderConfig extends BaseSwapProviderConfig {
 //   return baseAmount(amountBN, decimal);
 // };
 
-export interface ThorchainPool {
-	balance_rune: string;
-	balance_asset: string;
-	asset: string;
-	LP_units: string;
-	pool_units: string;
-	status: string;
-	synth_units: string;
-	synth_supply: string;
-	pending_inbound_rune: string;
-	pending_inbound_asset: string;
-}
-
 export interface ThorchainTx {
 	id: string;
 	chain: string;
@@ -120,24 +109,6 @@ export interface ThorchainTx {
 		amount: string;
 	}[];
 	memo: string;
-}
-
-export interface ThorchainObservedTx {
-	tx: ThorchainTx;
-	status: string;
-	block_height: number;
-	signers: string[];
-	observed_pub_key: string;
-	finalise_height: number;
-	out_hashes: string[];
-}
-
-export interface ThorchainTransactionResponse {
-	keysign_metric: {
-		tx_id: string;
-		node_tss_times?: any;
-	};
-	observed_tx: ThorchainObservedTx;
 }
 
 export enum TeleSwapTxTypes {
@@ -155,7 +126,7 @@ export interface TeleSwapSwapHistoryItem extends SwapHistoryItem {
 	receiveTx: Transaction;
 }
 
-export interface ThorchainSwapQuote extends SwapQuote {
+export interface TeleSwapSwapQuote extends SwapQuote {
 	receiveFee: string;
 	slippage: number;
 }
@@ -163,55 +134,77 @@ export interface ThorchainSwapQuote extends SwapQuote {
 class TeleSwapSwapProvider extends SwapProvider {
 	
 	config: TeleSwapSwapProviderConfig;
-	
+  // TODO move url to config
+	targetNetworkConnectionInfo = {
+    web3: {
+      url: "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK",
+    },
+  };
+
 	constructor(config: TeleSwapSwapProviderConfig) {
 		super(config);
 	}
 
-	async getSupportedPairs() {
+	async getSupportedPairs() { // seems not necessary since others didn't implement it
 		return [];
 	}
 
-	async getQuote(quoteRequest: QuoteRequest) {
-		// const { from, to, amount, network } = quoteRequest;
-		// TODO: EDIT IT
-		return {
-		fromAmount: quoteRequest.amount.toFixed(),
-		toAmount: quoteRequest.amount.toFixed(),
-		slippage: quoteRequest.amount, // Convert to bips
-		};
-		// // Only ethereum, bitcoin and bc chains are supported
-		// if (!SUPPORTED_CHAINS.includes(cryptoassets[from].chain) || !SUPPORTED_CHAINS.includes(cryptoassets[to].chain))
-		//   return null;
+	async getQuote({network, from, to, amount }: QuoteRequest) {
+		// const api = new ethers.providers.AlchemyWebSocketProvider(
+		// "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK"
+		// );
+		const api = new ethers.providers.InfuraProvider(
+			this._getChainId(to, network), 
+			buildConfig.infuraApiKey // we use api key provided in buildConfig
+		);
+		
+    // reduce the fees
+		const percentageFee = await this._getTeleporterFee({network, from, to, amount });
+    const amountAfterFee = BN(amount).times(10000 - Number(percentageFee) - PROTOCOL_FEE).div(10000);
 
-		// // Slippage must be higher for small value swaps
-		// const min = await this.getMin(quoteRequest);
-		// const slippage = new BN(amount).gt(min.times(2)) ? 0.03 : 0.05;
+		// check that the liquidity pool exists
+		const exchangeFactory = new ethers.Contract(
+			this.config.QuickSwapFactoryAddress, UniswapV2Factory.abi, api
+		);
+		const pair = await exchangeFactory.getPair(this.getTokenAddress(to), this.getTokenAddress(from));
+		if (pair == '0x0000000000000000000000000000000000000000') {
+			// pair not exists
+			throw createInternalError(CUSTOM_ERRORS.NotFound.Default);
+		}
 
-		// const fromAmountInUnit = currencyToUnit(cryptoassets[from], new BN(amount));
-		// const toAmountInUnit = await this.getOutput({ from, to, fromAmountInUnit, slippage, network });
+		// get the output amount having input amount
+		// assume that a liquidty pool between to and from exists
+		// TODO: if there is no direct liquidity pool between tokens
+		const exchangeRouter = new ethers.Contract(
+			this.config.QuickSwapRouterAddress, 
+			UniswapV2Factory.abi, api
+		);
 
-		// if (!toAmountInUnit) {
-		//   return null;
-		// }
+    const fromAmountInUnit = currencyToUnit(cryptoassets[from], new BN(amountAfterFee)); // TODO remove BN and see if it's ok
+		const outputAmount = exchangeRouter.getAmountsOut(
+			fromAmountInUnit, 
+			[this.getTokenAddress(to), this.getTokenAddress(from)]
+		);
+    const toAmountInUnit = outputAmount[outputAmount.length - 1];
 
-		// return {
-		//   fromAmount: fromAmountInUnit.toFixed(),
-		//   toAmount: toAmountInUnit.toFixed(),
-		//   slippage: slippage * 1000, // Convert to bips
-		// };
+    if (!toAmountInUnit) {
+      return null;
+    }
+
+    return {
+      fromAmount: fromAmountInUnit.toFixed(),
+      toAmount: toAmountInUnit.toFixed()
+    };
 	}
 
 	async sendBitcoinSwap({
 		quote,
 		network,
 		walletId,
-		// memo,
 	}: {
 		quote: TeleSwapSwapHistoryItem;
 		network: Network;
 		walletId: WalletId;
-		// memo: string;
 	}) {
 		// send notif to ledger
 		await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
@@ -244,14 +237,12 @@ class TeleSwapSwapProvider extends SwapProvider {
 	}
 
 	async sendSwap({ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
-		// const memo = await this.makeMemo({ network, walletId, swap });
 		let fromFundTx;
 		if (swap.from === 'BTC') {
 		fromFundTx = await this.sendBitcoinSwap({
 			quote: swap,
 			network,
 			walletId,
-			// memo,
 		});
 		}
 
@@ -285,15 +276,13 @@ class TeleSwapSwapProvider extends SwapProvider {
 		quote,
 		feePrices,
 		max,
-	}: EstimateFeeRequest<TeleSwapTxTypes, ThorchainSwapQuote>) {
+	}: EstimateFeeRequest<TeleSwapTxTypes, TeleSwapSwapQuote>) {
 		if (txType === this._txTypes().SWAP && asset === 'BTC') {
 			const client = this.getClient(network, walletId, asset, quote.fromAccountId) as Client<
 				BitcoinEsploraApiProvider,
 				BitcoinBaseWalletProvider
 			>;
 			const value = max ? undefined : new BN(quote.fromAmount);
-			// const memo = await this.makeMemo({ network, walletId, swap: quote });
-			// const encodedMemo = Buffer.from(memo, 'utf-8').toString('hex');
 			const txs = feePrices.map((fee) => ({ to: '', value, fee }));
 			const totalFees = await client.wallet.getTotalFees(txs, max);
 			return mapValues(totalFees, (f) => unitToCurrency(cryptoassets[asset], f));
@@ -311,12 +300,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 	}
 
 	async getMin(quote: QuoteRequest) {
-		const fiatRates = store.state.fiatRates;
-		let min = new BN('0');
-		if (fiatRates && fiatRates[quote.from]) {
-		min = new BN(fiatToCrypto(200, fiatRates[quote.from]));
-		}
-		return min;
+    return new BN(await this._getTeleporterFee({network: quote.network, from: quote.from, to: quote.to, amount: new BN(0) }));
 	}
 
 	// return address of asset
@@ -516,18 +500,12 @@ class TeleSwapSwapProvider extends SwapProvider {
 	private async _chooseLockerAddress(value: Number, network: Network) {
 		const isMainnet = network === Network.Mainnet? true: false;
 
-		// TODO: move url to config
 		// for now, we only support Polygon
-		const targetNetworkConnectionInfo = {
-			web3: {
-				url: "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK",
-			},
-		};
 
 		const lockers = await getLockers({
 			'amount': value, 
 			'type': 'transfer', // for now, we only support Bitcoin -> EVM through liquality
-			'targetNetworkConnectionInfo': targetNetworkConnectionInfo, 
+			'targetNetworkConnectionInfo': this.targetNetworkConnectionInfo, 
 			'testnet': isMainnet
 		});
 
@@ -548,6 +526,16 @@ class TeleSwapSwapProvider extends SwapProvider {
 		return Number(chain.network.chainId);
 	}
 
+  private async _getTeleporterFee(quote: QuoteRequest) {
+		const isMainnet = quote.network === Network.Mainnet? true: false;
+		return (await calculateFee({
+			'amount': quote.amount,
+			'type': 'transfer', // for now, we only support Bitcoin -> EVM through liquality 
+			'targetNetworkConnectionInfo': this.targetNetworkConnectionInfo,
+			'testnet': isMainnet
+		})).teleporterPercentageFee;
+	}
+
 	private async _getOpReturnData(
 		quote: TeleSwapSwapHistoryItem, 
 		requestType: TeleSwapTxTypes, 
@@ -563,15 +551,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 			buildConfig.infuraApiKey // we use api key provided in buildConfig
 		);
 
-		// TODO: move url to config
-		const targetNetworkConnectionInfo = {
-			web3: {
-				url: "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK",
-			},
-		};
-
 		let isExchange;
-		const isMainnet = network === Network.Mainnet? true: false;
 		const chainId = 3; // TODO: write func for it + update the amount
 		let appId;
 		const speed = 0; // for now, we only support normal through liquality 
@@ -581,14 +561,14 @@ class TeleSwapSwapProvider extends SwapProvider {
 		const isFixedToken = false;
 
 		// calculate teleporter percentage fee
-		const percentageFee = (await calculateFee({
-			'amount': quote.fromAmount,
-			'type': 'transfer', // for now, we only support Bitcoin -> EVM through liquality 
-			'teleporterFeeRatio': 2,
-			'minimumFee': 0.00001,
-			'targetNetworkConnectionInfo': targetNetworkConnectionInfo,
-			'testnet': isMainnet
-		})).teleporterPercentageFee;
+		const percentageFee = await this._getTeleporterFee(
+      {
+        network: network, 
+        from: quote.from, 
+        to: quote.to, 
+        amount: new BN(quote.fromAmount) 
+      }
+    );
 
 		if(requestType == TeleSwapTxTypes.SWAP) {
 			isExchange = true;
@@ -596,12 +576,14 @@ class TeleSwapSwapProvider extends SwapProvider {
 			exchangeTokenAddress = this.getTokenAddress(quote.to);
 			deadline = (await api.getBlock('lastest')).timestamp + SUGGESTED_DEADLINE;
 			// for now, we assume that the input token is fixed 
-			outputAmount = await this._getOutputAmount({
-				'from': quote.from, 
-				'to': quote.to, 
-				'fromAmountInUnit': BN(quote.fromAmount).times(10000 - Number(percentageFee) - PROTOCOL_FEE).div(10000),
-				'network': network
-			});
+			outputAmount = ((await this.getQuote(
+        {
+          network: network, 
+          from: quote.from, 
+          to: quote.to, 
+          amount: new BN(quote.fromAmount) 
+        }
+      ))?.toAmount)*(100 - SLIPPAGE);
 		} else {
 			isExchange = false;
 			appId = TRANSFER_APP_ID;
@@ -624,53 +606,6 @@ class TeleSwapSwapProvider extends SwapProvider {
 			isFixedToken,
 		});
 	}
-
-	private async _getOutputAmount({
-		from,
-		to,
-		fromAmountInUnit, 
-		network
-	}: {
-		from: Asset;
-		to: Asset;
-		fromAmountInUnit: BigNumber;
-		network: Network
-	}) {
-
-		// const api = new ethers.providers.AlchemyWebSocketProvider(
-		// "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK"
-		// );
-		const api = new ethers.providers.InfuraProvider(
-			this._getChainId(to, network), 
-			buildConfig.infuraApiKey // we use api key provided in buildConfig
-		);
-		
-		// check that the liquidity pool exists
-		const exchangeFactory = new ethers.Contract(
-			this.config.QuickSwapFactoryAddress, UniswapV2Factory.abi, api
-		);
-		const pair = await exchangeFactory.getPair(this.getTokenAddress(to), this.getTokenAddress(from));
-		if (pair == '0x0000000000000000000000000000000000000000') {
-			// pair not exists
-			throw createInternalError(CUSTOM_ERRORS.NotFound.Default);
-		}
-
-		// get the output amount having input amount
-		// assume that a liquidty pool between to and from exists
-		// TODO: if there is no direct liquidity pool between tokens
-		const exchangeRouter = new ethers.Contract(
-			this.config.QuickSwapRouterAddress, 
-			UniswapV2Factory.abi, api
-		);
-		const outputAmount = exchangeRouter.getAmountsOut(
-			fromAmountInUnit, 
-			[this.getTokenAddress(to), this.getTokenAddress(from)]
-		);
-
-		// reduce slippage from output amount
-		return outputAmount[outputAmount.length - 1]*(100 - SLIPPAGE);
-	}
-
 }
 
 export { TeleSwapSwapProvider };
