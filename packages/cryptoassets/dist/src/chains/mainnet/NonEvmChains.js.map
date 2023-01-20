@@ -1,0 +1,1 @@
+{"version":3,"file":"NonEvmChains.js","sourceRoot":"","sources":["../../../../src/chains/mainnet/NonEvmChains.ts"],"names":[],"mappings":";;;;AAAA,uCAAiD;AAEjD,kEAAuC;AACvC,sEAA2C;AAC3C,oEAAyC;AAE5B,QAAA,cAAc,GAAc;IACvC,CAAC,eAAO,CAAC,IAAI,CAAC,EAAE,cAAS;IACzB,CAAC,eAAO,CAAC,MAAM,CAAC,EAAE,gBAAW;IAC7B,CAAC,eAAO,CAAC,KAAK,CAAC,EAAE,eAAU;CAC5B,CAAC"}

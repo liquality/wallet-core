@@ -1,0 +1,34 @@
+{
+    "name": "@liquality/error-parser",
+    "version": "2.1.0",
+    "description": "Error Parsing Library for liquality",
+    "repository": "git@github.com:liquality/wallet-core.git",
+    "author": "koderholic <meetenebelioluchi@gmail.com>",
+    "license": "MIT",
+    "main": "./dist/src/index.js",
+    "types": "./dist/src/index.d.ts",
+    "files": [
+        "dist/**"
+    ],
+    "dependencies": {
+        "@chainify/client": "2.0.0",
+        "@chainify/errors": "2.0.0",
+        "@liquality/cryptoassets": "workspace:*",
+        "randombytes": "^2.1.0"
+    },
+    "devDependencies": {
+        "@types/randombytes": "^2.0.0",
+        "randexp": "^0.5.3"
+    },
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf node_modules .turbo dist",
+        "watch": "tsc -w",
+        "test": "npx jest --coverage",
+        "test:watch": "npx jest --watch",
+        "test:clearCache": "npx jest --clearCache"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

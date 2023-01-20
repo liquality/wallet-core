@@ -1,0 +1,1 @@
+{"version":3,"file":"InsufficientLiquidityError.js","sourceRoot":"","sources":["../../../src/LiqualityErrors/InsufficientLiquidityError.ts"],"names":[],"mappings":";;;AAAA,sCAAwC;AACxC,qDAAkD;AAClD,MAAa,0BAA2B,SAAQ,+BAAiD;IAC/F,YAAY,IAAwC;QAClD,KAAK,CAAC,oBAAW,CAAC,0BAA0B,EAAE,IAAI,CAAC,CAAC;IACtD,CAAC;IAED,iBAAiB;QACf,IAAI,CAAC,cAAc,GAAG,EAAE,CAAC;IAC3B,CAAC;CACF;AARD,gEAQC"}

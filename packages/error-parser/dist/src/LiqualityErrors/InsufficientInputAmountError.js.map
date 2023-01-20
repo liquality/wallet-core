@@ -1,0 +1,1 @@
+{"version":3,"file":"InsufficientInputAmountError.js","sourceRoot":"","sources":["../../../src/LiqualityErrors/InsufficientInputAmountError.ts"],"names":[],"mappings":";;;AAAA,sCAAwC;AACxC,qDAAkD;AAElD,MAAa,4BAA6B,SAAQ,+BAAmD;IACnG,YAAY,IAA0C;QACpD,KAAK,CAAC,oBAAW,CAAC,4BAA4B,EAAE,IAAI,CAAC,CAAC;IACxD,CAAC;CACF;AAJD,oEAIC"}

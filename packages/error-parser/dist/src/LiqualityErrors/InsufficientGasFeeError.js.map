@@ -1,0 +1,1 @@
+{"version":3,"file":"InsufficientGasFeeError.js","sourceRoot":"","sources":["../../../src/LiqualityErrors/InsufficientGasFeeError.ts"],"names":[],"mappings":";;;AAAA,sCAAwC;AACxC,qDAAkD;AAClD,MAAa,uBAAwB,SAAQ,+BAA8C;IACzF,YAAY,IAAqC;QAC/C,KAAK,CAAC,oBAAW,CAAC,uBAAuB,EAAE,IAAI,CAAC,CAAC;IACnD,CAAC;CACF;AAJD,0DAIC"}

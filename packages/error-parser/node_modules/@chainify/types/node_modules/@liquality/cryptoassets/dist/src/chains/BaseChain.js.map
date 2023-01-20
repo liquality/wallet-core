@@ -1,0 +1,1 @@
+{"version":3,"file":"BaseChain.js","sourceRoot":"","sources":["../../../src/chains/BaseChain.ts"],"names":[],"mappings":";;;AAEA,MAAsB,SAAS;IAC7B,YAAY,KAAa;QACvB,MAAM,CAAC,MAAM,CAAC,IAAI,EAAE,KAAK,CAAC,CAAC;IAC7B,CAAC;IAEM,eAAe,CAAC,OAAe;QACpC,OAAO,IAAI,CAAC,aAAa,CAAC,OAAO,CAAC,CAAC;IACrC,CAAC;CASF;AAhBD,8BAgBC"}

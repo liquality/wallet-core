@@ -1,0 +1,1 @@
+{"version":3,"file":"16_enable_terra_chain.js","sourceRoot":"","sources":["../../../../src/store/migrations/16_enable_terra_chain.ts"],"names":[],"mappings":";;;AAAA,0DAAkD;AAClD,iDAA6C;AAEhC,QAAA,gBAAgB,GAAG;IAC9B,OAAO,EAAE,EAAE;IACX,OAAO,EAAE,CAAC,KAAU,EAAE,EAAE,CAAC,IAAA,0BAAW,EAAC,KAAK,EAAE,sBAAO,CAAC,KAAK,CAAC;CAC3D,CAAC"}

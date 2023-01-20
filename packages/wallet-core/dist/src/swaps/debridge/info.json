@@ -1,0 +1,13 @@
+{
+    "title": "deBridge Cross-Chain Swaps",
+    "description": "deSwap — cross-chain swaps between any assets",
+    "pros": [
+        "Ethereum, Polygon, Binance Smart Chain, Arbitrum, Avalanche",
+        "Best exchange rates",
+        "High liquidity",
+        "Many pairs",
+        "Fast"
+    ],
+    "cons": ["Slippage"],
+    "fees": ["Additional aggregator fees", "Slippage (up to 3%)"]
+}

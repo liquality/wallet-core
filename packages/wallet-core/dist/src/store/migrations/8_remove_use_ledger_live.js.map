@@ -1,0 +1,1 @@
+{"version":3,"file":"8_remove_use_ledger_live.js","sourceRoot":"","sources":["../../../../src/store/migrations/8_remove_use_ledger_live.ts"],"names":[],"mappings":";;;;AAAa,QAAA,mBAAmB,GAAG;IAEjC,OAAO,EAAE,CAAC;IACV,OAAO,EAAE,CAAO,KAAU,EAAE,EAAE;QAC5B,OAAO,KAAK,CAAC,aAAa,CAAC;QAC3B,uCAAY,KAAK,KAAE,kBAAkB,EAAE,CAAC,IAAG;IAC7C,CAAC,CAAA;CACF,CAAC"}

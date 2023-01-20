@@ -10,7 +10,7 @@ npm-debug.log*
 coverage
 
 # Compiled files
-dist/
+# dist/
 
 # yarn
 .yarn/cache
