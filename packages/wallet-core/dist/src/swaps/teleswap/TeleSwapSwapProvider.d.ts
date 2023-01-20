@@ -40,8 +40,8 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     getSupportedPairs(): Promise<never[]>;
     getQuote({ network, from, to, amount }: QuoteRequest): Promise<{
         fromAmount: string;
-        toAmount: any;
-    } | null>;
+        toAmount: string;
+    }>;
     sendBitcoinSwap({ quote, network, walletId, }: {
         quote: TeleSwapSwapHistoryItem;
         network: Network;
@@ -49,11 +49,13 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     }): Promise<import("@chainify/types").Transaction<any>>;
     sendSwap({ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         status: string;
-        swapHash: string;
+        swapTxHash: string;
     }>;
     newSwap({ network, walletId, quote }: SwapRequest<TeleSwapSwapHistoryItem>): Promise<{
         status: string;
-        swapHash: string;
+        swapTxHash: string;
+        id: string;
+        fee: number;
     }>;
     estimateFees({ network, walletId, asset, txType, quote, feePrices, max }: EstimateFeeRequest): Promise<{
         [x: string]: BN;

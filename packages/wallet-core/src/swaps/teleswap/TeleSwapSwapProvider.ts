@@ -137,9 +137,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 	}
 
 	async getQuote({network, from, to, amount }: QuoteRequest) {
-		// const api = new ethers.providers.AlchemyWebSocketProvider(
-		// "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK"
-		// );
+
 		const api = new ethers.providers.InfuraProvider(
 			this._getChainId(to, network), 
 			buildConfig.infuraApiKey // we use api key provided in buildConfig
@@ -148,7 +146,9 @@ class TeleSwapSwapProvider extends SwapProvider {
     	// reduce the fees
 		// const percentageFee = await this._getTeleporterFee({ network, from, to, amount });
 		const percentageFee = 1; // TODO: REMOVE IT
-    	const amountAfterFee = BN(amount).times(10000 - Number(percentageFee) - PROTOCOL_FEE).div(10000);
+		// TODO: ROUND UP AMOUNT AFTER FEE
+    	let amountAfterFee = BN(amount).times(10000 - Number(percentageFee) - PROTOCOL_FEE).div(10000);
+		amountAfterFee = amount; // TODO: REMOVE IT
 
 		// check that the liquidity pool exists
 		const exchangeFactory = new ethers.Contract(
@@ -169,21 +169,15 @@ class TeleSwapSwapProvider extends SwapProvider {
 		);
 		
 		const fromAmountInUnit = currencyToUnit(cryptoassets[from], new BN(amountAfterFee)); // TODO remove BN and see if it's ok
-		console.log(fromAmountInUnit.toNumber());
 		const outputAmount = await exchangeRouter.getAmountsOut(
-			fromAmountInUnit.toNumber(), // TODO: ERROR
-			[this.getTokenAddress(to), this.getTokenAddress(from)]
+			fromAmountInUnit.toNumber(),
+			[this.getTokenAddress(from), this.getTokenAddress(to)]
 		);
-		console.log(outputAmount);
-		const toAmountInUnit = outputAmount[outputAmount.length - 1];
-		console.log(toAmountInUnit);
-		if (!toAmountInUnit) {
-			return null;
-		}
+		const toAmountInUnit = new BN((outputAmount[outputAmount.length - 1]).toString());
 
 		return {
 			fromAmount: fromAmountInUnit.toFixed(),
-			toAmount: toAmountInUnit.toFixed()
+			toAmount: toAmountInUnit.toFixed(),
 		};
 	}
 
@@ -205,23 +199,23 @@ class TeleSwapSwapProvider extends SwapProvider {
 		// input amount
 		const value = new BN(quote.fromAmount);
 
-		// determine req type (wrap or swap)
-		const requestType = quote.to === "TeleBTC"? TeleSwapTxTypes.WRAP: TeleSwapTxTypes.SWAP;
+		// // determine req type (wrap or swap)
+		// const requestType = quote.to === "TeleBTC"? TeleSwapTxTypes.WRAP: TeleSwapTxTypes.SWAP;
 
-		// get receipient address 
-		const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.toAccountId);
-		// const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
+		// // get receipient address 
+		// const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
 
-		// get OP_RETURN data
-		const opReturnData = await this._getOpReturnData(quote, requestType, network, fromAddressRaw);
-
+		// // get OP_RETURN data
+		// const opReturnData = await this._getOpReturnData(quote, requestType, network, fromAddressRaw);
+		const opReturnData = '0x00';
+		
 		// get client to sign tx
 		const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 		const fromFundTx = await client.wallet.sendTransaction({
-		to: to,
-		value,
-		data: opReturnData,
-		fee: quote.fee, // TODO: is it bitcoin tx fee?
+			to: to,
+			value,
+			data: opReturnData,
+			fee: quote.fee, // TODO: is it bitcoin tx fee?
 		});
 		return fromFundTx;
 	}
@@ -229,26 +223,26 @@ class TeleSwapSwapProvider extends SwapProvider {
 	async sendSwap({ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
 		let bitcoinTx;
 		if (swap.from === 'BTC') {
-		bitcoinTx = await this.sendBitcoinSwap({
-			quote: swap,
-			network,
-			walletId,
-		});
+			bitcoinTx = await this.sendBitcoinSwap({
+				quote: swap,
+				network,
+				walletId,
+			});
 		}
 
 		if (!bitcoinTx) {
-		throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction);
+			throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction);
 		}
-
+		
 		return {
-		status: 'WAITING_FOR_SEND_CONFIRMATIONS',
-		swapHash: bitcoinTx.hash,
+			status: 'WAITING_FOR_SEND_CONFIRMATIONS',
+			swapTxHash: bitcoinTx.hash,
 		};
 	}
 
 	async newSwap({ network, walletId, quote }: SwapRequest<TeleSwapSwapHistoryItem>) {
 
-		const updates = this.sendSwap({ network, walletId, swap: quote })
+		const updates = await this.sendSwap({ network, walletId, swap: quote });
 
 		return {
 			id: uuidv4(),
@@ -259,7 +253,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 
   // this func only estimates tx submission fee (not protocols fees)
 	async estimateFees({ network, walletId, asset, txType, quote, feePrices, max }: EstimateFeeRequest) {
-		console.log("we are estimateFess");
+		
 		if (txType === this._txTypes().SWAP && asset === 'BTC') {
 		const client = this.getClient(network, walletId, asset, quote.fromAccountId) as Client<
 			BitcoinEsploraApiProvider,
@@ -274,8 +268,11 @@ class TeleSwapSwapProvider extends SwapProvider {
   }
 
 	async getMin(quote: QuoteRequest) {
-		console.log("we are quote");
-    	return new BN(await this._getTeleporterFee({network: quote.network, from: quote.from, to: quote.to, amount: new BN(0) }));
+    	return new BN(
+			await this._getTeleporterFee(
+				{network: quote.network, from: quote.from, to: quote.to, amount: new BN(0) }
+			)
+		);
 	}
 
 	// return address of asset
@@ -289,19 +286,19 @@ class TeleSwapSwapProvider extends SwapProvider {
 	}
 
 	async waitForSendConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
+	
 		const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
-
 		try {
-		const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
-		if (tx && tx.confirmations && tx.confirmations > 0) {
-			return {
-			endTime: Date.now(),
-			status: 'WAITING_FOR_RECEIVE',
-			};
-		}
+			const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
+			if (tx && tx.confirmations && tx.confirmations > 0) {
+				return {
+					endTime: Date.now(),
+					status: 'WAITING_FOR_RECEIVE',
+				};
+			}
 		} catch (e) {
-		if (isTransactionNotFoundError(e)) console.warn(e);
-		else throw e;
+			if (isTransactionNotFoundError(e)) console.warn(e);
+			else throw e;
 		}
 	}
 
@@ -329,54 +326,60 @@ class TeleSwapSwapProvider extends SwapProvider {
 		_store: ActionContext,
 		{ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>
 	) {
+		// console.log(swap.status);
 		switch (swap.status) {
-      case 'WAITING_FOR_SEND_CONFIRMATIONS':
-        return withInterval(async () => this.waitForSendConfirmations({ swap, network, walletId }));
-      case 'WAITING_FOR_RECEIVE':
-        // return withInterval(async () => this.waitForReceive({ swap, network, walletId }));
-        return withInterval(async () => this.waitForSendConfirmations({ swap, network, walletId }));
+      		case 'WAITING_FOR_SEND_CONFIRMATIONS':
+        		return withInterval(async () => this.waitForSendConfirmations({ swap, network, walletId }));
+      		case 'WAITING_FOR_RECEIVE':
+        		// return withInterval(async () => this.waitForReceive({ swap, network, walletId }));
+        		return withInterval(async () => this.waitForSendConfirmations({ swap, network, walletId }));
 		}
 	}
 
 	protected _getStatuses(): Record<string, SwapStatus> {
 		return {
-      WAITING_FOR_SEND_CONFIRMATIONS: {
-        step: 0,
-        label: 'Swapping {from}',
-        filterStatus: 'PENDING',
-        notification() {
-          return {
-            message: 'Swap initiated',
-          };
-        },
-      },
-      WAITING_FOR_RECEIVE: {
-        step: 1,
-        label: 'Swapping {from}',
-        filterStatus: 'PENDING',
-      },
-      SUCCESS: {
-        step: 2,
-        label: 'Completed',
-        filterStatus: 'COMPLETED',
-        notification(swap: any) {
-          return {
-            message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
-          };
-        },
-      },
-      FAILED: {
-        step: 2,
-        label: 'Swap Failed',
-        filterStatus: 'REFUNDED',
-        notification(swap: any) {
-          let refundedTeleBTC = swap.fromAmount; // TODO show the correct amount (reduce the fee)
-          return {
-            message: `Swap failed, ${prettyBalance(refundedTeleBTC, 'TeleBTC')} ${'TeleBTC'} refunded`,
-          };
-        },
-      },
-    };
+			WAITING_FOR_SEND_CONFIRMATIONS: {
+				step: 0,
+				label: 'Swapping {from}',
+				filterStatus: 'PENDING',
+				notification() {
+					return {
+						message: 'Swap initiated',
+					};
+				},
+			},
+			WAITING_FOR_RECEIVE: {
+				step: 1,
+				label: 'Receiving {to}',
+				filterStatus: 'PENDING',
+				notification() {
+					return {
+						message: 'Waiting for confirmation',
+					};
+				},
+			},
+			SUCCESS: {
+				step: 2,
+				label: 'Completed',
+				filterStatus: 'COMPLETED',
+				notification(swap: any) {
+					return {
+						message: `Swap completed, ${prettyBalance(swap.toAmount, swap.to)} ${swap.to} ready to use`,
+					};
+				},
+			},
+			FAILED: {
+				step: 2,
+				label: 'Swap Failed',
+				filterStatus: 'REFUNDED',
+				notification(swap: any) {
+					let refundedTeleBTC = swap.fromAmount; // TODO show the correct amount (reduce the fee)
+					return {
+						message: `Swap failed, ${prettyBalance(refundedTeleBTC, 'TeleBTC')} ${'TeleBTC'} refunded`,
+					};
+				},
+			},
+    	};
 	}
 
 	protected _txTypes() {
@@ -403,20 +406,22 @@ class TeleSwapSwapProvider extends SwapProvider {
 		const isMainnet = network === Network.Mainnet? true: false;
 
 		// for now, we only support Polygon
-
-		const lockers = await getLockers({
+		// TODO: why it is empty
+		let lockers = await getLockers({
 			'amount': value, 
 			'type': 'transfer', // for now, we only support Bitcoin -> EVM through liquality
 			'targetNetworkConnectionInfo': this.targetNetworkConnectionInfo, 
 			'testnet': isMainnet
 		});
-
+		// TODO: uncomment it
 		if (!lockers.preferredLocker) {
-			throw createInternalError(CUSTOM_ERRORS.NotFound.Default); // TODO: edit error
+			// throw createInternalError(CUSTOM_ERRORS.NotFound.Default); // TODO: edit error
 		}
 
 		// return best locker bitcoin address
-		return lockers.preferredLocker.bitcoinAddress;
+		// TODO: uncomment it
+		// return lockers.preferredLocker.bitcoinAddress;
+		return '2N8JDhrLqtwZ4MGC1QAcwyiQg3v6ffhCrJb';
 	}
 
 	private _getChainId(asset: Asset, network: Network) {
@@ -479,14 +484,14 @@ class TeleSwapSwapProvider extends SwapProvider {
 			exchangeTokenAddress = this.getTokenAddress(quote.to);
 			deadline = (await api.getBlock('lastest')).timestamp + SUGGESTED_DEADLINE;
 			// for now, we assume that the input token is fixed 
-			outputAmount = ((await this.getQuote(
-        {
-          network: network, 
-          from: quote.from, 
-          to: quote.to, 
-          amount: new BN(quote.fromAmount) 
-        }
-      ))?.toAmount)*(100 - SLIPPAGE);
+			outputAmount = Number((await this.getQuote(
+				{
+					network: network, 
+					from: quote.from, 
+					to: quote.to, 
+					amount: new BN(quote.fromAmount) 
+				}
+			)).toAmount)*(100 - SLIPPAGE);
 		} else {
 			isExchange = false;
 			appId = TRANSFER_APP_ID;
@@ -509,7 +514,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 			isFixedToken,
 		);
 	}
-
+	// TODO: get from package
   private _getTransferOpReturnData(
     chainId: any,
     appId: any,
