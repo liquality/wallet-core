@@ -1,0 +1,13 @@
+export declare const MAX_SCRIPT_BLOCK = 50;
+export declare const DEFAULT_VERSION = 1;
+export declare const DEFAULT_LOCKTIME = 0;
+export declare const DEFAULT_SEQUENCE = 4294967295;
+export declare const SIGHASH_ALL = 1;
+export declare const OP_DUP = 118;
+export declare const OP_HASH160 = 169;
+export declare const HASH_SIZE = 20;
+export declare const OP_EQUAL = 135;
+export declare const OP_EQUALVERIFY = 136;
+export declare const OP_CHECKSIG = 172;
+export declare const OP_RETURN = 106;
+//# sourceMappingURL=constants.d.ts.map

@@ -1,0 +1,67 @@
+import BigNumber from 'bignumber.js';
+/**
+ * Shortcut to create a BigNumber
+ *
+ * @param {string | number | BigNumber.Instance} value
+ * @returns {BigNumber} The BigNumber interface from the given value.
+ */
+declare const bn: (value: BigNumber.Value) => BigNumber;
+/**
+ * Helper to check whether a BigNumber is valid or not
+ *
+ * @param {BigNumber} value
+ * @returns {boolean} `true` or `false`.
+ * */
+export declare const isValidBN: (value: BigNumber) => boolean;
+/**
+ * Helper to create a big number from string or number
+ * If it fails to create a big number, a big number with value 0 will be returned instead
+ *
+ * @param {string|number|undefined} value
+ * @returns {BigNumber} The BigNumber interface from the given value. If invalid one is provided, will return `0`.
+ * */
+export declare const bnOrZero: (value: string | number | undefined) => BigNumber;
+/**
+ * Helper to validate a possible BigNumber
+ * If the given value is invalid or undefined, 0 is returned as a BigNumber
+ *
+ * @param {BigNumber|undefined} value
+ * @returns {boolean} `true` or `false`.
+ */
+export declare const validBNOrZero: (value: BigNumber | undefined) => BigNumber;
+/**
+ * Format a BaseNumber to a string depending on given decimal places
+ *
+ * @param {BigNumber} value
+ * @param {number} decimal The decimal place. (optional)
+ * @returns {string} The formatted string from the given BigNumber and decimal place.
+ * */
+export declare const formatBN: (value: BigNumber, decimal?: number) => string;
+/**
+ * The enumuration for symbol position.
+ * `before` or `after`
+ */
+export declare enum SymbolPosition {
+    BEFORE = "before",
+    AFTER = "after"
+}
+/**
+ * Formats a big number value by prefixing it with `$`
+ *
+ * @param {BigNumber} n
+ * @param {number} decimalPlaces The decimal place. (optional)
+ * @param {string} symbol The currency symbol. (optional)
+ * @param {position} position The symbol position. (optional)
+ * @returns {string} The formatted string from the given BigNumber, decimal places, symbol and position.
+ */
+export declare const formatBNCurrency: (n: BigNumber, decimalPlaces?: number, symbol?: string, position?: SymbolPosition) => string;
+/**
+ * Helper to get a fixed `BigNumber`
+ * Returns zero `BigNumber` if `value` is invalid
+ *
+ * @param {number|string|BigNumber|undefined} value
+ * @param {number} decimalPlaces The decimal place. (optional)
+ * @returns {BigNumber} The BigNumber interface from the given value and decimal.
+ * */
+export declare const fixedBN: (value: BigNumber.Value | undefined, decimalPlaces?: number) => BigNumber;
+export default bn;

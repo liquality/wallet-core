@@ -1,0 +1,10 @@
+[
+  {
+    "network": "testnet",
+    "version": "mumbai"
+  },
+  {
+    "network": "mainnet",
+    "version": "v1"
+  }
+]

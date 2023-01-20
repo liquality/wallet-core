@@ -1,0 +1,40 @@
+{
+  "name": "jscrypto",
+  "version": "1.0.3",
+  "main": "./index.js",
+  "author": "Izumi Hoshino <rindo.hinase@gmail.com>",
+  "license": "MIT",
+  "description": "crypto-js enhancement for modern js environment",
+  "homepage": "https://github.com/Hinaser/jscrypto/blob/master/API.md",
+  "keywords": [
+    "crypt",
+    "crypto",
+    "cipher",
+    "hash",
+    "MD5",
+    "SHA1",
+    "SHA256",
+    "SHA512",
+    "HMAC-SHA1",
+    "HMAC-SHA256",
+    "AES",
+    "DES",
+    "Triple-DES",
+    "OpenSSL",
+    "GCM",
+    "GMAC",
+    "CCM",
+    "CBC-MAC"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hinaser/jscrypto.git"
+  },
+  "bugs": "https://github.com/Hinaser/jscrypto/issues",
+  "bin": {
+    "jscrypto": "bin/cli.js"
+  },
+  "browser": {
+    "crypto": false
+  }
+}

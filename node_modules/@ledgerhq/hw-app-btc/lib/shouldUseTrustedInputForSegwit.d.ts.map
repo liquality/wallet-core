@@ -1,0 +1,1 @@
+{"version":3,"file":"shouldUseTrustedInputForSegwit.d.ts","sourceRoot":"","sources":["../src/shouldUseTrustedInputForSegwit.ts"],"names":[],"mappings":"AACA,wBAAgB,8BAA8B,CAAC,EAC7C,OAAO,EACP,IAAI,GACL,EAAE;IACD,OAAO,EAAE,MAAM,CAAC;IAChB,IAAI,EAAE,MAAM,CAAC;CACd,GAAG,OAAO,CAIV"}
