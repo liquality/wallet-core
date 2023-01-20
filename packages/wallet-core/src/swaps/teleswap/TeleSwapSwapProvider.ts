@@ -6,6 +6,7 @@ import { currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoasset
 import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 // import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import UniswapV2Factory from '@uniswap/v2-core/build/UniswapV2Factory.json';
+import UniswapV2Router from '@uniswap/v2-periphery/build/UniswapV2Router02.json';
 // import { BaseAmount, baseAmount, } from '@xchainjs/xchain-util';
 // baseToAsset assetFromString
 import BN from 'bignumber.js'; // { BigNumber }
@@ -22,6 +23,7 @@ import cryptoassets from '../../utils/cryptoassets';
 // import { getTxFee } from '../../utils/fees';
 import { SwapProvider } from '../SwapProvider';
 import { calculateFee, getLockers } from '@sinatdt/scripts'; // TODO package name
+import { teleswap } from '@sinatdt/configs';
 // import { TeleportDaoPayment} from './bitcoin-evm-nodes-v2/packages/bitcoin/src/index.js'; // TODO package name
 
 import {
@@ -142,10 +144,11 @@ class TeleSwapSwapProvider extends SwapProvider {
 			this._getChainId(to, network), 
 			buildConfig.infuraApiKey // we use api key provided in buildConfig
 		);
-		
-    // reduce the fees
-		const percentageFee = await this._getTeleporterFee({network, from, to, amount });
-    const amountAfterFee = BN(amount).times(10000 - Number(percentageFee) - PROTOCOL_FEE).div(10000);
+
+    	// reduce the fees
+		// const percentageFee = await this._getTeleporterFee({ network, from, to, amount });
+		const percentageFee = 1; // TODO: REMOVE IT
+    	const amountAfterFee = BN(amount).times(10000 - Number(percentageFee) - PROTOCOL_FEE).div(10000);
 
 		// check that the liquidity pool exists
 		const exchangeFactory = new ethers.Contract(
@@ -156,30 +159,32 @@ class TeleSwapSwapProvider extends SwapProvider {
 			// pair not exists
 			throw createInternalError(CUSTOM_ERRORS.NotFound.Default);
 		}
-
+		
 		// get the output amount having input amount
 		// assume that a liquidty pool between to and from exists
 		// TODO: if there is no direct liquidity pool between tokens
 		const exchangeRouter = new ethers.Contract(
 			this.config.QuickSwapRouterAddress, 
-			UniswapV2Factory.abi, api
+			UniswapV2Router.abi, api
 		);
-
-    const fromAmountInUnit = currencyToUnit(cryptoassets[from], new BN(amountAfterFee)); // TODO remove BN and see if it's ok
-		const outputAmount = exchangeRouter.getAmountsOut(
-			fromAmountInUnit, 
+		
+		const fromAmountInUnit = currencyToUnit(cryptoassets[from], new BN(amountAfterFee)); // TODO remove BN and see if it's ok
+		console.log(fromAmountInUnit.toNumber());
+		const outputAmount = await exchangeRouter.getAmountsOut(
+			fromAmountInUnit.toNumber(), // TODO: ERROR
 			[this.getTokenAddress(to), this.getTokenAddress(from)]
 		);
-    const toAmountInUnit = outputAmount[outputAmount.length - 1];
+		console.log(outputAmount);
+		const toAmountInUnit = outputAmount[outputAmount.length - 1];
+		console.log(toAmountInUnit);
+		if (!toAmountInUnit) {
+			return null;
+		}
 
-    if (!toAmountInUnit) {
-      return null;
-    }
-
-    return {
-      fromAmount: fromAmountInUnit.toFixed(),
-      toAmount: toAmountInUnit.toFixed()
-    };
+		return {
+			fromAmount: fromAmountInUnit.toFixed(),
+			toAmount: toAmountInUnit.toFixed()
+		};
 	}
 
 	async sendBitcoinSwap({
@@ -254,26 +259,33 @@ class TeleSwapSwapProvider extends SwapProvider {
 
   // this func only estimates tx submission fee (not protocols fees)
 	async estimateFees({ network, walletId, asset, txType, quote, feePrices, max }: EstimateFeeRequest) {
-    if (txType === this._txTypes().SWAP && asset === 'BTC') {
-      const client = this.getClient(network, walletId, asset, quote.fromAccountId) as Client<
-        BitcoinEsploraApiProvider,
-        BitcoinBaseWalletProvider
-      >;
-      const value = max ? undefined : new BN(quote.fromAmount);
-      const txs = feePrices.map((fee) => ({ to: '', value, data: DUMMY_BYTES, fee }));
-      const totalFees = await client.wallet.getTotalFees(txs, max);
-      return mapValues(totalFees, (f) => unitToCurrency(cryptoassets[asset], f));
-    }
-    return null;
+		console.log("we are estimateFess");
+		if (txType === this._txTypes().SWAP && asset === 'BTC') {
+		const client = this.getClient(network, walletId, asset, quote.fromAccountId) as Client<
+			BitcoinEsploraApiProvider,
+			BitcoinBaseWalletProvider
+		>;
+		const value = max ? undefined : new BN(quote.fromAmount);
+		const txs = feePrices.map((fee) => ({ to: '', value, data: DUMMY_BYTES, fee }));
+		const totalFees = await client.wallet.getTotalFees(txs, max);
+		return mapValues(totalFees, (f) => unitToCurrency(cryptoassets[asset], f));
+		}
+		return null;
   }
 
 	async getMin(quote: QuoteRequest) {
-    return new BN(await this._getTeleporterFee({network: quote.network, from: quote.from, to: quote.to, amount: new BN(0) }));
+		console.log("we are quote");
+    	return new BN(await this._getTeleporterFee({network: quote.network, from: quote.from, to: quote.to, amount: new BN(0) }));
 	}
 
 	// return address of asset
 	getTokenAddress(asset: Asset) {
-		return cryptoassets[asset].contractAddress;
+		if (asset == 'BTC') {
+			return teleswap.tokenInfo.polygon.testnet.teleBTC;
+		} else {
+			return teleswap.tokenInfo.polygon.testnet.link; // TODO: EDIT IT
+		}
+		// return cryptoassets[asset].contractAddress;
 	}
 
 	async waitForSendConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {

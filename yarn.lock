@@ -10303,6 +10303,7 @@ __metadata:
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
     "@liquality/wallet-core": "workspace:^"
+    "@sinatdt/configs": ^0.1.16
     "@sinatdt/scripts": ^0.1.16
     "@types/amplitude-js": ^8.16.0
     "@types/bluebird": ^3.5.36
