@@ -4,13 +4,13 @@ logs
 npm-debug.log*
 
 # Dependencies
-# node_modules/
+node_modules/
 
 # Coverage
 coverage
 
 # Compiled files
-# dist/
+dist/
 
 # yarn
 .yarn/cache

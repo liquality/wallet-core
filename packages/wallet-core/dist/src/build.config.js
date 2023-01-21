@@ -205,8 +205,9 @@ const config = {
                 name: 'TeleSwap',
                 icon: 'sovryn.svg',
                 type: types_1.SwapProviderType.TeleSwap,
-                QuickSwapRouterAddress: '0x0000000000000000000000000000000000000000',
-                QuickSwapFactoryAddress: '0x0000000000000000000000000000000000000000'
+                network: types_1.Network.Testnet,
+                QuickSwapRouterAddress: '0x8954AfA98594b838bda56FE4C12a09D7739D179b',
+                QuickSwapFactoryAddress: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32'
             },
         },
     },

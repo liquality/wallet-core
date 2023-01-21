@@ -28,6 +28,7 @@ export declare enum TeleSwapTxTypes {
 }
 export interface TeleSwapSwapHistoryItem extends SwapHistoryItem {
     swapTxHash: string;
+    numberOfConfirmations: number;
 }
 declare class TeleSwapSwapProvider extends SwapProvider {
     config: TeleSwapSwapProviderConfig;
@@ -50,10 +51,12 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     sendSwap({ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         status: string;
         swapTxHash: string;
+        numberOfConfirmations: number;
     }>;
     newSwap({ network, walletId, quote }: SwapRequest<TeleSwapSwapHistoryItem>): Promise<{
         status: string;
         swapTxHash: string;
+        numberOfConfirmations: number;
         id: string;
         fee: number;
     }>;
@@ -65,10 +68,17 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     waitForSendConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
+        numberOfConfirmations: number;
+    } | undefined>;
+    waitForReceive({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
+        endTime: number;
+        status: string;
+        numberOfConfirmations: number | undefined;
     } | undefined>;
     performNextSwapAction(_store: ActionContext, { network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<Partial<{
         endTime: number;
         status: string;
+        numberOfConfirmations: number;
     }> | undefined>;
     protected _getStatuses(): Record<string, SwapStatus>;
     protected _txTypes(): typeof TeleSwapTxTypes;
@@ -80,6 +90,5 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     private _getChainId;
     private _getTeleporterFee;
     private _getOpReturnData;
-    private _getTransferOpReturnData;
 }
 export { TeleSwapSwapProvider };
