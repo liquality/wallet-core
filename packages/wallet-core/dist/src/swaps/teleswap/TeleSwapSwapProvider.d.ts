@@ -39,6 +39,7 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     };
     constructor(config: TeleSwapSwapProviderConfig);
     getSupportedPairs(): Promise<never[]>;
+    isSwapSupported(from: Asset, to: Asset, network: Network): boolean;
     getQuote({ network, from, to, amount }: QuoteRequest): Promise<{
         fromAmount: string;
         toAmount: string;
@@ -87,7 +88,7 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     protected _timelineDiagramSteps(): string[];
     protected _totalSteps(): number;
     private _chooseLockerAddress;
-    private _getChainId;
+    private _getChainIdNumber;
     private _getTeleporterFee;
     private _getOpReturnData;
 }

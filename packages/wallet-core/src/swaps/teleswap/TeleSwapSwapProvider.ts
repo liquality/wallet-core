@@ -1,7 +1,7 @@
 import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
 import { Client } from '@chainify/client'; // HttpClient
 // import { Transaction } from '@chainify/types';
-import { currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets'; // ChainId
+import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets'; 
 // import { getErrorParser, ThorchainAPIErrorParser } from '@liquality/error-parser';
 import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 // import ERC20 from '@uniswap/v2-core/build/ERC20.json';
@@ -37,6 +37,7 @@ import {
 } from '../types'; // SwapQuote
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
+const SUPPORTED_CHAINS = [{'from': ChainId.Bitcoin, 'to': ChainId.Polygon, 'network': 'testnet'}];
 const TRANSFER_APP_ID = 0;
 const EXCHANGE_APP_ID = 1;
 const SUGGESTED_DEADLINE = 100000000; // TODO: EDIT IT
@@ -95,16 +96,27 @@ class TeleSwapSwapProvider extends SwapProvider {
 		return [];
 	}
 
+	isSwapSupported(from: Asset, to: Asset, network: Network) {
+		const fromChainId = cryptoassets[from].chain;
+		const toChainId = cryptoassets[to].chain;
+		// TODO: WEIRD BUG
+		return !SUPPORTED_CHAINS.includes({'from': fromChainId, 'to': toChainId, 'network': network})
+	}
+
 	async getQuote({network, from, to, amount }: QuoteRequest) {
 
+		// check that if the chains supported
+		if(this.isSwapSupported(from, to, network) == false) {
+			throw createInternalError(CUSTOM_ERRORS.Unsupported.Chain);
+		}
+
 		const api = new ethers.providers.InfuraProvider(
-			this._getChainId(to, network), 
+			this._getChainIdNumber(to, network), 
 			buildConfig.infuraApiKey // we use api key provided in buildConfig
 		);
 		
     	// reduce the fees
-		// const percentageFee = await this._getTeleporterFee({ network, from, to, amount });
-		const percentageFee = 1; // TODO: REMOVE IT
+		const percentageFee = (await this._getTeleporterFee({ network, from, to, amount })).teleporterPercentageFee;
     	let amountAfterFee = BN(amount).times(10000 - Number(percentageFee) - PROTOCOL_FEE).div(10000);
 
 		// check that the liquidity pool exists
@@ -181,17 +193,18 @@ class TeleSwapSwapProvider extends SwapProvider {
 		
 		// get client to sign tx
 		const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-		const fromFundTx = await client.wallet.sendTransaction({
+		const tx = await client.wallet.sendTransaction({
 			to: to,
 			value,
 			data: opReturnData,
 			fee: quote.fee, // TODO: is it bitcoin tx fee?
 		});
-		return fromFundTx;
+		return tx;
 	}
 
 	async sendSwap({ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
 		let bitcoinTx;
+
 		if (swap.from === 'BTC') {
 			bitcoinTx = await this.sendBitcoinSwap({
 				quote: swap,
@@ -202,7 +215,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 
 		if (!bitcoinTx) {
 			throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction);
-		}
+		}	
 		
 		return {
 			status: 'WAITING_FOR_SEND_CONFIRMATIONS',
@@ -212,6 +225,11 @@ class TeleSwapSwapProvider extends SwapProvider {
 	}
 
 	async newSwap({ network, walletId, quote }: SwapRequest<TeleSwapSwapHistoryItem>) {
+
+		// check that if the chains supported
+		if(!this.isSwapSupported(quote.from, quote.to, network)) {
+			throw createInternalError(CUSTOM_ERRORS.Unsupported.Chain);
+		}
 
 		const updates = await this.sendSwap({ network, walletId, swap: quote });
 
@@ -239,10 +257,11 @@ class TeleSwapSwapProvider extends SwapProvider {
   	}
 
 	async getMin(quote: QuoteRequest) {
+		// return teleporterFee when input amount is 0
     	return new BN(
-			await this._getTeleporterFee(
+			(await this._getTeleporterFee(
 				{network: quote.network, from: quote.from, to: quote.to, amount: new BN(0) }
-			)
+			)).teleporterFeeInBTC
 		);
 	}
 
@@ -292,7 +311,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 				
 				// get web3 provider
 				const api = new ethers.providers.InfuraProvider(
-					this._getChainId(swap.to, network), 
+					this._getChainIdNumber(swap.to, network), 
 					buildConfig.infuraApiKey // we use api key provided in buildConfig
 				);
 				
@@ -417,29 +436,29 @@ class TeleSwapSwapProvider extends SwapProvider {
 	private async _chooseLockerAddress(value: Number, network: Network) {
 		const isMainnet = network === Network.Mainnet? true: false;
 
-		// // for now, we only support Polygon
-		// // TODO: pass lockers target address to it
-		// let lockers = await getLockers(
-		// 	{
-		// 		'amount': value, 
-		// 		'type': 'transfer', // for now, we only support Bitcoin -> EVM through liquality
-		// 		'targetNetworkConnectionInfo': this.targetNetworkConnectionInfo, 
-		// 		'testnet': isMainnet
-		// 	},
-		// );
+		// for now, we only support Polygon
+		// TODO: pass lockers target address to it
+		let lockers = await getLockers(
+			{
+				'amount': value, 
+				'type': 'transfer', // for now, we only support Bitcoin -> EVM through liquality
+				'targetNetworkConnectionInfo': this.targetNetworkConnectionInfo, 
+				'testnet': !isMainnet
+			},
+		);
 		
 		// // TODO: uncomment it
 		// if (!lockers.preferredLocker) {
 		// 	// throw createInternalError(CUSTOM_ERRORS.NotFound.Default); // TODO: edit error
 		// }
-		console.log(value, isMainnet)
+
 		// return best locker bitcoin address
 		// TODO: uncomment it
 		// return lockers.preferredLocker.bitcoinAddress;
 		return '2N8JDhrLqtwZ4MGC1QAcwyiQg3v6ffhCrJb';
 	}
 
-	private _getChainId(asset: Asset, network: Network) {
+	private _getChainIdNumber(asset: Asset, network: Network) {
 		const chainId = cryptoassets[asset].chain;
 		// if (chainId !== ChainId.Ethereum) {
 		//   throw createInternalError(CUSTOM_ERRORS.Unsupported.Chain);
@@ -450,17 +469,21 @@ class TeleSwapSwapProvider extends SwapProvider {
 
   	private async _getTeleporterFee(quote: QuoteRequest) {
 		const isMainnet = quote.network === Network.Mainnet? true: false;
-		console.log("calculatedFee", isMainnet)
-		
-		// const calculatedFee = await calculateFee({
-		// 	'amount': quote.amount,
-		// 	'type': 'transfer', // for now, we only support Bitcoin -> EVM through liquality 
-		// 	'targetNetworkConnectionInfo': this.targetNetworkConnectionInfo,
-		// 	'testnet': isMainnet
-		// });
-		// console.log("calculatedFee", calculatedFee)
-		// return calculatedFee.lockerPercentageFee; // TODO change it to teleporterPercentageFee
-		return 0;
+		const calculatedFee: any = await calculateFee({
+			'amount': quote.amount, // assume that amount is in currency (not unit)
+			'type': 'transfer', // for now, we only support Bitcoin -> EVM through liquality 
+			'targetNetworkConnectionInfo': this.targetNetworkConnectionInfo,
+			'testnet': !isMainnet
+		});
+		console.log("calculatedFee", calculatedFee.teleporterFeeInBTC)
+		return {
+			teleporterFeeInBTC: calculatedFee.teleporterFeeInBTC, // TODO change it
+			teleporterPercentageFee: (calculatedFee.teleporterFeeInBTC).times(100).div(quote.amount) // TODO change it
+		}
+		// return {
+		// 	teleporterFeeInBTC: 0,
+		// 	teleporterPercentageFee: 0
+		// }
 	}
 
 	private async _getOpReturnData(
@@ -471,7 +494,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 	) {
 	
 		const api = new ethers.providers.InfuraProvider(
-			this._getChainId(quote.to, network), 
+			this._getChainIdNumber(quote.to, network), 
 			buildConfig.infuraApiKey // we use api key provided in buildConfig
 		);
 
@@ -485,14 +508,14 @@ class TeleSwapSwapProvider extends SwapProvider {
 		const isFixedToken = false;
 
 		// calculate teleporter percentage fee
-		const percentageFee = await this._getTeleporterFee(
+		const percentageFee = (await this._getTeleporterFee(
 			{
 				network: network, 
 				from: quote.from, 
 				to: quote.to, 
-				amount: new BN(quote.fromAmount) 
+				amount: unitToCurrency(cryptoassets[quote.from], Number(quote.fromAmount))
 			}
-   		);
+   		)).teleporterPercentageFee;
 
 		if(requestType == TeleSwapTxTypes.SWAP) {
 			isExchange = true;
