@@ -20,7 +20,7 @@ const scripts_1 = require("@sinatdt/scripts");
 const configs_1 = require("@sinatdt/configs");
 const bitcoin_1 = require("@sinatdt/bitcoin");
 const error_parser_1 = require("@liquality/error-parser");
-const SUPPORTED_CHAINS = [{ 'from': cryptoassets_1.ChainId.Bitcoin, 'to': cryptoassets_1.ChainId.Polygon, 'network': 'testnet' }];
+const SUPPORTED_CHAINS = [[cryptoassets_1.ChainId.Bitcoin, cryptoassets_1.ChainId.Polygon, 'testnet']];
 const TRANSFER_APP_ID = 0;
 const EXCHANGE_APP_ID = 1;
 const SUGGESTED_DEADLINE = 100000000;
@@ -37,11 +37,6 @@ var TeleSwapTxTypes;
 class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
     constructor(config) {
         super(config);
-        this.targetNetworkConnectionInfo = {
-            web3: {
-                url: "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK",
-            },
-        };
     }
     getSupportedPairs() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -51,7 +46,8 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
     isSwapSupported(from, to, network) {
         const fromChainId = cryptoassets_2.default[from].chain;
         const toChainId = cryptoassets_2.default[to].chain;
-        return !SUPPORTED_CHAINS.includes({ 'from': fromChainId, 'to': toChainId, 'network': network });
+        const _SUPPORTED_CHAINS = SUPPORTED_CHAINS.map((item) => JSON.stringify(item));
+        return _SUPPORTED_CHAINS.includes(JSON.stringify([fromChainId, toChainId, network]));
     }
     getQuote({ network, from, to, amount }) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -90,7 +86,7 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
     sendBitcoinSwap({ quote, network, walletId, }) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
-            const to = yield this._chooseLockerAddress(Number(quote.fromAmount), network);
+            const to = yield this._chooseLockerAddress(quote.from, quote.fromAmount, network);
             const value = new bignumber_js_1.default(quote.fromAmount);
             const requestType = quote.to === "TeleBTC" ? TeleSwapTxTypes.WRAP : TeleSwapTxTypes.SWAP;
             const fromAddressRaw = yield this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
@@ -290,16 +286,21 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
     _totalSteps() {
         return 3;
     }
-    _chooseLockerAddress(value, network) {
+    _chooseLockerAddress(from, value, network) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const isMainnet = network === types_1.Network.Mainnet ? true : false;
             let lockers = yield (0, scripts_1.getLockers)({
-                'amount': value,
+                'amount': (0, cryptoassets_1.unitToCurrency)(cryptoassets_2.default[from], Number(value)),
                 'type': 'transfer',
-                'targetNetworkConnectionInfo': this.targetNetworkConnectionInfo,
+                'targetNetworkConnectionInfo': this.config.targetNetworkConnectionInfo,
                 'testnet': !isMainnet
             });
-            return '2N8JDhrLqtwZ4MGC1QAcwyiQg3v6ffhCrJb';
+            if (!lockers.preferredLocker) {
+                throw (0, error_parser_1.createInternalError)(error_parser_1.CUSTOM_ERRORS.NotFound.Default);
+            }
+            else {
+                return lockers.preferredLocker.bitcoinAddress;
+            }
         });
     }
     _getChainIdNumber(asset, network) {
@@ -313,13 +314,12 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
             const calculatedFee = yield (0, scripts_1.calculateFee)({
                 'amount': quote.amount,
                 'type': 'transfer',
-                'targetNetworkConnectionInfo': this.targetNetworkConnectionInfo,
+                'targetNetworkConnectionInfo': this.config.targetNetworkConnectionInfo,
                 'testnet': !isMainnet
             });
-            console.log("calculatedFee", calculatedFee.teleporterFeeInBTC);
             return {
                 teleporterFeeInBTC: calculatedFee.teleporterFeeInBTC,
-                teleporterPercentageFee: (calculatedFee.teleporterFeeInBTC).times(100).div(quote.amount)
+                teleporterPercentageFee: (new bignumber_js_1.default(calculatedFee.teleporterFeeInBTC)).times(100).div(quote.amount)
             };
         });
     }

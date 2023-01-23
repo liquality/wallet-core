@@ -6,21 +6,7 @@ import { BaseSwapProviderConfig, EstimateFeeRequest, NextSwapActionRequest, Quot
 export interface TeleSwapSwapProviderConfig extends BaseSwapProviderConfig {
     QuickSwapRouterAddress: string;
     QuickSwapFactoryAddress: string;
-}
-export interface ThorchainTx {
-    id: string;
-    chain: string;
-    from_address: string;
-    to_address: string;
-    coins: {
-        asset: string;
-        amount: string;
-    }[];
-    gas: {
-        asset: string;
-        amount: string;
-    }[];
-    memo: string;
+    targetNetworkConnectionInfo: any;
 }
 export declare enum TeleSwapTxTypes {
     WRAP = "WRAP",
@@ -32,11 +18,6 @@ export interface TeleSwapSwapHistoryItem extends SwapHistoryItem {
 }
 declare class TeleSwapSwapProvider extends SwapProvider {
     config: TeleSwapSwapProviderConfig;
-    targetNetworkConnectionInfo: {
-        web3: {
-            url: string;
-        };
-    };
     constructor(config: TeleSwapSwapProviderConfig);
     getSupportedPairs(): Promise<never[]>;
     isSwapSupported(from: Asset, to: Asset, network: Network): boolean;

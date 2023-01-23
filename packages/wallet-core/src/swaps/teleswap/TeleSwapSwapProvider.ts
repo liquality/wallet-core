@@ -1,14 +1,10 @@
 import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
-import { Client } from '@chainify/client'; // HttpClient
-// import { Transaction } from '@chainify/types';
+import { Client } from '@chainify/client';
 import { ChainId, currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets'; 
-// import { getErrorParser, ThorchainAPIErrorParser } from '@liquality/error-parser';
 import { isTransactionNotFoundError } from '../../utils/isTransactionNotFoundError';
 // import ERC20 from '@uniswap/v2-core/build/ERC20.json';
 import UniswapV2Factory from '@uniswap/v2-core/build/UniswapV2Factory.json';
 import UniswapV2Router from '@uniswap/v2-periphery/build/UniswapV2Router02.json';
-// import { BaseAmount, baseAmount, } from '@xchainjs/xchain-util';
-// baseToAsset assetFromString
 import BN from 'bignumber.js'; // { BigNumber }
 import * as ethers from 'ethers';
 import { ceil, mapValues } from 'lodash';
@@ -29,7 +25,6 @@ import { TeleportDaoPayment } from '@sinatdt/bitcoin';
 import {
 	BaseSwapProviderConfig,
 	EstimateFeeRequest,
-	// EstimateFeeResponse,
 	NextSwapActionRequest,
 	QuoteRequest,
 	SwapRequest,
@@ -37,7 +32,7 @@ import {
 } from '../types'; // SwapQuote
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
-const SUPPORTED_CHAINS = [{'from': ChainId.Bitcoin, 'to': ChainId.Polygon, 'network': 'testnet'}];
+const SUPPORTED_CHAINS = [[ChainId.Bitcoin, ChainId.Polygon, 'testnet']]; // [from, to, network]
 const TRANSFER_APP_ID = 0;
 const EXCHANGE_APP_ID = 1;
 const SUGGESTED_DEADLINE = 100000000; // TODO: EDIT IT
@@ -50,22 +45,8 @@ const DUMMY_BYTES = '0x000000000000000000000000000000000000000000000000000000000
 export interface TeleSwapSwapProviderConfig extends BaseSwapProviderConfig {
 	QuickSwapRouterAddress: string;
 	QuickSwapFactoryAddress: string;
-}
+	targetNetworkConnectionInfo: any;
 
-export interface ThorchainTx {
-	id: string;
-	chain: string;
-	from_address: string;
-	to_address: string;
-	coins: {
-		asset: string;
-		amount: string;
-	}[];
-	gas: {
-		asset: string;
-		amount: string;
-	}[];
-	memo: string;
 }
 
 export enum TeleSwapTxTypes {
@@ -81,12 +62,6 @@ export interface TeleSwapSwapHistoryItem extends SwapHistoryItem {
 class TeleSwapSwapProvider extends SwapProvider {
 	
 	config: TeleSwapSwapProviderConfig;
-  	// TODO move url to config
-	targetNetworkConnectionInfo = {
-		web3: {
-			url: "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK",
-		},
-  	};
 
 	constructor(config: TeleSwapSwapProviderConfig) {
 		super(config);
@@ -99,8 +74,8 @@ class TeleSwapSwapProvider extends SwapProvider {
 	isSwapSupported(from: Asset, to: Asset, network: Network) {
 		const fromChainId = cryptoassets[from].chain;
 		const toChainId = cryptoassets[to].chain;
-		// TODO: WEIRD BUG
-		return !SUPPORTED_CHAINS.includes({'from': fromChainId, 'to': toChainId, 'network': network})
+		const _SUPPORTED_CHAINS = SUPPORTED_CHAINS.map((item) => JSON.stringify(item))
+		return _SUPPORTED_CHAINS.includes(JSON.stringify([fromChainId, toChainId, network]));
 	}
 
 	async getQuote({network, from, to, amount }: QuoteRequest) {
@@ -177,7 +152,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 		await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
 
 		// find the best locker (is active and has capacity)
-		const to = await this._chooseLockerAddress(Number(quote.fromAmount), network);
+		const to = await this._chooseLockerAddress(quote.from, quote.fromAmount, network);
 
 		// input amount
 		const value = new BN(quote.fromAmount);
@@ -433,29 +408,26 @@ class TeleSwapSwapProvider extends SwapProvider {
 		return 3;
 	}
 
-	private async _chooseLockerAddress(value: Number, network: Network) {
+	private async _chooseLockerAddress(from: Asset, value: string, network: Network) {
 		const isMainnet = network === Network.Mainnet? true: false;
 
 		// for now, we only support Polygon
-		// TODO: pass lockers target address to it
 		let lockers = await getLockers(
 			{
-				'amount': value, 
+				'amount': unitToCurrency(cryptoassets[from], Number(value)), 
 				'type': 'transfer', // for now, we only support Bitcoin -> EVM through liquality
-				'targetNetworkConnectionInfo': this.targetNetworkConnectionInfo, 
+				'targetNetworkConnectionInfo': this.config.targetNetworkConnectionInfo, 
 				'testnet': !isMainnet
 			},
 		);
 		
-		// // TODO: uncomment it
-		// if (!lockers.preferredLocker) {
-		// 	// throw createInternalError(CUSTOM_ERRORS.NotFound.Default); // TODO: edit error
-		// }
-
-		// return best locker bitcoin address
-		// TODO: uncomment it
-		// return lockers.preferredLocker.bitcoinAddress;
-		return '2N8JDhrLqtwZ4MGC1QAcwyiQg3v6ffhCrJb';
+		if (!lockers.preferredLocker) {
+			throw createInternalError(CUSTOM_ERRORS.NotFound.Default); // TODO: edit error
+		} else {
+			// return best locker bitcoin address
+			return lockers.preferredLocker.bitcoinAddress;
+		}
+		
 	}
 
 	private _getChainIdNumber(asset: Asset, network: Network) {
@@ -472,18 +444,14 @@ class TeleSwapSwapProvider extends SwapProvider {
 		const calculatedFee: any = await calculateFee({
 			'amount': quote.amount, // assume that amount is in currency (not unit)
 			'type': 'transfer', // for now, we only support Bitcoin -> EVM through liquality 
-			'targetNetworkConnectionInfo': this.targetNetworkConnectionInfo,
+			'targetNetworkConnectionInfo': this.config.targetNetworkConnectionInfo,
 			'testnet': !isMainnet
 		});
-		console.log("calculatedFee", calculatedFee.teleporterFeeInBTC)
+
 		return {
-			teleporterFeeInBTC: calculatedFee.teleporterFeeInBTC, // TODO change it
-			teleporterPercentageFee: (calculatedFee.teleporterFeeInBTC).times(100).div(quote.amount) // TODO change it
+			teleporterFeeInBTC: calculatedFee.teleporterFeeInBTC,
+			teleporterPercentageFee: (new BN(calculatedFee.teleporterFeeInBTC)).times(100).div(quote.amount)
 		}
-		// return {
-		// 	teleporterFeeInBTC: 0,
-		// 	teleporterPercentageFee: 0
-		// }
 	}
 
 	private async _getOpReturnData(
