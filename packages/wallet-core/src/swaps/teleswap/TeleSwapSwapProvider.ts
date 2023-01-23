@@ -78,7 +78,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 		return _SUPPORTED_CHAINS.includes(JSON.stringify([fromChainId, toChainId, network]));
 	}
 
-	async getQuote({network, from, to, amount }: QuoteRequest) {
+	async getQuote({ network, from, to, amount }: QuoteRequest) {
 
 		// check that if the chains supported
 		if(this.isSwapSupported(from, to, network) == false) {
@@ -90,53 +90,62 @@ class TeleSwapSwapProvider extends SwapProvider {
 			buildConfig.infuraApiKey // we use api key provided in buildConfig
 		);
 		
-    	// reduce the fees
+		// reduce the fees
 		const percentageFee = (await this._getTeleporterFee({ network, from, to, amount })).teleporterPercentageFee;
-    	let amountAfterFee = BN(amount).times(10000 - Number(percentageFee) - PROTOCOL_FEE).div(10000);
+		let amountAfterFee = BN(amount).times(10000 - Number(percentageFee) - PROTOCOL_FEE).div(10000);
+		const amountAfterFeeInUnit = currencyToUnit(cryptoassets[from], amountAfterFee);
 
-		// check that the liquidity pool exists
-		const exchangeFactory = new ethers.Contract(
-			this.config.QuickSwapFactoryAddress, UniswapV2Factory.abi, api
-		);
-		const pair = await exchangeFactory.getPair(this.getTokenAddress(from), this.getTokenAddress(to));
-		let isDirectPair = true;
-		if (pair == '0x0000000000000000000000000000000000000000') {
-			isDirectPair = false
-			// there is a pair between TeleBTC and WMATIC, so we check if there is pair between WMATIC and {to}
-			let _pair = await exchangeFactory.getPair(this.getTokenAddress('WMATIC'), this.getTokenAddress(to));
-			if (_pair == '0x0000000000000000000000000000000000000000') {
-				// no path exists
-				throw createInternalError(CUSTOM_ERRORS.NotFound.Default);
+		const fromAmountInUnit = currencyToUnit(cryptoassets[from], new BN(amount));
+		
+		if (to != 'TELEBTC') { // this request is swap
+			// check that the liquidity pool exists
+			const exchangeFactory = new ethers.Contract(
+				this.config.QuickSwapFactoryAddress, UniswapV2Factory.abi, api
+			);
+			const pair = await exchangeFactory.getPair(this.getTokenAddress(from), this.getTokenAddress(to));
+			let isDirectPair = true;
+			if (pair == '0x0000000000000000000000000000000000000000') {
+				isDirectPair = false
+				// there is a pair between TeleBTC and WMATIC, so we check if there is pair between WMATIC and {to}
+				let _pair = await exchangeFactory.getPair(this.getTokenAddress('WMATIC'), this.getTokenAddress(to));
+				if (_pair == '0x0000000000000000000000000000000000000000') {
+					// no path exists
+					throw createInternalError(CUSTOM_ERRORS.NotFound.Default);
+				}
 			}
-		}
-		
-		// get the output amount having input amount
-		const exchangeRouter = new ethers.Contract(
-			this.config.QuickSwapRouterAddress, 
-			UniswapV2Router.abi, api
-		);
-		
-		const fromAmountInUnit = currencyToUnit(cryptoassets[from], amountAfterFee);
-		let outputAmount;
-
-		if (isDirectPair) {
-			outputAmount = await exchangeRouter.getAmountsOut(
-				ceil(fromAmountInUnit.toNumber()), // round up the number
-				[this.getTokenAddress(from), this.getTokenAddress(to)]
+			
+			// get the output amount having input amount
+			const exchangeRouter = new ethers.Contract(
+				this.config.QuickSwapRouterAddress, 
+				UniswapV2Router.abi, api
 			);
+			
+			let outputAmount;
+
+			if (isDirectPair) {
+				outputAmount = await exchangeRouter.getAmountsOut(
+					ceil(amountAfterFeeInUnit.toNumber()), // round up the number
+					[this.getTokenAddress(from), this.getTokenAddress(to)]
+				);
+			} else {
+				outputAmount = await exchangeRouter.getAmountsOut(
+					ceil(amountAfterFeeInUnit.toNumber()), // round up the number
+					[this.getTokenAddress(from), this.getTokenAddress('WMATIC'), this.getTokenAddress(to)]
+				);
+			}
+
+			const toAmountInUnit = new BN((outputAmount[outputAmount.length - 1]).toString());
+
+			return {
+				fromAmount: fromAmountInUnit.toFixed(),
+				toAmount: toAmountInUnit.toFixed(),
+			};
 		} else {
-			outputAmount = await exchangeRouter.getAmountsOut(
-				ceil(fromAmountInUnit.toNumber()), // round up the number
-				[this.getTokenAddress(from), this.getTokenAddress('WMATIC'), this.getTokenAddress(to)]
-			);
+			return { // this request is wrap
+				fromAmount: fromAmountInUnit.toFixed(),
+				toAmount: amountAfterFeeInUnit.toFixed(),
+			};
 		}
-
-		const toAmountInUnit = new BN((outputAmount[outputAmount.length - 1]).toString());
-
-		return {
-			fromAmount: fromAmountInUnit.toFixed(),
-			toAmount: toAmountInUnit.toFixed(),
-		};
 	}
 
 	async sendBitcoinSwap({
@@ -152,13 +161,14 @@ class TeleSwapSwapProvider extends SwapProvider {
 		await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
 
 		// find the best locker (is active and has capacity)
+		// quote.from == 'BTC'
 		const to = await this._chooseLockerAddress(quote.from, quote.fromAmount, network);
 
 		// input amount
 		const value = new BN(quote.fromAmount);
 
 		// determine req type (wrap or swap)
-		const requestType = quote.to === "TeleBTC"? TeleSwapTxTypes.WRAP: TeleSwapTxTypes.SWAP;
+		const requestType = (quote.to === "TeleBTC" || quote.to === "TElEBTC")? TeleSwapTxTypes.WRAP: TeleSwapTxTypes.SWAP;
 
 		// get receipient address 
 		const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
@@ -244,6 +254,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 	getTokenAddress(asset: Asset) {
 		switch(asset) {
 			case 'TeleBTC':
+			case 'TELEBTC':
 			case 'BTC':
 				return teleswap.tokenInfo.polygon.testnet.teleBTC
 			case 'MATIC':
@@ -292,7 +303,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 				
 				// set cc router contract
 				let ccRouterFactory;
-				if (swap.to == 'TeleBTC') {
+				if (swap.to == 'TeleBTC' || swap.to == 'TELEBTC') {
 					ccRouterFactory = new ethers.Contract(
 						teleswap.contractsInfo.polygon.testnet.ccTransferAddress, 
 						teleswap.ABI.CCTransferRouterABI, 

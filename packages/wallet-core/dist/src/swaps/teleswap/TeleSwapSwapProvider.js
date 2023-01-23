@@ -57,30 +57,39 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
             const api = new ethers.providers.InfuraProvider(this._getChainIdNumber(to, network), build_config_1.default.infuraApiKey);
             const percentageFee = (yield this._getTeleporterFee({ network, from, to, amount })).teleporterPercentageFee;
             let amountAfterFee = (0, bignumber_js_1.default)(amount).times(10000 - Number(percentageFee) - PROTOCOL_FEE).div(10000);
-            const exchangeFactory = new ethers.Contract(this.config.QuickSwapFactoryAddress, UniswapV2Factory_json_1.default.abi, api);
-            const pair = yield exchangeFactory.getPair(this.getTokenAddress(from), this.getTokenAddress(to));
-            let isDirectPair = true;
-            if (pair == '0x0000000000000000000000000000000000000000') {
-                isDirectPair = false;
-                let _pair = yield exchangeFactory.getPair(this.getTokenAddress('WMATIC'), this.getTokenAddress(to));
-                if (_pair == '0x0000000000000000000000000000000000000000') {
-                    throw (0, error_parser_1.createInternalError)(error_parser_1.CUSTOM_ERRORS.NotFound.Default);
+            const amountAfterFeeInUnit = (0, cryptoassets_1.currencyToUnit)(cryptoassets_2.default[from], amountAfterFee);
+            const fromAmountInUnit = (0, cryptoassets_1.currencyToUnit)(cryptoassets_2.default[from], new bignumber_js_1.default(amount));
+            if (to != 'TELEBTC') {
+                const exchangeFactory = new ethers.Contract(this.config.QuickSwapFactoryAddress, UniswapV2Factory_json_1.default.abi, api);
+                const pair = yield exchangeFactory.getPair(this.getTokenAddress(from), this.getTokenAddress(to));
+                let isDirectPair = true;
+                if (pair == '0x0000000000000000000000000000000000000000') {
+                    isDirectPair = false;
+                    let _pair = yield exchangeFactory.getPair(this.getTokenAddress('WMATIC'), this.getTokenAddress(to));
+                    if (_pair == '0x0000000000000000000000000000000000000000') {
+                        throw (0, error_parser_1.createInternalError)(error_parser_1.CUSTOM_ERRORS.NotFound.Default);
+                    }
                 }
-            }
-            const exchangeRouter = new ethers.Contract(this.config.QuickSwapRouterAddress, UniswapV2Router02_json_1.default.abi, api);
-            const fromAmountInUnit = (0, cryptoassets_1.currencyToUnit)(cryptoassets_2.default[from], amountAfterFee);
-            let outputAmount;
-            if (isDirectPair) {
-                outputAmount = yield exchangeRouter.getAmountsOut((0, lodash_1.ceil)(fromAmountInUnit.toNumber()), [this.getTokenAddress(from), this.getTokenAddress(to)]);
+                const exchangeRouter = new ethers.Contract(this.config.QuickSwapRouterAddress, UniswapV2Router02_json_1.default.abi, api);
+                let outputAmount;
+                if (isDirectPair) {
+                    outputAmount = yield exchangeRouter.getAmountsOut((0, lodash_1.ceil)(amountAfterFeeInUnit.toNumber()), [this.getTokenAddress(from), this.getTokenAddress(to)]);
+                }
+                else {
+                    outputAmount = yield exchangeRouter.getAmountsOut((0, lodash_1.ceil)(amountAfterFeeInUnit.toNumber()), [this.getTokenAddress(from), this.getTokenAddress('WMATIC'), this.getTokenAddress(to)]);
+                }
+                const toAmountInUnit = new bignumber_js_1.default((outputAmount[outputAmount.length - 1]).toString());
+                return {
+                    fromAmount: fromAmountInUnit.toFixed(),
+                    toAmount: toAmountInUnit.toFixed(),
+                };
             }
             else {
-                outputAmount = yield exchangeRouter.getAmountsOut((0, lodash_1.ceil)(fromAmountInUnit.toNumber()), [this.getTokenAddress(from), this.getTokenAddress('WMATIC'), this.getTokenAddress(to)]);
+                return {
+                    fromAmount: fromAmountInUnit.toFixed(),
+                    toAmount: amountAfterFeeInUnit.toFixed(),
+                };
             }
-            const toAmountInUnit = new bignumber_js_1.default((outputAmount[outputAmount.length - 1]).toString());
-            return {
-                fromAmount: fromAmountInUnit.toFixed(),
-                toAmount: toAmountInUnit.toFixed(),
-            };
         });
     }
     sendBitcoinSwap({ quote, network, walletId, }) {
@@ -88,7 +97,7 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
             yield this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
             const to = yield this._chooseLockerAddress(quote.from, quote.fromAmount, network);
             const value = new bignumber_js_1.default(quote.fromAmount);
-            const requestType = quote.to === "TeleBTC" ? TeleSwapTxTypes.WRAP : TeleSwapTxTypes.SWAP;
+            const requestType = (quote.to === "TeleBTC" || quote.to === "TElEBTC") ? TeleSwapTxTypes.WRAP : TeleSwapTxTypes.SWAP;
             const fromAddressRaw = yield this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
             const opReturnData = yield this._getOpReturnData(quote, requestType, network, fromAddressRaw);
             const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
@@ -150,6 +159,7 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
     getTokenAddress(asset) {
         switch (asset) {
             case 'TeleBTC':
+            case 'TELEBTC':
             case 'BTC':
                 return configs_1.teleswap.tokenInfo.polygon.testnet.teleBTC;
             case 'MATIC':
@@ -188,7 +198,7 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
                 if (bitcoinTxConfirmations && bitcoinTxConfirmations >= RELAY_FINALIZATION_PARAMETER) {
                     const api = new ethers.providers.InfuraProvider(this._getChainIdNumber(swap.to, network), build_config_1.default.infuraApiKey);
                     let ccRouterFactory;
-                    if (swap.to == 'TeleBTC') {
+                    if (swap.to == 'TeleBTC' || swap.to == 'TELEBTC') {
                         ccRouterFactory = new ethers.Contract(configs_1.teleswap.contractsInfo.polygon.testnet.ccTransferAddress, configs_1.teleswap.ABI.CCTransferRouterABI, api);
                     }
                     else {

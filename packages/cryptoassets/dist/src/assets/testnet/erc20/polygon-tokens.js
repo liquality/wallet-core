@@ -14,6 +14,17 @@ const TOKENS = {
             coinGeckoId: 'weth',
         },
     },
+    TELEBTC: {
+        name: 'TeleportDAO BTC',
+        code: 'TELEBTC',
+        decimals: 8,
+        contractAddress: '0x19c650e2C6E9f5DEB9FaB3078fD1b11FAD1E54Ee',
+        color: '#5b3159',
+        matchingAsset: 'BTC',
+        priceSource: {
+            coinGeckoId: 'bitcoin',
+        },
+    },
 };
 exports.default = (0, utils_1.transformTokenMap)(TOKENS, types_1.ChainId.Polygon);
 //# sourceMappingURL=polygon-tokens.js.map

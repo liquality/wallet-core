@@ -1,7 +1,7 @@
 {
   "title": "TeleSwap",
   "description": "Trustless wrap/unwrap and exchange services for BTC using a trustless light client bridge.",
-  "pros": ["Trustless", "High liquidity"],
+  "pros": ["Fully-decentralized", "High liquidity"],
   "cons": ["-"],
   "fees": ["0.25% liquidity provider fee", "0.2% protocol fee"]
 }
