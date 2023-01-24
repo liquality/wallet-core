@@ -80,7 +80,7 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     } | null>;
     getMin(quote: QuoteRequest): Promise<BN>;
     getTokenAddress(asset: Asset): string;
-    waitForSendConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
+    waitForBitcoinConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
         numberOfBitcoinConfirmations: number;
@@ -88,7 +88,11 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     waitForReceive({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
-        numberOfBitcoinConfirmations: number | undefined;
+        numberOfBitcoinConfirmations: number;
+    } | {
+        endTime: number;
+        status: string;
+        numberOfBitcoinConfirmations?: undefined;
     } | undefined>;
     waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;

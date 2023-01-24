@@ -21,15 +21,18 @@ const scripts_1 = require("@sinatdt/scripts");
 const configs_1 = require("@sinatdt/configs");
 const bitcoin_1 = require("@sinatdt/bitcoin");
 const error_parser_1 = require("@liquality/error-parser");
-const SUPPORTED_CHAINS = [[cryptoassets_1.ChainId.Bitcoin, cryptoassets_1.ChainId.Polygon, 'testnet'], [cryptoassets_1.ChainId.Polygon, cryptoassets_1.ChainId.Bitcoin, 'testnet']];
+const SUPPORTED_CHAINS = [
+    [cryptoassets_1.ChainId.Bitcoin, cryptoassets_1.ChainId.Polygon, 'testnet'],
+    [cryptoassets_1.ChainId.Polygon, cryptoassets_1.ChainId.Bitcoin, 'testnet']
+];
 const addressTypesNumber = { p2pk: 0, p2pkh: 1, p2sh: 2, p2wpkh: 3 };
-const TRANSFER_APP_ID = 0;
-const EXCHANGE_APP_ID = 1;
+const TRANSFER_APP_ID = 1;
+const EXCHANGE_APP_ID = 20;
 const SUGGESTED_DEADLINE = 100000000;
-const RELAY_FINALIZATION_PARAMETER = 1;
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+const RELAY_FINALIZATION_PARAMETER = 6;
+const ZERO_ADDRESS = '0x' + '0'.repeat(20 * 2);
 const SLIPPAGE = 10;
-const DUMMY_BYTES = '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+const DUMMY_BYTES = '0x' + '0'.repeat(79 * 2);
 var TeleSwapTxTypes;
 (function (TeleSwapTxTypes) {
     TeleSwapTxTypes["WRAP"] = "WRAP";
@@ -114,15 +117,21 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
             const fromAddressRaw = yield this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
             const opReturnData = yield this._getOpReturnData(quote, requestType, network, fromAddressRaw);
             const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
-            const tx = yield client.wallet.sendTransaction({
-                to: to,
-                value,
-                data: opReturnData,
-                fee: quote.fee,
-            });
+            let tx;
+            try {
+                tx = yield client.wallet.sendTransaction({
+                    to: to,
+                    value,
+                    data: opReturnData,
+                    fee: quote.fee,
+                });
+            }
+            catch (_a) {
+                throw (0, error_parser_1.createInternalError)(error_parser_1.CUSTOM_ERRORS.FailedAssert.SendTransaction);
+            }
             return {
                 status: 'WAITING_FOR_SEND_CONFIRMATIONS',
-                bitcoinTxHash: tx.hash,
+                bitcoinTxHash: tx === null || tx === void 0 ? void 0 : tx.hash,
                 numberOfBitcoinConfirmations: 0
             };
         });
@@ -153,14 +162,20 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
             const _userScript = '0x' + ((_a = userBitcoinInfo.addressObject.hash) === null || _a === void 0 ? void 0 : _a.toString("hex"));
             const _scriptType = addressTypesNumber[userBitcoinInfo.addressType];
             const _encodedData = ccBurnRouter.interface.encodeFunctionData('ccBurn', [inputAmountHex, _userScript, _scriptType, _lockerLockingScript]);
-            const burnTx = yield client.wallet.sendTransaction({
-                to: configs_1.teleswap.contractsInfo.polygon.testnet.ccBurnAddress,
-                value: new bignumber_js_1.default(0),
-                data: _encodedData,
-            });
+            let burnTx;
+            try {
+                burnTx = yield client.wallet.sendTransaction({
+                    to: configs_1.teleswap.contractsInfo.polygon.testnet.ccBurnAddress,
+                    value: new bignumber_js_1.default(0),
+                    data: _encodedData,
+                });
+            }
+            catch (_b) {
+                throw (0, error_parser_1.createInternalError)(error_parser_1.CUSTOM_ERRORS.FailedAssert.SendTransaction);
+            }
             return {
                 status: 'WAITING_FOR_BURN_CONFIRMATIONS',
-                burnTxHash: burnTx.hash,
+                burnTxHash: burnTx === null || burnTx === void 0 ? void 0 : burnTx.hash,
             };
         });
     }
@@ -173,14 +188,20 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
             const erc20 = new ethers.Contract(configs_1.teleswap.tokenInfo.polygon.testnet.teleBTC, ERC20_json_1.default.abi, api);
             const inputAmountHex = '0x' + (value.toNumber()).toString(16);
             const encodedData = erc20.interface.encodeFunctionData('approve', [configs_1.teleswap.contractsInfo.polygon.testnet.ccBurnAddress, inputAmountHex]);
-            const approveTx = yield client.wallet.sendTransaction({
-                to: configs_1.teleswap.tokenInfo.polygon.testnet.teleBTC,
-                value: new bignumber_js_1.default(0),
-                data: encodedData,
-            });
+            let approveTx;
+            try {
+                approveTx = yield client.wallet.sendTransaction({
+                    to: configs_1.teleswap.tokenInfo.polygon.testnet.teleBTC,
+                    value: new bignumber_js_1.default(0),
+                    data: encodedData,
+                });
+            }
+            catch (_a) {
+                throw (0, error_parser_1.createInternalError)(error_parser_1.CUSTOM_ERRORS.FailedAssert.SendTransaction);
+            }
             return {
                 status: 'WAITING_FOR_APPROVE_CONFIRMATIONS',
-                approveTxHash: approveTx.hash,
+                approveTxHash: approveTx === null || approveTx === void 0 ? void 0 : approveTx.hash,
             };
         });
     }
@@ -241,7 +262,7 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
                 return configs_1.teleswap.tokenInfo.polygon.testnet.link;
         }
     }
-    waitForSendConfirmations({ swap, network, walletId }) {
+    waitForBitcoinConfirmations({ swap, network, walletId }) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
             try {
@@ -284,8 +305,15 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
                             numberOfBitcoinConfirmations: bitcoinTxConfirmations
                         };
                     }
+                    else if (bitcoinTxConfirmations > RELAY_FINALIZATION_PARAMETER * 2) {
+                        return {
+                            endTime: Date.now(),
+                            status: 'FAILED',
+                            numberOfBitcoinConfirmations: bitcoinTxConfirmations
+                        };
+                    }
                 }
-                else {
+                else if (bitcoinTxConfirmations && bitcoinTxConfirmations > swap.numberOfBitcoinConfirmations) {
                     return {
                         endTime: Date.now(),
                         status: 'WAITING_FOR_RECEIVE',
@@ -294,7 +322,10 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
                 }
             }
             catch (e) {
-                console.error(`TeleSwap waiting for receive failed ${swap.bitcoinTxHash}`, e);
+                return {
+                    endTime: Date.now(),
+                    status: 'FAILED'
+                };
             }
         });
     }
@@ -348,7 +379,7 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
                 case 'WAITING_FOR_BURN_CONFIRMATIONS':
                     return (0, utils_1.withInterval)(() => tslib_1.__awaiter(this, void 0, void 0, function* () { return this.waitForBurnConfirmations({ swap, network, walletId }); }));
                 case 'WAITING_FOR_SEND_CONFIRMATIONS':
-                    return (0, utils_1.withInterval)(() => tslib_1.__awaiter(this, void 0, void 0, function* () { return this.waitForSendConfirmations({ swap, network, walletId }); }));
+                    return (0, utils_1.withInterval)(() => tslib_1.__awaiter(this, void 0, void 0, function* () { return this.waitForBitcoinConfirmations({ swap, network, walletId }); }));
                 case 'WAITING_FOR_RECEIVE':
                     return (0, utils_1.withInterval)(() => tslib_1.__awaiter(this, void 0, void 0, function* () { return this.waitForReceive({ swap, network, walletId }); }));
             }
@@ -377,7 +408,7 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
                 },
             },
             WAITING_FOR_BURN_CONFIRMATIONS: {
-                step: 0,
+                step: 1,
                 label: 'Approve {from}',
                 filterStatus: 'PENDING',
                 notification() {
@@ -419,6 +450,16 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
             FAILED: {
                 step: 2,
                 label: 'Swap Failed',
+                filterStatus: 'FAILED',
+                notification(swap) {
+                    return {
+                        message: `Swap failed, please send ${swap === null || swap === void 0 ? void 0 : swap.bitcoinTxHash} to the TeleportDAO discord`,
+                    };
+                },
+            },
+            PARTIAL_FAILED: {
+                step: 2,
+                label: 'Swap Failed',
                 filterStatus: 'REFUNDED',
                 notification(swap) {
                     let refundedTeleBTC = swap.fromAmount;
@@ -454,7 +495,6 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
                 'targetNetworkConnectionInfo': this.config.targetNetworkConnectionInfo,
                 'testnet': !isMainnet
             });
-            console.log("lockers", lockers);
             if (!lockers.preferredLocker) {
                 throw (0, error_parser_1.createInternalError)(error_parser_1.CUSTOM_ERRORS.NotFound.Default);
             }
