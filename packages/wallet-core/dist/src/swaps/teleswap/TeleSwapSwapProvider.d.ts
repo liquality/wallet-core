@@ -13,8 +13,10 @@ export declare enum TeleSwapTxTypes {
     SWAP = "SWAP"
 }
 export interface TeleSwapSwapHistoryItem extends SwapHistoryItem {
-    swapTxHash: string;
-    numberOfConfirmations: number;
+    bitcoinTxHash: string;
+    approveTxHash: string;
+    burnTxHash: string;
+    numberOfBitcoinConfirmations: number;
 }
 declare class TeleSwapSwapProvider extends SwapProvider {
     config: TeleSwapSwapProviderConfig;
@@ -29,16 +31,47 @@ declare class TeleSwapSwapProvider extends SwapProvider {
         quote: TeleSwapSwapHistoryItem;
         network: Network;
         walletId: WalletId;
-    }): Promise<import("@chainify/types").Transaction<any>>;
+    }): Promise<{
+        status: string;
+        bitcoinTxHash: string;
+        numberOfBitcoinConfirmations: number;
+    }>;
+    sendBurn({ quote, network, walletId, }: {
+        quote: TeleSwapSwapHistoryItem;
+        network: Network;
+        walletId: WalletId;
+    }): Promise<{
+        status: string;
+        burnTxHash: string;
+    }>;
+    approveForBurn({ quote, network, walletId, }: {
+        quote: TeleSwapSwapHistoryItem;
+        network: Network;
+        walletId: WalletId;
+    }): Promise<{
+        status: string;
+        approveTxHash: string;
+    }>;
     sendSwap({ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         status: string;
-        swapTxHash: string;
-        numberOfConfirmations: number;
-    }>;
-    newSwap({ network, walletId, quote }: SwapRequest<TeleSwapSwapHistoryItem>): Promise<{
+        bitcoinTxHash: string;
+        numberOfBitcoinConfirmations: number;
+    } | {
         status: string;
-        swapTxHash: string;
-        numberOfConfirmations: number;
+        approveTxHash: string;
+    } | undefined>;
+    newSwap({ network, walletId, quote }: SwapRequest<TeleSwapSwapHistoryItem>): Promise<{
+        id: string;
+        fee: number;
+    } | {
+        status: string;
+        bitcoinTxHash: string;
+        numberOfBitcoinConfirmations: number;
+        id: string;
+        fee: number;
+    } | {
+        status: string;
+        approveTxHash: string;
         id: string;
         fee: number;
     }>;
@@ -50,17 +83,24 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     waitForSendConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
-        numberOfConfirmations: number;
+        numberOfBitcoinConfirmations: number;
     } | undefined>;
     waitForReceive({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
-        numberOfConfirmations: number | undefined;
+        numberOfBitcoinConfirmations: number | undefined;
     } | undefined>;
-    performNextSwapAction(_store: ActionContext, { network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<Partial<{
+    waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
-        numberOfConfirmations: number;
+    } | undefined>;
+    waitForBurnConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
+        endTime: number;
+        status: string;
+    } | undefined>;
+    performNextSwapAction(store: ActionContext, { network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<Partial<{
+        endTime: number;
+        status: string;
     }> | undefined>;
     protected _getStatuses(): Record<string, SwapStatus>;
     protected _txTypes(): typeof TeleSwapTxTypes;
@@ -70,7 +110,7 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     protected _totalSteps(): number;
     private _chooseLockerAddress;
     private _getChainIdNumber;
-    private _getTeleporterFee;
+    private _getFees;
     private _getOpReturnData;
 }
 export { TeleSwapSwapProvider };
