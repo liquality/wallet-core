@@ -3039,12 +3039,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinatdt/bitcoin@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@sinatdt/bitcoin@npm:1.0.2"
+"@sinatdt/bitcoin@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@sinatdt/bitcoin@npm:1.0.6"
   dependencies:
-    "@sinatdt/configs": ^1.0.0
-    "@sinatdt/providers": ^1.0.0
+    "@sinatdt/configs": ^1.0.6
+    "@sinatdt/providers": ^1.0.6
     axios: ^0.27.2
     bip32: ^2.0.6
     bip39: ^3.0.4
@@ -3057,23 +3057,23 @@ __metadata:
     stream: ^0.0.2
     tiny-secp256k1: ^2.2.1
     varuint-bitcoin: ^1.1.2
-  checksum: dd9504e83fad46f8799456f04a59bbc3fe328282742ab3c2fe1250713f26ce35e47203a5e378f6973f647d22fd8443de74ca96f3238d942b26e929826454eb14
+  checksum: 49f650630f33cb166d660902e4dc34ee5c54d82fbb10ec8f980a504da3e0bc7b776e7d653824bd877a7e19c4bee80aec23940dacd495de6b88a668217836319c
   languageName: node
   linkType: hard
 
-"@sinatdt/configs@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@sinatdt/configs@npm:1.0.0"
-  checksum: 845cdd649f3c2b8ed19bedf6e24a4aadb67855b45ef81f0b51d03966bcd56c6a784fd979516dc51ab81a0dedea8fb5e38e153b2d1febe5024b32b9ceff75a6b6
+"@sinatdt/configs@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@sinatdt/configs@npm:1.0.6"
+  checksum: 0dc14f81f7e8e630454d9c8beb12f311457009a89d84604cf493410dc5e313bbc8e0e2e319f2b14390c2ea9c1b9b17c17d8bf824199d3f30c22dce671b014371
   languageName: node
   linkType: hard
 
-"@sinatdt/contracts-helper@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@sinatdt/contracts-helper@npm:1.0.2"
+"@sinatdt/contracts-helper@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@sinatdt/contracts-helper@npm:1.0.6"
   dependencies:
-    "@sinatdt/bitcoin": ^1.0.2
-    "@sinatdt/configs": ^1.0.0
+    "@sinatdt/bitcoin": ^1.0.6
+    "@sinatdt/configs": ^1.0.6
     bignumber.js: ^9.1.1
     bip32: ^2.0.6
     bip39: ^3.0.4
@@ -3081,30 +3081,30 @@ __metadata:
     web3-eth: ^1.8.1
     web3-providers-http: ^1.8.1
     web3-providers-ws: ^1.8.1
-  checksum: 42c3a96b6f38eadbeefc758f675a384d3b3331bc219a130c9f535ac8b6ea772df774d1724cf58a1ba7b04991c109efbbce9ad3223c80dfccd9c070c8e162e1c3
+  checksum: 0e97c3c02f174a0845d9cb47537a96f5d1ecbd98166d0f2bb496da08f8da69cda858538f741664c7f3df5fb5629c9373a472025a3ca74e5bebb465dfea6cf234
   languageName: node
   linkType: hard
 
-"@sinatdt/providers@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@sinatdt/providers@npm:1.0.0"
+"@sinatdt/providers@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@sinatdt/providers@npm:1.0.6"
   dependencies:
     axios: ^0.27.2
     util: ^0.12.5
-  checksum: 7cff770a819c89edab982540ccae45dc28625e39f75bb990ae9696704b8104c986134f2bb813486ab37cabbf724a727810f73c351e28db01fc10b706f85ab377
+  checksum: 65e4303bdc0e698125ffd3d2feaf4253dc9e67f4dab888de595703bdc7e398c6932a91044c2d1ef6d1ce8685ff3b4da906596bee56ee3657d5cbe8b75991af7f
   languageName: node
   linkType: hard
 
-"@sinatdt/scripts@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@sinatdt/scripts@npm:1.0.3"
+"@sinatdt/scripts@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@sinatdt/scripts@npm:1.0.6"
   dependencies:
-    "@sinatdt/bitcoin": ^1.0.2
-    "@sinatdt/configs": ^1.0.0
-    "@sinatdt/contracts-helper": ^1.0.2
+    "@sinatdt/bitcoin": ^1.0.6
+    "@sinatdt/configs": ^1.0.6
+    "@sinatdt/contracts-helper": ^1.0.6
     axios: ^0.27.2
     bignumber.js: ^9.1.1
-  checksum: 1fbc147cecd4c6add0b4a5948d095de74af12050a373fa562780467b66839c963d350b17eaba7e7c848895ea508684e53d527b592d756840a5cb574fbdc9b2b5
+  checksum: 986e776a35522627f0103f782d8118b7368727e48e7c12832ef5c1d46272792265aa7deba0c08de890076f0edf26ad626627477f4d3de985a661be7683b20c5b
   languageName: node
   linkType: hard
 
@@ -10276,8 +10276,8 @@ __metadata:
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
     "@liquality/wallet-core": "workspace:^"
-    "@sinatdt/configs": ^1.0.0
-    "@sinatdt/scripts": ^1.0.3
+    "@sinatdt/configs": ^1.0.6
+    "@sinatdt/scripts": ^1.0.6
     "@types/amplitude-js": ^8.16.0
     "@types/bluebird": ^3.5.36
     "@types/chai": ^4.3.3

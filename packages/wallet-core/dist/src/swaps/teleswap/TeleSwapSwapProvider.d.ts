@@ -1,3 +1,4 @@
+import { Transaction } from '@chainify/types';
 import BN from 'bignumber.js';
 import { ActionContext } from '../../store';
 import { Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
@@ -13,10 +14,11 @@ export declare enum TeleSwapTxTypes {
     SWAP = "SWAP"
 }
 export interface TeleSwapSwapHistoryItem extends SwapHistoryItem {
-    bitcoinTxHash: string;
+    swapTx: Transaction;
+    swapTxHash: string;
     approveTxHash: string;
-    burnTxHash: string;
     numberOfBitcoinConfirmations: number;
+    userBitcoinAddress: string;
 }
 declare class TeleSwapSwapProvider extends SwapProvider {
     config: TeleSwapSwapProviderConfig;
@@ -33,7 +35,8 @@ declare class TeleSwapSwapProvider extends SwapProvider {
         walletId: WalletId;
     }): Promise<{
         status: string;
-        bitcoinTxHash: string;
+        swapTxHash: string;
+        swapTx: Transaction<any>;
         numberOfBitcoinConfirmations: number;
     }>;
     sendBurn({ quote, network, walletId, }: {
@@ -42,7 +45,9 @@ declare class TeleSwapSwapProvider extends SwapProvider {
         walletId: WalletId;
     }): Promise<{
         status: string;
-        burnTxHash: string;
+        swapTxHash: string;
+        swapTx: Transaction<any>;
+        userBitcoinAddress: string;
     }>;
     approveForBurn({ quote, network, walletId, }: {
         quote: TeleSwapSwapHistoryItem;
@@ -54,7 +59,8 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     }>;
     sendSwap({ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         status: string;
-        bitcoinTxHash: string;
+        swapTxHash: string;
+        swapTx: Transaction<any>;
         numberOfBitcoinConfirmations: number;
     } | {
         status: string;
@@ -65,7 +71,8 @@ declare class TeleSwapSwapProvider extends SwapProvider {
         fee: number;
     } | {
         status: string;
-        bitcoinTxHash: string;
+        swapTxHash: string;
+        swapTx: Transaction<any>;
         numberOfBitcoinConfirmations: number;
         id: string;
         fee: number;
@@ -89,16 +96,16 @@ declare class TeleSwapSwapProvider extends SwapProvider {
         endTime: number;
         status: string;
         numberOfBitcoinConfirmations: number;
-    } | {
-        endTime: number;
-        status: string;
-        numberOfBitcoinConfirmations?: undefined;
     } | undefined>;
     waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
     } | undefined>;
     waitForBurnConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
+        endTime: number;
+        status: string;
+    } | undefined>;
+    waitForBurnBitcoinConfirmations({ swap, network }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
     } | undefined>;
@@ -115,6 +122,8 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     private _chooseLockerAddress;
     private _getChainIdNumber;
     private _getFees;
+    private getOutputAmount;
+    private changeEndianness;
     private _getOpReturnData;
 }
 export { TeleSwapSwapProvider };
