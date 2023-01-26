@@ -144,9 +144,15 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
     sendBurn({ quote, network, walletId, }) {
         var _a;
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            let value;
+            if (quote.exchangedTeleBTCAmount) {
+                value = quote.exchangedTeleBTCAmount;
+            }
+            else {
+                value = new bignumber_js_1.default(quote.fromAmount);
+            }
             yield this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
-            const _lockerLockingScript = (yield this._chooseLockerAddress(quote.from, quote.fromAmount, network)).lockerLockingScript;
-            const value = new bignumber_js_1.default(quote.fromAmount);
+            const _lockerLockingScript = (yield this._chooseLockerAddress('TELEBTC', value.toString(), network)).lockerLockingScript;
             const fromAddressRaw = yield this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
             const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
             const api = new ethers.providers.InfuraProvider(this._getChainIdNumber(quote.from, network), build_config_1.default.infuraApiKey);
@@ -186,10 +192,78 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
             };
         });
     }
-    approveForBurn({ quote, network, walletId, }) {
+    sendExchange({ quote, network, walletId, }) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             yield this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
             const value = new bignumber_js_1.default(quote.fromAmount);
+            const fromAddressRaw = yield this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+            const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
+            const api = new ethers.providers.InfuraProvider(this._getChainIdNumber(quote.from, network), build_config_1.default.infuraApiKey);
+            const exchangeRouter = new ethers.Contract(this.config.QuickSwapRouterAddress, UniswapV2Router02_json_1.default.abi, api);
+            const path = [
+                this.getTokenAddress(quote.from),
+                this.getTokenAddress('TELEBTC')
+            ];
+            const exchangedTeleBTC = (0, cryptoassets_1.unitToCurrency)(cryptoassets_2.default['TELEBTC'], parseInt((yield this.getOutputAmount(value.toString(), quote.from, 'TELEBTC', network))._hex, 16));
+            const inputAmountHex = '0x' + (value.toNumber()).toString(16);
+            const outputAmountHex = '0x' + (0).toString(16);
+            console.log("path", path, "inputAmountHex", inputAmountHex, "exchangedTeleBTC", exchangedTeleBTC.toString());
+            const deadline = (yield api.getBlock('latest')).timestamp + 1000000;
+            const _encodedData = exchangeRouter.interface.encodeFunctionData('swapExactTokensForTokens', [inputAmountHex, outputAmountHex, path, fromAddressRaw, deadline]);
+            let tx;
+            try {
+                tx = yield client.wallet.sendTransaction({
+                    to: this.config.QuickSwapRouterAddress,
+                    value: new bignumber_js_1.default(0),
+                    data: _encodedData,
+                });
+            }
+            catch (_a) {
+                throw (0, error_parser_1.createInternalError)(error_parser_1.CUSTOM_ERRORS.FailedAssert.SendTransaction);
+            }
+            return {
+                status: 'WAITING_FOR_EXCHANGE_CONFIRMATIONS',
+                exchangeTxHash: tx === null || tx === void 0 ? void 0 : tx.hash,
+                exchangedTeleBTCAmount: exchangedTeleBTC
+            };
+        });
+    }
+    approveForExchange({ quote, network, walletId, }) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            yield this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
+            const value = new bignumber_js_1.default(quote.fromAmount);
+            const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
+            const api = new ethers.providers.InfuraProvider(this._getChainIdNumber(quote.from, network), build_config_1.default.infuraApiKey);
+            const erc20 = new ethers.Contract(this.getTokenAddress(quote.from), ERC20_json_1.default.abi, api);
+            const inputAmountHex = '0x' + (value.toNumber()).toString(16);
+            const encodedData = erc20.interface.encodeFunctionData('approve', [this.config.QuickSwapRouterAddress, inputAmountHex]);
+            let exchangeApproveTx;
+            try {
+                exchangeApproveTx = yield client.wallet.sendTransaction({
+                    to: this.getTokenAddress(quote.from),
+                    value: new bignumber_js_1.default(0),
+                    data: encodedData,
+                });
+            }
+            catch (_a) {
+                throw (0, error_parser_1.createInternalError)(error_parser_1.CUSTOM_ERRORS.FailedAssert.SendTransaction);
+            }
+            return {
+                status: 'WAITING_FOR_EXCHANGE_APPROVE_CONFIRMATIONS',
+                exchangeApproveTxHash: exchangeApproveTx === null || exchangeApproveTx === void 0 ? void 0 : exchangeApproveTx.hash,
+            };
+        });
+    }
+    approveForBurn({ quote, network, walletId, }) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            let value;
+            if (quote.exchangedTeleBTCAmount) {
+                value = quote.exchangedTeleBTCAmount;
+            }
+            else {
+                value = new bignumber_js_1.default(quote.fromAmount);
+            }
+            yield this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
             const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
             const api = new ethers.providers.InfuraProvider(this._getChainIdNumber(quote.from, network), build_config_1.default.infuraApiKey);
             const erc20 = new ethers.Contract(configs_1.teleswap.tokenInfo.polygon.testnet.teleBTC, ERC20_json_1.default.abi, api);
@@ -214,14 +288,21 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
     }
     sendSwap({ network, walletId, swap }) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            if (swap.from === 'BTC') {
+            if (swap.from == 'BTC') {
                 return yield this.sendBitcoinSwap({
                     quote: swap,
                     network,
                     walletId,
                 });
             }
-            if (swap.from === 'TELEBTC' && swap.to === 'BTC') {
+            if (swap.from != 'TELEBTC' && swap.to == 'BTC') {
+                return yield this.approveForExchange({
+                    quote: swap,
+                    network,
+                    walletId,
+                });
+            }
+            if (swap.from == 'TELEBTC' && swap.to == 'BTC') {
                 return yield this.approveForBurn({
                     quote: swap,
                     network,
@@ -302,7 +383,6 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
                         ccRouterFactory = new ethers.Contract(configs_1.teleswap.contractsInfo.polygon.testnet.ccTransferAddress, configs_1.teleswap.ABI.CCTransferRouterABI, api);
                     }
                     else {
-                        console.log("we are exchange");
                         ccRouterFactory = new ethers.Contract(configs_1.teleswap.contractsInfo.polygon.testnet.ccExchangeAddress, configs_1.teleswap.ABI.CCExchangeRouterABI, api);
                     }
                     const result = yield ccRouterFactory.isRequestUsed('0x' + this.changeEndianness(swap.swapTxHash));
@@ -354,12 +434,51 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
             }
         });
     }
+    waitForExchangeApproveConfirmations({ swap, network, walletId }) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
+            try {
+                const tx = yield client.chain.getTransactionByHash(swap.exchangeApproveTxHash);
+                if (tx && tx.confirmations && tx.confirmations > 0) {
+                    return {
+                        endTime: Date.now(),
+                        status: 'EXCHANGE_APPROVE_CONFIRMED',
+                    };
+                }
+            }
+            catch (e) {
+                if ((0, isTransactionNotFoundError_1.isTransactionNotFoundError)(e))
+                    console.warn(e);
+                else
+                    throw e;
+            }
+        });
+    }
+    waitForExchangeConfirmations({ swap, network, walletId }) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
+            try {
+                const tx = yield client.chain.getTransactionByHash(swap.exchangeTxHash);
+                if (tx && tx.confirmations && tx.confirmations > 0) {
+                    return {
+                        endTime: Date.now(),
+                        status: 'WAITING_FOR_BURN_BITCOIN_CONFIRMATIONS',
+                    };
+                }
+            }
+            catch (e) {
+                if ((0, isTransactionNotFoundError_1.isTransactionNotFoundError)(e))
+                    console.warn(e);
+                else
+                    throw e;
+            }
+        });
+    }
     waitForBurnConfirmations({ swap, network, walletId }) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
             try {
                 const tx = yield client.chain.getTransactionByHash(swap.swapTxHash);
-                console.log(tx.logs);
                 if (tx && tx.confirmations && tx.confirmations > 0) {
                     return {
                         endTime: Date.now(),
@@ -406,6 +525,14 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
     performNextSwapAction(store, { network, walletId, swap }) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             switch (swap.status) {
+                case 'WAITING_FOR_EXCHANGE_APPROVE_CONFIRMATIONS':
+                    return (0, utils_1.withInterval)(() => tslib_1.__awaiter(this, void 0, void 0, function* () { return this.waitForExchangeApproveConfirmations({ swap, network, walletId }); }));
+                case 'EXCHANGE_APPROVE_CONFIRMED':
+                    return (0, utils_1.withLock)(store, { item: swap, network, walletId, asset: swap.from }, () => tslib_1.__awaiter(this, void 0, void 0, function* () { return this.sendExchange({ quote: swap, network, walletId }); }));
+                case 'WAITING_FOR_EXCHANGE_CONFIRMATIONS':
+                    return (0, utils_1.withInterval)(() => tslib_1.__awaiter(this, void 0, void 0, function* () { return this.waitForExchangeConfirmations({ swap, network, walletId }); }));
+                case 'EXCHANGE_CONFIRMED':
+                    return (0, utils_1.withLock)(store, { item: swap, network, walletId, asset: swap.from }, () => tslib_1.__awaiter(this, void 0, void 0, function* () { return this.approveForBurn({ quote: swap, network, walletId }); }));
                 case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
                     return (0, utils_1.withInterval)(() => tslib_1.__awaiter(this, void 0, void 0, function* () { return this.waitForApproveConfirmations({ swap, network, walletId }); }));
                 case 'APPROVE_CONFIRMED':
@@ -423,6 +550,31 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
     }
     _getStatuses() {
         return {
+            WAITING_FOR_EXCHANGE_APPROVE_CONFIRMATIONS: {
+                step: 0,
+                label: 'Approve {from}',
+                filterStatus: 'PENDING',
+                notification() {
+                    return {
+                        message: 'Swap initiated',
+                    };
+                },
+            },
+            EXCHANGE_APPROVE_CONFIRMED: {
+                step: 0,
+                label: 'Swapping {from}',
+                filterStatus: 'PENDING',
+                notification() {
+                    return {
+                        message: 'Exchange approve confirmed',
+                    };
+                },
+            },
+            WAITING_FOR_EXCHANGE_CONFIRMATIONS: {
+                step: 1,
+                label: 'Swapping {from}',
+                filterStatus: 'PENDING',
+            },
             WAITING_FOR_APPROVE_CONFIRMATIONS: {
                 step: 0,
                 label: 'Approve {from}',
@@ -439,7 +591,7 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
                 filterStatus: 'PENDING',
                 notification() {
                     return {
-                        message: 'Approve confirmed',
+                        message: 'Burn approve confirmed',
                     };
                 },
             },

@@ -17,6 +17,9 @@ export interface TeleSwapSwapHistoryItem extends SwapHistoryItem {
     swapTx: Transaction;
     swapTxHash: string;
     approveTxHash: string;
+    exchangeApproveTxHash: string;
+    exchangeTxHash: string;
+    exchangedTeleBTCAmount: BN;
     numberOfBitcoinConfirmations: number;
     userBitcoinAddress: string;
 }
@@ -49,6 +52,23 @@ declare class TeleSwapSwapProvider extends SwapProvider {
         swapTx: Transaction<any>;
         userBitcoinAddress: string;
     }>;
+    sendExchange({ quote, network, walletId, }: {
+        quote: TeleSwapSwapHistoryItem;
+        network: Network;
+        walletId: WalletId;
+    }): Promise<{
+        status: string;
+        exchangeTxHash: string;
+        exchangedTeleBTCAmount: BN;
+    }>;
+    approveForExchange({ quote, network, walletId, }: {
+        quote: TeleSwapSwapHistoryItem;
+        network: Network;
+        walletId: WalletId;
+    }): Promise<{
+        status: string;
+        exchangeApproveTxHash: string;
+    }>;
     approveForBurn({ quote, network, walletId, }: {
         quote: TeleSwapSwapHistoryItem;
         network: Network;
@@ -64,6 +84,9 @@ declare class TeleSwapSwapProvider extends SwapProvider {
         numberOfBitcoinConfirmations: number;
     } | {
         status: string;
+        exchangeApproveTxHash: string;
+    } | {
+        status: string;
         approveTxHash: string;
     } | undefined>;
     newSwap({ network, walletId, quote }: SwapRequest<TeleSwapSwapHistoryItem>): Promise<{
@@ -74,6 +97,11 @@ declare class TeleSwapSwapProvider extends SwapProvider {
         swapTxHash: string;
         swapTx: Transaction<any>;
         numberOfBitcoinConfirmations: number;
+        id: string;
+        fee: number;
+    } | {
+        status: string;
+        exchangeApproveTxHash: string;
         id: string;
         fee: number;
     } | {
@@ -98,6 +126,14 @@ declare class TeleSwapSwapProvider extends SwapProvider {
         numberOfBitcoinConfirmations: number;
     } | undefined>;
     waitForApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
+        endTime: number;
+        status: string;
+    } | undefined>;
+    waitForExchangeApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
+        endTime: number;
+        status: string;
+    } | undefined>;
+    waitForExchangeConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
     } | undefined>;

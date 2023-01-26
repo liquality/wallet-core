@@ -60,6 +60,9 @@ export interface TeleSwapSwapHistoryItem extends SwapHistoryItem {
 	swapTx: Transaction; // bitcoin tx or burn tx
 	swapTxHash: string;
 	approveTxHash: string;
+	exchangeApproveTxHash: string;
+	exchangeTxHash: string;
+	exchangedTeleBTCAmount: BN
 	numberOfBitcoinConfirmations: number;
 	userBitcoinAddress: string;
 }
@@ -208,16 +211,27 @@ class TeleSwapSwapProvider extends SwapProvider {
 		network: Network;
 		walletId: WalletId;
 	}) {
+
+		// input amount
+		let value;
+		if (quote.exchangedTeleBTCAmount) { // if it not undefined
+			// other tokens -> btc
+			value = quote.exchangedTeleBTCAmount;
+		} else {
+			// telebtc -> btc
+			value = new BN(quote.fromAmount)
+		}
+
 		// send notif to ledger
 		await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
 		
 		// find the best locker (is active and has capacity)
 		const _lockerLockingScript = (await this._chooseLockerAddress(
-			quote.from, quote.fromAmount, network
+			'TELEBTC', value.toString(), network // TODO NEW CHANGE
 		)).lockerLockingScript;
 
-		// input amount
-		const value = new BN(quote.fromAmount);
+		// // input amount
+		// const value = new BN(quote.fromAmount);
 
 		// get receipient address (bitcoin) 
 		const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
@@ -225,7 +239,6 @@ class TeleSwapSwapProvider extends SwapProvider {
 		// get client to sign tx
 		const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 
-		// approve amount to cc burn router
 		const api = new ethers.providers.InfuraProvider(
 			this._getChainIdNumber(quote.from, network), 
 			buildConfig.infuraApiKey // we use api key provided in buildConfig
@@ -281,7 +294,92 @@ class TeleSwapSwapProvider extends SwapProvider {
 		};
 	}
 
-	async approveForBurn({
+	async sendExchange({
+		quote,
+		network,
+		walletId,
+	}: {
+		quote: TeleSwapSwapHistoryItem;
+		network: Network;
+		walletId: WalletId;
+	}) {
+		// send notif to ledger
+		await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
+
+		// input amount
+		const value = new BN(quote.fromAmount);
+
+		// get receipient address (bitcoin) 
+		const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
+		
+		// get client to sign tx
+		const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
+
+		const api = new ethers.providers.InfuraProvider(
+			this._getChainIdNumber(quote.from, network), 
+			buildConfig.infuraApiKey // we use api key provided in buildConfig
+		);
+
+		// exchange input token for TeleBTC
+		const exchangeRouter = new ethers.Contract(
+			this.config.QuickSwapRouterAddress, 
+			UniswapV2Router.abi, 
+			api
+		);
+
+		// exchange from token -> teleBTC
+		const path = [
+			this.getTokenAddress(quote.from), 
+			this.getTokenAddress('TELEBTC')
+		] // TODO: IF PATH NOT EXIST
+
+		// teleBTC amount (after exchanging)
+		const exchangedTeleBTC = unitToCurrency(
+			cryptoassets['TELEBTC'], 
+			parseInt(
+				(await this.getOutputAmount(
+					value.toString(),
+					quote.from,
+					'TELEBTC',
+					network
+				))._hex, 
+				16
+			)
+		);
+		
+
+		const inputAmountHex = '0x' + (value.toNumber()).toString(16);
+		const outputAmountHex = '0x' + (0).toString(16);
+
+		console.log("path", path, "inputAmountHex", inputAmountHex, "exchangedTeleBTC", exchangedTeleBTC.toString());
+
+		const deadline = (await api.getBlock('latest')).timestamp + 1000000; // TODO: CHANGE IT
+
+		const _encodedData = exchangeRouter.interface.encodeFunctionData(
+			'swapExactTokensForTokens', 
+			[inputAmountHex, outputAmountHex, path, fromAddressRaw, deadline]
+		);
+
+		let tx;
+		try {
+			tx = await client.wallet.sendTransaction({
+				to: this.config.QuickSwapRouterAddress,
+				value: new BN(0),
+				data: _encodedData,
+				// fee: quote.fee, // TODO: CHECK IT
+			});
+		} catch {
+			throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction); 
+		}
+		
+		return {
+			status: 'WAITING_FOR_EXCHANGE_CONFIRMATIONS',
+			exchangeTxHash: tx?.hash,
+			exchangedTeleBTCAmount: exchangedTeleBTC
+		};
+	}
+
+	async approveForExchange({
 		quote,
 		network,
 		walletId,
@@ -296,6 +394,63 @@ class TeleSwapSwapProvider extends SwapProvider {
 		// input amount
 		const value = new BN(quote.fromAmount);
 		
+		// get client to sign tx
+		const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
+
+		// approve amount to exchange router
+		const api = new ethers.providers.InfuraProvider(
+			this._getChainIdNumber(quote.from, network), 
+			buildConfig.infuraApiKey // we use api key provided in buildConfig
+		);
+    	const erc20 = new ethers.Contract(this.getTokenAddress(quote.from), ERC20.abi, api);
+		const inputAmountHex = '0x' + (value.toNumber()).toString(16); 
+		const encodedData = erc20.interface.encodeFunctionData(
+			'approve', 
+			[this.config.QuickSwapRouterAddress, inputAmountHex]
+		);
+		
+		let exchangeApproveTx;
+		
+		try {
+			exchangeApproveTx = await client.wallet.sendTransaction({
+				to: this.getTokenAddress(quote.from),
+				value: new BN(0),
+				data: encodedData,
+				// fee: quote.fee, // TODO: CHECK IT
+			});
+		} catch {
+			throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction); 
+		}
+
+		return {
+			status: 'WAITING_FOR_EXCHANGE_APPROVE_CONFIRMATIONS',
+			exchangeApproveTxHash: exchangeApproveTx?.hash,
+		};
+	}
+
+	async approveForBurn({
+		quote,
+		network,
+		walletId,
+	}: {
+		quote: TeleSwapSwapHistoryItem;
+		network: Network;
+		walletId: WalletId;
+	}) {
+
+		// input amount
+		let value;
+		if (quote.exchangedTeleBTCAmount) { // if it not undefined
+			// other tokens -> btc
+			value = quote.exchangedTeleBTCAmount;
+		} else {
+			// telebtc -> btc
+			value = new BN(quote.fromAmount)
+		}
+
+		// send notif to ledger
+		await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
+				
 		// get client to sign tx
 		const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 
@@ -332,7 +487,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 
 	async sendSwap({ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
 
-		if (swap.from === 'BTC') {
+		if (swap.from == 'BTC') {
 			return await this.sendBitcoinSwap({
 				quote: swap,
 				network,
@@ -340,7 +495,15 @@ class TeleSwapSwapProvider extends SwapProvider {
 			});
 		}
 
-		if (swap.from === 'TELEBTC' && swap.to === 'BTC') {
+		if (swap.from != 'TELEBTC' && swap.to == 'BTC') {
+			return await this.approveForExchange({
+				quote: swap,
+				network,
+				walletId,
+			});
+		}
+
+		if (swap.from == 'TELEBTC' && swap.to == 'BTC') {
 			return await this.approveForBurn({
 				quote: swap,
 				network,
@@ -450,7 +613,6 @@ class TeleSwapSwapProvider extends SwapProvider {
 						api
 					);
 				} else {
-					console.log("we are exchange")
 					ccRouterFactory = new ethers.Contract(
 						teleswap.contractsInfo.polygon.testnet.ccExchangeAddress, 
 						teleswap.ABI.CCExchangeRouterABI, 
@@ -504,13 +666,47 @@ class TeleSwapSwapProvider extends SwapProvider {
 		}
 	}
 
+	async waitForExchangeApproveConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
+		const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
+	
+		try {
+			const tx = await client.chain.getTransactionByHash(swap.exchangeApproveTxHash);
+	
+		  	if (tx && tx.confirmations && tx.confirmations > 0) {
+				return {
+			  		endTime: Date.now(),
+			  		status: 'EXCHANGE_APPROVE_CONFIRMED',
+				};
+		  	}
+		} catch (e) {
+			if (isTransactionNotFoundError(e)) console.warn(e);
+		  	else throw e;
+		}
+	}
+
+	async waitForExchangeConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
+		const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
+	
+		try {
+			const tx = await client.chain.getTransactionByHash(swap.exchangeTxHash);
+	
+		  	if (tx && tx.confirmations && tx.confirmations > 0) {
+				return {
+			  		endTime: Date.now(),
+			  		status: 'WAITING_FOR_BURN_BITCOIN_CONFIRMATIONS',
+				};
+		  	}
+		} catch (e) {
+			if (isTransactionNotFoundError(e)) console.warn(e);
+		  	else throw e;
+		}
+	}
+
 	async waitForBurnConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
 		const client = this.getClient(network, walletId, swap.from, swap.fromAccountId);
 	
 		try {
 			const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
-			
-			console.log(tx.logs);
 	
 		  	if (tx && tx.confirmations && tx.confirmations > 0) {
 				return {
@@ -566,6 +762,18 @@ class TeleSwapSwapProvider extends SwapProvider {
 		{ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>
 	) {
 		switch (swap.status) {
+			case 'WAITING_FOR_EXCHANGE_APPROVE_CONFIRMATIONS':
+        		return withInterval(async () => this.waitForExchangeApproveConfirmations({ swap, network, walletId }));
+			case 'EXCHANGE_APPROVE_CONFIRMED':
+				return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+          			this.sendExchange({ quote: swap, network, walletId })
+				);
+			case 'WAITING_FOR_EXCHANGE_CONFIRMATIONS':
+				return withInterval(async () => this.waitForExchangeConfirmations({ swap, network, walletId }));
+			case 'EXCHANGE_CONFIRMED':
+				return withLock(store, { item: swap, network, walletId, asset: swap.from }, async () =>
+          			this.approveForBurn({ quote: swap, network, walletId })
+				);
 			case 'WAITING_FOR_APPROVE_CONFIRMATIONS':
         		return withInterval(async () => this.waitForApproveConfirmations({ swap, network, walletId }));
 			case 'APPROVE_CONFIRMED':
@@ -585,6 +793,31 @@ class TeleSwapSwapProvider extends SwapProvider {
 
 	protected _getStatuses(): Record<string, SwapStatus> {
 		return {
+			WAITING_FOR_EXCHANGE_APPROVE_CONFIRMATIONS: {
+				step: 0,
+				label: 'Approve {from}',
+				filterStatus: 'PENDING',
+				notification() {
+					return {
+						message: 'Swap initiated',
+					};
+				},
+			},
+			EXCHANGE_APPROVE_CONFIRMED: {
+				step: 0,
+				label: 'Swapping {from}',
+				filterStatus: 'PENDING',
+				notification() {
+					return {
+						message: 'Exchange approve confirmed',
+					};
+				},
+			},
+			WAITING_FOR_EXCHANGE_CONFIRMATIONS: {
+				step: 1,
+				label: 'Swapping {from}',
+				filterStatus: 'PENDING',
+			},
 			WAITING_FOR_APPROVE_CONFIRMATIONS: {
 				step: 0,
 				label: 'Approve {from}',
@@ -601,7 +834,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 				filterStatus: 'PENDING',
 				notification() {
 					return {
-						message: 'Approve confirmed',
+						message: 'Burn approve confirmed',
 					};
 				},
 			},
@@ -785,7 +1018,8 @@ class TeleSwapSwapProvider extends SwapProvider {
 		// get the output amount having input amount
 		const exchangeRouter = new ethers.Contract(
 			this.config.QuickSwapRouterAddress, 
-			UniswapV2Router.abi, api
+			UniswapV2Router.abi, 
+			api
 		);
 		
 		let outputAmount;
