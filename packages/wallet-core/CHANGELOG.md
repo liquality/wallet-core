@@ -1,5 +1,18 @@
 # @liquality/wallet-core
 
+## 4.10.0
+
+### Minor Changes
+
+- 1a64072: Updated with thorchain fixes
+- cca4448: Fixed lint issues
+
+### Patch Changes
+
+- Updated dependencies [3e6dd4e]
+  - @liquality/cryptoassets@2.3.0
+  - @liquality/error-parser@2.2.1
+
 ## 4.9.0
 
 ### Minor Changes

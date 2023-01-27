@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.3.0
+
+### Minor Changes
+
+- 3e6dd4e: Updaed Avax Tokens
+
 ## 2.2.0
 
 ### Minor Changes
