@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 4.12.0
+
+### Minor Changes
+
+- 651126b: Updated channify versions for ledger packages
+
 ## 4.11.0
 
 ### Minor Changes
