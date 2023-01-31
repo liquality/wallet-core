@@ -1,4 +1,4 @@
-import { LedgerProviderTypes } from '@chainify/hw-ledger';
+import { TransportCreator } from '@chainify/hw-ledger';
 import { Network } from '@chainify/types';
 import { RootState } from './store/types';
 
@@ -23,7 +23,7 @@ export interface WalletOptions {
   };
 
   createNotification(notification: Notification): void;
-  ledgerTransportCreator?: LedgerProviderTypes.TransportCreator;
+  ledgerTransportCreator?: TransportCreator;
 }
 
 export interface ChainifyNetwork extends Network {
