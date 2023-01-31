@@ -1,5 +1,12 @@
 # @liquality/wallet-core
 
+## 4.15.0
+
+### Minor Changes
+
+- 4b6bcbe: Updated chanifiy deps
+- baf04a7: Updated chanify ledger packages
+
 ## 4.12.0
 
 ### Minor Changes
