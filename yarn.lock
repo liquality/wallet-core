@@ -3039,75 +3039,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinatdt/bitcoin@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "@sinatdt/bitcoin@npm:1.0.6"
-  dependencies:
-    "@sinatdt/configs": ^1.0.6
-    "@sinatdt/providers": ^1.0.6
-    axios: ^0.27.2
-    bip32: ^2.0.6
-    bip39: ^3.0.4
-    bitcoinjs-lib: ^5.2.0
-    buffer: ^6.0.3
-    coinselect: ^3.1.13
-    ecpair: ^2.1.0
-    merkle-lib: ^2.0.10
-    merkle-patricia-tree: ^2.3.2
-    stream: ^0.0.2
-    tiny-secp256k1: ^2.2.1
-    varuint-bitcoin: ^1.1.2
-  checksum: 49f650630f33cb166d660902e4dc34ee5c54d82fbb10ec8f980a504da3e0bc7b776e7d653824bd877a7e19c4bee80aec23940dacd495de6b88a668217836319c
-  languageName: node
-  linkType: hard
-
-"@sinatdt/configs@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "@sinatdt/configs@npm:1.0.6"
-  checksum: 0dc14f81f7e8e630454d9c8beb12f311457009a89d84604cf493410dc5e313bbc8e0e2e319f2b14390c2ea9c1b9b17c17d8bf824199d3f30c22dce671b014371
-  languageName: node
-  linkType: hard
-
-"@sinatdt/contracts-helper@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "@sinatdt/contracts-helper@npm:1.0.6"
-  dependencies:
-    "@sinatdt/bitcoin": ^1.0.6
-    "@sinatdt/configs": ^1.0.6
-    bignumber.js: ^9.1.1
-    bip32: ^2.0.6
-    bip39: ^3.0.4
-    tiny-secp256k1: ^2.2.1
-    web3-eth: ^1.8.1
-    web3-providers-http: ^1.8.1
-    web3-providers-ws: ^1.8.1
-  checksum: 0e97c3c02f174a0845d9cb47537a96f5d1ecbd98166d0f2bb496da08f8da69cda858538f741664c7f3df5fb5629c9373a472025a3ca74e5bebb465dfea6cf234
-  languageName: node
-  linkType: hard
-
-"@sinatdt/providers@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "@sinatdt/providers@npm:1.0.6"
-  dependencies:
-    axios: ^0.27.2
-    util: ^0.12.5
-  checksum: 65e4303bdc0e698125ffd3d2feaf4253dc9e67f4dab888de595703bdc7e398c6932a91044c2d1ef6d1ce8685ff3b4da906596bee56ee3657d5cbe8b75991af7f
-  languageName: node
-  linkType: hard
-
-"@sinatdt/scripts@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "@sinatdt/scripts@npm:1.0.6"
-  dependencies:
-    "@sinatdt/bitcoin": ^1.0.6
-    "@sinatdt/configs": ^1.0.6
-    "@sinatdt/contracts-helper": ^1.0.6
-    axios: ^0.27.2
-    bignumber.js: ^9.1.1
-  checksum: 986e776a35522627f0103f782d8118b7368727e48e7c12832ef5c1d46272792265aa7deba0c08de890076f0edf26ad626627477f4d3de985a661be7683b20c5b
-  languageName: node
-  linkType: hard
-
 "@sindresorhus/is@npm:^4.6.0":
   version: 4.6.0
   resolution: "@sindresorhus/is@npm:4.6.0"
@@ -3237,6 +3168,75 @@ __metadata:
   dependencies:
     defer-to-connect: ^2.0.1
   checksum: fc9cb993e808806692e4a3337c90ece0ec00c89f4b67e3652a356b89730da98bc824273a6d67ca84d5f33cd85f317dcd5ce39d8cc0a2f060145a608a7cb8ce92
+  languageName: node
+  linkType: hard
+
+"@teleportdao/bitcoin@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@teleportdao/bitcoin@npm:1.0.1"
+  dependencies:
+    "@teleportdao/configs": ^1.0.1
+    "@teleportdao/providers": ^1.0.1
+    axios: ^0.27.2
+    bip32: ^2.0.6
+    bip39: ^3.0.4
+    bitcoinjs-lib: ^5.2.0
+    buffer: ^6.0.3
+    coinselect: ^3.1.13
+    ecpair: ^2.1.0
+    merkle-lib: ^2.0.10
+    merkle-patricia-tree: ^2.3.2
+    stream: ^0.0.2
+    tiny-secp256k1: ^2.2.1
+    varuint-bitcoin: ^1.1.2
+  checksum: 06d0bc4a7846d9966255bd0e23253316274a54b551936d39f58e1b3540ebd82adc6ac1ef8579985e6fe6926b912196f756f8c0af7e669d9aa8a2d6e78afa1b5c
+  languageName: node
+  linkType: hard
+
+"@teleportdao/configs@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@teleportdao/configs@npm:1.0.1"
+  checksum: a2a684440d2ffd5b4431a0851b90f82ea901bd029eba96b2230cf1d305ed24aefa4cf88581fc1ae6628e818fb9b0a91a48314e9aba030f35f9c8dfad8cfb8d27
+  languageName: node
+  linkType: hard
+
+"@teleportdao/contracts-helper@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@teleportdao/contracts-helper@npm:1.0.1"
+  dependencies:
+    "@teleportdao/bitcoin": ^1.0.1
+    "@teleportdao/configs": ^1.0.1
+    bignumber.js: ^9.1.1
+    bip32: ^2.0.6
+    bip39: ^3.0.4
+    tiny-secp256k1: ^2.2.1
+    web3-eth: ^1.8.1
+    web3-providers-http: ^1.8.1
+    web3-providers-ws: ^1.8.1
+  checksum: 8f3ec961757f9beca38b34bfbb8c475043c18d93192707ad12cc44f89164e943d473dfd6cf85c496a21ce9772702bcd5f14ae3b54a98728a68b192a8bd011d45
+  languageName: node
+  linkType: hard
+
+"@teleportdao/providers@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@teleportdao/providers@npm:1.0.1"
+  dependencies:
+    axios: ^0.27.2
+    util: ^0.12.5
+  checksum: 25edd8c3ff14dbd8b2528dd8236f12d392f40c9a3edb5740b167c71f262bd5bb5d6d876e075c156f8dc98e31675686d511ec5e12b36d5d90433548739a2f3e2c
+  languageName: node
+  linkType: hard
+
+"@teleportdao/scripts@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@teleportdao/scripts@npm:1.0.1"
+  dependencies:
+    "@teleportdao/bitcoin": ^1.0.1
+    "@teleportdao/configs": ^1.0.1
+    "@teleportdao/contracts-helper": ^1.0.1
+    axios: ^0.27.2
+    bignumber.js: ^9.1.1
+  checksum: b191ba5bc479ed09294b9ba266eb513fcf1a855e824863a0288ea86898423c14347625da9b01e5111ce51f2c87ef01ec4d7979c2b0a40caed238b2b9f9efd776
   languageName: node
   linkType: hard
 
@@ -10276,8 +10276,8 @@ __metadata:
     "@commitlint/cli": ^16.2.3
     "@commitlint/config-conventional": ^16.2.1
     "@liquality/wallet-core": "workspace:^"
-    "@sinatdt/configs": ^1.0.6
-    "@sinatdt/scripts": ^1.0.6
+    "@teleportdao/configs": ^1.0.1
+    "@teleportdao/scripts": ^1.0.1
     "@types/amplitude-js": ^8.16.0
     "@types/bluebird": ^3.5.36
     "@types/chai": ^4.3.3

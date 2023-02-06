@@ -76,6 +76,7 @@ const config: WalletCoreConfig = {
       'PUSDT',
       'sUSDT',
       'USDT.e',
+      'TELEBTC'
     ],
     testnet: [
       'BTC',
@@ -157,11 +158,6 @@ const config: WalletCoreConfig = {
         network: Network.Testnet,
         QuickSwapRouterAddress: '0x8954AfA98594b838bda56FE4C12a09D7739D179b',
         QuickSwapFactoryAddress: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
-        targetNetworkConnectionInfo: {
-          web3: {
-            url: "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK",
-          },
-        }
       },
     },
     mainnet: {
@@ -296,13 +292,8 @@ const config: WalletCoreConfig = {
         icon: 'sovryn.svg', // TODO
         type: SwapProviderType.TeleSwap,
         network: Network.Testnet,
-        QuickSwapRouterAddress: '0x8954AfA98594b838bda56FE4C12a09D7739D179b',
-        QuickSwapFactoryAddress: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
-        targetNetworkConnectionInfo: {
-          web3: {
-            url: "wss://polygon-mumbai.g.alchemy.com/v2/5M02lhCj_-C62MzO5TcSj53mOy-X-QPK",
-          },
-        }
+        QuickSwapRouterAddress: '',
+        QuickSwapFactoryAddress: '0x5757371414417b8c6caad45baef941abc7d3ab32 ',
       },
     },
   },

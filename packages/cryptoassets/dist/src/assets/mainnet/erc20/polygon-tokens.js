@@ -333,6 +333,17 @@ const TOKENS = {
         color: '#00d4d8',
         matchingAsset: 'IOTX',
     },
+    TELEBTC: {
+        name: 'teleBTC',
+        code: 'TELEBTC',
+        decimals: 8,
+        contractAddress: '0x515D720B9D219f1931205D5B8D842bE1Fe2FeBDE',
+        color: '#5b3159',
+        matchingAsset: 'BTC',
+        priceSource: {
+            coinGeckoId: 'bitcoin',
+        },
+    },
 };
 exports.default = (0, utils_1.transformTokenMap)(TOKENS, types_1.ChainId.Polygon);
 //# sourceMappingURL=polygon-tokens.js.map

@@ -15,7 +15,7 @@ const TOKENS = {
         },
     },
     TELEBTC: {
-        name: 'TeleportDAO BTC',
+        name: 'teleBTC',
         code: 'TELEBTC',
         decimals: 8,
         contractAddress: '0x19c650e2C6E9f5DEB9FaB3078fD1b11FAD1E54Ee',

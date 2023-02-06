@@ -11,16 +11,16 @@ import * as ethers from 'ethers';
 import { ceil, mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import buildConfig from '../../build.config';
-import { ActionContext } from '../../store'; // store
+import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils'; 
 import { Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
 // import { isERC20 } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { SwapProvider } from '../SwapProvider';
-import { calculateFee, getLockers, getUserPendingBurns } from '@sinatdt/scripts';
-import { teleswap } from '@sinatdt/configs';
-import { TeleportDaoPayment, BitcoinInterface} from '@sinatdt/bitcoin';
+import { calculateFee, getLockers, getUserPendingBurns } from '@teleportdao/scripts';
+import { teleswap } from '@teleportdao/configs';
+import { TeleportDaoPayment, BitcoinInterface} from '@teleportdao/bitcoin';
 
 import {
 	BaseSwapProviderConfig,
@@ -34,21 +34,23 @@ import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
 const SUPPORTED_CHAINS = [
 	[ChainId.Bitcoin, ChainId.Polygon, 'testnet'], 
-	[ChainId.Polygon, ChainId.Bitcoin, 'testnet']
+	[ChainId.Polygon, ChainId.Bitcoin, 'testnet'],
+	[ChainId.Bitcoin, ChainId.Polygon, 'mainnet'],
+	[ChainId.Polygon, ChainId.Bitcoin, 'mainnet']
 ]; // [from, to, network]
+
 const addressTypesNumber = { p2pk: 0, p2pkh: 1, p2sh: 2, p2wpkh: 3 };
 const TRANSFER_APP_ID = 1;
-const EXCHANGE_APP_ID = 20;
-const SUGGESTED_DEADLINE = 100000000; // TODO: EDIT IT
-const RELAY_FINALIZATION_PARAMETER = 6;
+const EXCHANGE_APP_ID = 20; // QuickSwap app id
+const SUGGESTED_DEADLINE = 7200; // 12 Bitcoin blocks
+const RELAY_FINALIZATION_PARAMETER = 5;
 const ZERO_ADDRESS = '0x' + '0'.repeat(20*2); // 20 bytes zero
-const SLIPPAGE = 10; // TODO: EDIT IT
+const SLIPPAGE = 5;
 const DUMMY_BYTES = '0x' + '0'.repeat(79*2); // 79 bytes zero
 
 export interface TeleSwapSwapProviderConfig extends BaseSwapProviderConfig {
 	QuickSwapRouterAddress: string;
 	QuickSwapFactoryAddress: string;
-	targetNetworkConnectionInfo: any;
 }
 
 export enum TeleSwapTxTypes {
@@ -80,45 +82,46 @@ class TeleSwapSwapProvider extends SwapProvider {
 	}
 
 	isSwapSupported(from: Asset, to: Asset, network: Network) {
-		const fromChainId = cryptoassets[from].chain;
-		const toChainId = cryptoassets[to].chain;
+		const fromChain = cryptoassets[from].chain;
+		const toChain = cryptoassets[to].chain;
 		const _SUPPORTED_CHAINS = SUPPORTED_CHAINS.map((item) => JSON.stringify(item))
-		return _SUPPORTED_CHAINS.includes(JSON.stringify([fromChainId, toChainId, network]));
+		return _SUPPORTED_CHAINS.includes(JSON.stringify([fromChain, toChain, network]));
 	}
 
 	async getQuote({ network, from, to, amount }: QuoteRequest) {
 		let fees;
 		let amountAfterFee;
 		let amountAfterFeeInUnit;
+		// amount is in currency
 		const fromAmountInUnit = currencyToUnit(cryptoassets[from], new BN(amount));
 
-		// check that if the chains supported
+		// check that the chains supported
 		if(this.isSwapSupported(from, to, network) == false) {
 			throw createInternalError(CUSTOM_ERRORS.Unsupported.Chain);
 		}
 		
-		if (from == 'BTC') { // this request is btc -> evm 
+		if (from == 'BTC') { // this request is bitcoin -> evm (wrap or exchange)
 
-			fees = await this._getFees({ network, from, to, amount });
-			amountAfterFee = BN(amount).plus(fees.TransactionFeeInBTC).minus(fees.totalFeeInBTC);
+			fees = await this.getFees({ network, from, to, amount });
+			amountAfterFee = BN(amount).minus(fees.totalFeeInBTC);
 			amountAfterFeeInUnit = currencyToUnit(cryptoassets[from], amountAfterFee);
 
 			let toAmountInUnit;
-			if (to != 'TELEBTC') {
+			if (to != 'TELEBTC') { // exchange
 				toAmountInUnit = new BN(
 					(await this.getOutputAmount(String(ceil(amountAfterFeeInUnit.toNumber())), from, to , network))
 						.toString()
 				)
-			} else {
+			} else { // wrap
 				toAmountInUnit = amountAfterFeeInUnit;
 			}
 
 			return {
-				fromAmount: fromAmountInUnit.toFixed(),
-				toAmount: toAmountInUnit.toFixed(),
+				fromAmount: fromAmountInUnit.toFixed(), // input amount
+				toAmount: toAmountInUnit.toFixed(), // output amount
 			};
 		} else { // this request is evm -> btc
-			if (from != 'TELEBTC') {
+			if (from != 'TELEBTC') { // exchange
 				// teleBTC amount (after exchanging)
 				const teleBTCAmount = unitToCurrency(
 					cryptoassets['TELEBTC'], 
@@ -126,7 +129,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 				);
 				
 				// reduce fees for burning telebtc
-				fees = await this._getFees({ network, from, to, amount: teleBTCAmount}); 
+				fees = await this.getFees({ network, from, to, amount: teleBTCAmount}); 
 				console.log("fees", fees);
 				
 				// find received amount
@@ -137,8 +140,8 @@ class TeleSwapSwapProvider extends SwapProvider {
 					fromAmount: fromAmountInUnit.toFixed(),
 					toAmount: amountAfterFeeInUnit.toFixed(),
 				};
-			} else {
-				fees = await this._getFees({ network, from, to, amount });
+			} else { // unwrap
+				fees = await this.getFees({ network, from, to, amount });
 				amountAfterFee = BN(amount).minus(fees.totalFeeInBTC);
 				amountAfterFeeInUnit = currencyToUnit(cryptoassets[from], amountAfterFee);
 				return { 
@@ -158,18 +161,18 @@ class TeleSwapSwapProvider extends SwapProvider {
 		network: Network;
 		walletId: WalletId;
 	}) {
-		// send notif to ledger
-		await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
+		// polygon not supported
+		// // send notif to ledger
+		// await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
 
-		// find the best locker (is active and has capacity)
-		// quote.from == 'BTC'
-		const to = (await this._chooseLockerAddress(quote.from, quote.fromAmount, network)).bitcoinAddress;
+		// find the best locker (is active and has enough capacity)
+		const to = (await this._chooseLockerAddress(quote.from, quote.to, quote.fromAmount, network)).bitcoinAddress;
 
 		// input amount
 		const value = new BN(quote.fromAmount);
 
 		// determine req type (wrap or swap)
-		const requestType = (quote.to == "TeleBTC" || quote.to == "TELEBTC")? TeleSwapTxTypes.WRAP: TeleSwapTxTypes.SWAP;
+		const requestType = (quote.to == "TELEBTC") ? TeleSwapTxTypes.WRAP : TeleSwapTxTypes.SWAP;
 
 		// get receipient address 
 		const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
@@ -181,16 +184,13 @@ class TeleSwapSwapProvider extends SwapProvider {
 		const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 		let tx;
 		try {
+			console.log("quote.fee", quote);
 			tx = await client.wallet.sendTransaction({
 				to: to,
 				value,
-				data: opReturnData,
-				fee: quote.fee, // TODO: is it bitcoin tx fee?
+				data: opReturnData
 			});
 		} catch {
-			// return {
-			// 	status: 'FAILED',
-			// };
 			throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction); 
 		}
 		
@@ -215,46 +215,50 @@ class TeleSwapSwapProvider extends SwapProvider {
 		// input amount
 		let value;
 		if (quote.exchangedTeleBTCAmount) { // if it not undefined
-			// other tokens -> btc
+			// non-telebtc -> btc
 			value = quote.exchangedTeleBTCAmount;
 		} else {
 			// telebtc -> btc
 			value = new BN(quote.fromAmount)
 		}
 
-		// send notif to ledger
-		await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
+		// // send notif to ledger
+		// await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
 		
 		// find the best locker (is active and has capacity)
-		const _lockerLockingScript = (await this._chooseLockerAddress(
-			'TELEBTC', value.toString(), network // TODO NEW CHANGE
-		)).lockerLockingScript;
+		const _lockerLockingScript = (
+			await this._chooseLockerAddress(
+				'TELEBTC', quote.to, value.toString(), network
+			)
+		).lockerLockingScript;
 
-		// // input amount
-		// const value = new BN(quote.fromAmount);
-
-		// get receipient address (bitcoin) 
+		// get receipient bitcoin address
 		const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
 		
 		// get client to sign tx
 		const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 
 		const api = new ethers.providers.InfuraProvider(
-			this._getChainIdNumber(quote.from, network), 
-			buildConfig.infuraApiKey // we use api key provided in buildConfig
+			this.getChainIdNumber(quote.from, network), 
+			buildConfig.infuraApiKey
 		);
+
+		const ccBurnRouterAddress = (quote.network == Network.Mainnet) ? 
+			teleswap.contractsInfo.polygon.mainnet.ccBurnAddress :
+				teleswap.contractsInfo.polygon.testnet.ccBurnAddress;
 
 		// send request to cc burn router
 		const ccBurnRouter = new ethers.Contract(
-			teleswap.contractsInfo.polygon.testnet.ccBurnAddress, 
+			ccBurnRouterAddress, 
 			teleswap.ABI.CCBurnRouterABI, 
 			api
 		);
 
 		const inputAmountHex = '0x' + (value.toNumber()).toString(16);
 		
+		const networkName = (quote.network == Network.Mainnet) ? "bitcoin" : "bitcoin_testnet";
 		let bitcoinNetwork = {
-			"name": "bitcoin_testnet",
+			"name": networkName,
 			"connection": {
 				"api": {
 					"enabled": true,
@@ -263,11 +267,12 @@ class TeleSwapSwapProvider extends SwapProvider {
 				}
 			}
 		};
-		const userBitcoinInfo = (new BitcoinInterface(bitcoinNetwork.connection, bitcoinNetwork.name))
+
+		const bitcoinAddressObject = (new BitcoinInterface(bitcoinNetwork.connection, bitcoinNetwork.name))
 			.convertAddressToObject(fromAddressRaw);
-			
-		const _userScript = '0x' + userBitcoinInfo.addressObject.hash?.toString("hex");
-		const _scriptType = addressTypesNumber[userBitcoinInfo.addressType];
+
+		const _userScript = '0x' + bitcoinAddressObject.addressObject.hash?.toString("hex");
+		const _scriptType = addressTypesNumber[bitcoinAddressObject.addressType];
 
 		const _encodedData = ccBurnRouter.interface.encodeFunctionData(
 			'ccBurn', 
@@ -277,10 +282,9 @@ class TeleSwapSwapProvider extends SwapProvider {
 		let tx;
 		try {
 			tx = await client.wallet.sendTransaction({
-				to: teleswap.contractsInfo.polygon.testnet.ccBurnAddress,
+				to: ccBurnRouterAddress,
 				value: new BN(0),
-				data: _encodedData,
-				// fee: quote.fee, // TODO: CHECK IT
+				data: _encodedData
 			});
 		} catch {
 			throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction); 
@@ -303,8 +307,8 @@ class TeleSwapSwapProvider extends SwapProvider {
 		network: Network;
 		walletId: WalletId;
 	}) {
-		// send notif to ledger
-		await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
+		// // send notif to ledger
+		// await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
 
 		// input amount
 		const value = new BN(quote.fromAmount);
@@ -316,8 +320,8 @@ class TeleSwapSwapProvider extends SwapProvider {
 		const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 
 		const api = new ethers.providers.InfuraProvider(
-			this._getChainIdNumber(quote.from, network), 
-			buildConfig.infuraApiKey // we use api key provided in buildConfig
+			this.getChainIdNumber(quote.from, network), 
+			buildConfig.infuraApiKey
 		);
 
 		// exchange input token for TeleBTC
@@ -329,8 +333,8 @@ class TeleSwapSwapProvider extends SwapProvider {
 
 		// exchange from token -> teleBTC
 		const path = [
-			this.getTokenAddress(quote.from), 
-			this.getTokenAddress('TELEBTC')
+			this.getTokenAddress(quote.from, network), 
+			this.getTokenAddress('TELEBTC', network)
 		] // TODO: IF PATH NOT EXIST
 
 		// teleBTC amount (after exchanging)
@@ -365,8 +369,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 			tx = await client.wallet.sendTransaction({
 				to: this.config.QuickSwapRouterAddress,
 				value: new BN(0),
-				data: _encodedData,
-				// fee: quote.fee, // TODO: CHECK IT
+				data: _encodedData
 			});
 		} catch {
 			throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction); 
@@ -388,8 +391,8 @@ class TeleSwapSwapProvider extends SwapProvider {
 		network: Network;
 		walletId: WalletId;
 	}) {
-		// send notif to ledger
-		await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
+		// // send notif to ledger
+		// await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
 
 		// input amount
 		const value = new BN(quote.fromAmount);
@@ -399,10 +402,10 @@ class TeleSwapSwapProvider extends SwapProvider {
 
 		// approve amount to exchange router
 		const api = new ethers.providers.InfuraProvider(
-			this._getChainIdNumber(quote.from, network), 
-			buildConfig.infuraApiKey // we use api key provided in buildConfig
+			this.getChainIdNumber(quote.from, network), 
+			buildConfig.infuraApiKey
 		);
-    	const erc20 = new ethers.Contract(this.getTokenAddress(quote.from), ERC20.abi, api);
+    	const erc20 = new ethers.Contract(this.getTokenAddress(quote.from, network)!, ERC20.abi, api);
 		const inputAmountHex = '0x' + (value.toNumber()).toString(16); 
 		const encodedData = erc20.interface.encodeFunctionData(
 			'approve', 
@@ -413,10 +416,9 @@ class TeleSwapSwapProvider extends SwapProvider {
 		
 		try {
 			exchangeApproveTx = await client.wallet.sendTransaction({
-				to: this.getTokenAddress(quote.from),
+				to: this.getTokenAddress(quote.from, network),
 				value: new BN(0),
-				data: encodedData,
-				// fee: quote.fee, // TODO: CHECK IT
+				data: encodedData
 			});
 		} catch {
 			throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction); 
@@ -441,39 +443,45 @@ class TeleSwapSwapProvider extends SwapProvider {
 		// input amount
 		let value;
 		if (quote.exchangedTeleBTCAmount) { // if it not undefined
-			// other tokens -> btc
+			// non-telebtc -> btc
 			value = quote.exchangedTeleBTCAmount;
 		} else {
 			// telebtc -> btc
 			value = new BN(quote.fromAmount)
 		}
 
-		// send notif to ledger
-		await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
+		// // send notif to ledger
+		// await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
 				
-		// get client to sign tx
+		// get evm client to sign tx
 		const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
 
 		// approve amount to cc burn router
 		const api = new ethers.providers.InfuraProvider(
-			this._getChainIdNumber(quote.from, network), 
-			buildConfig.infuraApiKey // we use api key provided in buildConfig
+			this.getChainIdNumber(quote.from, network), 
+			buildConfig.infuraApiKey
 		);
-    	const erc20 = new ethers.Contract(teleswap.tokenInfo.polygon.testnet.teleBTC, ERC20.abi, api);
+		const teleBTCAddress = cryptoassets['TELEBTC'].contractAddress;
+
+    	const erc20 = new ethers.Contract(teleBTCAddress!, ERC20.abi, api);
 		const inputAmountHex = '0x' + (value.toNumber()).toString(16); 
+
+		const ccBurnRouterAddress = (quote.network == Network.Mainnet) ? 
+			teleswap.contractsInfo.polygon.mainnet.ccBurnAddress :
+				teleswap.contractsInfo.polygon.testnet.ccBurnAddress;
+
 		const encodedData = erc20.interface.encodeFunctionData(
 			'approve', 
-			[teleswap.contractsInfo.polygon.testnet.ccBurnAddress, inputAmountHex]
+			[ccBurnRouterAddress, inputAmountHex]
 		);
 		
 		let approveTx;
 		
 		try {
 			approveTx = await client.wallet.sendTransaction({
-				to: teleswap.tokenInfo.polygon.testnet.teleBTC,
+				to: teleBTCAddress,
 				value: new BN(0),
-				data: encodedData,
-				// fee: quote.fee, // TODO: CHECK IT
+				data: encodedData
 			});
 		} catch {
 			throw createInternalError(CUSTOM_ERRORS.FailedAssert.SendTransaction); 
@@ -487,7 +495,8 @@ class TeleSwapSwapProvider extends SwapProvider {
 
 	async sendSwap({ network, walletId, swap }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
 
-		if (swap.from == 'BTC') {
+		// wrap or exchange
+		if (swap.from == 'BTC') { // wrap or swap
 			return await this.sendBitcoinSwap({
 				quote: swap,
 				network,
@@ -495,7 +504,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 			});
 		}
 
-		if (swap.from != 'TELEBTC' && swap.to == 'BTC') {
+		if (swap.from != 'TELEBTC' && swap.to == 'BTC') { // swap and unwrap
 			return await this.approveForExchange({
 				quote: swap,
 				network,
@@ -503,7 +512,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 			});
 		}
 
-		if (swap.from == 'TELEBTC' && swap.to == 'BTC') {
+		if (swap.from == 'TELEBTC' && swap.to == 'BTC') { // unwrap
 			return await this.approveForBurn({
 				quote: swap,
 				network,
@@ -512,9 +521,10 @@ class TeleSwapSwapProvider extends SwapProvider {
 		}
 	}
 
+	// main function
 	async newSwap({ network, walletId, quote }: SwapRequest<TeleSwapSwapHistoryItem>) {
 
-		// check that if the chains supported
+		// check that the chains supported
 		if(!this.isSwapSupported(quote.from, quote.to, network)) {
 			throw createInternalError(CUSTOM_ERRORS.Unsupported.Chain);
 		}
@@ -547,25 +557,24 @@ class TeleSwapSwapProvider extends SwapProvider {
 	async getMin(quote: QuoteRequest) {
 		// return teleporterFee when input amount is 0
     	return new BN(
-			(await this._getFees(
+			(await this.getFees(
 				{network: quote.network, from: quote.from, to: quote.to, amount: new BN(0) }
 			)).teleporterFeeInBTC
 		);
 	}
 
 	// return address of asset
-	getTokenAddress(asset: Asset) {
+	getTokenAddress(asset: Asset, network: Network) {
 		switch(asset) {
-			case 'TeleBTC':
+			case 'teleBTC':
 			case 'TELEBTC':
 			case 'BTC':
-				return teleswap.tokenInfo.polygon.testnet.teleBTC
+				return (network == Network.Mainnet) ? cryptoassets['PTELEBTC'].contractAddress : teleswap.tokenInfo.polygon.testnet.teleBTCAddress;
 			case 'MATIC':
 			case 'WMATIC':
-				return teleswap.tokenInfo.polygon.testnet.link; 
+				return (network == Network.Mainnet) ? cryptoassets['PWMATIC'].contractAddress : teleswap.tokenInfo.polygon.testnet.WrappedMATICAddress;
 			default:
-				return teleswap.tokenInfo.polygon.testnet.link;
-				// return cryptoassets[asset].contractAddress; TODO: UNCOMMENT IT
+				return (network == Network.Mainnet) ? cryptoassets[asset].contractAddress : teleswap.tokenInfo.polygon.testnet.chainlinkAddress;
 		}
 	}
 
@@ -600,21 +609,31 @@ class TeleSwapSwapProvider extends SwapProvider {
 				
 				// get web3 provider
 				const api = new ethers.providers.InfuraProvider(
-					this._getChainIdNumber(swap.to, network), 
-					buildConfig.infuraApiKey // we use api key provided in buildConfig
+					this.getChainIdNumber(swap.to, network), 
+					buildConfig.infuraApiKey
 				);
 				
 				// set cc router contract
 				let ccRouterFactory;
-				if (swap.to == 'TELEBTC') {
+				let ccRouterFactoryAddress;
+
+				if (swap.to == 'TELEBTC') { // wrap
+					ccRouterFactoryAddress = (swap.network == Network.Mainnet) ? 
+						teleswap.contractsInfo.polygon.mainnet.ccTransferAddress : 
+							teleswap.contractsInfo.polygon.testnet.ccTransferAddress 	
+
 					ccRouterFactory = new ethers.Contract(
-						teleswap.contractsInfo.polygon.testnet.ccTransferAddress, 
+						ccRouterFactoryAddress, 
 						teleswap.ABI.CCTransferRouterABI, 
 						api
 					);
-				} else {
+				} else { // swap
+					ccRouterFactoryAddress = (swap.network == Network.Mainnet) ? 
+						teleswap.contractsInfo.polygon.mainnet.ccExchangeAddress : 
+							teleswap.contractsInfo.polygon.testnet.ccExchangeAddress 
+
 					ccRouterFactory = new ethers.Contract(
-						teleswap.contractsInfo.polygon.testnet.ccExchangeAddress, 
+						ccRouterFactoryAddress, 
 						teleswap.ABI.CCExchangeRouterABI, 
 						api
 					);
@@ -628,7 +647,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 						status: 'SUCCESS',
 						numberOfBitcoinConfirmations: bitcoinTxConfirmations
 					};
-				} else if (bitcoinTxConfirmations > RELAY_FINALIZATION_PARAMETER*2) {
+				} else if (bitcoinTxConfirmations > (RELAY_FINALIZATION_PARAMETER + 1) * 2) {
 					// if s.th goes wrong (no teleporter colllects the request)
 					return {
 						endTime: Date.now(),
@@ -709,9 +728,38 @@ class TeleSwapSwapProvider extends SwapProvider {
 			const tx = await client.chain.getTransactionByHash(swap.swapTxHash);
 	
 		  	if (tx && tx.confirmations && tx.confirmations > 0) {
+
+				// find burnt amount from event
+				const api = new ethers.providers.InfuraWebSocketProvider(
+					this.getChainIdNumber(swap.from, network), 
+					buildConfig.infuraApiKey
+				);
+
+				const ccBurnRouterAddress = (network == Network.Mainnet) ? 
+					teleswap.contractsInfo.polygon.mainnet.ccBurnAddress :
+						teleswap.contractsInfo.polygon.testnet.ccBurnAddress;
+
+				const ccBurnRouter = new ethers.Contract(
+					ccBurnRouterAddress, 
+					teleswap.ABI.CCBurnRouterABI, 
+					api
+				);
+
+				const fromAddressRaw = await this.getSwapAddress(network, walletId, swap.from, swap.fromAccountId);
+				const filter = ccBurnRouter.filters.CCBurn(
+					fromAddressRaw
+				);
+
+				const receipt = await api.getTransactionReceipt(swap.swapTxHash);
+				const logs = await ccBurnRouter.queryFilter(filter, receipt.blockNumber, receipt.blockNumber);
+								
+				const event = ccBurnRouter.interface.parseLog(logs[0]);
+				const burntAmount = (event.args.burntAmount).toNumber();
+
 				return {
 			  		endTime: Date.now(),
 			  		status: 'WAITING_FOR_BURN_BITCOIN_CONFIRMATIONS',
+					toAmount: String(burntAmount) // replace the exact burnt amount
 				};
 		  	}
 		} catch (e) {
@@ -723,27 +771,19 @@ class TeleSwapSwapProvider extends SwapProvider {
 	async waitForBurnBitcoinConfirmations({ swap, network }: NextSwapActionRequest<TeleSwapSwapHistoryItem>) {
 	
 		try {
-			const isMainnet = network === Network.Mainnet? true: false;
-
+			const isTestnet = network === Network.Testnet ? true : false;
+			
 			let userBurnReqs = (await getUserPendingBurns({
 				userBurnRequests: [
-					{address: swap.userBitcoinAddress, amount: swap.toAmount},
-					{address: swap.userBitcoinAddress, amount: String(Number(swap.toAmount) + 1)},
-					{address: swap.userBitcoinAddress, amount: String(Number(swap.toAmount) + 2)}
+					{
+						address: swap.userBitcoinAddress, 
+						amount: swap.toAmount // TODO: (unitToCurrency(cryptoassets['BTC'], Number(swap.toAmount))).toNumber()
+					}
 				],
-				// lockerAddresses
-				targetNetworkConnectionInfo: this.config.targetNetworkConnectionInfo,
-				testnet: !isMainnet,
+				targetNetworkConnectionInfo: this.getTargetNetworkConnectionInfo(swap.from, swap.network),
+				testnet: isTestnet,
 			}));
 			
-			// console.log("userBurnReqs", userBurnReqs, swap.toAmount);
-		  	
-			// if (userBurnReqs.processedBurns.length > 0) { // TODO: FIX IT
-			// 	return {
-			//   		endTime: Date.now(),
-			//   		status: 'SUCCESS',
-			// 	};
-			// }
 			if (userBurnReqs.processedBurns) { // TODO: FIX IT
 				return {
 			  		endTime: Date.now(),
@@ -869,7 +909,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 				filterStatus: 'PENDING',
 				notification(swap: any) {
 					return {
-						message: `Waiting for confirmations:  ${swap.numberOfBitcoinConfirmations} / 6`,
+						message: `Waiting for confirmations:  ${swap.numberOfBitcoinConfirmations} / ${RELAY_FINALIZATION_PARAMETER}`,
 					};
 				},
 			},
@@ -900,7 +940,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 				notification(swap: any) {
 					let refundedTeleBTC = swap.fromAmount; // TODO show the correct amount (reduce the fee)
 					return {
-						message: `Swap failed, ${prettyBalance(refundedTeleBTC, 'TeleBTC')} ${'TeleBTC'} refunded`,
+						message: `Swap failed, ${prettyBalance(refundedTeleBTC, 'teleBTC')} ${'teleBTC'} refunded`,
 					};
 				},
 			},
@@ -927,24 +967,29 @@ class TeleSwapSwapProvider extends SwapProvider {
 		return 3;
 	}
 
-	private async _chooseLockerAddress(from: Asset, value: string, network: Network) {
-		const isMainnet = network === Network.Mainnet? true: false;
-		let type = (from == 'BTC') ? 'transfer' : 'burn';
+	private async _chooseLockerAddress(from: Asset, to: Asset, value: string, network: Network) {
+		// determine testnet or mainnet
+		const isTestnet = (network === Network.Testnet) ? true : false;
 
-		// for now, we only support Polygon
+		// determine req type (Bitcoin to EVM to EVM to Bitcoin)
+		const type = (from == 'BTC') ? 'transfer' : 'burn';
+		const targetNetworkConnectionInfo = (from == 'BTC') ? 
+			this.getTargetNetworkConnectionInfo(to, network) :
+				this.getTargetNetworkConnectionInfo(from, network);
+
 		let lockers = await getLockers(
 			{
-				'amount': unitToCurrency(cryptoassets['BTC'], Number(value)), // TODO: REPLACE WITH cryptoassets[from]
-				'type': type, // for now, we only support Bitcoin -> EVM through liquality
-				'targetNetworkConnectionInfo': this.config.targetNetworkConnectionInfo, 
-				'testnet': !isMainnet
+				'amount': unitToCurrency(cryptoassets['BTC'], Number(value)), // BTC and TELEBTC has same decimal
+				'type': type,
+				'targetNetworkConnectionInfo': targetNetworkConnectionInfo,
+				'testnet': isTestnet
 			},
 		);
 		
 		if (!lockers.preferredLocker) {
-			throw createInternalError(CUSTOM_ERRORS.NotFound.Default); // TODO: edit error
+			throw createInternalError("Lockers capacity is low (decrease input amount)");
 		} else {
-			// return best locker bitcoin address
+			// return best locker's bitcoin address
 			return {
 				bitcoinAddress: lockers.preferredLocker.bitcoinAddress,
 				lockerLockingScript: lockers.preferredLocker.lockerInfo.lockerLockingScript
@@ -953,37 +998,36 @@ class TeleSwapSwapProvider extends SwapProvider {
 		
 	}
 
-	private _getChainIdNumber(asset: Asset, network: Network) {
+	private getChainIdNumber(asset: Asset, network: Network) {
 		const chainId = cryptoassets[asset].chain;
 		const chain = getChain(network, chainId);
 		return Number(chain.network.chainId);
 	}
 
-  	private async _getFees(quote: QuoteRequest) {
-		const isMainnet = quote.network === Network.Mainnet? true: false;
+  	private async getFees(quote: QuoteRequest) {
+		const isTestnet = (quote.network === Network.Testnet) ? true: false;
 		let calculatedFee: any;
 
 		if (quote.from == 'BTC') {
 			calculatedFee = await calculateFee({
 				'amount': quote.amount, // assume that amount is in currency (not unit)
-				'type': 'transfer', // btc -> evm
-				'targetNetworkConnectionInfo': this.config.targetNetworkConnectionInfo,
-				'testnet': !isMainnet
+				'type': 'transfer', // bitcoin -> evm
+				'targetNetworkConnectionInfo': this.getTargetNetworkConnectionInfo(quote.to, quote.network),
+				'testnet': isTestnet
 			});
 		} else {
 			calculatedFee = await calculateFee({
 				'amount': quote.amount, // assume that amount is in currency (not unit)
-				'type': 'burn', // evm -> btc
-				'targetNetworkConnectionInfo': this.config.targetNetworkConnectionInfo,
-				'testnet': !isMainnet
+				'type': 'burn', // evm -> bitcoin
+				'targetNetworkConnectionInfo': this.getTargetNetworkConnectionInfo(quote.from, quote.network),
+				'testnet': isTestnet
 			});
 		}
 
 		return {
 			teleporterFeeInBTC: calculatedFee.teleporterFeeInBTC || 0,
 			teleporterPercentageFee: calculatedFee.teleporterPercentageFee || 0,
-			TransactionFeeInBTC: calculatedFee.TransactionFeeInBTC || 0,
-			totalFeeInBTC: calculatedFee.totalFeeInBTC,
+			totalFeeInBTC: calculatedFee.totalFeeInBTC || 0,
 		}
 	}
 
@@ -995,20 +1039,20 @@ class TeleSwapSwapProvider extends SwapProvider {
 	) {
 
 		const api = new ethers.providers.InfuraProvider(
-			this._getChainIdNumber(to, network), 
-			buildConfig.infuraApiKey // we use api key provided in buildConfig
+			this.getChainIdNumber(to, network), 
+			buildConfig.infuraApiKey
 		);
 
 		// check that the liquidity pool exists
 		const exchangeFactory = new ethers.Contract(
 			this.config.QuickSwapFactoryAddress, UniswapV2Factory.abi, api
 		);
-		const pair = await exchangeFactory.getPair(this.getTokenAddress(from), this.getTokenAddress(to));
+		const pair = await exchangeFactory.getPair(this.getTokenAddress(from, network), this.getTokenAddress(to, network));
 		let isDirectPair = true;
 		if (pair == '0x0000000000000000000000000000000000000000') {
 			isDirectPair = false
-			// there is a pair between TeleBTC and WMATIC, so we check if there is pair between WMATIC and {to}
-			let _pair = await exchangeFactory.getPair(this.getTokenAddress('WMATIC'), this.getTokenAddress(to));
+			// there is a pair between TELEBTC and WMATIC, so we check if there is pair between WMATIC and {to}
+			let _pair = await exchangeFactory.getPair(this.getTokenAddress('WMATIC', network), this.getTokenAddress(to, network));
 			if (_pair == '0x0000000000000000000000000000000000000000') {
 				// no path exists
 				throw createInternalError(CUSTOM_ERRORS.NotFound.Default);
@@ -1027,12 +1071,12 @@ class TeleSwapSwapProvider extends SwapProvider {
 		if (isDirectPair) {
 			outputAmount = await exchangeRouter.getAmountsOut(
 				amount,
-				[this.getTokenAddress(from), this.getTokenAddress(to)]
+				[this.getTokenAddress(from, network), this.getTokenAddress(to, network)]
 			);
 		} else {
 			outputAmount = await exchangeRouter.getAmountsOut(
 				amount,
-				[this.getTokenAddress(from), this.getTokenAddress('WMATIC'), this.getTokenAddress(to)]
+				[this.getTokenAddress(from, network), this.getTokenAddress('WMATIC', network), this.getTokenAddress(to, network)]
 			);
 		}
 
@@ -1049,6 +1093,21 @@ class TeleSwapSwapProvider extends SwapProvider {
         return result.join('');
 	}
 
+	private getTargetNetworkConnectionInfo(to: Asset, network: Network) {
+		const api = new ethers.providers.InfuraWebSocketProvider(
+			this.getChainIdNumber(to, network), 
+			buildConfig.infuraApiKey
+		);
+
+		let targetNetworkConnectionInfo = {
+			web3: {
+				url: api.connection.url,
+			},
+		}
+
+		return targetNetworkConnectionInfo;
+	}
+
 	private async _getOpReturnData(
 		quote: TeleSwapSwapHistoryItem, 
 		requestType: TeleSwapTxTypes, 
@@ -1057,33 +1116,36 @@ class TeleSwapSwapProvider extends SwapProvider {
 	) {
 	
 		const api = new ethers.providers.InfuraProvider(
-			this._getChainIdNumber(quote.to, network), 
-			buildConfig.infuraApiKey // we use api key provided in buildConfig
+			this.getChainIdNumber(quote.to, network), 
+			buildConfig.infuraApiKey
 		);
 
 		let isExchange;
-		const chainId = 137; // TODO: write func for it + update the amount
+
+		// find chain id (we use same id for the testnet and mainnet)
+		const chainId = this.getChainIdNumber(quote.to, quote.network);
+
 		let appId;
-		const speed = 0; // for now, we only support normal through liquality 
+		const speed = 0; // for now, we only support normal speed 
 		let exchangeTokenAddress;
 		let deadline;
 		let outputAmount;
-		const isFixedToken = false;
+		const isFixedToken = true;
 
 		// calculate teleporter percentage fee
-		const percentageFee = (await this._getFees(
+		const percentageFee = (await this.getFees(
 			{
 				network: network, 
-				from: quote.from, 
+				from: 'BTC',
 				to: quote.to, 
-				amount: unitToCurrency(cryptoassets[quote.from], Number(quote.fromAmount))
+				amount: unitToCurrency(cryptoassets['BTC'], Number(quote.fromAmount))
 			}
    		)).teleporterPercentageFee;
 
 		if(requestType == TeleSwapTxTypes.SWAP) {
 			isExchange = true;
 			appId = EXCHANGE_APP_ID; // we use the first registered dex in teleswap
-			exchangeTokenAddress = this.getTokenAddress(quote.to);
+			exchangeTokenAddress = this.getTokenAddress(quote.to, network);
 			deadline = (await api.getBlock('latest')).timestamp + SUGGESTED_DEADLINE;
 			// for now, we assume that the input token is fixed 
 			outputAmount = ceil(Number((await this.getQuote(

@@ -7,7 +7,6 @@ import { BaseSwapProviderConfig, EstimateFeeRequest, NextSwapActionRequest, Quot
 export interface TeleSwapSwapProviderConfig extends BaseSwapProviderConfig {
     QuickSwapRouterAddress: string;
     QuickSwapFactoryAddress: string;
-    targetNetworkConnectionInfo: any;
 }
 export declare enum TeleSwapTxTypes {
     WRAP = "WRAP",
@@ -114,7 +113,7 @@ declare class TeleSwapSwapProvider extends SwapProvider {
         [x: string]: BN;
     } | null>;
     getMin(quote: QuoteRequest): Promise<BN>;
-    getTokenAddress(asset: Asset): string;
+    getTokenAddress(asset: Asset, network: Network): string | undefined;
     waitForBitcoinConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
@@ -140,6 +139,7 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     waitForBurnConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
+        toAmount: string;
     } | undefined>;
     waitForBurnBitcoinConfirmations({ swap, network }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
@@ -156,10 +156,11 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     protected _timelineDiagramSteps(): string[];
     protected _totalSteps(): number;
     private _chooseLockerAddress;
-    private _getChainIdNumber;
-    private _getFees;
+    private getChainIdNumber;
+    private getFees;
     private getOutputAmount;
     private changeEndianness;
+    private getTargetNetworkConnectionInfo;
     private _getOpReturnData;
 }
 export { TeleSwapSwapProvider };
