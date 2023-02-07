@@ -76,7 +76,7 @@ const config: WalletCoreConfig = {
       'PUSDT',
       'sUSDT',
       'USDT.e',
-      'TELEBTC'
+      'TELEBTC',
     ],
     testnet: [
       'BTC',
@@ -95,7 +95,7 @@ const config: WalletCoreConfig = {
       'UST',
       'OPTETH',
       'OPTUSDC',
-      'TELEBTC'
+      'TELEBTC',
     ],
   },
   infuraApiKey: 'da99ebc8c0964bb8bb757b6f8cc40f1f',

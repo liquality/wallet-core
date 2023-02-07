@@ -122,13 +122,16 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
             const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
             let tx;
             try {
+                console.log("value", value);
                 tx = yield client.wallet.sendTransaction({
                     to: to,
                     value,
-                    data: opReturnData
+                    data: opReturnData,
+                    fee: quote.fee
                 });
             }
             catch (_a) {
+                console.log("errrrr");
                 throw (0, error_parser_1.createInternalError)(error_parser_1.CUSTOM_ERRORS.FailedAssert.SendTransaction);
             }
             return {
@@ -208,7 +211,6 @@ class TeleSwapSwapProvider extends SwapProvider_1.SwapProvider {
             const path = result.path;
             const inputAmountHex = '0x' + (value.toNumber()).toString(16);
             const outputAmountHex = '0x' + expectedOutput.toString(16);
-            console.log("outputAmountHex", outputAmountHex);
             const deadline = (yield api.getBlock('latest')).timestamp + 120;
             let _encodedData;
             let _value;
