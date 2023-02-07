@@ -135,6 +135,7 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     waitForExchangeConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
         status: string;
+        exchangedTeleBTCAmount: BN;
     } | undefined>;
     waitForBurnConfirmations({ swap, network, walletId }: NextSwapActionRequest<TeleSwapSwapHistoryItem>): Promise<{
         endTime: number;
@@ -158,7 +159,7 @@ declare class TeleSwapSwapProvider extends SwapProvider {
     private _chooseLockerAddress;
     private getChainIdNumber;
     private getFees;
-    private getOutputAmount;
+    private getOutputAmountAndPath;
     private changeEndianness;
     private getTargetNetworkConnectionInfo;
     private _getOpReturnData;

@@ -2,8 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const contracts_mainnet_json_1 = tslib_1.__importDefault(require("@blobfishkate/sovryncontracts/contracts-mainnet.json"));
+const contracts_testnet_json_1 = tslib_1.__importDefault(require("@blobfishkate/sovryncontracts/contracts-testnet.json"));
 const cryptoassets_1 = require("@liquality/cryptoassets");
 const types_1 = require("./store/types");
+const chainify_1 = require("./utils/chainify");
 const config = {
     defaultAssets: {
         mainnet: [
@@ -73,13 +75,55 @@ const config = {
     },
     swapProviders: {
         testnet: {
+            [types_1.SwapProviderType.Liquality]: {
+                name: 'Liquality',
+                icon: 'liquality.svg',
+                type: types_1.SwapProviderType.Liquality,
+                routerAddress: chainify_1.HTLC_CONTRACT_ADDRESS,
+                agent: process.env.VUE_APP_AGENT_TESTNET_URL || 'https://testnet-dev-agent.liq-chainhub.net',
+            },
+            [types_1.SwapProviderType.LiqualityBoostNativeToERC20]: {
+                name: 'Liquality Boost',
+                type: types_1.SwapProviderType.LiqualityBoostNativeToERC20,
+                network: types_1.Network.Testnet,
+                icon: 'liqualityboost.svg',
+                supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
+            },
+            [types_1.SwapProviderType.LiqualityBoostERC20ToNative]: {
+                name: 'Liquality Boost',
+                type: types_1.SwapProviderType.LiqualityBoostERC20ToNative,
+                network: types_1.Network.Testnet,
+                icon: 'liqualityboost.svg',
+                supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
+            },
+            [types_1.SwapProviderType.UniswapV2]: {
+                name: 'Uniswap V2',
+                icon: 'uniswap.svg',
+                type: types_1.SwapProviderType.UniswapV2,
+                routerAddress: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+            },
+            [types_1.SwapProviderType.Sovryn]: {
+                name: 'Sovryn',
+                icon: 'sovryn.svg',
+                type: types_1.SwapProviderType.Sovryn,
+                routerAddress: contracts_testnet_json_1.default.swapNetwork,
+                routerAddressRBTC: contracts_testnet_json_1.default.proxy3,
+                rpcURL: 'https://testnet.sovryn.app/rpc',
+            },
+            [types_1.SwapProviderType.FastBTCWithdraw]: {
+                name: 'FastBTC',
+                icon: 'sovryn.svg',
+                type: types_1.SwapProviderType.FastBTCWithdraw,
+                network: types_1.Network.Testnet,
+                routerAddress: '0x10C848e9495a32acA95F6c23C92eCA2b2bE9903A',
+            },
             [types_1.SwapProviderType.TeleSwap]: {
                 name: 'TeleSwap',
-                icon: 'sovryn.svg',
+                icon: 'teleswap.svg',
                 type: types_1.SwapProviderType.TeleSwap,
                 network: types_1.Network.Testnet,
-                QuickSwapRouterAddress: '0x8954AfA98594b838bda56FE4C12a09D7739D179b',
-                QuickSwapFactoryAddress: '0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32',
+                QuickSwapRouterAddress: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff',
+                QuickSwapFactoryAddress: '0x5757371414417b8c6caad45baef941abc7d3ab32',
             },
         },
         mainnet: {
@@ -205,11 +249,11 @@ const config = {
             },
             [types_1.SwapProviderType.TeleSwap]: {
                 name: 'TeleSwap',
-                icon: 'sovryn.svg',
+                icon: 'teleswap.svg',
                 type: types_1.SwapProviderType.TeleSwap,
-                network: types_1.Network.Testnet,
-                QuickSwapRouterAddress: '',
-                QuickSwapFactoryAddress: '0x5757371414417b8c6caad45baef941abc7d3ab32 ',
+                network: types_1.Network.Mainnet,
+                QuickSwapRouterAddress: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff',
+                QuickSwapFactoryAddress: '0x5757371414417b8c6caad45baef941abc7d3ab32',
             },
         },
     },
