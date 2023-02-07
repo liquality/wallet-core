@@ -1,19 +1,20 @@
 import buildConfig from '../build.config';
 import { getSwapProvider } from '../factory';
 import { Network, SwapProviderType } from '../store/types';
-import astroportInfo from '../swaps/astroport/info.json';
-import fastbtcInfo from '../swaps/fastbtc/info.json';
-import hopInfo from '../swaps/hop/info.json';
-import lifiInfo from '../swaps/lifi/info.json';
-import jupiterInfo from '../swaps/jupiter/info.json';
-import liqualityInfo from '../swaps/liquality/info.json';
-import liqualityBoostERC20toNativeInfo from '../swaps/liqualityboost/liqualityBoostERC20toNative/info.json';
-import liqualityBoostNativeToERC20Info from '../swaps/liqualityboost/liqualityBoostNativeToERC20/info.json';
-import oneinchInfo from '../swaps/oneinch/info.json';
-import sovrynInfo from '../swaps/sovryn/info.json';
-import thorchainInfo from '../swaps/thorchain/info.json';
-import uniswapInfo from '../swaps/uniswap/info.json';
-import debridgeInfo from '../swaps/debridge/info.json';
+import astroportInfo from './astroport/info.json';
+import fastbtcInfo from './fastbtc/info.json';
+import hopInfo from './hop/info.json';
+import lifiInfo from './lifi/info.json';
+import jupiterInfo from './jupiter/info.json';
+import liqualityInfo from './liquality/info.json';
+import liqualityBoostERC20toNativeInfo from './liqualityboost/liqualityBoostERC20toNative/info.json';
+import liqualityBoostNativeToERC20Info from './liqualityboost/liqualityBoostNativeToERC20/info.json';
+import oneinchInfo from './oneinch/info.json';
+import sovrynInfo from './sovryn/info.json';
+import thorchainInfo from './thorchain/info.json';
+import uniswapInfo from './uniswap/info.json';
+import debridgeInfo from './debridge/info.json';
+import teleswapInfo from './teleswap/info.json';
 import { LiqualitySwapProvider } from './liquality/LiqualitySwapProvider';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 
@@ -32,6 +33,7 @@ const swapProviderInfo = {
   [SwapProviderType.Jupiter]: jupiterInfo,
   [SwapProviderType.DeBridge]: debridgeInfo,
   [SwapProviderType.LiFi]: lifiInfo,
+  [SwapProviderType.TeleSwap]: teleswapInfo,
 };
 
 function getSwapProviderConfig(network: Network, providerId: SwapProviderType) {

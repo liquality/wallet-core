@@ -1,6 +1,6 @@
 import { FAKE_ERROR, getError, getErrorAsync } from '..';
 import { LiqualityError } from '../../LiqualityErrors/LiqualityError';
-import { getErrorParser, InsufficientGasFeeError } from '../../';
+import { getErrorParser, InsufficientGasFeeError } from '../..';
 import { ChainifyErrorParser } from '../../parsers';
 import { JsonRPCNodeErrorParser } from '../../parsers/Chainify/JsonRPCNodeErrorParser';
 

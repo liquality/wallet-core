@@ -2,8 +2,8 @@ import { BitcoinTypes } from '@chainify/bitcoin';
 import { ChainId, getChain } from '@liquality/cryptoassets';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import { AccountType, Network } from '../store/types';
-import { BTC_ADDRESS_TYPE_TO_PREFIX } from '../utils/address';
-import { LEDGER_BITCOIN_OPTIONS } from '../utils/ledger';
+import { BTC_ADDRESS_TYPE_TO_PREFIX } from './address';
+import { LEDGER_BITCOIN_OPTIONS } from './ledger';
 
 export type DerivationPathCreator = {
   [key in ChainId]?: (network: Network, index: number, accountType?: AccountType) => string;

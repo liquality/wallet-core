@@ -1,5 +1,5 @@
-import optimism from '../../../chains/mainnet/evm/optimism';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import optimism from '../../mainnet/evm/optimism';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 const optimismTestnet = transformMainnetToTestnetChain(
   optimism,

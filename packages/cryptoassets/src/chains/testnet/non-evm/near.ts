@@ -1,5 +1,5 @@
-import near from '../../../chains/mainnet/non-evm/near';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import near from '../../mainnet/non-evm/near';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 export default transformMainnetToTestnetChain(
   near,

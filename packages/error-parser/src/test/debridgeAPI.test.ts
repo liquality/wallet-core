@@ -6,7 +6,7 @@ import {
   InternalError,
   PairNotSupportedError,
   ThirdPartyError,
-} from '../';
+} from '..';
 import { DebridgeError, DEBRIDGE_ERRORS } from '../parsers/Debridge';
 import { DebridgeAPIErrorParser } from '../parsers/Debridge/DebridgeAPIErrorParser';
 

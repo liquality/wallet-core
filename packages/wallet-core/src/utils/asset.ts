@@ -2,7 +2,7 @@ import { AssetTypes, ChainId, getChain, getNativeAssetCode, isEvmChain } from '@
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import * as ethers from 'ethers';
 import { Asset, Network } from '../store/types';
-import cryptoassets from '../utils/cryptoassets';
+import cryptoassets from './cryptoassets';
 
 function getChainExplorer(chainId: ChainId, network: Network) {
   const chain = getChain(network, chainId);

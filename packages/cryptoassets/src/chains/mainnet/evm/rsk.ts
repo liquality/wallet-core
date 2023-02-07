@@ -1,4 +1,4 @@
-import { RskChain } from '../../../chains/EvmChain';
+import { RskChain } from '../../EvmChain';
 import { AssetTypes, ChainId } from '../../../types';
 
 export default new RskChain({

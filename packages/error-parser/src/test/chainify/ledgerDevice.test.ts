@@ -8,7 +8,7 @@ import {
   LedgerDeviceNotUpdatedError,
   LedgerDeviceSmartContractTransactionDisabledError,
   UserDeclinedError,
-} from '../../';
+} from '../..';
 import { ChainifyErrorParser } from '../../parsers';
 import { LEDGER_ERRORS } from '../../parsers/Chainify';
 import { LedgerErrorParser } from '../../parsers/Chainify/LedgerErrorParser';

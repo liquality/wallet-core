@@ -1,0 +1,7 @@
+{
+    "title": "Li.Fi",
+    "description": "Advanced Bridge & DEX Aggregation Protocol",
+    "pros": ["Cross-chain bridging"],
+    "cons": ["Slippage"],
+    "fees": ["0.003% fee", "Slippage (up to 0.5%)"]
+}

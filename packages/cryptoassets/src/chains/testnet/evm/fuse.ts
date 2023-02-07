@@ -1,5 +1,5 @@
-import fuse from '../../../chains/mainnet/evm/fuse';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import fuse from '../../mainnet/evm/fuse';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 export default transformMainnetToTestnetChain(
   fuse,

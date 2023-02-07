@@ -1,0 +1,1 @@
+{"version":3,"file":"PairNotSupportedError.js","sourceRoot":"","sources":["../../../src/LiqualityErrors/PairNotSupportedError.ts"],"names":[],"mappings":";;;AAAA,sCAAwC;AACxC,qDAAkD;AAElD,MAAa,qBAAsB,SAAQ,+BAA4C;IACrF,YAAY,IAAmC;QAC7C,KAAK,CAAC,oBAAW,CAAC,qBAAqB,EAAE,IAAI,CAAC,CAAC;IACjD,CAAC;CACF;AAJD,sDAIC"}

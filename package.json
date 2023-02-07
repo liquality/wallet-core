@@ -73,5 +73,10 @@
     "@ledgerhq/hw-transport": "6.27.1",
     "@ledgerhq/hw-transport-webhid": "6.27.1",
     "@ledgerhq/hw-app-eth": "6.26.0"
+  },
+  "dependencies": {
+    "@liquality/wallet-core": "workspace:^",
+    "@teleportdao/configs": "^1.0.1",
+    "@teleportdao/scripts": "^1.0.1"
   }
 }

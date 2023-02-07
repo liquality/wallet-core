@@ -1,0 +1,1 @@
+{"version":3,"file":"HighInputAmountError.js","sourceRoot":"","sources":["../../../src/LiqualityErrors/HighInputAmountError.ts"],"names":[],"mappings":";;;AAAA,sCAAwC;AACxC,qDAAkD;AAClD,MAAa,oBAAqB,SAAQ,+BAA2C;IACnF,YAAY,IAAkC;QAC5C,KAAK,CAAC,oBAAW,CAAC,oBAAoB,EAAE,IAAI,CAAC,CAAC;IAChD,CAAC;IAED,iBAAiB;QACf,IAAI,CAAC,cAAc,GAAG,EAAE,CAAC;IAC3B,CAAC;CACF;AARD,oDAQC"}

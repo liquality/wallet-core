@@ -1,5 +1,5 @@
-import polygon from '../../../chains/mainnet/evm/polygon';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import polygon from '../../mainnet/evm/polygon';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 export default transformMainnetToTestnetChain(
   polygon,

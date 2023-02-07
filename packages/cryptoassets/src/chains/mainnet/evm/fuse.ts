@@ -1,4 +1,4 @@
-import { EvmChain } from '../../../chains/EvmChain';
+import { EvmChain } from '../../EvmChain';
 import { AssetTypes, ChainId } from '../../../types';
 
 export default new EvmChain({
