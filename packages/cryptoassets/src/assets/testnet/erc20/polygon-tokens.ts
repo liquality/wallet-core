@@ -17,7 +17,7 @@ const TOKENS = {
     name: 'teleBTC',
     code: 'TELEBTC',
     decimals: 8,
-    contractAddress: '0x19c650e2C6E9f5DEB9FaB3078fD1b11FAD1E54Ee',
+    contractAddress: '0x515D720B9D219f1931205D5B8D842bE1Fe2FeBDE',
     color: '#5b3159',
     matchingAsset: 'BTC',
     priceSource: {

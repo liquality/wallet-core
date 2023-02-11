@@ -14,7 +14,6 @@ import buildConfig from '../../build.config';
 import { ActionContext } from '../../store';
 import { withInterval, withLock } from '../../store/actions/performNextAction/utils';
 import { Asset, Network, SwapHistoryItem, WalletId } from '../../store/types';
-// import { isERC20 } from '../../utils/asset';
 import { prettyBalance } from '../../utils/coinFormatter';
 import cryptoassets from '../../utils/cryptoassets';
 import { SwapProvider } from '../SwapProvider';
@@ -43,7 +42,7 @@ const addressTypesNumber = { p2pk: 0, p2pkh: 1, p2sh: 2, p2wpkh: 3 };
 const TRANSFER_APP_ID = 1;
 const EXCHANGE_APP_ID = 10; // QuickSwap app id
 const SUGGESTED_DEADLINE = 7200; // 12 Bitcoin blocks
-const RELAY_FINALIZATION_PARAMETER = 3;
+const RELAY_FINALIZATION_PARAMETER = 5;
 const ZERO_ADDRESS = '0x' + '0'.repeat(20 * 2); // 20 bytes zero
 const SLIPPAGE = 5;
 const DUMMY_BYTES = '0x' + '0'.repeat(79 * 2); // 79 bytes zero
@@ -178,10 +177,10 @@ class TeleSwapSwapProvider extends SwapProvider {
     // polygon not supported
     // // send notif to ledger
     // await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
-
+    
     // find the best locker (is active and has enough capacity)
     const to = (await this._chooseLockerAddress(quote.from, quote.to, quote.fromAmount, network)).bitcoinAddress;
-
+   
     // input amount
     const value = new BN(quote.fromAmount);
 
@@ -192,7 +191,7 @@ class TeleSwapSwapProvider extends SwapProvider {
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.to, quote.toAccountId);
 
     // get OP_RETURN data
-    const opReturnData = await this._getOpReturnData(quote, requestType, network, fromAddressRaw);
+    const opReturnData = await this.getOpReturnData(quote, requestType, network, fromAddressRaw);
 
     // get client to sign tx
     const client = this.getClient(network, walletId, quote.from, quote.fromAccountId);
@@ -1116,7 +1115,7 @@ class TeleSwapSwapProvider extends SwapProvider {
     return targetNetworkConnectionInfo;
   }
 
-  private async _getOpReturnData(
+  private async getOpReturnData(
     quote: TeleSwapSwapHistoryItem,
     requestType: TeleSwapTxTypes,
     network: Network,
@@ -1127,7 +1126,7 @@ class TeleSwapSwapProvider extends SwapProvider {
     let isExchange;
 
     // find chain id (we use same id for the testnet and mainnet)
-    const chainId = this.getChainIdNumber(quote.to, quote.network);
+    const chainId = this.getChainIdNumber(quote.to, Network.Mainnet);
 
     let appId;
     const speed = 0; // for now, we only support normal speed
