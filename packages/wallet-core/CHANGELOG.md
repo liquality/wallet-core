@@ -1,5 +1,14 @@
 # @liquality/wallet-core
 
+## 4.15.1
+
+### Patch Changes
+
+- Updated dependencies [ef71d00]
+- Updated dependencies [8cbbaee]
+  - @liquality/cryptoassets@2.4.0
+  - @liquality/error-parser@2.2.3
+
 ## 4.15.0
 
 ### Minor Changes
