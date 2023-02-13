@@ -1,5 +1,12 @@
 # @liquality/cryptoassets
 
+## 2.4.0
+
+### Minor Changes
+
+- ef71d00: Changed default network polygon rpc url
+- 8cbbaee: Bumped version
+
 ## 2.3.0
 
 ### Minor Changes
