@@ -191,12 +191,12 @@ const config: WalletCoreConfig = {
         },
         referrerFee: 0.3,
       },
-      [SwapProviderType.FastBTCDeposit]: {
-        name: 'FastBTC',
-        icon: 'sovryn.svg',
-        type: SwapProviderType.FastBTCDeposit,
-        bridgeEndpoint: 'https://fastbtc.sovryn.app',
-      },
+      // [SwapProviderType.FastBTCDeposit]: {
+      //   name: 'FastBTC',
+      //   icon: 'sovryn.svg',
+      //   type: SwapProviderType.FastBTCDeposit,
+      //   bridgeEndpoint: 'https://fastbtc.sovryn.app',
+      // },
       // [SwapProviderType.FastBTCWithdraw]: {
       //   name: 'FastBTC',
       //   icon: 'sovryn.svg',
