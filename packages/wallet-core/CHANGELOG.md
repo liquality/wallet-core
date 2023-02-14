@@ -1,5 +1,12 @@
 # @liquality/wallet-core
 
+## 4.16.0
+
+### Minor Changes
+
+- 7b8a495: removed fast btc deposit
+- dcca896: Disable Fast BTC Swap Provider
+
 ## 4.15.1
 
 ### Patch Changes
