@@ -1,1 +1,0 @@
-{"version":3,"file":"1_first_migration.js","sourceRoot":"","sources":["../../../../src/store/migrations/1_first_migration.ts"],"names":[],"mappings":";;;;AACa,QAAA,cAAc,GAAG;IAC5B,OAAO,EAAE,CAAC;IACV,OAAO,EAAE,CAAO,KAAU,EAAE,EAAE;QAC5B,yBAAY,KAAK,EAAG;IACtB,CAAC,CAAA;CACF,CAAC"}

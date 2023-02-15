@@ -1,1 +1,0 @@
-{"version":3,"file":"18_enable_avalanche_chain.js","sourceRoot":"","sources":["../../../../src/store/migrations/18_enable_avalanche_chain.ts"],"names":[],"mappings":";;;AAAA,0DAAkD;AAClD,iDAA6C;AAEhC,QAAA,oBAAoB,GAAG;IAClC,OAAO,EAAE,EAAE;IACX,OAAO,EAAE,CAAC,KAAU,EAAE,EAAE,CAAC,IAAA,0BAAW,EAAC,KAAK,EAAE,sBAAO,CAAC,SAAS,CAAC;CAC/D,CAAC"}

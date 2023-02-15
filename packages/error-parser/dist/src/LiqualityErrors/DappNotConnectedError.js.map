@@ -1,1 +1,0 @@
-{"version":3,"file":"DappNotConnectedError.js","sourceRoot":"","sources":["../../../src/LiqualityErrors/DappNotConnectedError.ts"],"names":[],"mappings":";;;AAAA,sCAAwC;AACxC,qDAAkD;AAElD,MAAa,qBAAsB,SAAQ,+BAA4C;IACrF,YAAY,IAAmC;QAC7C,KAAK,CAAC,oBAAW,CAAC,qBAAqB,EAAE,IAAI,CAAC,CAAC;IACjD,CAAC;IACD,iBAAiB;QACf,IAAI,CAAC,cAAc,GAAG,EAAE,CAAC;IAC3B,CAAC;CACF;AAPD,sDAOC"}
