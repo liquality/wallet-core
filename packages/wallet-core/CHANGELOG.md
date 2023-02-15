@@ -1,5 +1,65 @@
 # @liquality/wallet-core
 
+## 4.16.0
+
+### Minor Changes
+
+- 7b8a495: removed fast btc deposit
+- dcca896: Disable Fast BTC Swap Provider
+
+## 4.15.1
+
+### Patch Changes
+
+- Updated dependencies [ef71d00]
+- Updated dependencies [8cbbaee]
+  - @liquality/cryptoassets@2.4.0
+  - @liquality/error-parser@2.2.3
+
+## 4.15.0
+
+### Minor Changes
+
+- 4b6bcbe: Updated chanifiy deps
+- baf04a7: Updated chanify ledger packages
+
+## 4.12.0
+
+### Minor Changes
+
+- 651126b: Updated channify versions for ledger packages
+
+## 4.11.0
+
+### Minor Changes
+
+- 59bb6a3: Updated ledger chanify packages
+
+## 4.10.0
+
+### Minor Changes
+
+- 1a64072: Updated with thorchain fixes
+- cca4448: Fixed lint issues
+
+### Patch Changes
+
+- Updated dependencies [3e6dd4e]
+  - @liquality/cryptoassets@2.3.0
+  - @liquality/error-parser@2.2.1
+
+## 4.9.0
+
+### Minor Changes
+
+- 7f7f84f: Fix thorchain url
+
+### Patch Changes
+
+- Updated dependencies [7f7f84f]
+  - @liquality/cryptoassets@2.2.0
+  - @liquality/error-parser@2.2.0
+
 ## 4.8.0
 
 ### Minor Changes

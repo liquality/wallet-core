@@ -16,8 +16,6 @@
     "@types/chrome": "^0.0.179",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^27.4.1",
-    "@types/ledgerhq__hw-app-btc": "^5.19.3",
-    "@types/ledgerhq__hw-transport": "^4.21.4",
     "@types/mocha": "^9.1.1",
     "@types/node": "^17.0.21",
     "@types/uuid": "^8.3.4",
@@ -69,9 +67,11 @@
     "packages/*"
   ],
   "resolutions": {
-    "@ledgerhq/devices": "6.27.1",
-    "@ledgerhq/hw-transport": "6.27.1",
-    "@ledgerhq/hw-transport-webhid": "6.27.1",
-    "@ledgerhq/hw-app-eth": "6.26.0"
+    "@ledgerhq/devices": "7.0.7",
+    "@ledgerhq/hw-transport": "6.27.10",
+    "@ledgerhq/hw-transport-webhid": "6.27.10",
+    "@ledgerhq/cryptoassets": "7.3.0",
+    "@ledgerhq/hw-app-eth": "6.30.5",
+    "@ledgerhq/hw-app-btc": "9.1.2"
   }
 }

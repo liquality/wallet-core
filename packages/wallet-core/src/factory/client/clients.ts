@@ -6,7 +6,7 @@ import {
   BitcoinSwapEsploraProvider,
   BitcoinTypes,
 } from '@chainify/bitcoin';
-import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
+import { BitcoinLedgerProvider, CreateBitcoinLedgerApp } from '@chainify/bitcoin-ledger';
 import { ChainifyNetwork } from '../../types';
 import { NearChainProvider, NearSwapProvider, NearTypes, NearWalletProvider } from '@chainify/near';
 import { SolanaChainProvider, SolanaNftProvider, SolanaWalletProvider } from '@chainify/solana';
@@ -60,6 +60,7 @@ export function createBtcClient(
         basePublicKey: accountInfo?.publicKey,
         baseChainCode: accountInfo?.chainCode,
         transportCreator: walletOptionsStore.walletOptions.ledgerTransportCreator,
+        createLedgerApp: CreateBitcoinLedgerApp,
       },
       chainProvider
     );

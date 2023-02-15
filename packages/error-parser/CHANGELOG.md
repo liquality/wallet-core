@@ -1,5 +1,31 @@
 # @liquality/error-parser
 
+## 2.2.3
+
+### Patch Changes
+
+- Updated dependencies [ef71d00]
+- Updated dependencies [8cbbaee]
+  - @liquality/cryptoassets@2.4.0
+
+## 2.2.1
+
+### Patch Changes
+
+- Updated dependencies [3e6dd4e]
+  - @liquality/cryptoassets@2.3.0
+
+## 2.2.0
+
+### Minor Changes
+
+- 7f7f84f: Fix thorchain url
+
+### Patch Changes
+
+- Updated dependencies [7f7f84f]
+  - @liquality/cryptoassets@2.2.0
+
 ## 2.1.0
 
 ### Minor Changes

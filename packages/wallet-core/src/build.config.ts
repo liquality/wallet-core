@@ -201,19 +201,19 @@ const config: WalletCoreConfig = {
         },
         referrerFee: 0.3,
       },
-      [SwapProviderType.FastBTCDeposit]: {
-        name: 'FastBTC',
-        icon: 'sovryn.svg',
-        type: SwapProviderType.FastBTCDeposit,
-        bridgeEndpoint: 'https://fastbtc.sovryn.app',
-      },
-      [SwapProviderType.FastBTCWithdraw]: {
-        name: 'FastBTC',
-        icon: 'sovryn.svg',
-        type: SwapProviderType.FastBTCWithdraw,
-        network: Network.Mainnet,
-        routerAddress: '0x0D5006330289336ebdF9d0AC9E0674f91b4851eA',
-      },
+      // [SwapProviderType.FastBTCDeposit]: {
+      //   name: 'FastBTC',
+      //   icon: 'sovryn.svg',
+      //   type: SwapProviderType.FastBTCDeposit,
+      //   bridgeEndpoint: 'https://fastbtc.sovryn.app',
+      // },
+      // [SwapProviderType.FastBTCWithdraw]: {
+      //   name: 'FastBTC',
+      //   icon: 'sovryn.svg',
+      //   type: SwapProviderType.FastBTCWithdraw,
+      //   network: Network.Mainnet,
+      //   routerAddress: '0x0D5006330289336ebdF9d0AC9E0674f91b4851eA',
+      // },
       [SwapProviderType.Sovryn]: {
         name: 'Sovryn',
         icon: 'sovryn.svg',
@@ -226,7 +226,7 @@ const config: WalletCoreConfig = {
         name: 'Thorchain',
         icon: 'thorchain.svg',
         type: SwapProviderType.Thorchain,
-        thornode: 'https://thornode.thorchain.info',
+        thornode: 'https://thornode.ninerealms.com',
       },
       [SwapProviderType.Astroport]: {
         name: 'Astroport',

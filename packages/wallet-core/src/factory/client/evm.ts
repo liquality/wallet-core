@@ -6,7 +6,7 @@ import {
   OptimismChainProvider,
   RpcFeeProvider,
 } from '@chainify/evm';
-import { EvmLedgerProvider } from '@chainify/evm-ledger';
+import { EvmLedgerProvider, CreateEvmLedgerApp } from '@chainify/evm-ledger';
 import { Address, Network } from '@chainify/types';
 import { ChainifyNetwork } from '../../types';
 import { JsonRpcProvider, StaticJsonRpcProvider } from '@ethersproject/providers';
@@ -58,6 +58,7 @@ function getEvmWalletProvider(
         derivationPath: accountInfo.derivationPath,
         addressCache,
         transportCreator: walletOptionsStore.walletOptions.ledgerTransportCreator,
+        createLedgerApp: CreateEvmLedgerApp,
       },
       chainProvider
     );

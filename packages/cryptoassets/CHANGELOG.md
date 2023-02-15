@@ -1,5 +1,24 @@
 # @liquality/cryptoassets
 
+## 2.4.0
+
+### Minor Changes
+
+- ef71d00: Changed default network polygon rpc url
+- 8cbbaee: Bumped version
+
+## 2.3.0
+
+### Minor Changes
+
+- 3e6dd4e: Updaed Avax Tokens
+
+## 2.2.0
+
+### Minor Changes
+
+- 7f7f84f: Fix thorchain url
+
 ## 2.1.0
 
 ### Minor Changes
