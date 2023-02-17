@@ -177,10 +177,10 @@ class TeleSwapSwapProvider extends SwapProvider {
     // polygon not supported
     // // send notif to ledger
     // await this.sendLedgerNotification(quote.fromAccountId, 'Signing required to complete the swap.');
-    
+
     // find the best locker (is active and has enough capacity)
     const to = (await this._chooseLockerAddress(quote.from, quote.to, quote.fromAmount, network)).bitcoinAddress;
-   
+
     // input amount
     const value = new BN(quote.fromAmount);
 

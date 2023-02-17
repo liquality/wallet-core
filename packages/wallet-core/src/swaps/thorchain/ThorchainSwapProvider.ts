@@ -188,9 +188,14 @@ class ThorchainSwapProvider extends SwapProvider {
 
   async _getTransaction(hash: string): Promise<ThorchainTransactionResponse | null> {
     try {
-      return await this.thorchainAPIErrorParser.wrapAsync(() => this._httpClient.nodeGet(`/thorchain/tx/${hash}`), {
-        txHash: hash,
-      });
+      const hasOx = hash.charAt(0) + hash.charAt(1) === '0x';
+      const transactionHash = hasOx ? hash.slice(2) : hash;
+      return await this.thorchainAPIErrorParser.wrapAsync(
+        () => this._httpClient.nodeGet(`/thorchain/tx/${transactionHash}`),
+        {
+          txHash: transactionHash,
+        }
+      );
     } catch (e) {
       return null;
     }

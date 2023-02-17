@@ -1,6 +1,6 @@
 {
   "name": "@liquality/wallet-core",
-  "version": "4.8.0",
+  "version": "4.16.0",
   "description": "Common library for liquality wallet",
   "repository": "git@github.com:liquality/wallet-core.git",
   "author": "monokh <mnokhb@gmail.com>",
@@ -13,12 +13,12 @@
   "dependencies": {
     "@blobfishkate/sovryncontracts": "1.3.27",
     "@chainify/bitcoin": "2.2.0",
-    "@chainify/bitcoin-ledger": "2.2.0",
+    "@chainify/bitcoin-ledger": "2.4.0",
     "@chainify/client": "2.2.0",
     "@chainify/errors": "2.2.0",
     "@chainify/evm": "2.2.0",
-    "@chainify/evm-ledger": "2.2.0",
-    "@chainify/hw-ledger": "2.2.0",
+    "@chainify/evm-ledger": "2.4.0",
+    "@chainify/hw-ledger": "2.4.0",
     "@chainify/near": "2.2.0",
     "@chainify/solana": "2.2.0",
     "@chainify/terra": "2.2.0",

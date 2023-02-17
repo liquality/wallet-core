@@ -1,1 +1,0 @@
-{"version":3,"file":"21_enable_solana_chain.js","sourceRoot":"","sources":["../../../../src/store/migrations/21_enable_solana_chain.ts"],"names":[],"mappings":";;;AAAA,0DAAkD;AAClD,iDAA6C;AAEhC,QAAA,iBAAiB,GAAG;IAC/B,OAAO,EAAE,EAAE;IACX,OAAO,EAAE,CAAC,KAAU,EAAE,EAAE,CAAC,IAAA,0BAAW,EAAC,KAAK,EAAE,sBAAO,CAAC,MAAM,CAAC;CAC5D,CAAC"}

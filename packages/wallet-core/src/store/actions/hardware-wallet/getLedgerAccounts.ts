@@ -1,5 +1,5 @@
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
-import { AssetTypes, ChainId, getAllAssets, getChain } from '@liquality/cryptoassets';
+import { ChainId, getAllAssets, getChain } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { ActionContext, rootActionContext } from '../..';
 import { getDerivationPath } from '../../../utils/derivationPath';
@@ -34,9 +34,8 @@ export const getLedgerAccounts = async (
   const allAssets = getAllAssets();
   const { chain } = allAssets[network][asset];
 
-  const chainifyAsset = {
+  const chainifyAsset: any = {
     ...allAssets[network][asset],
-    isNative: allAssets[network][asset].type === AssetTypes.native,
   };
 
   const results: LedgerAccountEntry[] = [];
@@ -72,7 +71,7 @@ export const getLedgerAccounts = async (
       const exists = existingIndex >= 0;
 
       // Get the account balance
-      const balance = addresses.length === 0 ? 0 : (await _client.chain.getBalance(addresses, [chainifyAsset]))[0];
+      const balance = addresses.length === 0 ? BN(0) : (await _client.chain.getBalance(addresses, [chainifyAsset]))[0];
       const fiatBalance = assetFiatBalance(asset, balance as BN) || new BN(0);
       const result = {
         account: normalizedAddress,
