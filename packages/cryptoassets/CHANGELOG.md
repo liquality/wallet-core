@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.5.0
+
+### Minor Changes
+
+- 5391ea28: Teleport Dao Integration
+
 ## 2.4.0
 
 ### Minor Changes

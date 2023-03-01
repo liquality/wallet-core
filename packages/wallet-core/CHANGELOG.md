@@ -1,5 +1,17 @@
 # @liquality/wallet-core
 
+## 4.17.0
+
+### Minor Changes
+
+- 5391ea28: Teleport Dao Integration
+
+### Patch Changes
+
+- Updated dependencies [5391ea28]
+  - @liquality/cryptoassets@2.5.0
+  - @liquality/error-parser@2.2.4
+
 ## 4.16.0
 
 ### Minor Changes
