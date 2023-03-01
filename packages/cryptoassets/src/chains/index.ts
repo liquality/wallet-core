@@ -1,4 +1,4 @@
-import { BaseChain } from '../chains/BaseChain';
+import { BaseChain } from './BaseChain';
 import { ChainId, Network } from '../types';
 import { EVM_CHAINS } from './mainnet/EvmChains';
 import { NON_EVM_CHAINS } from './mainnet/NonEvmChains';

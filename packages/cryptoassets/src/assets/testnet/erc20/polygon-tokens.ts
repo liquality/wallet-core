@@ -13,6 +13,17 @@ const TOKENS = {
       coinGeckoId: 'weth',
     },
   },
+  TELEBTC: {
+    name: 'teleBTC',
+    code: 'TELEBTC',
+    decimals: 8,
+    contractAddress: '0x515D720B9D219f1931205D5B8D842bE1Fe2FeBDE',
+    color: '#5b3159',
+    matchingAsset: 'BTC',
+    priceSource: {
+      coinGeckoId: 'bitcoin',
+    },
+  },
 };
 
 export default transformTokenMap(TOKENS, ChainId.Polygon);

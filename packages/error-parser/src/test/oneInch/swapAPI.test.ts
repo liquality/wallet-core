@@ -12,7 +12,7 @@ import {
   PairNotSupportedError,
   ThirdPartyError,
   UnknownError,
-} from '../../';
+} from '../..';
 import { OneInchSwapParserDataType } from '../../parsers';
 
 describe('OneInchSwapAPI parser', () => {

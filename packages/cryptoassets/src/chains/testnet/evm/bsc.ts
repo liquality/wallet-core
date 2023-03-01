@@ -1,5 +1,5 @@
-import bsc from '../../../chains/mainnet/evm/bsc';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import bsc from '../../mainnet/evm/bsc';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 export default transformMainnetToTestnetChain(
   bsc,

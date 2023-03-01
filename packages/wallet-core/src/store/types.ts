@@ -132,6 +132,7 @@ export enum SwapProviderType {
   Jupiter = 'jupiter',
   DeBridge = 'debridge',
   LiFi = 'lifi',
+  TeleSwap = 'teleswap',
 }
 
 export interface BaseHistoryItem {

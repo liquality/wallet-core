@@ -1,4 +1,4 @@
-import { BitcoinChain } from '../../../chains/UtxoChain';
+import { BitcoinChain } from '../../UtxoChain';
 import { AssetTypes, ChainId } from '../../../types';
 
 export default new BitcoinChain({

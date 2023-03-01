@@ -1,5 +1,5 @@
-import arbitrum from '../../../chains/mainnet/evm/arbitrum';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import arbitrum from '../../mainnet/evm/arbitrum';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 export default transformMainnetToTestnetChain(
   arbitrum,

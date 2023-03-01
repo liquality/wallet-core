@@ -2,7 +2,7 @@ import { ChainId, getChain } from '@liquality/cryptoassets';
 import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import { v4 as uuidv4 } from 'uuid';
 import { Account, AccountDefinition, Network, WalletId } from '../store/types';
-import { getDerivationPath } from '../utils/derivationPath';
+import { getDerivationPath } from './derivationPath';
 
 export const accountCreator = (payload: {
   network: Network;

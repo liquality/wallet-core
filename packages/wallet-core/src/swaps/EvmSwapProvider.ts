@@ -7,7 +7,7 @@ import { isTransactionNotFoundError } from '../utils/isTransactionNotFoundError'
 import * as ethers from 'ethers';
 import { SwapHistoryItem } from '../store/types';
 import { assetsAdapter } from '../utils/chainify';
-import { SwapProviderType } from './../store/types';
+import { SwapProviderType } from '../store/types';
 import { SwapProvider } from './SwapProvider';
 import { BaseSwapProviderConfig, NextSwapActionRequest, SwapRequest, SwapStatus } from './types';
 

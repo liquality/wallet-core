@@ -1,5 +1,5 @@
-import bitcoin from '../../../chains/mainnet/utxo/bitcoin';
-import { transformMainnetToTestnetChain } from '../../../chains/utils';
+import bitcoin from '../../mainnet/utxo/bitcoin';
+import { transformMainnetToTestnetChain } from '../../utils';
 
 export default transformMainnetToTestnetChain(
   bitcoin,
