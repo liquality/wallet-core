@@ -1,5 +1,17 @@
 # @liquality/wallet-core
 
+## 4.18.0
+
+### Minor Changes
+
+- 1058bc36: Bumped version for Teleswap integration
+
+### Patch Changes
+
+- Updated dependencies [1058bc36]
+  - @liquality/cryptoassets@2.6.0
+  - @liquality/error-parser@2.2.5
+
 ## 4.17.0
 
 ### Minor Changes

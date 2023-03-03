@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.6.0
+
+### Minor Changes
+
+- 1058bc36: Bumped version for Teleswap integration
+
 ## 2.5.0
 
 ### Minor Changes
