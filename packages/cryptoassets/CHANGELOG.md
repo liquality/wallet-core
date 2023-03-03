@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.7.0
+
+### Minor Changes
+
+- 217cbda8: Updated version to include latest changes from dev
+
 ## 2.6.0
 
 ### Minor Changes
