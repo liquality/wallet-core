@@ -1,5 +1,12 @@
 # @liquality/wallet-core
 
+## 4.20.0
+
+### Minor Changes
+
+- 017921f9: Updated Teleswap icon path for mainnet
+- 23e4c33a: updated default assets config
+
 ## 4.19.0
 
 ### Minor Changes
