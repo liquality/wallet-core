@@ -109,13 +109,6 @@ const config: WalletCoreConfig = {
   },
   swapProviders: {
     testnet: {
-      [SwapProviderType.Liquality]: {
-        name: 'Liquality',
-        icon: 'liquality.svg',
-        type: SwapProviderType.Liquality,
-        routerAddress: HTLC_CONTRACT_ADDRESS,
-        agent: process.env.VUE_APP_AGENT_TESTNET_URL || 'https://testnet-dev-agent.liq-chainhub.net',
-      },
       [SwapProviderType.LiqualityBoostNativeToERC20]: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostNativeToERC20,
@@ -161,12 +154,6 @@ const config: WalletCoreConfig = {
       },
     },
     mainnet: {
-      [SwapProviderType.Liquality]: {
-        name: 'Liquality',
-        icon: 'liquality.svg',
-        type: SwapProviderType.Liquality,
-        agent: process.env.VUE_APP_AGENT_MAINNET_URL || 'https://mainnet-dev-agent.liq-chainhub.net',
-      },
       [SwapProviderType.LiqualityBoostNativeToERC20]: {
         name: 'Liquality Boost',
         type: SwapProviderType.LiqualityBoostNativeToERC20,
