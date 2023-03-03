@@ -289,7 +289,7 @@ const config: WalletCoreConfig = {
       },
       [SwapProviderType.TeleSwap]: {
         name: 'TeleSwap',
-        icon: 'teleswap.svg',
+        icon: 'teleswap.png',
         type: SwapProviderType.TeleSwap,
         network: Network.Mainnet,
         QuickSwapRouterAddress: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff',
