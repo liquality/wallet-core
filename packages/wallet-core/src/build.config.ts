@@ -2,7 +2,6 @@ import SovrynMainnetAddresses from '@blobfishkate/sovryncontracts/contracts-main
 import SovrynTestnetAddresses from '@blobfishkate/sovryncontracts/contracts-testnet.json';
 import { ChainId } from '@liquality/cryptoassets';
 import { Asset, Network, SwapProviderType } from './store/types';
-import { HTLC_CONTRACT_ADDRESS } from './utils/chainify';
 
 export interface SwapProviderDefinition {
   name: string;
