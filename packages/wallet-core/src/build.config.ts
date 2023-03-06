@@ -108,20 +108,6 @@ const config: WalletCoreConfig = {
   },
   swapProviders: {
     testnet: {
-      [SwapProviderType.LiqualityBoostNativeToERC20]: {
-        name: 'Liquality Boost',
-        type: SwapProviderType.LiqualityBoostNativeToERC20,
-        network: Network.Testnet,
-        icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
-      },
-      [SwapProviderType.LiqualityBoostERC20ToNative]: {
-        name: 'Liquality Boost',
-        type: SwapProviderType.LiqualityBoostERC20ToNative,
-        network: Network.Testnet,
-        icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
-      },
       [SwapProviderType.UniswapV2]: {
         name: 'Uniswap V2',
         icon: 'uniswap.svg',
@@ -153,20 +139,6 @@ const config: WalletCoreConfig = {
       },
     },
     mainnet: {
-      [SwapProviderType.LiqualityBoostNativeToERC20]: {
-        name: 'Liquality Boost',
-        type: SwapProviderType.LiqualityBoostNativeToERC20,
-        network: Network.Mainnet,
-        icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
-      },
-      [SwapProviderType.LiqualityBoostERC20ToNative]: {
-        name: 'Liquality Boost',
-        type: SwapProviderType.LiqualityBoostERC20ToNative,
-        network: Network.Mainnet,
-        icon: 'liqualityboost.svg',
-        supportedBridgeAssets: ['RBTC', 'AVAX', 'LUNA', 'UST'],
-      },
       [SwapProviderType.UniswapV2]: {
         name: 'Uniswap V2',
         icon: 'uniswap.svg',
@@ -187,19 +159,6 @@ const config: WalletCoreConfig = {
         },
         referrerFee: 0.3,
       },
-      // [SwapProviderType.FastBTCDeposit]: {
-      //   name: 'FastBTC',
-      //   icon: 'sovryn.svg',
-      //   type: SwapProviderType.FastBTCDeposit,
-      //   bridgeEndpoint: 'https://fastbtc.sovryn.app',
-      // },
-      // [SwapProviderType.FastBTCWithdraw]: {
-      //   name: 'FastBTC',
-      //   icon: 'sovryn.svg',
-      //   type: SwapProviderType.FastBTCWithdraw,
-      //   network: Network.Mainnet,
-      //   routerAddress: '0x0D5006330289336ebdF9d0AC9E0674f91b4851eA',
-      // },
       [SwapProviderType.Sovryn]: {
         name: 'Sovryn',
         icon: 'sovryn.svg',
@@ -226,12 +185,6 @@ const config: WalletCoreConfig = {
         icon: 'jupiter.svg',
         type: SwapProviderType.Jupiter,
       },
-      // [SwapProviderType.Hop]: {
-      //   name: 'Hop',
-      //   icon: 'hop.svg',
-      //   type: SwapProviderType.Hop,
-      //   graphqlBaseURL: 'https://api.thegraph.com/subgraphs/name/hop-protocol',
-      // },
       [SwapProviderType.DeBridge]: {
         name: 'DeBridge',
         icon: 'debridge.svg',
