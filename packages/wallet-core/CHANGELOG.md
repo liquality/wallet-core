@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 4.21.0
+
+### Minor Changes
+
+- 5e9c2a4a: Remove Liq boost providers
+
 ## 4.20.0
 
 ### Minor Changes
