@@ -1,5 +1,12 @@
 # @liquality/error-parser
 
+## 2.2.7
+
+### Patch Changes
+
+- Updated dependencies [831f1e86]
+  - @liquality/cryptoassets@2.8.0
+
 ## 2.2.6
 
 ### Patch Changes
