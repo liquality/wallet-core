@@ -72,6 +72,21 @@
     "@ledgerhq/hw-transport-webhid": "6.27.10",
     "@ledgerhq/cryptoassets": "7.3.0",
     "@ledgerhq/hw-app-eth": "6.30.5",
-    "@ledgerhq/hw-app-btc": "9.1.2"
+    "@ledgerhq/hw-app-btc": "9.1.2",
+    "chainify": "portal:/Users/bradley/Code/Liquality/chainify",
+    "@chainify/bitcoin": "portal:/Users/bradley/Code/Liquality/chainify/packages/bitcoin",
+    "@chainify/bitcoin-ledger": "portal:/Users/bradley/Code/Liquality/chainify/packages/bitcoin-ledger",
+    "@chainify/client": "portal:/Users/bradley/Code/Liquality/chainify/packages/client",
+    "@chainify/errors": "portal:/Users/bradley/Code/Liquality/chainify/packages/errors",
+    "@chainify/evm": "portal:/Users/bradley/Code/Liquality/chainify/packages/evm",
+    "@chainify/evm-contracts": "portal:/Users/bradley/Code/Liquality/chainify/packages/evm-contracts",
+    "@chainify/evm-ledger": "portal:/Users/bradley/Code/Liquality/chainify/packages/evm-ledger",
+    "@chainify/hw-ledger": "portal:/Users/bradley/Code/Liquality/chainify/packages/hw-ledger",
+    "@chainify/logger": "portal:/Users/bradley/Code/Liquality/chainify/packages/logger",
+    "@chainify/near": "portal:/Users/bradley/Code/Liquality/chainify/packages/near",
+    "@chainify/solana": "portal:/Users/bradley/Code/Liquality/chainify/packages/solana",
+    "@chainify/terra": "portal:/Users/bradley/Code/Liquality/chainify/packages/terra",
+    "@chainify/types": "portal:/Users/bradley/Code/Liquality/chainify/packages/types",
+    "@chainify/utils": "portal:/Users/bradley/Code/Liquality/chainify/packages/utils"
   }
 }
