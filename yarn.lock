@@ -398,25 +398,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime-corejs3@npm:7.16.8":
-  version: 7.16.8
-  resolution: "@babel/runtime-corejs3@npm:7.16.8"
-  dependencies:
-    core-js-pure: ^3.20.2
-    regenerator-runtime: ^0.13.4
-  checksum: 3d8fe2f3030c01e8725b9e0985b403463fae2081ca46f16bf257f8e7f32e2ebc37065499941de8678b3ba46145b19db6a7d4c8ac3b675331c7284dd3cdd1dc62
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:7.16.7":
-  version: 7.16.7
-  resolution: "@babel/runtime@npm:7.16.7"
-  dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: 47912f0aaacd1cab2e2552aaf3e6eaffbcaf2d5ac9b07a89a12ac0d42029cb92c070b0d16f825e4277c4a34677c54d8ffe85e1f7c6feb57de58f700eec67ce2f
-  languageName: node
-  linkType: hard
-
 "@babel/runtime@npm:^7.10.4, @babel/runtime@npm:^7.3.4, @babel/runtime@npm:^7.5.5":
   version: 7.18.9
   resolution: "@babel/runtime@npm:7.18.9"
@@ -579,13 +560,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/evm-ledger@npm:2.4.0":
-  version: 2.4.0
-  resolution: "@chainify/evm-ledger@npm:2.4.0"
+"@chainify/evm-ledger@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@chainify/evm-ledger@npm:2.4.1"
   dependencies:
     "@chainify/client": 2.2.0
     "@chainify/errors": 2.2.0
-    "@chainify/evm": 2.2.0
+    "@chainify/evm": 2.3.0
     "@chainify/hw-ledger": 2.4.0
     "@chainify/types": 2.2.0
     "@chainify/utils": 2.2.0
@@ -599,13 +580,13 @@ __metadata:
     "@ethersproject/strings": 5.7.0
     "@ethersproject/transactions": 5.7.0
     "@ledgerhq/hw-app-eth": 6.30.5
-  checksum: 8350f1cb8202d160705b8ad3f0b209760b14fb081871bfae3133499eb56fa9fce5966447ee8a4bb1bbb9b4db69691381579477584cfece3287a85387ce4a3f84
+  checksum: 84c5645788bb201cb38bab26d91e2a1abb6aeba063e52c6d7ceecd6a6c831598c5b05d825bf12308428f1485abf9c1d12e3410a6f2e5a66a8e7467a9459d1cf6
   languageName: node
   linkType: hard
 
-"@chainify/evm@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@chainify/evm@npm:2.2.0"
+"@chainify/evm@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@chainify/evm@npm:2.3.0"
   dependencies:
     "@chainify/client": 2.2.0
     "@chainify/errors": 2.2.0
@@ -625,8 +606,7 @@ __metadata:
     "@liquality/fee-suggestions": 2.0.2
     "@metamask/eth-sig-util": 4.0.1
     ethers: 5.7.0
-    moralis: 1.8.0
-  checksum: cb5315e4c6b535216b50d0416ba991a6e01ee9920437b59ff7d6a3b089acff17c8d5064ecd2f03445bc2caacbfc9f06ce7a6b2e5a9854c2012a5d1fbcfcf02c0
+  checksum: 3706a134f56c20803ed6675243c2908e80a64f3fa9bf02d1ec25270c7ca482a0cc86d3bb22f2de676aa45b8fb9dee683895fd8cf7df3abd96ae82154910563e0
   languageName: node
   linkType: hard
 
@@ -673,9 +653,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/solana@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@chainify/solana@npm:2.2.0"
+"@chainify/solana@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@chainify/solana@npm:2.3.0"
   dependencies:
     "@chainify/client": 2.2.0
     "@chainify/errors": 2.2.0
@@ -688,7 +668,7 @@ __metadata:
     bip39: ^3.0.4
     ed25519-hd-key: ^1.2.0
     tweetnacl: ^1.0.3
-  checksum: 4a48b8fc24e99e4524fb60530c2fd483eb6fcd06be84850346780ba581f810ac9804c102d9ae1efc4b78020e1c650171cfc68d296a86b9b3586f4de840b68795
+  checksum: eb966ee228c444e350d519082ab77ac98e81334d8b1d497c070c607b3301c4c7762e1f41e9cce235a52a6bcc76cc98c607c3df816b689ba9ac0b099eaceffa2f
   languageName: node
   linkType: hard
 
@@ -2800,11 +2780,11 @@ __metadata:
     "@chainify/bitcoin-ledger": 2.4.0
     "@chainify/client": 2.2.0
     "@chainify/errors": 2.2.0
-    "@chainify/evm": 2.2.0
-    "@chainify/evm-ledger": 2.4.0
+    "@chainify/evm": 2.3.0
+    "@chainify/evm-ledger": 2.4.1
     "@chainify/hw-ledger": 2.4.0
     "@chainify/near": 2.2.0
-    "@chainify/solana": 2.2.0
+    "@chainify/solana": 2.3.0
     "@chainify/terra": 2.2.0
     "@chainify/types": 2.2.0
     "@chainify/utils": 2.2.0
@@ -2898,13 +2878,6 @@ __metadata:
   version: 2.4.34
   resolution: "@maticnetwork/meta@npm:2.4.34"
   checksum: 7b81fcf3d63eeed53651dc068a63ae3bd2931e71c89d54f8e0905a980497876d9a22f41841ab96d026709914bbc6c00b781d3df5884c252b6dfa925487cd5cf1
-  languageName: node
-  linkType: hard
-
-"@metamask/detect-provider@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@metamask/detect-provider@npm:1.2.0"
-  checksum: 2c152534a8dd15bc1430bb5159cdf58993549a644cff344a1ff43f4ede8f041aad72b909e822747f6545de3ed293a740ecffc86a859daf7a925c4096efd61eb3
   languageName: node
   linkType: hard
 
@@ -4514,15 +4487,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:0.26.1, axios@npm:^0.26.1":
-  version: 0.26.1
-  resolution: "axios@npm:0.26.1"
-  dependencies:
-    follow-redirects: ^1.14.8
-  checksum: d9eb58ff4bc0b36a04783fc9ff760e9245c829a5a1052ee7ca6013410d427036b1d10d04e7380c02f3508c5eaf3485b1ae67bd2adbfec3683704745c8d7a6e1a
-  languageName: node
-  linkType: hard
-
 "axios@npm:^0.21.1":
   version: 0.21.4
   resolution: "axios@npm:0.21.4"
@@ -4538,6 +4502,15 @@ __metadata:
   dependencies:
     follow-redirects: ^1.14.7
   checksum: 2a8a3787c05f2a0c9c3878f49782357e2a9f38945b93018fb0c4fd788171c43dceefbb577988628e09fea53952744d1ecebde234b561f1e703aa43e0a598a3ad
+  languageName: node
+  linkType: hard
+
+"axios@npm:^0.26.1":
+  version: 0.26.1
+  resolution: "axios@npm:0.26.1"
+  dependencies:
+    follow-redirects: ^1.14.8
+  checksum: d9eb58ff4bc0b36a04783fc9ff760e9245c829a5a1052ee7ca6013410d427036b1d10d04e7380c02f3508c5eaf3485b1ae67bd2adbfec3683704745c8d7a6e1a
   languageName: node
   linkType: hard
 
@@ -5938,13 +5911,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js-pure@npm:^3.20.2":
-  version: 3.27.2
-  resolution: "core-js-pure@npm:3.27.2"
-  checksum: 7cb24502a782a032ffa2af6e84abfcfeffa0c30e84c38f4d0a1d7567c8c86e2d36a7554a00ca47762606c84d2a86d99662a7158e9f4df989f3fe3c7e7c09fa45
-  languageName: node
-  linkType: hard
-
 "core-js@npm:^2.4.0":
   version: 2.6.12
   resolution: "core-js@npm:2.6.12"
@@ -6136,17 +6102,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypto-js@npm:4.1.1, crypto-js@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "crypto-js@npm:4.1.1"
-  checksum: b3747c12ee3a7632fab3b3e171ea50f78b182545f0714f6d3e7e2858385f0f4101a15f2517e033802ce9d12ba50a391575ff4638c9de3dd9b2c4bc47768d5425
-  languageName: node
-  linkType: hard
-
 "crypto-js@npm:^3.1.9-1":
   version: 3.3.0
   resolution: "crypto-js@npm:3.3.0"
   checksum: 193923143a4784b2f974366068d96fe8280168fd3fef2bfea9551a5c3e32096f5a8fa49ff4eeb5bd0b9716d325618d38cfbe6125e359a4ef488fbca93e600824
+  languageName: node
+  linkType: hard
+
+"crypto-js@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "crypto-js@npm:4.1.1"
+  checksum: b3747c12ee3a7632fab3b3e171ea50f78b182545f0714f6d3e7e2858385f0f4101a15f2517e033802ce9d12ba50a391575ff4638c9de3dd9b2c4bc47768d5425
   languageName: node
   linkType: hard
 
@@ -11092,27 +11058,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moralis@npm:1.8.0":
-  version: 1.8.0
-  resolution: "moralis@npm:1.8.0"
-  dependencies:
-    "@babel/runtime": 7.16.7
-    "@babel/runtime-corejs3": 7.16.8
-    "@metamask/detect-provider": ^1.2.0
-    axios: 0.26.1
-    crypto-js: 4.1.1
-    ethers: 5.6.0
-    react-native-crypto-js: 1.0.0
-    uuid: ^8.3.2
-    ws: ^8.3.0
-    xmlhttprequest: 1.8.0
-  dependenciesMeta:
-    crypto-js:
-      optional: true
-  checksum: 8370a5a74d3724e81d6549796abffef30e9d13cd18145709aedaa4926073ad83ad905941ea6fec88c2fbf43d0475efc1003506dcf469ff69a7c4f9b9dd555219
-  languageName: node
-  linkType: hard
-
 "moving-averages@npm:^4.0.6":
   version: 4.0.6
   resolution: "moving-averages@npm:4.0.6"
@@ -12498,13 +12443,6 @@ __metadata:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 9d6d111d8990dc98bc5402c1266a808b0459b5d54830bbea24c12d908b536df7883f268a7868cfaedde3dd9d4e0d574db456f84d2e6df9c4526f99bb4b5344d8
-  languageName: node
-  linkType: hard
-
-"react-native-crypto-js@npm:1.0.0":
-  version: 1.0.0
-  resolution: "react-native-crypto-js@npm:1.0.0"
-  checksum: 74aa3f16820b8d76fbb21a0bff720f0152e21ecc5e46edb4d1d01dcb86af4da934f4d8a1d5059bf8680bbc5090852b302b29bb742980c45137bfed6cef5991d3
   languageName: node
   linkType: hard
 
@@ -15662,7 +15600,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.3.0, ws@npm:^8.5.0":
+"ws@npm:^8.5.0":
   version: 8.12.0
   resolution: "ws@npm:8.12.0"
   peerDependencies:
@@ -15746,13 +15684,6 @@ __metadata:
   version: 2.0.0
   resolution: "xmlhttprequest-ssl@npm:2.0.0"
   checksum: 1e98df67f004fec15754392a131343ea92e6ab5ac4d77e842378c5c4e4fd5b6a9134b169d96842cc19422d77b1606b8df84a5685562b3b698cb68441636f827e
-  languageName: node
-  linkType: hard
-
-"xmlhttprequest@npm:1.8.0":
-  version: 1.8.0
-  resolution: "xmlhttprequest@npm:1.8.0"
-  checksum: c891cf0d7884b4f5cce835aa01f1965727cd352cbd2d7a2e0605bf11ec99ae2198364cca54656ec8b2581a5704dee6c2bf9911922a0ff2a71b613455d32e81b7
   languageName: node
   linkType: hard
 
