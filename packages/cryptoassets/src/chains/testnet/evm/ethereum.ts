@@ -20,5 +20,5 @@ export default transformMainnetToTestnetChain(
     },
   ],
   'https://faucet.paradigm.xyz/',
-  NftProviderType.Moralis
+  NftProviderType.Infura
 );

@@ -49,6 +49,6 @@ export type ChainsMap = { [key in ChainId]?: IChain };
 
 export enum NftProviderType {
   OpenSea = 'opensea',
-  Moralis = 'moralis',
+  Infura = 'infura',
   Covalent = 'covalent',
 }

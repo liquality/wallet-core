@@ -115,11 +115,7 @@ export function createSolanaClient(
   const walletOptions = { mnemonic, derivationPath: accountInfo.derivationPath };
   const chainProvider = new SolanaChainProvider(settings.chainifyNetwork);
   const walletProvider = new SolanaWalletProvider(walletOptions, chainProvider);
-  const nftProvider = new SolanaNftProvider(walletProvider as any, {
-    url: 'https://tjgwcry8a7dd.usemoralis.com:2053/server',
-    appId: 'PwWfldBBlRaVWGihW4K6LqL4AQbmVNTI3w2OyDhN',
-    apiKey: 'X9Bg0wQh5rzvbZ3owmtqAsxdMTy3L81jnz6BNVsj',
-  });
+  const nftProvider = new SolanaNftProvider(walletProvider as any);
 
   return new Client().connect(walletProvider).connect(nftProvider);
 }

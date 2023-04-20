@@ -22,7 +22,7 @@ export default new EvmChain({
   isEVM: true,
   hasTokens: true,
   isMultiLayered: false,
-  nftProviderType: NftProviderType.Moralis,
+  nftProviderType: NftProviderType.Infura,
 
   averageBlockTime: 3,
   safeConfirmations: 10,
