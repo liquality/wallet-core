@@ -1,5 +1,17 @@
 # @liquality/wallet-core
 
+## 4.22.0
+
+### Minor Changes
+
+- 5a03a948: Updated nft providers and enable fastBTC
+
+### Patch Changes
+
+- Updated dependencies [5a03a948]
+  - @liquality/cryptoassets@2.9.0
+  - @liquality/error-parser@2.2.8
+
 ## 4.21.1
 
 ### Patch Changes
