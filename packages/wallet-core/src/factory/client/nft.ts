@@ -5,7 +5,7 @@ import { NftProviderType } from '../../store/types';
 export function getNftProvider(
   providerType: NftProviderType,
   walletProvider: EvmBaseWalletProvider<BaseProvider>,
-  testnet: boolean
+  _testnet: boolean = false
 ) {
   switch (providerType) {
     case NftProviderType.OpenSea:
@@ -14,17 +14,10 @@ export function getNftProvider(
         apiKey: '963da5bcea554a92b078fe1f48a2300e',
       });
     case NftProviderType.Infura:
-      if (testnet) {
-        return new InfuraNftProvider(walletProvider, {
-          url: 'https://tjgwcry8a7dd.usemoralis.com:2053/server',
-          appId: 'PwWfldBBlRaVWGihW4K6LqL4AQbmVNTI3w2OyDhN',
-          apiKey: 'X9Bg0wQh5rzvbZ3owmtqAsxdMTy3L81jnz6BNVsj',
-        });
-      }
       return new InfuraNftProvider(walletProvider, {
-        url: 'https://ghi7f9miezr7.usemoralis.com:2053/server',
-        appId: 'T94TjnFcaFycYfHqkf227JmpZeEjGXmDWINkfJD2',
-        apiKey: 'iv94v0ZQgQfIkTe09QLple1DDAGbmAD8zX9BeVGo',
+        url: 'https://nft.api.infura.io',
+
+        apiKey: Buffer.from('37efa691ffec4c41a60aa4a69865d8f6:2123b0717d6a44738bbdbd28e8ce13cc').toString('base64'),
       });
     case NftProviderType.Covalent:
       return new CovalentNftProvider(walletProvider, {
