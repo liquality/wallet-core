@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.9.0
+
+### Minor Changes
+
+- 5a03a948: Updated nft providers and enable fastBTC
+
 ## 2.8.0
 
 ### Minor Changes
