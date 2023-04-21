@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 4.23.0
+
+### Minor Changes
+
+- 180320d8: Fixed issues with fastBTC query
+
 ## 4.22.0
 
 ### Minor Changes
