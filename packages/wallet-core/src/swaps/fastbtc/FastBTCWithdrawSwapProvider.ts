@@ -232,7 +232,9 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
     try {
       const fastBtcBridge = this.getFastBtcBridge(this._provider);
       const statusUpdateFilter = fastBtcBridge.filters.BitcoinTransferStatusUpdated(swap.transferId);
-      const stausUpdateEvents = await fastBtcBridge.queryFilter(statusUpdateFilter, swap.swapTx.blockNumber);
+      const receiveClient = this.getReceiveClient(network, walletId, 'BTC', swap.toAccountId);
+      const tx = await receiveClient.chain.getTransactionByHash(swap.receiveTxHash);
+      const stausUpdateEvents = await fastBtcBridge.queryFilter(statusUpdateFilter, tx.blockNumber);
       if (stausUpdateEvents.length > 0) {
         for (const statusUpdateEvent of stausUpdateEvents) {
           if (statusUpdateEvent.args!.newStatus === BitcoinTransferStatus.SENDING) {
@@ -245,7 +247,6 @@ class FastBTCWithdrawSwapProvider extends SwapProvider {
             );
             const transferEvent = transferEvents[0];
             const receiveTxHash = transferEvent.args!.bitcoinTxHash.replace('0x', '');
-            const receiveClient = this.getReceiveClient(network, walletId, 'BTC', swap.toAccountId);
             const receiveTx = await receiveClient.chain.getTransactionByHash(receiveTxHash);
             if (receiveTx && receiveTx.confirmations && receiveTx.confirmations > 0) {
               return {

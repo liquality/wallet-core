@@ -653,9 +653,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/solana@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@chainify/solana@npm:2.3.0"
+"@chainify/solana@npm:2.4.0":
+  version: 2.4.0
+  resolution: "@chainify/solana@npm:2.4.0"
   dependencies:
     "@chainify/client": 2.2.0
     "@chainify/errors": 2.2.0
@@ -668,7 +668,7 @@ __metadata:
     bip39: ^3.0.4
     ed25519-hd-key: ^1.2.0
     tweetnacl: ^1.0.3
-  checksum: eb966ee228c444e350d519082ab77ac98e81334d8b1d497c070c607b3301c4c7762e1f41e9cce235a52a6bcc76cc98c607c3df816b689ba9ac0b099eaceffa2f
+  checksum: b5720163a4318ee815f4e55b3f4c7435eb554dc0cdf745e680c9d7c28ea04db2f2cd6b135e99bcf64e596657aedbfa53587e2a3f3e7b1ec4defb62f47c201c7a
   languageName: node
   linkType: hard
 
@@ -2784,7 +2784,7 @@ __metadata:
     "@chainify/evm-ledger": 2.4.1
     "@chainify/hw-ledger": 2.4.0
     "@chainify/near": 2.2.0
-    "@chainify/solana": 2.3.0
+    "@chainify/solana": 2.4.0
     "@chainify/terra": 2.2.0
     "@chainify/types": 2.2.0
     "@chainify/utils": 2.2.0
