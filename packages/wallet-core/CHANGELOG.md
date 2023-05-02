@@ -1,5 +1,17 @@
 # @liquality/wallet-core
 
+## 4.24.0
+
+### Minor Changes
+
+- 2b5bb0a5: Updated node providers and infura nft from chanify
+
+### Patch Changes
+
+- Updated dependencies [2b5bb0a5]
+  - @liquality/cryptoassets@2.10.0
+  - @liquality/error-parser@2.2.9
+
 ## 4.23.0
 
 ### Minor Changes

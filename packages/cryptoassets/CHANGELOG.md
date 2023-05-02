@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.10.0
+
+### Minor Changes
+
+- 2b5bb0a5: Updated node providers and infura nft from chanify
+
 ## 2.9.0
 
 ### Minor Changes
