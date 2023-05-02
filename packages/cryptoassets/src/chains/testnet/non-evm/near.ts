@@ -8,7 +8,7 @@ export default transformMainnetToTestnetChain(
     networkId: 'testnet',
     coinType: '397',
     isTestnet: true,
-    rpcUrls: ['https://rpc.testnet.near.org'],
+    rpcUrls: ['https://near-testnet.infura.io/v3/37efa691ffec4c41a60aa4a69865d8f6', 'https://rpc.testnet.near.org'],
     scraperUrls: ['https://near-testnet-api.liq-chainhub.net'],
   },
   [

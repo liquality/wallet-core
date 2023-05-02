@@ -10,7 +10,7 @@ export default transformMainnetToTestnetChain(
     chainId: 43113,
     isTestnet: true,
     rpcUrls: [
-      'https://nd-865-707-799.p2pify.com/50bb56fd7bb9cc0f1847f418417c0d7a/ext/bc/C/rpc',
+      'https://avalanche-fuji.infura.io/v3/37efa691ffec4c41a60aa4a69865d8f6',
       'https://api.avax-test.network/ext/bc/C/rpc',
     ],
   },

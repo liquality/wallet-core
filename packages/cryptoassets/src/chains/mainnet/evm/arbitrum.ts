@@ -23,7 +23,7 @@ export default new EvmChain({
   isEVM: true,
   isMultiLayered: false,
   hasTokens: true,
-  nftProviderType: NftProviderType.Covalent,
+  nftProviderType: NftProviderType.Infura,
 
   averageBlockTime: 3,
   safeConfirmations: 5,
