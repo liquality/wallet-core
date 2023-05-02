@@ -1,4 +1,4 @@
-import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
+//import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
 import { ChainId, getAllAssets, getChain } from '@liquality/cryptoassets';
 import BN from 'bignumber.js';
 import { ActionContext, rootActionContext } from '../..';
@@ -53,7 +53,7 @@ export const getLedgerAccounts = async (
 
     // we need to get the chain code and public key for btc
     if (chain === ChainId.Bitcoin) {
-      const btcAccount = await (_client.wallet as BitcoinLedgerProvider).getWalletPublicKey(derivationPath);
+      const btcAccount = await (_client.wallet as any).getWalletPublicKey(derivationPath);
       _chainCode = btcAccount.chainCode;
       _publicKey = btcAccount.publicKey;
     }

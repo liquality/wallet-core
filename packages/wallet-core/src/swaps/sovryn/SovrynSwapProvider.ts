@@ -161,7 +161,7 @@ class SovrynSwapProvider extends SwapProvider {
     const fromChain = fromInfo.chain;
     const fromAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
     // don't pass network because Ethers does not support EIP1191
-    const fromAddress = getChain(network, fromChain).formatAddress(fromAddressRaw);
+    const fromAddress = getChain(network, fromChain as any).formatAddress(fromAddressRaw);
 
     return {
       from: fromAddress, // Required for estimation only (not used in chain client)

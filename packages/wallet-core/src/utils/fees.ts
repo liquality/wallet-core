@@ -46,7 +46,7 @@ function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number, network
   const assetInfo = cryptoassets[asset];
   const nativeAssetInfo = cryptoassets[getNativeAsset(asset)];
 
-  if (assetInfo.chain === ChainId.Optimism) {
+  if (assetInfo.chain === 'optimism') { //ChainId.Optimism
     // calculate ETH fees
     const gasLimitL1 = getAssetSendL1GasLimit(assetInfo, network);
     if (!gasLimitL1) {
@@ -97,7 +97,7 @@ function getFeeLabel(fee: string) {
 }
 
 function isEIP1559Fees(chain: ChainId) {
-  return chain === ChainId.Ethereum || chain === ChainId.Polygon || chain === ChainId.Avalanche;
+  return chain === ChainId.Ethereum || chain === ChainId.Polygon || (chain as any) === 'avalanche' //ChainId.Avalanche;
 }
 
 /*
@@ -170,7 +170,7 @@ async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN, cu
     _suggestedGasFees.custom = { fee: customFee };
   }
 
-  if (assetChain === ChainId.Bitcoin) {
+  if (assetChain === 'bitcoin') { //ChainId.Bitcoin
     return sendBitcoinTxFees(accountId, asset, _suggestedGasFees, amount);
   } else {
     return sendTxFeesInNativeAsset(asset, _suggestedGasFees);
@@ -187,7 +187,7 @@ function sendTxFeesInNativeAsset(asset: Asset, suggestedGasFees: FeeDetailsWithC
   for (const [speed, fee] of Object.entries(suggestedGasFees)) {
     const _speed = speed as keyof FeeDetailsWithCustom;
 
-    const _fee: number = feePerUnit(fee.fee, assetChain);
+    const _fee: number = feePerUnit(fee.fee, assetChain as any);
 
     _sendFees[_speed] = _sendFees[_speed].plus(getSendFee(asset, _fee, fee.multilayerFee?.l1));
   }
@@ -287,7 +287,7 @@ async function estimateTransferNFT(
 
     for (const [speed, fee] of Object.entries(suggestedGasFees)) {
       const _speed = speed as keyof FeeDetailsWithCustom;
-      const _fee: number = feePerUnit(fee.fee, account.chain);
+      const _fee: number = feePerUnit(fee.fee, account.chain as any);
       _sendFees[_speed] = new BN(estimation).times(_fee).div(1e9);
     }
 
@@ -297,7 +297,7 @@ async function estimateTransferNFT(
     if (e.name === 'UnsupportedMethodError' || e.rawError?.name === 'UnsupportedMethodError') {
       for (const [speed, fee] of Object.entries(suggestedGasFees)) {
         const _speed = speed as keyof FeeDetailsWithCustom;
-        _sendFees[_speed] = new BN(feePerUnit(fee.fee, account.chain));
+        _sendFees[_speed] = new BN(feePerUnit(fee.fee, account.chain as any));
       }
 
       return _sendFees;

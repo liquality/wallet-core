@@ -1,6 +1,6 @@
 import { BitcoinBaseWalletProvider, BitcoinEsploraApiProvider } from '@chainify/bitcoin';
 import { Client, HttpClient } from '@chainify/client';
-import { Asset as ChainifyAsset, Transaction } from '@chainify/types';
+import { Transaction } from '@chainify/types';
 import { sha256 } from '@chainify/utils';
 import { currencyToUnit, getChain, unitToCurrency } from '@liquality/cryptoassets';
 import BN, { BigNumber } from 'bignumber.js';
@@ -577,7 +577,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
     const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
     const toAsset = cryptoassets[swap.to];
-    const asset = { ...toAsset, isNative: toAsset.type === 'native' } as ChainifyAsset;
+    const asset = { ...toAsset, isNative: toAsset.type === 'native' } as any//ChainifyAsset;
 
     try {
       const tx = await toClient.swap.findInitiateSwapTransaction({
