@@ -577,7 +577,7 @@ export class LiqualitySwapProvider extends EvmSwapProvider {
   }: NextSwapActionRequest<LiqualitySwapHistoryItem>) {
     const toClient = this.getClient(network, walletId, swap.to, swap.toAccountId);
     const toAsset = cryptoassets[swap.to];
-    const asset = { ...toAsset, isNative: toAsset.type === 'native' } as any//ChainifyAsset;
+    const asset = { ...toAsset, isNative: toAsset.type === 'native' } as any; //ChainifyAsset;
 
     try {
       const tx = await toClient.swap.findInitiateSwapTransaction({

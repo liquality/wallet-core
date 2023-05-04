@@ -690,18 +690,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/near@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@chainify/near@npm:2.2.0"
+"@chainify/near@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@chainify/near@npm:2.3.0"
   dependencies:
-    "@chainify/client": 2.2.0
+    "@chainify/client": 2.2.1
     "@chainify/errors": 2.2.0
-    "@chainify/types": 2.2.0
-    "@chainify/utils": 2.2.0
+    "@chainify/types": 2.3.0
+    "@chainify/utils": 2.3.0
     bn.js: ^5.2.0
     near-api-js: ^0.44.2
     near-seed-phrase: ^0.2.0
-  checksum: 7db51c9a171971ced4e2bf0dac0f67a3ef1aff7e7b759c7095e73d7accb38f51664b72254ebfe4e9e1aa79c1d05f4a456ea79379de45984844951d333ee0812a
+  checksum: df31bb8af39a9b32cf27fe9ac15b1d9f34aca5f92008538f63ba4c0a7fbe14a9ea81f7378c3b3ddd92576ffc2710b76b149e228eaef291dddc1b3cd5437bd4b3
   languageName: node
   linkType: hard
 
@@ -2875,7 +2875,7 @@ __metadata:
     "@chainify/evm": 2.4.0
     "@chainify/evm-ledger": 2.4.2
     "@chainify/hw-ledger": 2.4.1
-    "@chainify/near": 2.2.0
+    "@chainify/near": 2.3.0
     "@chainify/solana": 2.4.1
     "@chainify/terra": 2.2.0
     "@chainify/types": 2.3.0

@@ -1,5 +1,5 @@
 import { ChainId, getChain } from '@liquality/cryptoassets';
-import { ChainifyErrorParser, CUSTOM_ERRORS, getErrorParser, createInternalError } from '@liquality/error-parser';
+import { CUSTOM_ERRORS, createInternalError } from '@liquality/error-parser';
 import { AccountInfo, ClientSettings } from '../../store/types';
 import { createBtcClient, createNearClient, createSolanaClient, createTerraClient } from './clients';
 import { createEvmClient } from './evm';
@@ -44,43 +44,43 @@ export const createClient = ({
   }
 
   // Proxify Client so that chainify errors are parsed and rethrown as Liquality Errors.
-  if (client.chain) client.chain = proxify(client.chain);
-  if (client.swap) client.swap = proxify(client.swap);
-  if (client.nft) client.nft = proxify(client.nft);
-  if (client.wallet) client.wallet = proxify(client.wallet);
+  // if (client.chain) client.chain = proxify(client.chain);
+  // if (client.swap) client.swap = proxify(client.swap);
+  // if (client.nft) client.nft = proxify(client.nft);
+  // if (client.wallet) client.wallet = proxify(client.wallet);
 
   return client;
 };
 
-const parser = getErrorParser(ChainifyErrorParser);
-function proxify(obj: any) {
-  return new Proxy(obj, {
-    get(target, prop) {
-      if (target[prop] instanceof Function) {
-        return (...args: any) => {
-          try {
-            const result = target[prop](...args);
-            if (isPromise(result)) {
-              return result.catch((e: any) => {
-                throw parser.parseError(e, null);
-              });
-            }
-            return result;
-          } catch (e) {
-            throw parser.parseError(e, null);
-          }
-        };
-      } else {
-        return target[prop];
-      }
-    },
-  });
-}
+// const parser = getErrorParser(ChainifyErrorParser);
+// function proxify(obj: any) {
+//   return new Proxy(obj, {
+//     get(target, prop) {
+//       if (target[prop] instanceof Function) {
+//         return (...args: any) => {
+//           try {
+//             const result = target[prop](...args);
+//             if (isPromise(result)) {
+//               return result.catch((e: any) => {
+//                 throw parser.parseError(e, null);
+//               });
+//             }
+//             return result;
+//           } catch (e) {
+//             throw parser.parseError(e, null);
+//           }
+//         };
+//       } else {
+//         return target[prop];
+//       }
+//     },
+//   });
+// }
 
-function isPromise(p: any) {
-  if (p !== null && typeof p === 'object' && typeof p.then === 'function' && typeof p.catch === 'function') {
-    return true;
-  }
+// function isPromise(p: any) {
+//   if (p !== null && typeof p === 'object' && typeof p.then === 'function' && typeof p.catch === 'function') {
+//     return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }

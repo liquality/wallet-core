@@ -17,12 +17,14 @@ export const updateAccountBalance = async (
     await Bluebird.map(assets, async (asset) => {
       const chainId = getters.cryptoassets[asset].chain;
       const _client = getters.client({ network, walletId, chainId, accountId });
-      const addresses = await _client.wallet.getUsedAddresses();
+      if (_client && _client.wallet) {
+        const addresses = await _client.wallet.getUsedAddresses();
 
-      const _assets = assetsAdapter(asset);
-      const balance = addresses.length === 0 ? '0' : (await _client.chain.getBalance(addresses, _assets)).toString();
+        const _assets = assetsAdapter(asset);
+        const balance = addresses.length === 0 ? '0' : (await _client.chain.getBalance(addresses, _assets)).toString();
 
-      commit.UPDATE_BALANCE({ network, accountId, walletId, asset, balance });
+        commit.UPDATE_BALANCE({ network, accountId, walletId, asset, balance });
+      }
     });
   }
 };

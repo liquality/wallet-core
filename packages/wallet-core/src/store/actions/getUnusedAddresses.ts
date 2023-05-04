@@ -27,30 +27,30 @@ export const getUnusedAddresses = async (
       const index = accounts.findIndex((a) => a.id === accountId);
       if (index >= 0 && asset) {
         const account = accounts[index];
-        const result = await getters
-          .client({ network, walletId, chainId, accountId: account.id })
-          .wallet.getUnusedAddress();
-
-        const address = result.address;
-        let updatedAddresses: string[] = [];
-        if (account.chain === ChainId.Bitcoin) {
-          if (!account.addresses.includes(address)) {
-            updatedAddresses = [...account.addresses, address];
+        const client = getters.client({ network, walletId, chainId, accountId: account.id });
+        if (client && client.wallet) {
+          const result = await client.wallet.getUnusedAddress();
+          const address = result.address;
+          let updatedAddresses: string[] = [];
+          if (account.chain === ChainId.Bitcoin) {
+            if (!account.addresses.includes(address)) {
+              updatedAddresses = [...account.addresses, address];
+            } else {
+              updatedAddresses = [...account.addresses];
+            }
           } else {
-            updatedAddresses = [...account.addresses];
+            updatedAddresses = [address];
           }
-        } else {
-          updatedAddresses = [address];
+
+          commit.UPDATE_ACCOUNT_ADDRESSES({
+            network,
+            accountId: account.id,
+            walletId,
+            addresses: updatedAddresses,
+          });
+
+          return address;
         }
-
-        commit.UPDATE_ACCOUNT_ADDRESSES({
-          network,
-          accountId: account.id,
-          walletId,
-          addresses: updatedAddresses,
-        });
-
-        return address;
       }
       return '';
     },

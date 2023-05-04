@@ -53,7 +53,7 @@ export default {
       accountType?: AccountType;
       accountIndex?: number;
     }): Client => {
-      const account = accountId ? getters.accountItem(accountId) : null;
+      const account = accountId ? state.accounts[walletId]?.[network].find((a) => a.id === accountId) : null;
       const _accountType = account?.type || accountType;
       const _accountIndex = account?.index || accountIndex;
 

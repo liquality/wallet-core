@@ -42,7 +42,7 @@ export abstract class EvmSwapProvider extends SwapProvider {
     const tokenContract = Typechain.ERC20__factory.connect(fromAsset.contractAddress, signer);
 
     const userAddressRaw = await this.getSwapAddress(network, walletId, quote.from, quote.fromAccountId);
-    const userAddress = getChain(network, fromAsset.chain  as any).formatAddress(userAddressRaw);
+    const userAddress = getChain(network, fromAsset.chain as any).formatAddress(userAddressRaw);
 
     const _approvalAddress = approvalAddress ?? this.config.routerAddress;
     const allowance = await tokenContract.allowance(userAddress.toLowerCase(), _approvalAddress);
