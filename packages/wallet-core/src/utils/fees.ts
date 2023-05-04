@@ -46,7 +46,8 @@ function getSendFee(asset: Asset, feePrice: number, l1FeePrice?: number, network
   const assetInfo = cryptoassets[asset];
   const nativeAssetInfo = cryptoassets[getNativeAsset(asset)];
 
-  if (assetInfo.chain === 'optimism') { //ChainId.Optimism
+  if (assetInfo.chain === 'optimism') {
+    //ChainId.Optimism
     // calculate ETH fees
     const gasLimitL1 = getAssetSendL1GasLimit(assetInfo, network);
     if (!gasLimitL1) {
@@ -97,7 +98,7 @@ function getFeeLabel(fee: string) {
 }
 
 function isEIP1559Fees(chain: ChainId) {
-  return chain === ChainId.Ethereum || chain === ChainId.Polygon || (chain as any) === 'avalanche' //ChainId.Avalanche;
+  return chain === ChainId.Ethereum || chain === ChainId.Polygon || (chain as any) === 'avalanche'; //ChainId.Avalanche;
 }
 
 /*
@@ -170,7 +171,8 @@ async function getSendTxFees(accountId: AccountId, asset: Asset, amount?: BN, cu
     _suggestedGasFees.custom = { fee: customFee };
   }
 
-  if (assetChain === 'bitcoin') { //ChainId.Bitcoin
+  if (assetChain === 'bitcoin') {
+    //ChainId.Bitcoin
     return sendBitcoinTxFees(accountId, asset, _suggestedGasFees, amount);
   } else {
     return sendTxFeesInNativeAsset(asset, _suggestedGasFees);

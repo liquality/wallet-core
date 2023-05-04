@@ -21,7 +21,7 @@ export function assetsAdapter(assets: string | string[]): ChainifyAsset[] {
 
 const parseAsset = (asset: IAsset) => {
   if (asset.type === 'native') {
-    return { ...asset, isNative: true }  as any //as ChainifyAsset;
+    return { ...asset, isNative: true } as any; //as ChainifyAsset;
   } else {
     const chainifyAsset = {
       ...asset,
@@ -31,12 +31,12 @@ const parseAsset = (asset: IAsset) => {
     // Avoid mutation on contractAddress to lower case
     switch (asset.chain) {
       case ChainId.Solana:
-        return chainifyAsset  as any //as ChainifyAsset;
+        return chainifyAsset as any; //as ChainifyAsset;
       default:
         return {
           ...chainifyAsset,
           contractAddress: asset.contractAddress?.toLowerCase(),
-        }  as any; //as ChainifyAsset;
+        } as any; //as ChainifyAsset;
     }
   }
 };

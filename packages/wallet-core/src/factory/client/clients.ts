@@ -91,7 +91,7 @@ export function createNearClient(
   const chainProvider = new NearChainProvider(settings.chainifyNetwork);
   const walletProvider = new NearWalletProvider(walletOptions, chainProvider);
   const swapProvider = new NearSwapProvider(settings.chainifyNetwork.helperUrl, walletProvider);
-  return new Client().connect(swapProvider as any);
+  return new Client(chainProvider as any, walletProvider as any).connect(swapProvider as any);
 }
 
 export function createTerraClient(
@@ -104,7 +104,7 @@ export function createTerraClient(
   const chainProvider = new TerraChainProvider(settings.chainifyNetwork);
   const walletProvider = new TerraWalletProvider(walletOptions, chainProvider);
   const swapProvider = new TerraSwapProvider(helperUrl, walletProvider);
-  return new Client().connect(swapProvider as any);
+  return new Client(chainProvider as any, walletProvider as any).connect(swapProvider as any);
 }
 
 export function createSolanaClient(
@@ -117,5 +117,5 @@ export function createSolanaClient(
   const walletProvider = new SolanaWalletProvider(walletOptions, chainProvider);
   const nftProvider = new SolanaNftProvider(walletProvider as any);
 
-  return new Client().connect(walletProvider).connect(nftProvider);
+  return new Client(chainProvider as any, walletProvider as any).connect(nftProvider);
 }

@@ -19,13 +19,13 @@ type EvmAccountsMap = Record<ChainId, Array<Account>>;
 export const updateBalances = async (context: ActionContext, request: UpdateBalanceRequestType) => {
   const { walletId, network } = request;
   const { state, commit, getters } = rootActionContext(context);
-  const wallet = state.accounts[walletId];
+  const accounts = state.accounts[walletId]?.[network];
 
-  if (wallet) {
+  if (accounts) {
     const accountIds =
       request.accountIds ||
       // get all enabled account ids if none are requested
-      wallet[network].reduce((filtered, account) => {
+      accounts.reduce((filtered, account) => {
         if (account.enabled) {
           filtered.push(account.id);
         }
@@ -39,7 +39,7 @@ export const updateBalances = async (context: ActionContext, request: UpdateBala
     await Bluebird.map(
       accountIds,
       async (accountId) => {
-        const account = getters.accountItem(accountId);
+        const account = accounts.find((a) => a.id === accountId);
 
         // skip all EVM chains, because they are handled in a different way (multicall for all accounts & assets)
         if (account && !evmAccounts[account.chain]) {
