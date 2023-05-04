@@ -1,5 +1,17 @@
 # @liquality/wallet-core
 
+## 4.25.0
+
+### Minor Changes
+
+- 2cce88d4: fixed near client setup and rpc settings
+
+### Patch Changes
+
+- Updated dependencies [2cce88d4]
+  - @liquality/cryptoassets@2.11.0
+  - @liquality/error-parser@2.2.10
+
 ## 4.24.0
 
 ### Minor Changes

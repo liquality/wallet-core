@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.11.0
+
+### Minor Changes
+
+- 2cce88d4: fixed near client setup and rpc settings
+
 ## 2.10.0
 
 ### Minor Changes
