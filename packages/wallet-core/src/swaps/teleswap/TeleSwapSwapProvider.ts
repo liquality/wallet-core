@@ -754,7 +754,7 @@ class TeleSwapSwapProvider extends SwapProvider {
 
       if (tx && tx.confirmations && tx.confirmations > 0) {
         // find exact burnt amount from event
-        const api = new ethers.providers.InfuraWebSocketProvider(
+        const api = new ethers.providers.InfuraProvider(
           this.getChainIdNumber(swap.from, network),
           buildConfig.infuraApiKey
         );
@@ -1101,10 +1101,7 @@ class TeleSwapSwapProvider extends SwapProvider {
   };
 
   private getTargetNetworkConnectionInfo(to: Asset, network: Network) {
-    const api = new ethers.providers.InfuraWebSocketProvider(
-      this.getChainIdNumber(to, network),
-      buildConfig.infuraApiKey
-    );
+    const api = new ethers.providers.InfuraProvider(this.getChainIdNumber(to, network), buildConfig.infuraApiKey);
 
     const targetNetworkConnectionInfo = {
       web3: {
