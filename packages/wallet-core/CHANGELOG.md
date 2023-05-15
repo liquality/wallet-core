@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 4.26.0
+
+### Minor Changes
+
+- 9a927abd: Change teleswap to use infura http provider instead of wss
+
 ## 4.25.0
 
 ### Minor Changes
