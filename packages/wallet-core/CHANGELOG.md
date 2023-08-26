@@ -1,5 +1,11 @@
 # @liquality/wallet-core
 
+## 4.27.0
+
+### Minor Changes
+
+- e36a3c4e: Updated chanify signing message
+
 ## 4.26.0
 
 ### Minor Changes
