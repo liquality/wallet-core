@@ -18,7 +18,7 @@ Error Parser is an Error formatting and reporting Library for Liquality. It's an
 4. **Custom Internal Errors:** The Error Parser package contains a list of [reusable Custom Errors](src/LiqualityErrors/customErrors.ts) that can be used anywhere there is a need to throw an Internal Error.
 
 5. **Error Reporting:**
-   - The error reporting is done seemlessly without the developer's intervention. The error reporting function is automatically invoked [after parsing an external](https://github.com/liquality/wallet-core/blob/911aa835d15782c33811a7b3b03d7766d4c52d93/packages/error-parser/src/parsers/ErrorParser.ts#L32) error and [after creating a custom error](https://github.com/liquality/wallet-core/blob/8f8b6cb5dae62a791c2608a6a21f85e3132c63ff/packages/error-parser/src/utils/index.ts#L17).
+   - The error reporting is done seamlessly without the developer's intervention. The error reporting function is automatically invoked [after parsing an external](https://github.com/liquality/wallet-core/blob/911aa835d15782c33811a7b3b03d7766d4c52d93/packages/error-parser/src/parsers/ErrorParser.ts#L32) error and [after creating a custom error](https://github.com/liquality/wallet-core/blob/8f8b6cb5dae62a791c2608a6a21f85e3132c63ff/packages/error-parser/src/utils/index.ts#L17).
    - The Error parser package relies on two env variables
      - `VUE_APP_REPORT_TARGETS` listing a comma-separated list of destinations where error reports should be sent(`Console` and `Discord` are currently supported) and
      - `VUE_APP_DISCORD_WEBHOOK` to hold the discord webhook (if necessary)
