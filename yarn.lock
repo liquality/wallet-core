@@ -598,13 +598,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chainify/evm-ledger@npm:2.4.2":
-  version: 2.4.2
-  resolution: "@chainify/evm-ledger@npm:2.4.2"
+"@chainify/evm-ledger@npm:2.4.3":
+  version: 2.4.3
+  resolution: "@chainify/evm-ledger@npm:2.4.3"
   dependencies:
     "@chainify/client": 2.2.1
     "@chainify/errors": 2.2.0
-    "@chainify/evm": 2.4.0
+    "@chainify/evm": 3.0.0
     "@chainify/hw-ledger": 2.4.1
     "@chainify/types": 2.3.0
     "@chainify/utils": 2.3.0
@@ -618,13 +618,13 @@ __metadata:
     "@ethersproject/strings": 5.7.0
     "@ethersproject/transactions": 5.7.0
     "@ledgerhq/hw-app-eth": 6.30.5
-  checksum: 738bf8356706a11959b780d2c678c467b1ba7393b52ff6fb36861999cace544519ac4f23dda6a91aa366fd534be9f9468c5dc9a048f2a3c98494b49f888f3ba9
+  checksum: bc8f792fb9264fdde4968e7a069a0bfc90d5e3502b562fccfd441fcb1c3f9f5c2b65510c6074c2c8995f23db087bf7a2ff9a74d6f8244a6de41788cca12c0eb6
   languageName: node
   linkType: hard
 
-"@chainify/evm@npm:2.4.0":
-  version: 2.4.0
-  resolution: "@chainify/evm@npm:2.4.0"
+"@chainify/evm@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@chainify/evm@npm:3.0.0"
   dependencies:
     "@chainify/client": 2.2.1
     "@chainify/errors": 2.2.0
@@ -644,7 +644,7 @@ __metadata:
     "@liquality/fee-suggestions": 2.0.2
     "@metamask/eth-sig-util": 4.0.1
     ethers: 5.7.0
-  checksum: 02cb153839e79b9fdb7d95c38c3b5ed7fdbf64880dcbec216cc3b82b82acdb5f4c6ce0bf403ad568d2ac2b96110f181a84f87262eaba7f81c90119b6727af04e
+  checksum: 0475683a64e0c56ff0719b23e02895fba479edff9d231544eab1bb2dad8c194009f74af97bc4d04980042b8b6976bf783c61fa9a22976c9b896b075104b4b5e7
   languageName: node
   linkType: hard
 
@@ -2872,8 +2872,8 @@ __metadata:
     "@chainify/bitcoin-ledger": 2.4.0
     "@chainify/client": 2.2.1
     "@chainify/errors": 2.2.0
-    "@chainify/evm": 2.4.0
-    "@chainify/evm-ledger": 2.4.2
+    "@chainify/evm": 3.0.0
+    "@chainify/evm-ledger": 2.4.3
     "@chainify/hw-ledger": 2.4.1
     "@chainify/near": 2.3.0
     "@chainify/solana": 2.4.1
