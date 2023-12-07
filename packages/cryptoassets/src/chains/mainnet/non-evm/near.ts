@@ -32,7 +32,7 @@ export default new NearChain({
     coinType: '397',
     isTestnet: false,
     networkId: 'mainnet',
-    rpcUrls: ['https://near-mainnet.infura.io/v3/37efa691ffec4c41a60aa4a69865d8f6'],
+    rpcUrls: ['https://rpc.mainnet.near.org'],
   },
   explorerViews: [
     {
