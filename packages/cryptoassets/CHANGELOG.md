@@ -1,5 +1,11 @@
 # @liquality/cryptoassets
 
+## 2.12.0
+
+### Minor Changes
+
+- 90e9aa0d: Updated Near urls
+
 ## 2.11.0
 
 ### Minor Changes
