@@ -11,7 +11,7 @@
 ![](https://img.shields.io/npm/v/@liquality/wallet-core?label=wallet-core)
 ![master](https://github.com/liquality/wallet-core/actions/workflows/build-test.yml/badge.svg?branch=master)
 
-Wallet Core is a cryptocurrency wallet library in Typescript. It provides an abstracted interface that handles all the necessary internals of a muilti chain wallet.
+Wallet Core is a cryptocurrency wallet library in Typescript. It provides an abstracted interface that handles all the necessary internals of a multi chain wallet.
 
 # Features
 
@@ -19,7 +19,7 @@ Wallet Core is a cryptocurrency wallet library in Typescript. It provides an abs
 - Seed management and security
 - Account management
 - Blockchain communication under a common interface, powered by [Chainify](https://github.com/liquality/chainify)
-- Retriving balances
+- Retrieving balances
 - Sending transactions
 - Intra and cross chain swaps supporting a host of decentralised exchanges - Liquality, Thorchain, Uniswap, 1inch, Sovryn, Astroport etc.
 - Hardware wallet support
@@ -59,7 +59,7 @@ See `WalletOptions` in [types](src/types.ts)
 ```typescript
   {
     initialState?: RootState; // The initial state of the wallet
-    crypto: { // Implmenetation for platform specific crypto
+    crypto: { // Implementation for platform specific crypto
       pbkdf2(password: string, salt: string, iterations: number, length: number, digest: string): Promise<string>;
       encrypt(value: string, key: string): Promise<any>;
       decrypt(value: any, key: string): Promise<any>;
